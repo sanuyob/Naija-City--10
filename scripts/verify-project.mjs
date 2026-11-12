@@ -31,6 +31,9 @@ assert.match(entry,/import\('\.\/game\.js'\)/,'Engine module must be lazy-loaded
 assert.doesNotMatch(entry,/from ['"]playcanvas['"]/,'Initial entry must not eagerly import PlayCanvas');
 assert.match(game,/createGraphicsDevice/);
 assert.match(game,/createStage08ACityExpansion/,'Stage 08A city expansion must be mounted in the live scene');
+assert.match(controller,/pc\.math\.clamp\(p\.x \+ velocity\.x \* step, -46, 46\)/,'Player must traverse the expanded city width');
+assert.match(controller,/pc\.math\.clamp\(p\.z \+ velocity\.z \* step, -195, 160\)/,'Player must traverse the expanded city length');
+assert.match(game,/knownBounds:\{min:\[-48,-1,-205\],max:\[48,10,169\]\}/,'Runtime diagnostics must report the expanded world bounds');
 assert.match(game,/farClip:420/,'Camera far clip must cover the expanded city footprint');
 for(const feature of ['stage08-ground-west','stage08-ground-east','stage08-main-road-extension','stage08-parallel-road','stage08-cross-street','stage08-commercial-building','stage08-residential-building','stage08-pocket-park']) assert.ok(expansion.includes(feature),`Missing Stage 08A city feature: ${feature}`);
 assert.match(expansion,/parallelRoads: 2/);
