@@ -9,6 +9,13 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - Kept the new geometry procedural and modular for iteration; these are expansion blockouts, not finished PBR buildings.
 - The existing Stage 07 landscape controls and HUD remain in place.
 
+## Stage 08B — Nigerian building detail
+- Upgraded all eight commercial blockout buildings with coloured shop fascia panels, projecting awnings, roller shutters, security doors, upper glazing and roof parapets.
+- Added residential facade details to all eight homes: window bands, balcony slabs, open metal balustrades, security grilles, front doors and external AC units.
+- Added rooftop water tanks as a recognisable Nigerian urban residential detail.
+- Shared low-poly material families and modular box geometry keep the pass editable and avoid downloading large texture sets.
+- This is a geometry/material detail pass, not the final PBR pass. Readable shop names, interiors, texture baking, collision refinement and street vendor dressing remain future work.
+
 ## Landscape HUD
 - Landscape-first mobile layout with a portrait rotation notice and web-app manifest orientation hint.
 - Left thumb zone: camera-relative movement joystick.
@@ -43,6 +50,7 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - `src/third-person-controller.js`: locomotion, sprint/stamina, jump, crouch, touch/keyboard input and camera.
 - `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback and Stage 08A expansion integration.
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
+- `src/stage-08b-building-detail.js`: Nigerian-inspired commercial and residential facade detail, balconies, security grilles, AC units and rooftop tanks.
 - `src/rpg-ui.js` / `src/rpg-ui.css`: HUD, menus, safe areas and touch controls.
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
@@ -50,4 +58,4 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 `npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser`
 
 ## Honest status
-The character remains a lightweight procedural placeholder and the city is still a blockout. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for touch comfort, safe-area behavior and performance.
+The character remains a lightweight procedural placeholder. Stage 08A establishes the city blockout, while Stage 08B adds low-poly facade detail; neither stage is a final photorealistic or PBR environment. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for touch comfort, safe-area behavior and performance.
