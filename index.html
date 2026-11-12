@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#101820" />
+  <title>Naija City Drive — Prototype</title>
+</head>
+<body>
+  <canvas id="application"></canvas>
+  <div id="hud">
+    <div class="brand">NAIJA CITY DRIVE <span>EARLY BUILD</span></div>
+    <div id="speed">0 km/h</div>
+    <div class="hint">WASD / ARROWS · MOBILE: hold the controls</div>
+  </div>
+  <div id="controls" aria-label="Driving controls">
+    <div class="steering">
+      <button data-control="left" aria-label="Steer left">◀</button>
+      <button data-control="right" aria-label="Steer right">▶</button>
+    </div>
+    <div class="pedals">
+      <button data-control="brake" aria-label="Brake">BRAKE</button>
+      <button data-control="accelerate" aria-label="Accelerate">GO</button>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
