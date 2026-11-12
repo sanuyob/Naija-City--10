@@ -1,9 +1,10 @@
-name: Stage 02 verification
+name: Stage 05 RPG foundation verification
 
 on:
   push:
     branches:
       - feature/naija-city-drive-stage-01
+      - feature/naija-city-stage-05-rpg-foundation
   pull_request:
     branches:
       - main
