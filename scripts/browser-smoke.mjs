@@ -30,9 +30,10 @@ try {
  await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height/2);await page.mouse.down();await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height*0.12,{steps:5});await page.waitForTimeout(650);await page.mouse.up();
  const after=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().position);
  if(Math.hypot(after[0]-before[0],after[2]-before[2])<0.25)throw new Error('Movement joystick did not move the human player: '+JSON.stringify({before,after}));
- await page.locator('#jump-button').dispatchEvent('pointerdown',{pointerId:9,clientX:0,clientY:0});await page.waitForTimeout(90);
+ await page.locator('#jump-button').tap();
+ await page.waitForFunction(()=>{const state=window.__NAIJA_GAME__?.getPlayerState();return !!state&&(state.position[1]>0.05||!state.grounded);},null,{timeout:1500});
  const jumpState=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState());
- if(jumpState.position[1]<=0)throw new Error('Jump input did not move the character vertically: '+JSON.stringify(jumpState));
+ if(jumpState.position[1]<=0.05||jumpState.grounded)throw new Error('Touch jump input did not make the character airborne: '+JSON.stringify(jumpState));
  await page.locator('#crouch-button').click();
  if(!(await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().crouched)))throw new Error('Crouch button did not change player stance');
  await page.locator('#crouch-button').click();
