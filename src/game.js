@@ -50,9 +50,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const camera = new pc.Entity('chase-camera');
   camera.addComponent('camera',{clearColor:new pc.Color(0.49,0.72,0.88),fov:62,farClip:190});
   camera.setPosition(0,7,13); camera.lookAt(0,0,0); app.root.addChild(camera);
-  const diagnosticMaterial=material([1,0.05,0.72],0.2);
-  diagnosticMaterial.emissive=new pc.Color(1,0.02,0.55);diagnosticMaterial.update();
-  box('render-diagnostic-marker',[0,1.45,-12],[2.2,2.2,2.2],diagnosticMaterial);
+  const diagnosticMaterial=material([1,0,1],0.2);
+  diagnosticMaterial.useLighting=false;diagnosticMaterial.emissive=new pc.Color(1,0,1);diagnosticMaterial.update();
+  const diagnosticMarker=box('render-diagnostic-marker',[4.5,1.5,-8],[2.8,2.8,2.8],diagnosticMaterial);
   const sun = new pc.Entity('sun');
   sun.addComponent('light',{type:'directional',color:new pc.Color(1,0.91,0.78),intensity:1.05});
   sun.setEulerAngles(48,28,0); app.root.addChild(sun);
@@ -219,6 +219,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     perf.cpuTotal+=(stats.cpuUpdateTime||0)+(stats.cpuRenderTime||0);perf.drawTotal+=stats.drawCallCount||0;
     if(perf.elapsed<1000||!perfPanel)return;
     const avg=perf.frameTotal/perf.samples,heap=performance.memory?.usedJSHeapSize;
+    const renderDiag=window.__NAIJA_RENDER_DIAGNOSTICS__;
+    const fps=Math.round(1000/Math.max(avg,0.01));
+    window.__NAIJA_ANDROID_BASELINE__={userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight},devicePixelRatio:window.devicePixelRatio,canvas:{width:canvas.width,height:canvas.height},fps,averageFrameMs:avg,drawCalls:stats.drawCallCount,meshInstances:renderDiag?.scene?.meshInstances??null,gpuMemoryMiB:stats.vramTotalBytes/(1024*1024),jsHeapMiB:heap?heap/1048576:null,gpu:device.unmaskedRenderer||'Not exposed'};
     const vram=stats.vramTotalBytes/(1024*1024);
     perfPanel.textContent=`FPS ${Math.round(1000/Math.max(avg,0.01))} · Frame ${avg.toFixed(1)} ms (peak ${perf.framePeak.toFixed(1)}) · CPU ${(perf.cpuTotal/perf.samples).toFixed(1)} ms\nDraw calls ${Math.round(perf.drawTotal/perf.samples)} · GPU resources ${Number.isFinite(vram)?vram.toFixed(1):'N/A'} MiB · JS heap ${heap?(heap/1048576).toFixed(1):'N/A'} MiB\nGPU: ${device.unmaskedRenderer||'Not exposed by browser'}`;
     perf.elapsed=0;perf.samples=0;perf.frameTotal=0;perf.framePeak=0;perf.cpuTotal=0;perf.drawTotal=0;
@@ -228,7 +231,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     const rect=canvas.getBoundingClientRect(),cameraPos=camera.getPosition(),forward=camera.forward;
     const renderComponents=app.root.findComponents('render');
     const meshInstances=renderComponents.reduce((sum,component)=>sum+(component.meshInstances?.length||0),0);
-    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
+    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
   window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:assetState,stats};
