@@ -1,9 +1,11 @@
 import * as pc from 'playcanvas';
 import { createVehiclePhysics } from './vehicle-physics.js';
+import { mountAssetInventory } from './asset-inventory.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   const canvas = document.getElementById('application');
   const speedLabel = document.getElementById('speed');
+  const assetInventory = mountAssetInventory();
   if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Missing #application canvas');
   statusLabel.textContent = 'Starting 3D engine…';
   const device = await pc.createGraphicsDevice(canvas, { deviceTypes: [pc.DEVICETYPE_WEBGL2] });
@@ -217,7 +219,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   }
   app.on('frameend',samplePerformance);
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,stats};
+  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assetInventory:true,assetInventoryData:assetInventory,stats};
   window.addEventListener('pagehide',()=>physics.cleanup(),{once:true});
   app.start();statusLabel.textContent='Ready — Stage 04 real vehicle physics';
 }
