@@ -143,11 +143,20 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
 
   statusLabel.textContent='Loading GLB models and textures…';
   const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
-  const playerController=createThirdPersonController(app,camera,canvas);
+  const playerController=createThirdPersonController(app,camera,canvas,{
+    onInteract:state=>{
+      const [px,,pz]=state.position;
+      const targets=[{name:'Street kiosk',x:-7.9,z:-17},{name:'Bus stop',x:7.3,z:-37}];
+      const nearest=targets.map(target=>({...target,distance:Math.hypot(px-target.x,pz-target.z)})).sort((a,b)=>a.distance-b.distance)[0];
+      if(nearest&&nearest.distance<4.5)window.__NAIJA_RPG_UI__?.showToast(nearest.name+' nearby — vendor/transport interaction is not active yet.');
+      else window.__NAIJA_RPG_UI__?.showToast('Nothing nearby to interact with.');
+    }
+  });
   statusLabel.textContent='Third-person character ready — WASD / touch joystick';
 
   // Stage 06: city traffic continues as lightweight kinematic scenery.
   // The human character is now the only player-controlled actor.
+  let hudClock=0;
   app.on('update',dt=>{
     if(window.__NAIJA_RPG_PAUSED__) return;
     const step=Math.min(dt,0.05);
@@ -172,6 +181,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       }
     }
     playerController.update(step);
+    hudClock+=step;
+    if(hudClock>=0.12){hudClock=0;window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());}
   });
 
   // Documented AppStats telemetry; GPU memory is estimated tracked resource usage.
@@ -196,7 +207,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:6,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  window.__NAIJA_GAME__={ready:true,stage:6,hudStage:7,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
   window.addEventListener('pagehide',()=>playerController.destroy(),{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
 }
