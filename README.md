@@ -20,11 +20,12 @@ npm install
 npm run dev
 ```
 
-For a production build:
+For checks and a production build:
 
 ```bash
 npm run verify
 npm run build
+npm run test:browser
 npm run preview
 ```
 
@@ -38,7 +39,13 @@ npm run preview
 
 ## Verification
 
-GitHub Actions runs source checks and a Vite production build on pushes to the Stage 01 branch and on pull requests into `main`. A successful production build verifies bundling; it does not replace a real Android browser playtest.
+GitHub Actions checks JavaScript syntax and project wiring, builds the production bundle, then launches it in headless Chromium at a 390 × 844 mobile viewport. The browser smoke test confirms WebGL 2 startup and that holding GO increases the speed readout.
+
+This automated mobile-sized browser test is not a substitute for testing on a physical Android phone or measuring real-device frame rate and memory.
+
+## Build note
+
+The current production JavaScript bundle is approximately 1.23 MB minified (327 KB gzip). Vite reports a chunk-size warning. This is acceptable for the first prototype build but should be profiled and optimized before the district grows.
 
 ## Known limitations
 
@@ -46,7 +53,7 @@ This is an early prototype, not a finished driving simulator. Vehicle movement i
 
 ## Next milestone
 
-After Stage 01 passes CI and a browser smoke test, improve vehicle handling and collisions, then add a compact street junction and carefully budgeted Nigerian street props.
+Improve vehicle handling and proper collisions, then add a compact street junction and carefully budgeted Nigerian street props.
 
 ## Engine references
 
