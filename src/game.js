@@ -171,6 +171,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   let heading=0;
   const position=new pc.Vec3(),desiredCamera=new pc.Vec3(),cameraPosition=new pc.Vec3();
   app.on('update',dt=>{
+    if(window.__NAIJA_RPG_PAUSED__) return;
     const step=Math.min(dt,0.05);
     const accelerate=held.accelerate||keys.w||keys.arrowup;
     const brake=held.brake||keys.s||keys.arrowdown;
