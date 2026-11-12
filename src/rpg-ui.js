@@ -13,7 +13,7 @@ export function mountRPGInterface() {
   if (!root) throw new Error('Missing RPG interface root');
   root.innerHTML = `
     <header class="topbar">
-      <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small>THIRD-PERSON OPEN-WORLD ACTION RPG</small></div></div>
+      <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small data-genre="third-person open-world action RPG">THIRD-PERSON OPEN-WORLD ACTION RPG</small></div></div>
       <div class="district"><small>CURRENT DISTRICT</small><b>YABA · LAGOS</b></div>
       <button class="menu" data-open="pause" aria-label="Pause game">Ⅱ<small>PAUSE</small></button>
     </header>
