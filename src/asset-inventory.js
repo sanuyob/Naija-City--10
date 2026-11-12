@@ -1,6 +1,6 @@
 const INVENTORY = [
   { title: 'STAGE 08A CITY EXPANSION', items: [
-    ['Expanded playable ground footprint (approx.)', '96 × 370 m'],
+    ['Expanded playable ground footprint (approx.)', '96 × 374 m'],
     ['Connected parallel distributor roads', '2'], ['New cross streets', '3'],
     ['Central avenue extensions', '2'], ['Commercial neighbourhood buildings', '8'],
     ['Residential neighbourhood buildings', '8'], ['Pocket parks', '3']
