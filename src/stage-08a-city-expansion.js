@@ -30,6 +30,16 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   box('stage08-ground-north', [0, -0.35, -150], [46, 0.5, 110], extra.ground);
   box('stage08-ground-south', [0, -0.35, 114], [46, 0.5, 110], extra.ground);
 
+  // Continue the original central avenue beyond its old north/south ends.
+  for (const z of [-150, 114]) {
+    box('stage08-main-road-extension', [0, -0.07, z], [11, 0.16, 110], extra.asphalt);
+    box('stage08-main-road-footpath', [-6.1, 0.02, z], [1.1, 0.2, 110], extra.concrete);
+    box('stage08-main-road-footpath', [6.1, 0.02, z], [1.1, 0.2, 110], extra.concrete);
+    for (let offset = -48; offset <= 48; offset += 12) {
+      box('stage08-main-road-lane-dash', [0, 0.025, z + offset], [0.14, 0.025, 4.2], extra.yellow);
+    }
+  }
+
   // Two parallel distributor streets and three cross streets connect the new blocks.
   for (const x of [-32, 32]) {
     box('stage08-parallel-road', [x, -0.07, -18], [7.5, 0.16, 350], extra.asphalt);
@@ -68,11 +78,11 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   const outerZ = [-155, -72, 65, 150];
   for (const side of [-1, 1]) {
     outerZ.forEach((z, index) => {
-      const x = side * 43.5;
+      const x = side * 42.5;
       const height = 4.1 + (index % 3) * 0.45;
-      const body = box('stage08-residential-building', [x, height / 2, z], [10.5, height, 14.5], extra.residential[index % extra.residential.length]);
+      const body = box('stage08-residential-building', [x, height / 2, z], [9.5, height, 14.5], extra.residential[index % extra.residential.length]);
       body.tags.add('stage08a-building');
-      box('stage08-residential-roof', [x, height + 0.13, z], [10.8, 0.26, 14.8], extra.roof);
+      box('stage08-residential-roof', [x, height + 0.13, z], [9.8, 0.26, 14.8], extra.roof);
     });
   }
 
