@@ -247,14 +247,23 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
       max = max.map((value, i) => Math.max(value, [hi.x, hi.y, hi.z][i]));
     }
     const gl = device.gl;
+    const cameraPos = camera.getPosition();
+    const marker = app.root.findByName('render-diagnostic-marker');
+    const markerPos = marker ? marker.getPosition() : new pc.Vec3();
+    const target = [position.x, position.y + 0.8, position.z - 2];
+    const forward = [target[0] - cameraPos.x, target[1] - cameraPos.y, target[2] - cameraPos.z];
+    const toMarker = [markerPos.x - cameraPos.x, markerPos.y - cameraPos.y, markerPos.z - cameraPos.z];
+    const forwardLength = Math.hypot(forward[0], forward[1], forward[2]) || 1;
+    const markerLength = Math.hypot(toMarker[0], toMarker[1], toMarker[2]) || 1;
+    const cameraToMarkerDot = forward.reduce((sum, value, i) => sum + value / forwardLength * toMarker[i] / markerLength, 0);
     return {
       canvas: { cssWidth: rect.width, cssHeight: rect.height, pixelWidth: canvas.width, pixelHeight: canvas.height },
-      camera: { position: camera.getPosition().toString(), euler: camera.getEulerAngles().toString(), fov: camera.camera.fov, nearClip: camera.camera.nearClip, farClip: camera.camera.farClip },
+      camera: { position: [cameraPos.x, cameraPos.y, cameraPos.z], lookTarget: target, fov: camera.camera.fov, nearClip: camera.camera.nearClip, farClip: camera.camera.farClip, cameraToMarkerDot },
       sceneBounds: { min, max }, meshInstances: meshInstances.length,
       drawCalls: stats.drawCallCount || 0,
       glViewport: gl ? Array.from(gl.getParameter(gl.VIEWPORT)) : null,
       drawingBuffer: gl ? [gl.drawingBufferWidth, gl.drawingBufferHeight] : null,
-      diagnosticMarker: Boolean(app.root.findByName('render-diagnostic-marker'))
+      diagnosticMarker: Boolean(marker)
     };
   }
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
