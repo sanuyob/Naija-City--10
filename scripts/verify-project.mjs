@@ -31,6 +31,7 @@ assert.match(game,/stats\.vramTotalBytes/);
 assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerHandler\]/,'GLB and texture resource handlers must be registered');
 assert.match(game,/render-diagnostic-marker/,'A visible diagnostic render object must be present');
 assert.match(game,/position\.z\+Math\.cos\(rad\)\*11/,'Chase camera must remain behind a forward-facing player');
+assert.match(game,/cameraPosition\.lerp\(camera\.getPosition\(\),desiredCamera,Math\.min\(1,step\*4\)\)/,'Camera interpolation must use the three-argument PlayCanvas Vec3.lerp API');
 assert.match(game,/__NAIJA_RENDER_DIAGNOSTICS__/,'Runtime must expose canvas, camera and submitted geometry diagnostics');
 assert.match(loader,/new pc\.Asset\(name, type/,'Asset loader must use PlayCanvas assets');
 assert.match(loader,/instantiateRenderEntity/,'Loaded GLB containers must be instantiated into the scene');
