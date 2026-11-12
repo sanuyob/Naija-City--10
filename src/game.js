@@ -261,6 +261,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   window.__NAIJA_GAME__={ready:true,stage:5,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:loadedAssets,stats};
   window.__NAIJA_RENDER_DIAGNOSTICS__ = getRenderDiagnostics();
   app.on('frameend', () => { window.__NAIJA_RENDER_DIAGNOSTICS__ = getRenderDiagnostics(); });
+  const { mountDeviceBaseline } = await import('./device-baseline.js');
+  mountDeviceBaseline({ app, canvas, device, stats, getRenderDiagnostics });
   window.addEventListener('pagehide',()=>{window.removeEventListener('resize',resizeCanvas);physics.cleanup();},{once:true});
   app.start();
   statusLabel.textContent='Ready — Stage 05 rendering diagnostics';
