@@ -19,9 +19,17 @@ function applyTexture(entity, texture, mapName = 'diffuseMap') {
   for (const component of components) {
     for (const instance of component.meshInstances || []) {
       const material = instance.material;
-      if (!material || !(mapName in material)) continue;
-      material[mapName] = texture;
-      if (mapName === 'diffuseMap') material.diffuse = new pc.Color(1, 1, 1);
+      if (!material) continue;
+      if (mapName === 'diffuseMap') {
+        material.diffuseMap = texture;
+        material.diffuse = new pc.Color(1, 1, 1);
+      } else if (mapName === 'emissiveMap') {
+        material.emissiveMap = texture;
+        material.emissive = new pc.Color(1, 1, 1);
+      } else {
+        if (!(mapName in material)) throw new Error(`Unsupported texture slot "${mapName}".`);
+        material[mapName] = texture;
+      }
       material.update();
       applied++;
     }
@@ -101,7 +109,7 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
     }
   }
 
-  if (report.failures.length) setStatus(`Assets: ${report.modelsLoaded} GLB + ${report.texturesLoaded} textures loaded; ${report.failures.length} failure(s)`, 'error');
+  if (report.failures.length) setStatus(`Asset error: ${report.failures.join(' | ')}`, 'error');
   else setStatus(`Assets: ${report.modelsLoaded} GLB + ${report.texturesLoaded} texture(s) loaded successfully`, 'ready');
   return report;
 }
