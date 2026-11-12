@@ -87,7 +87,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   }
 
   // Small green pocket parks break up the repeated street grid.
-  for (const [x, z] of [[-20, -112], [20, 118], [-42, 40]]) {
+  for (const [x, z] of [[-20, -88], [20, 90], [42, -5]]) {
     box('stage08-pocket-park', [x, 0.02, z], [9, 0.12, 10], extra.park);
     for (const offset of [-2.7, 2.7]) {
       box('stage08-park-tree-trunk', [x + offset, 1.15, z], [0.34, 2.3, 0.34], extra.roof);
