@@ -80,3 +80,5 @@
  #orientation-notice b{color:#d6b477;font:26px Georgia}
  #orientation-notice span{max-width:300px;color:#c1ccc4}
 }
+
+#interact-button{touch-action:manipulation}
