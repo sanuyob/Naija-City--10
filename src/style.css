@@ -5,7 +5,7 @@ html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background:
 .brand { font-weight: 900; letter-spacing: .12em; font-size: 13px; }
 .brand span { display: block; color: #ffbf47; font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
 #speed { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
-#status { position: fixed; top: 72px; left: 14px; max-width: calc(100vw - 28px); font-size: 11px; opacity: .9; }
+#status { position: fixed; top: 72px; left: 14px; max-width: calc(100vw - 28px); font-size: 11px; opacity: .9; }\n#traffic-status { position: fixed; top: 91px; left: 14px; max-width: calc(100vw - 28px); font-size: 10px; font-weight: 800; color: #ffcf68; letter-spacing: .05em; text-shadow: 0 2px 8px #000; }
 .hint { position: fixed; top: 52px; left: 14px; font-size: 10px; opacity: .75; }
 #perf-toggle { position: fixed; top: 70px; right: 14px; min-width: 54px; min-height: 34px; padding: 5px 10px; font-size: 11px; pointer-events: auto; }
 #perf-panel { position: fixed; top: 110px; right: 14px; max-width: calc(100vw - 28px); padding: 9px 11px; border: 1px solid #ffffff55; border-radius: 9px; background: #101820ef; color: #d9f4e8; font: 10px/1.55 ui-monospace, monospace; white-space: pre-wrap; pointer-events: none; }
