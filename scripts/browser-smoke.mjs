@@ -23,7 +23,7 @@ try {
  if(state.diag.camera.position[2]<=0||state.diag.camera.forward[2]>=-0.2)throw new Error('Third-person camera is not behind the player and facing the scene: '+JSON.stringify(state.diag.camera));
  const stick=await page.locator('#move-joystick').boundingBox();
  if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible()))throw new Error('Mobile movement/action controls are missing');
- const before=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState().position);
+ const before=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().position);
  await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height/2);await page.mouse.down();await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height*0.12,{steps:5});await page.waitForTimeout(650);await page.mouse.up();
  const after=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState().position);
  if(Math.hypot(after[0]-before[0],after[2]-before[2])<0.25)throw new Error('Movement joystick did not move the human player: '+JSON.stringify({before,after}));
