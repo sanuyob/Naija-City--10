@@ -234,7 +234,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:assetState,stats};
+  window.__NAIJA_GAME__={ready:true,stage:5,genre:'third-person open-world action RPG',cameraMode:'third-person',legacyVehiclePhysics:true,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:assetState,stats};
   window.addEventListener('pagehide',()=>physics.cleanup(),{once:true});
-  app.start();statusLabel.textContent='Ready — Stage 04 real vehicle physics';
+  app.start();statusLabel.textContent='Ready — Stage 05 RPG foundation (legacy vehicle physics retained)';
 }
