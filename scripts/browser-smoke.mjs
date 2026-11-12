@@ -18,6 +18,13 @@ try {
  const go=page.locator('[data-control="accelerate"]'),b=await go.boundingBox();if(!b)throw new Error('GO control is not visible');
  await page.mouse.move(b.x+b.width/2,b.y+b.height/2);await page.mouse.down();await page.waitForTimeout(1400);
  const speed=parseInt((await page.locator('#speed').textContent())??'0',10);await page.mouse.up();if(!(speed>0))throw new Error('Accelerator did not increase speed');
+ const inventoryReady=await page.evaluate(()=>window.__NAIJA_GAME__?.assetInventory===true&&Array.isArray(window.__NAIJA_GAME__?.assetInventoryData));
+ if(!inventoryReady)throw new Error('In-game asset inventory did not initialize');
+ await page.locator('#assets-toggle').click();
+ await page.locator('#assets-panel').waitFor({state:'visible'});
+ const inventoryText=await page.locator('#assets-panel').textContent();
+ if(!inventoryText?.includes('Low-poly shop building blocks')||!inventoryText.includes('32')||!inventoryText.includes('Not in this build'))throw new Error('Asset inventory contents are incomplete');
+ await page.locator('#assets-close').click();
  await page.locator('#perf-toggle').click();await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1300);
  if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
  if(errors.length)throw new Error(`Browser errors: ${errors.join(' | ')}`);
