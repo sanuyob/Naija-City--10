@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101820; font-family: system-ui, sans-serif; touch-action: none; }
-#application { position: fixed !important; inset: 0 !important; display: block; width: 100vw !important; height: 100dvh !important; min-width: 100vw; min-height: 100dvh; max-width: 100vw; max-height: 100dvh; }
+#application { position: fixed !important; inset: 0 !important; display: block; width: 100vw !important; height: min(100dvh, 1600px) !important; min-width: 100vw; min-height: 0 !important; max-width: 100vw; max-height: 1600px !important; }
 #hud { position: fixed; inset: 14px 14px auto; display: flex; align-items: flex-start; justify-content: space-between; color: white; pointer-events: none; text-shadow: 0 2px 8px #000; }
 .brand { font-weight: 900; letter-spacing: .12em; font-size: 13px; }
 .brand span { display: block; color: #ffbf47; font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
