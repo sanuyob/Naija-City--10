@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { createVehiclePhysics } from './vehicle-physics.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   const canvas = document.getElementById('application');
@@ -136,10 +137,16 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
 
   const car=new pc.Entity('player-car'); app.root.addChild(car);
   const carPaint=material([0.72,0.12,0.08],0.35), glass=material([0.10,0.20,0.24],0.25), rubber=material([0.025,0.028,0.03]);
-  box('car-body',[0,0.65,0],[1.8,0.62,3.6],carPaint,car);
-  box('car-cabin',[0,1.28,-0.25],[1.42,0.72,1.75],glass,car);
-  for(const x of [-0.94,0.94]) for(const z of [-1.12,1.12]){const w=new pc.Entity('wheel');w.addComponent('render',{type:'cylinder',material:rubber});w.setLocalScale(0.42,0.22,0.42);w.setLocalEulerAngles(0,0,90);w.setLocalPosition(x,0.42,z);car.addChild(w);}
-  car.setPosition(0,0,8);
+  // Render meshes follow the physical chassis; collision geometry is a separate low-poly box.
+  box('car-body',[0,0,0],[1.8,0.62,3.6],carPaint,car);
+  box('car-cabin',[0,0.62,-0.25],[1.42,0.72,1.75],glass,car);
+  const wheelRoots=[];
+  for(let i=0;i<4;i++){
+    const root=new pc.Entity('physics-wheel-'+i);app.root.addChild(root);
+    const mesh=new pc.Entity('wheel-mesh');mesh.addComponent('render',{type:'cylinder',material:rubber});
+    mesh.setLocalScale(0.84,0.22,0.84);mesh.setLocalEulerAngles(0,0,90);root.addChild(mesh);
+    wheelRoots.push(root);
+  }
 
   const keys=Object.create(null), held={left:false,right:false,accelerate:false,brake:false};
   window.addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;});
@@ -147,33 +154,29 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   window.addEventListener('blur',()=>{Object.keys(held).forEach(k=>held[k]=false);Object.keys(keys).forEach(k=>keys[k]=false);});
   document.querySelectorAll('[data-control]').forEach(button=>{const control=button.dataset.control;button.addEventListener('pointerdown',e=>{e.preventDefault();button.setPointerCapture?.(e.pointerId);held[control]=true;});const release=e=>{e.preventDefault();held[control]=false;};button.addEventListener('pointerup',release);button.addEventListener('pointercancel',release);button.addEventListener('lostpointercapture',()=>held[control]=false);});
 
-  // Arcade vehicle: signed forward/reverse speed, progressive steering, coasting and shoulder drag.
-  let speed=0,heading=0;const maxForward=25,maxReverse=5;
+  statusLabel.textContent='Loading real vehicle physics (Ammo.js)…';
+  const physics=await createVehiclePhysics(car,traffic,wheelRoots);
+  statusLabel.textContent='Physics ready — four raycast wheels and suspension';
+
+  // Stage 04: Ammo/Bullet owns chassis motion, wheel raycasts, suspension,
+  // tyre friction, braking and contacts. Traffic remains kinematic AI with Bullet colliders.
+  let heading=0;
   const position=new pc.Vec3(),desiredCamera=new pc.Vec3(),cameraPosition=new pc.Vec3();
   app.on('update',dt=>{
     const step=Math.min(dt,0.05);
-    const accelerate=held.accelerate||keys.w||keys.arrowup,brake=held.brake||keys.s||keys.arrowdown,left=held.left||keys.a||keys.arrowleft,right=held.right||keys.d||keys.arrowright;
-    if(accelerate)speed=Math.min(maxForward,speed+(speed<0?20:12)*step);
-    else if(!brake)speed=speed>0?Math.max(0,speed-2.6*step):Math.min(0,speed+2.6*step);
-    if(brake)speed=speed>0?Math.max(0,speed-19*step):Math.max(-maxReverse,speed-7*step);
-    const steering=(left?1:0)-(right?1:0),factor=Math.min(1,Math.abs(speed)/5);
-    heading+=steering*factor*(speed<0?-1:1)*68*step;
-    const rad=heading*Math.PI/180;
-    position.copy(car.getPosition());
-    const nx=position.x+Math.sin(rad)*speed*step,nz=position.z-Math.cos(rad)*speed*step;
-    const inJunction=Math.abs(nz-junctionZ)<10.5,onMain=Math.abs(nx)<4.55,onCross=inJunction&&Math.abs(nx)<20;
-    if(!onMain&&!onCross)speed*=Math.max(0,1-5*step);
-    position.set(pc.math.clamp(nx,-20.2,20.2),0,nz);
-    if(position.z < -88)position.z=52;if(position.z>58)position.z=-84;
-
-    // Advance traffic on fixed lanes. Vehicles yield at the junction when their signal is red.
+    const accelerate=held.accelerate||keys.w||keys.arrowup;
+    const brake=held.brake||keys.s||keys.arrowdown;
+    const left=held.left||keys.a||keys.arrowleft;
+    const right=held.right||keys.d||keys.arrowright;
     const greenForMain=updateSignal(step);
+
+    // Preserve Stage 03 signal-controlled traffic routes, then sync their
+    // kinematic Bullet bodies before advancing the physical player vehicle.
     for(const vehicle of traffic){
       const v=vehicle.entity.getPosition();
       if(vehicle.route==='main'){
         const approaching=Math.abs(v.z-junctionZ)<12;
-        const allowed=greenForMain;
-        if(!(approaching&&!allowed)){
+        if(!(approaching&&!greenForMain)){
           v.z+=vehicle.dir*vehicle.speed*step;
           if(v.z < -88)v.z=52;if(v.z>58)v.z=-84;
           vehicle.entity.setPosition(v);
@@ -188,22 +191,17 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
         }
       }
     }
-    // Low-cost broad-phase proximity collision: keeps this prototype light without loading Ammo.
-    let collision=false;
-    for(const vehicle of traffic){
-      const v=vehicle.entity.getPosition(),dx=position.x-v.x,dz=position.z-v.z;
-      if(dx*dx+dz*dz<5.0){
-        collision=true;
-        speed*=Math.max(0,1-12*step);
-        position.x+=Math.sign(dx||1)*0.35*step;
-      }
-    }
-    if(collision&&trafficStatus)trafficStatus.textContent='TRAFFIC: VEHICLE CONTACT — SLOW DOWN';
-    car.setPosition(position);car.setEulerAngles(0,heading,0);
-    desiredCamera.set(position.x+Math.sin(rad)*2.2,6.2,position.z+11);
+    physics.syncTraffic();
+    physics.step(step,{accelerate,brake,left,right});
+    physics.syncPlayer();
+
+    position.copy(car.getPosition());
+    heading=car.getEulerAngles().y;
+    const rad=heading*Math.PI/180;
+    desiredCamera.set(position.x+Math.sin(rad)*2.2,position.y+6.2,position.z+Math.cos(rad)*11);
     cameraPosition.copy(camera.getPosition()).lerp(desiredCamera,Math.min(1,step*4));
-    camera.setPosition(cameraPosition);camera.lookAt(position.x,0.8,position.z-2);
-    speedLabel.textContent=`${Math.round(Math.abs(speed)*3.6)} km/h`;
+    camera.setPosition(cameraPosition);camera.lookAt(position.x,position.y+0.8,position.z-2);
+    speedLabel.textContent=`${Math.round(Math.abs(physics.getSpeedKmh()))} km/h`;
   });
 
   // Documented AppStats telemetry; GPU memory is estimated tracked resource usage.
@@ -219,6 +217,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   }
   app.on('frameend',samplePerformance);
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:3,junction:true,traffic:traffic.length,trafficAI:true,proximityCollisions:true,stats};
-  app.start();statusLabel.textContent='Ready — Stage 03 live traffic and signal junction';
+  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,stats};
+  window.addEventListener('pagehide',()=>physics.cleanup(),{once:true});
+  app.start();statusLabel.textContent='Ready — Stage 04 real vehicle physics';
 }
