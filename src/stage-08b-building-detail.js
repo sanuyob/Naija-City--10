@@ -67,9 +67,17 @@ export function createStage08BBuildingDetail({ app, box, material }) {
       detail('stage08b-home-window-band', [faceX(0.08), 3.05, z], [0.14, 1.15, 8.7], mats.glass);
       detail('stage08b-home-window-sill', [faceX(0.28), 2.42, z], [0.42, 0.14, 9.1], mats.trim);
       detail('stage08b-home-balcony-slab', [faceX(0.82), 2.35, z], [1.55, 0.18, 5.4], mats.concrete);
-      detail('stage08b-home-balcony-rail', [faceX(1.48), 2.9, z], [0.12, 0.92, 5.25], mats.metal);
+      detail('stage08b-home-balcony-top-rail', [faceX(1.48), 3.32, z], [0.12, 0.1, 5.25], mats.metal);
+      detail('stage08b-home-balcony-bottom-rail', [faceX(1.48), 2.58, z], [0.12, 0.08, 5.25], mats.metal);
+      for (const barZ of [-2.1, -0.7, 0.7, 2.1]) {
+        detail('stage08b-home-balcony-baluster', [faceX(1.48), 2.94, z + barZ], [0.12, 0.78, 0.07], mats.metal);
+      }
       detail('stage08b-home-front-door', [faceX(0.12), 1.12, z - 4.45], [0.16, 2.2, 1.35], mats.door);
-      detail('stage08b-home-security-grille', [faceX(0.22), 3.05, z], [0.16, 1.25, 8.45], mats.metal);
+      detail('stage08b-home-security-grille-top', [faceX(0.22), 3.58, z], [0.16, 0.08, 8.45], mats.metal);
+      detail('stage08b-home-security-grille-bottom', [faceX(0.22), 2.52, z], [0.16, 0.08, 8.45], mats.metal);
+      for (const barZ of [-3.2, -1.6, 0, 1.6, 3.2]) {
+        detail('stage08b-home-security-grille-bar', [faceX(0.22), 3.05, z + barZ], [0.16, 1.05, 0.07], mats.metal);
+      }
       detail('stage08b-home-external-ac', [faceX(0.48), 3.95, z + 5.25], [0.75, 0.58, 0.85], mats.ac);
       detail('stage08b-home-roof-water-tank', [x + side * 1.8, height + 1.1, z + 4.9], [1.35, 1.9, 1.35], mats.tank);
       detail('stage08b-home-roof-parapet', [x, height + 0.28, z], [9.75, 0.3, 14.75], wallTone);
