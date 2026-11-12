@@ -14,7 +14,7 @@ try {
  page.on('pageerror',error=>errors.push(error.message));
  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
  await page.goto(origin,{waitUntil:'networkidle'});
- await page.locator('#status').filter({hasText:'Ready'}).waitFor({timeout:60000});
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
  const state=await page.evaluate(()=>({viewport:{w:innerWidth,h:innerHeight},canvas:(()=>{const c=document.querySelector('#application'),r=c.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bufferW:c.width,bufferH:c.height,webgl2:!!c.getContext('webgl2')};})(),diag:window.__NAIJA_RENDER_DIAGNOSTICS__,game:window.__NAIJA_GAME__}));
  if(state.viewport.w!==390||state.viewport.h!==844)throw new Error('Test viewport is not 390x844: '+JSON.stringify(state.viewport));
