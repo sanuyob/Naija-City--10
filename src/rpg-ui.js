@@ -102,7 +102,11 @@ export function mountRPGInterface() {
       return;
     }
     const slot = event.target.closest('[data-slot]');
-    if (slot) showToast('Quick slot ' + slot.dataset.slot + ' is empty.');
+    if (slot) {
+      root.querySelectorAll('[data-slot]').forEach(item => item.setAttribute('aria-pressed', String(item === slot)));
+      showToast('Quick slot ' + slot.dataset.slot + ' is empty.');
+      return;
+    }
   });
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {

@@ -37,7 +37,7 @@ try {
  await page.locator('#interact-button').click();
  if(!(await page.locator('#hud-toast').textContent()))throw new Error('Interact control did not produce feedback');
  await page.locator('[data-slot="1"]').click();
- if(!(await page.locator('#hud-toast').textContent()).includes('empty'))throw new Error('Quick-access slot did not respond');
+ if(!(await page.locator('#hud-toast').textContent()).includes('empty')||await page.locator('[data-slot="1"]').getAttribute('aria-pressed')!=='true')throw new Error('Quick-access slot did not respond or show selection state');
  if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||!state.game?.proceduralAnimations||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Stage 06 character capabilities were not mounted: '+JSON.stringify(state.game));
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
