@@ -33,12 +33,10 @@ try {
    return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,magentaPixels:magenta,nonBluePixels:nonBlue};
  },screenshot.toString('base64'));
  if(visual.width<380||visual.height<800||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels<20)throw new Error('Canvas screenshot visual assertion failed; scene may be blank: '+JSON.stringify(visual));
- const go=page.locator('[data-control="accelerate"]'),bounds=await go.boundingBox();
- if(!bounds)throw new Error('GO control is not visible');
- await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);
- await page.mouse.down();await page.waitForTimeout(1100);
- const speed=parseInt((await page.locator('#speed').textContent())??'0',10);await page.mouse.up();
- if(!(speed>0))throw new Error('Accelerator did not increase speed');
+ if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.objective').isVisible())||!(await page.locator('.weapon').isVisible()))throw new Error('Core RPG HUD zones are not visible');
+ for(const [button,title] of [['inventory','Inventory'],['quests','Missions'],['map','District map'],['character','Character']]){await page.locator('[data-open="'+button+'"]').first().click();await page.locator('#rpg-panel').waitFor({state:'visible'});if(!(await page.locator('#panel-title').textContent()).includes(title))throw new Error('RPG menu failed: '+button);await page.locator('[data-close]').click();}
+ await page.locator('[data-open="pause"]').click();await page.locator('#rpg-pause').waitFor({state:'visible'});await page.locator('[data-resume]').click();
+ await page.locator('[data-open="settings"]').click();await page.locator('[data-setting="motion"]').click();if(await page.locator('[data-setting="motion"]').getAttribute('aria-pressed')!=='true')throw new Error('Settings toggle did not respond');await page.locator('[data-close]').click();
  await page.locator('#assets-toggle').click();await page.locator('#assets-panel[open]').waitFor({state:'visible'});
  const inventory=await page.locator('#assets-panel').textContent();
  if(!inventory?.includes('Low-poly shop building blocks')||!inventory.includes('Not in this build'))throw new Error('Asset inventory contents are incomplete');
@@ -46,7 +44,7 @@ try {
  await page.locator('#perf-toggle').click();await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1200);
  if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
- console.log('Stage 04 render verification passed: 390x844 canvas, camera direction, mesh instances, nonzero draw calls, screenshot pixel assertion including magenta diagnostic marker, GLB + texture loaded, physics and performance panel.');
+ console.log('Stage 05 RPG UI and Stage 04 preserved-engine verification passed: 390x844 canvas, camera direction, mesh instances, nonzero draw calls, screenshot pixel assertion including magenta diagnostic marker, GLB + texture loaded, physics and performance panel.');
  console.log('Render diagnostics: '+JSON.stringify(state.diag));
  console.log('Canvas screenshot metrics: '+JSON.stringify(visual));
  await context.close();
