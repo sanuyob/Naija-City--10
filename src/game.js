@@ -15,6 +15,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   options.graphicsDevice = device;
   options.componentSystems = [pc.RenderComponentSystem, pc.CameraComponentSystem, pc.LightComponentSystem];
   options.resourceHandlers = [pc.TextureHandler, pc.ContainerHandler];
+  options.batchManager = pc.BatchManager;
   const app = new pc.AppBase(canvas);
   app.init(options);
   app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
