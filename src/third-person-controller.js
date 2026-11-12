@@ -122,7 +122,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
   };
   crouchButton?.addEventListener('click', toggleCrouch);
   const interactPress = event => { event.preventDefault(); onInteract?.(getState()); };
-  interactButton?.addEventListener('pointerdown', interactPress);
+  interactButton?.addEventListener('click', interactPress);
 
   const onKeyDown = event => {
     const key = event.key.toLowerCase();
@@ -238,7 +238,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
     canvas.removeEventListener('pointerup', onPointerUp);
     canvas.removeEventListener('pointercancel', onPointerUp);
     crouchButton?.removeEventListener('click', toggleCrouch);
-    interactButton?.removeEventListener('pointerdown', interactPress);
+    interactButton?.removeEventListener('click', interactPress);
     player.destroy();
   }
 
