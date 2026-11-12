@@ -1,9 +1,10 @@
-name: Stage 04 playable preview
+name: Stage 05 rendering and asset pipeline preview
 
 on:
   push:
     branches:
       - feature/naija-city-drive-stage-01
+      - fix/stage-05-rendering-asset-pipeline
   workflow_dispatch:
 
 permissions:
@@ -29,7 +30,7 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify Stage 04 and build
+      - name: Verify Stage 05 rendering, assets and build
         run: |
           npm run verify
           npx playwright install --with-deps chromium
