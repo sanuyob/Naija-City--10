@@ -34,7 +34,7 @@ try {
  await page.locator('#crouch-button').click();
  if(!(await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().crouched)))throw new Error('Crouch button did not change player stance');
  await page.locator('#crouch-button').click();
- await page.locator('#interact-button').dispatchEvent('pointerdown',{pointerId:11,clientX:0,clientY:0});
+ await page.locator('#interact-button').click();
  if(!(await page.locator('#hud-toast').textContent()))throw new Error('Interact control did not produce feedback');
  await page.locator('[data-slot="1"]').click();
  if(!(await page.locator('#hud-toast').textContent()).includes('empty'))throw new Error('Quick-access slot did not respond');
