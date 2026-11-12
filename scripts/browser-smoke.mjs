@@ -36,7 +36,7 @@ try {
  if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.objective').isVisible())||!(await page.locator('.weapon').isVisible()))throw new Error('Core RPG HUD zones are not visible');
  for(const [button,title] of [['inventory','Inventory'],['quests','Missions'],['map','District map'],['character','Character']]){await page.locator('[data-open="'+button+'"]').first().click();await page.locator('#rpg-panel').waitFor({state:'visible'});if(!(await page.locator('#panel-title').textContent()).includes(title))throw new Error('RPG menu failed: '+button);await page.locator('[data-close]').click();}
  await page.locator('[data-open="pause"]').click();await page.locator('#rpg-pause').waitFor({state:'visible'});await page.locator('[data-resume]').click();
- await page.locator('[data-open="settings"]').click();await page.locator('[data-setting="motion"]').click();if(await page.locator('[data-setting="motion"]').getAttribute('aria-pressed')!=='true')throw new Error('Settings toggle did not respond');await page.locator('[data-close]').click();
+ await page.locator('[data-open="pause"]').click();await page.locator('[data-open="settings"]').click();await page.locator('[data-setting="motion"]').click();if(await page.locator('[data-setting="motion"]').getAttribute('aria-pressed')!=='true')throw new Error('Settings toggle did not respond');await page.locator('[data-close]').click();
  await page.locator('#assets-toggle').click();await page.locator('#assets-panel[open]').waitFor({state:'visible'});
  const inventory=await page.locator('#assets-panel').textContent();
  if(!inventory?.includes('Low-poly shop building blocks')||!inventory.includes('Not in this build'))throw new Error('Asset inventory contents are incomplete');
