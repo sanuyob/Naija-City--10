@@ -19,7 +19,7 @@ assert.match(html,/id="rpg-interface"/);
 assert.match(entry,/mountRPGInterface/);
 for(const feature of ['inventory','quests','map','character','settings','pause','resume','third-person open-world action RPG']) assert.ok(rpg.includes(feature),`Missing RPG UI feature: ${feature}`);
 for(const feature of ['.minimap','.objective','.status','.weapon','.nav','.panel','.pause','.touch','@media(max-width:600px)']) assert.ok(rpgCss.includes(feature),`Missing responsive RPG UI style: ${feature}`);
-assert.match(html,/id="perf-toggle"/);
+assert.match(rpg,/id="perf-toggle"/);
 assert.match(html,/id="perf-panel"/);
 assert.match(html,/id="traffic-status"/);
 assert.match(html,/id="asset-status"/);
