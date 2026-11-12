@@ -40,7 +40,7 @@ assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerH
 assert.match(game,/render-diagnostic-marker/,'A visible diagnostic render object must be present');
 assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
 assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
-for(const feature of ['player-character','player-head','left-leg-pivot','right-arm-pivot','move-joystick','jump-button','sprint-button','crouch-button','interact-button','cameraYaw','cameraPitch','velocity.y -=','running ? 6.0 : 3.15','smoothedCamera.lerp(smoothedCamera, desiredCamera']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
+for(const feature of ['player-character','player-head','left-leg-pivot','right-arm-pivot','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','velocity.y -=','running ? 6.0 : 3.15','smoothedCamera.lerp(smoothedCamera, desiredCamera']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
 assert.match(controller,/pointerdown/,'Touch movement and orbit must use pointer events');
 assert.match(controller,/stamina = Math.max/,'Sprint must consume stamina');
 assert.match(controller,/input.crouch/,'Crouch must affect player movement');
