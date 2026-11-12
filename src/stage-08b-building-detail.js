@@ -22,10 +22,12 @@ export function createStage08BBuildingDetail({ app, box, material }) {
     ac: material([0.72, 0.75, 0.72], 0.48)
   };
 
+  const batchGroup = app.batcher?.addGroup('stage08b-static-facades', false, 96);
   let detailMeshes = 0;
   const detail = (name, position, scale, mat) => {
     const entity = box(name, position, scale, mat);
     entity.tags.add('stage08b-detail');
+    if (batchGroup && entity.render) entity.render.batchGroupId = batchGroup.id;
     detailMeshes++;
     return entity;
   };
@@ -90,6 +92,8 @@ export function createStage08BBuildingDetail({ app, box, material }) {
     residentialFacades: 8,
     sharedMaterialFamilies: Object.keys(mats).length,
     detailMeshes,
+    batching: Boolean(batchGroup),
+    batchGroupId: batchGroup?.id ?? null,
     features: [
       'shop fascia and projecting awnings',
       'roller shutters and security doors',
