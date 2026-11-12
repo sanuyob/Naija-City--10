@@ -25,10 +25,10 @@ try {
  if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible()))throw new Error('Mobile movement/action controls are missing');
  const before=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().position);
  await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height/2);await page.mouse.down();await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height*0.12,{steps:5});await page.waitForTimeout(650);await page.mouse.up();
- const after=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState().position);
+ const after=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().position);
  if(Math.hypot(after[0]-before[0],after[2]-before[2])<0.25)throw new Error('Movement joystick did not move the human player: '+JSON.stringify({before,after}));
  await page.locator('#jump-button').dispatchEvent('pointerdown',{pointerId:9,clientX:0,clientY:0});await page.waitForTimeout(90);
- const jumpState=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState());
+ const jumpState=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState());
  if(jumpState.position[1]<=0)throw new Error('Jump input did not move the character vertically: '+JSON.stringify(jumpState));
  if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||!state.game?.proceduralAnimations||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Stage 06 character capabilities were not mounted: '+JSON.stringify(state.game));
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
