@@ -2,6 +2,13 @@
 
 Naija City is a Nigerian-inspired third-person open-world RPG prototype built with PlayCanvas.
 
+## Stage 08A — City expansion
+- Expanded the environment footprint to approximately 96 m wide by 370 m long, including the original Yaba blockout.
+- Continued the central avenue and added two parallel distributor roads plus three connecting cross streets.
+- Added eight commercial and eight residential low-poly neighbourhood buildings, with three pocket parks.
+- Kept the new geometry procedural and modular for iteration; these are expansion blockouts, not finished PBR buildings.
+- The existing Stage 07 landscape controls and HUD remain in place.
+
 ## Landscape HUD
 - Landscape-first mobile layout with a portrait rotation notice and web-app manifest orientation hint.
 - Left thumb zone: camera-relative movement joystick.
@@ -34,7 +41,8 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 
 ## Architecture
 - `src/third-person-controller.js`: locomotion, sprint/stamina, jump, crouch, touch/keyboard input and camera.
-- `src/game.js`: PlayCanvas scene, traffic and contextual interact feedback.
+- `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback and Stage 08A expansion integration.
+- `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
 - `src/rpg-ui.js` / `src/rpg-ui.css`: HUD, menus, safe areas and touch controls.
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
