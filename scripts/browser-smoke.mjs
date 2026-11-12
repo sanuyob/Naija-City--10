@@ -20,7 +20,17 @@ try {
  if(state.viewport.w!==390||state.viewport.h!==844)throw new Error('Test viewport is not 390x844: '+JSON.stringify(state.viewport));
  if(!state.canvas.webgl2||state.canvas.w<380||state.canvas.h<800||state.canvas.h>900||state.canvas.y>1)throw new Error('Canvas does not fit the mobile viewport: '+JSON.stringify(state.canvas));
  if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||!state.diag.scene.diagnosticMarker.inFront)throw new Error('No actual scene geometry submitted for rendering: '+JSON.stringify(state.diag));
- if(state.diag.camera.position[2]<=0||state.diag.camera.forward[2]>=-0.2)throw new Error('Chase camera is not behind the player and looking down the road: '+JSON.stringify(state.diag.camera));
+ if(state.diag.camera.position[2]<=0||state.diag.camera.forward[2]>=-0.2)throw new Error('Third-person camera is not behind the player and facing the scene: '+JSON.stringify(state.diag.camera));
+ const stick=await page.locator('#move-joystick').boundingBox();
+ if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible()))throw new Error('Mobile movement/action controls are missing');
+ const before=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState().position);
+ await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height/2);await page.mouse.down();await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height*0.12,{steps:5});await page.waitForTimeout(650);await page.mouse.up();
+ const after=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState().position);
+ if(Math.hypot(after[0]-before[0],after[2]-before[2])<0.25)throw new Error('Movement joystick did not move the human player: '+JSON.stringify({before,after}));
+ await page.locator('#jump-button').dispatchEvent('pointerdown',{pointerId:9,clientX:0,clientY:0});await page.waitForTimeout(90);
+ const jumpState=await page.evaluate(()=>window.__NAIJA_GAME__.playerController.getState());
+ if(jumpState.position[1]<=0)throw new Error('Jump input did not move the character vertically: '+JSON.stringify(jumpState));
+ if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||!state.game?.proceduralAnimations||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Stage 06 character capabilities were not mounted: '+JSON.stringify(state.game));
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  const visual=await page.evaluate(async encoded=>{
@@ -44,7 +54,7 @@ try {
  await page.locator('#perf-toggle').click();await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1200);
  if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
- console.log('Stage 05 RPG UI and Stage 04 preserved-engine verification passed: 390x844 canvas, camera direction, mesh instances, nonzero draw calls, screenshot pixel assertion including magenta diagnostic marker, GLB + texture loaded, physics and performance panel.');
+ console.log('Stage 06 character movement/jump and Stage 05 RPG UI / Stage 04 environment verification passed: 390x844 canvas, camera direction, mesh instances, nonzero draw calls, screenshot pixel assertion including magenta diagnostic marker, GLB + texture loaded, physics and performance panel.');
  console.log('Render diagnostics: '+JSON.stringify(state.diag));
  console.log('Canvas screenshot metrics: '+JSON.stringify(visual));
  await context.close();
