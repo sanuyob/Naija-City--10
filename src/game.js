@@ -1,7 +1,8 @@
 import * as pc from 'playcanvas';
 import { createVehiclePhysics } from './vehicle-physics.js';
+import { loadSceneAssets } from './asset-loader.js';
 
-export async function startGame({ statusLabel, perfToggle, perfPanel }) {
+export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
   const speedLabel = document.getElementById('speed');
   if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Missing #application canvas');
@@ -11,11 +12,13 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   const options = new pc.AppOptions();
   options.graphicsDevice = device;
   options.componentSystems = [pc.RenderComponentSystem, pc.CameraComponentSystem, pc.LightComponentSystem];
-  // No external textures or GLB assets are loaded in this procedural blockout; keep asset handlers out of the bundle.
+  options.resourceHandlers = [pc.TextureHandler, pc.ContainerHandler];
   const app = new pc.AppBase(canvas);
   app.init(options);
   app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
   app.setCanvasResolution(pc.RESOLUTION_AUTO);
+  Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100vw', height: '100dvh' });
+  app.resizeCanvas();
   app.scene.ambientLight = new pc.Color(0.42, 0.43, 0.45);
   window.addEventListener('resize', () => app.resizeCanvas());
   canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); statusLabel.textContent = 'Graphics context lost. Reload this page to try again.'; });
@@ -47,6 +50,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   const camera = new pc.Entity('chase-camera');
   camera.addComponent('camera',{clearColor:new pc.Color(0.49,0.72,0.88),fov:62,farClip:190});
   camera.setPosition(0,7,13); camera.lookAt(0,0,0); app.root.addChild(camera);
+  const diagnosticMaterial=material([1,0.05,0.72],0.2);
+  diagnosticMaterial.emissive=new pc.Color(1,0.02,0.55);diagnosticMaterial.update();
+  box('render-diagnostic-marker',[0,1.45,-12],[2.2,2.2,2.2],diagnosticMaterial);
   const sun = new pc.Entity('sun');
   sun.addComponent('light',{type:'directional',color:new pc.Color(1,0.91,0.78),intensity:1.05});
   sun.setEulerAngles(48,28,0); app.root.addChild(sun);
@@ -154,6 +160,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   window.addEventListener('blur',()=>{Object.keys(held).forEach(k=>held[k]=false);Object.keys(keys).forEach(k=>keys[k]=false);});
   document.querySelectorAll('[data-control]').forEach(button=>{const control=button.dataset.control;button.addEventListener('pointerdown',e=>{e.preventDefault();button.setPointerCapture?.(e.pointerId);held[control]=true;});const release=e=>{e.preventDefault();held[control]=false;};button.addEventListener('pointerup',release);button.addEventListener('pointercancel',release);button.addEventListener('lostpointercapture',()=>held[control]=false);});
 
+  statusLabel.textContent='Loading GLB models and textures…';
+  const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
   statusLabel.textContent='Loading real vehicle physics (Ammo.js)…';
   const physics=await createVehiclePhysics(car,traffic,wheelRoots);
   statusLabel.textContent='Physics ready — four raycast wheels and suspension';
@@ -198,9 +206,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
     position.copy(car.getPosition());
     heading=car.getEulerAngles().y;
     const rad=heading*Math.PI/180;
-    desiredCamera.set(position.x+Math.sin(rad)*2.2,position.y+6.2,position.z-Math.cos(rad)*11);
+    desiredCamera.set(position.x-Math.sin(rad)*2.2,position.y+6.2,position.z+Math.cos(rad)*11);
     cameraPosition.copy(camera.getPosition()).lerp(desiredCamera,Math.min(1,step*4));
-    camera.setPosition(cameraPosition);camera.lookAt(position.x,position.y+0.8,position.z-2);
+    camera.setPosition(cameraPosition);camera.lookAt(position.x,position.y+0.8,position.z-5);
     speedLabel.textContent=`${Math.round(Math.abs(physics.getSpeedKmh()))} km/h`;
   });
 
@@ -216,8 +224,14 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
     perf.elapsed=0;perf.samples=0;perf.frameTotal=0;perf.framePeak=0;perf.cpuTotal=0;perf.drawTotal=0;
   }
   app.on('frameend',samplePerformance);
+  app.on('frameend',()=>{
+    const rect=canvas.getBoundingClientRect(),cameraPos=camera.getPosition(),forward=camera.forward;
+    const renderComponents=app.root.findComponents('render');
+    const meshInstances=renderComponents.reduce((sum,component)=>sum+(component.meshInstances?.length||0),0);
+    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
+  });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,stats};
+  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:assetState,stats};
   window.addEventListener('pagehide',()=>physics.cleanup(),{once:true});
   app.start();statusLabel.textContent='Ready — Stage 04 real vehicle physics';
 }
