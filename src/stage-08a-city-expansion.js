@@ -31,9 +31,9 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   box('stage08-ground-south', [0, -0.35, 114], [46, 0.5, 110], extra.ground);
 
   // Continue the original central avenue beyond its old north/south ends.
-  for (const z of [-150, 114]) {
-    box('stage08-main-road-extension', [0, -0.07, z], [11, 0.16, 110], extra.asphalt);
-    box('stage08-main-road-footpath', [-6.1, 0.02, z], [1.1, 0.2, 110], extra.concrete);
+  for (const z of [-149, 113]) {
+    box('stage08-main-road-extension', [0, -0.07, z], [11, 0.16, 112], extra.asphalt);
+    box('stage08-main-road-footpath', [-6.1, 0.02, z], [1.1, 0.2, 112], extra.concrete);
     box('stage08-main-road-footpath', [6.1, 0.02, z], [1.1, 0.2, 110], extra.concrete);
     for (let offset = -48; offset <= 48; offset += 12) {
       box('stage08-main-road-lane-dash', [0, 0.025, z + offset], [0.14, 0.025, 4.2], extra.yellow);
@@ -87,7 +87,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   }
 
   // Small green pocket parks break up the repeated street grid.
-  for (const [x, z] of [[-20, -112], [20, 118], [-44, 40]]) {
+  for (const [x, z] of [[-20, -112], [20, 118], [-42, 40]]) {
     box('stage08-pocket-park', [x, 0.02, z], [9, 0.12, 10], extra.park);
     for (const offset of [-2.7, 2.7]) {
       box('stage08-park-tree-trunk', [x + offset, 1.15, z], [0.34, 2.3, 0.34], extra.roof);
