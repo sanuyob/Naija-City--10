@@ -238,9 +238,10 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
     player.destroy();
   }
 
+  const getState = () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch });
   return {
     player, update, destroy,
     interact: () => onInteract?.(getState()),
-    getState: () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch })
+    getState
   };
 }
