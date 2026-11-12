@@ -1,4 +1,8 @@
 import './style.css';
+import { mountAssetInventory } from './asset-inventory.js';
+
+// Mount the inventory before loading the heavier 3D engine so it always works independently.
+window.__NAIJA_ASSET_INVENTORY__ = mountAssetInventory();
 
 const statusLabel = document.getElementById('status');
 const perfToggle = document.getElementById('perf-toggle');
