@@ -1,4 +1,11 @@
 const INVENTORY = [
+  { title: 'STAGE 08B NIGERIAN BUILDING DETAIL', items: [
+    ['Detailed commercial shopfronts', '8'], ['Residential facade upgrades', '8'],
+    ['Projecting shop awnings and fascia', '8 / 8'], ['Roller shutters and security doors', '8 / 8'],
+    ['Residential balconies and open balustrades', '8'], ['Window security grilles', '8'],
+    ['External AC condensers', '8'], ['Rooftop water tanks', '16'],
+    ['Shared architectural material families', '12']
+  ]},
   { title: 'STAGE 08A CITY EXPANSION', items: [
     ['Expanded playable ground footprint (approx.)', '96 × 374 m'],
     ['Connected parallel distributor roads', '2'], ['New cross streets', '3'],
@@ -45,7 +52,7 @@ export function mountAssetInventory() {
     </section>
   `).join('') + `
     <p class="asset-note">Stage 08A adds connected road extensions, commercial and residential blockout buildings, and pocket parks. Buildings are still procedural blockout geometry, not final detailed architecture. The player is now a lightweight human character built from primitive meshes with procedural movement animations. The imported GLB is still a diagnostic asset, not the player model. Shop buildings remain blockout shapes, not detailed storefront models.</p>
-    <p class="asset-note asset-missing"><strong>Not in this build:</strong> production rigged humanoid GLB, motion-capture animation clips, robust building collision, stairs/slopes, foot IK, pedestrians, keke, motorcycles, buses, detailed shop interiors, production building assets, detailed texture libraries and advanced traffic AI.</p>
+    <p class="asset-note asset-missing"><strong>Not in this build:</strong> production rigged humanoid GLB, motion-capture animation clips, robust building collision, stairs/slopes, foot IK, pedestrians, keke, motorcycles, buses, detailed shop interiors, baked PBR texture libraries, readable business-name signage, detailed shop interiors and advanced traffic AI.</p>
   `;
 
   const setOpen = open => {
