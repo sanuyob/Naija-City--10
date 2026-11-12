@@ -7,12 +7,14 @@
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "verify": "node --check src/main.js && node scripts/verify-project.mjs"
+    "verify": "node --check src/main.js && node scripts/verify-project.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs"
   },
   "dependencies": {
     "playcanvas": "^2.24.0"
   },
   "devDependencies": {
+    "playwright": "^1.56.1",
     "vite": "^7.2.2"
   }
 }
