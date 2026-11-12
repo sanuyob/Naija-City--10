@@ -22,7 +22,10 @@ button:active { transform: scale(.96); filter: brightness(1.2); }
 
 /* In-game scene asset inventory */
 #assets-toggle { position: fixed; top: 70px; right: 78px; min-width: 66px; min-height: 34px; padding: 5px 9px; font-size: 10px; pointer-events: auto; }
-#assets-panel { position: fixed; z-index: 20; left: 14px; bottom: 94px; width: min(360px, calc(100vw - 28px)); max-height: min(58vh, 520px); overflow-y: auto; overscroll-behavior: contain; padding: 13px; border: 1px solid #ffffff55; border-radius: 13px; background: #101820f5; color: #f2f5f4; box-shadow: 0 12px 36px #0009; text-shadow: none; pointer-events: auto; touch-action: pan-y; }
+#assets-panel { position: fixed; inset: 0; z-index: 1000; width: min(360px, calc(100vw - 28px)); max-width: calc(100vw - 28px); max-height: min(70dvh, 560px); margin: auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 13px; border: 1px solid #ffffff55; border-radius: 13px; background: #101820; color: #f2f5f4; box-shadow: 0 12px 36px #0009; text-shadow: none; pointer-events: auto; touch-action: pan-y; }
+#assets-panel:not([open]) { display: none; }
+#assets-panel[open] { display: block; }
+#assets-panel::backdrop { background: #050b10bb; }
 .assets-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .assets-heading h2 { margin: 0; font-size: 12px; letter-spacing: .1em; }
 .assets-heading p { margin: 4px 0 0; color: #ffbf47; font-size: 10px; }
@@ -33,4 +36,4 @@ button:active { transform: scale(.96); filter: brightness(1.2); }
 .asset-row strong { color: #ffcf68; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .asset-note { margin: 10px 0 0; padding: 8px; border-radius: 8px; background: #ffffff0d; color: #cbd5d1; font-size: 10px; line-height: 1.45; }
 .asset-missing { color: #ffb5a8; }
-@media (max-width: 390px) { #assets-toggle { right: 76px; } #assets-panel { bottom: 88px; max-height: 54vh; } }
+@media (max-width: 390px) { #assets-toggle { right: 76px; } #assets-panel { max-height: 70dvh; } }
