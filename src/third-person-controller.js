@@ -62,7 +62,6 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
   const jumpButton = document.getElementById('jump-button');
   const sprintButton = document.getElementById('sprint-button');
   const crouchButton = document.getElementById('crouch-button');
-  const interactButton = document.getElementById('interact-button');
   let joystickPointer = null;
   let orbitPointer = null;
   let orbitLastX = 0, orbitLastY = 0;
@@ -121,8 +120,6 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
     crouchButton?.setAttribute('aria-pressed', String(input.crouch));
   };
   crouchButton?.addEventListener('click', toggleCrouch);
-  const interactPress = event => { event.preventDefault(); onInteract?.(getState()); };
-  interactButton?.addEventListener('click', interactPress);
 
   const onKeyDown = event => {
     const key = event.key.toLowerCase();
@@ -238,12 +235,12 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
     canvas.removeEventListener('pointerup', onPointerUp);
     canvas.removeEventListener('pointercancel', onPointerUp);
     crouchButton?.removeEventListener('click', toggleCrouch);
-    interactButton?.removeEventListener('click', interactPress);
     player.destroy();
   }
 
   return {
     player, update, destroy,
+    interact: () => onInteract?.(getState()),
     getState: () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch })
   };
 }
