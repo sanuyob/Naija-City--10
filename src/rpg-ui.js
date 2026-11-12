@@ -36,7 +36,7 @@ export function mountRPGInterface() {
         <button id="jump-button" aria-label="Jump">↑<small>JUMP</small></button>
         <button id="sprint-button" aria-label="Hold to sprint">»<small>SPRINT</small></button>
         <button id="crouch-button" aria-label="Toggle crouch" aria-pressed="false">↓<small>CROUCH</small></button>
-        <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
+        <button id="interact-button" aria-label="Interact" onclick="window.__NAIJA_RPG_UI__?.showToast('Checking nearby…');window.__NAIJA_INTERACT__?.()">◎<small>INTERACT</small></button>
       </div>
     </div>
     <div class="quick-slots" aria-label="Quick access slots">
@@ -83,7 +83,6 @@ export function mountRPGInterface() {
     pause.hidden = true;
   };
   root.addEventListener('click', event => {
-    if (event.target.closest('#interact-button')) { window.__NAIJA_INTERACT__?.(); return; }
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
