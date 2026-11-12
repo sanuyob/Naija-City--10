@@ -58,7 +58,7 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
       body.setActivationState(4); // DISABLE_DEACTIVATION
     }
     world.addRigidBody(body);
-    return { body, shape, motionState, kinematic, transform: own(new Ammo.btTransform()) };
+    return { body, shape, motionState, kinematic, transform: own(new Ammo.btTransform()), origin: vector(position.x, position.y, position.z), rotation: own(new Ammo.btQuaternion(0, 0, 0, 1)) };
   }
 
   // A simple low-poly collision floor is deliberately cheaper than colliding
@@ -117,8 +117,10 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
     const yaw = record.item.entity.getEulerAngles().y;
     const half = yaw * Math.PI / 360;
     record.transform.setIdentity();
-    record.transform.setOrigin(vector(p.x, 0.88, p.z));
-    record.transform.setRotation(own(new Ammo.btQuaternion(0, Math.sin(half), 0, Math.cos(half))));
+    record.origin.setValue(p.x, 0.88, p.z);
+    record.rotation.setValue(0, Math.sin(half), 0, Math.cos(half));
+    record.transform.setOrigin(record.origin);
+    record.transform.setRotation(record.rotation);
     record.body.setWorldTransform(record.transform);
     record.motionState.setWorldTransform(record.transform);
     world.updateSingleAabb(record.body);
