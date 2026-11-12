@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { createVehiclePhysics } from './vehicle-physics.js';
+import { createThirdPersonController } from './third-person-controller.js';
 import { loadSceneAssets } from './asset-loader.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
@@ -141,46 +141,17 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     return mainGreen;
   }
 
-  const car=new pc.Entity('player-car'); app.root.addChild(car);
-  const carPaint=material([0.72,0.12,0.08],0.35), glass=material([0.10,0.20,0.24],0.25), rubber=material([0.025,0.028,0.03]);
-  // Render meshes follow the physical chassis; collision geometry is a separate low-poly box.
-  box('car-body',[0,0,0],[1.8,0.62,3.6],carPaint,car);
-  box('car-cabin',[0,0.62,-0.25],[1.42,0.72,1.75],glass,car);
-  const wheelRoots=[];
-  for(let i=0;i<4;i++){
-    const root=new pc.Entity('physics-wheel-'+i);app.root.addChild(root);
-    const mesh=new pc.Entity('wheel-mesh');mesh.addComponent('render',{type:'cylinder',material:rubber});
-    mesh.setLocalScale(0.84,0.22,0.84);mesh.setLocalEulerAngles(0,0,90);root.addChild(mesh);
-    wheelRoots.push(root);
-  }
-
-  const keys=Object.create(null), held={left:false,right:false,accelerate:false,brake:false};
-  window.addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;});
-  window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
-  window.addEventListener('blur',()=>{Object.keys(held).forEach(k=>held[k]=false);Object.keys(keys).forEach(k=>keys[k]=false);});
-  document.querySelectorAll('[data-control]').forEach(button=>{const control=button.dataset.control;button.addEventListener('pointerdown',e=>{e.preventDefault();button.setPointerCapture?.(e.pointerId);held[control]=true;});const release=e=>{e.preventDefault();held[control]=false;};button.addEventListener('pointerup',release);button.addEventListener('pointercancel',release);button.addEventListener('lostpointercapture',()=>held[control]=false);});
-
   statusLabel.textContent='Loading GLB models and textures…';
   const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
-  statusLabel.textContent='Loading real vehicle physics (Ammo.js)…';
-  const physics=await createVehiclePhysics(car,traffic,wheelRoots);
-  statusLabel.textContent='Physics ready — four raycast wheels and suspension';
+  const playerController=createThirdPersonController(app,camera,canvas);
+  statusLabel.textContent='Third-person character ready — WASD / touch joystick';
 
-  // Stage 04: Ammo/Bullet owns chassis motion, wheel raycasts, suspension,
-  // tyre friction, braking and contacts. Traffic remains kinematic AI with Bullet colliders.
-  let heading=0;
-  const position=new pc.Vec3(),desiredCamera=new pc.Vec3(),cameraPosition=new pc.Vec3();
+  // Stage 06: city traffic continues as lightweight kinematic scenery.
+  // The human character is now the only player-controlled actor.
   app.on('update',dt=>{
     if(window.__NAIJA_RPG_PAUSED__) return;
     const step=Math.min(dt,0.05);
-    const accelerate=held.accelerate||keys.w||keys.arrowup;
-    const brake=held.brake||keys.s||keys.arrowdown;
-    const left=held.left||keys.a||keys.arrowleft;
-    const right=held.right||keys.d||keys.arrowright;
     const greenForMain=updateSignal(step);
-
-    // Preserve Stage 03 signal-controlled traffic routes, then sync their
-    // kinematic Bullet bodies before advancing the physical player vehicle.
     for(const vehicle of traffic){
       const v=vehicle.entity.getPosition();
       if(vehicle.route==='main'){
@@ -200,17 +171,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
         }
       }
     }
-    physics.syncTraffic();
-    physics.step(step,{accelerate,brake,left,right});
-    physics.syncPlayer();
-
-    position.copy(car.getPosition());
-    heading=car.getEulerAngles().y;
-    const rad=heading*Math.PI/180;
-    desiredCamera.set(position.x-Math.sin(rad)*2.2,position.y+6.2,position.z+Math.cos(rad)*11);
-    cameraPosition.lerp(camera.getPosition(),desiredCamera,Math.min(1,step*4));
-    camera.setPosition(cameraPosition);camera.lookAt(position.x,position.y+0.8,position.z-5);
-    speedLabel.textContent=`${Math.round(Math.abs(physics.getSpeedKmh()))} km/h`;
+    playerController.update(step);
   });
 
   // Documented AppStats telemetry; GPU memory is estimated tracked resource usage.
@@ -235,7 +196,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:5,genre:'third-person open-world action RPG',cameraMode:'third-person',legacyVehiclePhysics:true,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:assetState,stats};
-  window.addEventListener('pagehide',()=>physics.cleanup(),{once:true});
-  app.start();statusLabel.textContent='Ready — Stage 05 RPG foundation (legacy vehicle physics retained)';
+  window.__NAIJA_GAME__={ready:true,stage:6,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,playerController};
+  window.addEventListener('pagehide',()=>playerController.destroy(),{once:true});
+  app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
 }
