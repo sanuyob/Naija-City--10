@@ -19,7 +19,7 @@ try {
  const state=await page.evaluate(()=>({viewport:{w:innerWidth,h:innerHeight},canvas:(()=>{const c=document.querySelector('#application'),r=c.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bufferW:c.width,bufferH:c.height,webgl2:!!c.getContext('webgl2')};})(),diag:window.__NAIJA_RENDER_DIAGNOSTICS__,game:window.__NAIJA_GAME__}));
  if(state.viewport.w!==390||state.viewport.h!==844)throw new Error('Test viewport is not 390x844: '+JSON.stringify(state.viewport));
  if(!state.canvas.webgl2||state.canvas.w<380||state.canvas.h<800||state.canvas.h>900||state.canvas.y>1)throw new Error('Canvas does not fit the mobile viewport: '+JSON.stringify(state.canvas));
- if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30)throw new Error('No actual scene geometry submitted for rendering: '+JSON.stringify(state.diag));
+ if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||!state.diag.scene.diagnosticMarker.inFront)throw new Error('No actual scene geometry submitted for rendering: '+JSON.stringify(state.diag));
  if(state.diag.camera.position[2]<=0||state.diag.camera.forward[2]>=-0.2)throw new Error('Chase camera is not behind the player and looking down the road: '+JSON.stringify(state.diag.camera));
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
