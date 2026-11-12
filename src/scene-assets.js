@@ -1,3 +1,5 @@
+import { Asset } from 'playcanvas';
+
 // Runtime GLB / texture loader for the standalone PlayCanvas AppBase build.
 // Add production assets here when their files are committed under /assets.
 export const SCENE_ASSET_MANIFEST = [];
@@ -18,7 +20,7 @@ export async function loadSceneAssets(app, onProgress = () => {}, manifest = SCE
       resolve();
       return;
     }
-    const asset = new pcAsset(name, type, { url });
+    const asset = new Asset(name, type, { url });
     app.assets.add(asset);
     asset.on('progress', (received, total) => onProgress({ loaded: result.loaded.length, failed: result.failed.length, total: result.total, current: name, received, bytesTotal: total }));
     asset.once('load', () => {
@@ -30,6 +32,13 @@ export async function loadSceneAssets(app, onProgress = () => {}, manifest = SCE
           entity.setLocalPosition(...position);
           entity.setLocalScale(...scale);
           app.root.addChild(entity);
+        } else if (type === 'texture' && definition.targetName) {
+          const target = app.root.findByName(definition.targetName);
+          const render = target?.render;
+          const material = render?.meshInstances?.[0]?.material;
+          if (!material) throw new Error(`Texture target not found or has no render material: ${definition.targetName}`);
+          material.diffuseMap = asset.resource;
+          material.update();
         }
         result.loaded.push({ name, type, url, assetId: asset.id });
       } catch (error) {
@@ -49,12 +58,4 @@ export async function loadSceneAssets(app, onProgress = () => {}, manifest = SCE
   }));
   await Promise.all(tasks);
   return result;
-}
-
-// Resolve Asset from the engine attached to the AppBase instance. The registry
-// creates and owns resources; this avoids a second engine import in this module.
-function pcAsset(name, type, file) {
-  const Constructor = globalThis.__NAIJA_PLAYCANVAS_ASSET__;
-  if (!Constructor) throw new Error('PlayCanvas Asset constructor was not registered.');
-  return new Constructor(name, type, file);
 }
