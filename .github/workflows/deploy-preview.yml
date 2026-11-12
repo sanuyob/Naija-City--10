@@ -1,10 +1,11 @@
-name: Stage 05 RPG preview
+name: Stage 06 third-person playable preview
 
 on:
   push:
     branches:
       - feature/naija-city-drive-stage-01
       - feature/naija-city-stage-05-rpg-foundation
+      - feature/naija-city-stage-06-third-person
   workflow_dispatch:
 
 permissions:
@@ -20,7 +21,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out Stage 05
+      - name: Check out Stage 06
         uses: actions/checkout@v4
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -30,7 +31,7 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify Stage 05 RPG foundation and build
+      - name: Verify Stage 06 third-person character system and build
         run: |
           npm run verify
           npm run build
