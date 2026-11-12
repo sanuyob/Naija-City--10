@@ -208,7 +208,7 @@ export function createThirdPersonController(app, camera, canvas) {
       p.y + 1.28 + Math.sin(cameraPitch) * cameraDistance + 0.35,
       p.z + Math.cos(yaw) * horizontal
     );
-    smoothedCamera.lerp(desiredCamera, Math.min(1, step * 8));
+    smoothedCamera.lerp(smoothedCamera, desiredCamera, Math.min(1, step * 8));
     camera.setPosition(smoothedCamera);
     camera.lookAt(cameraTarget);
   }
