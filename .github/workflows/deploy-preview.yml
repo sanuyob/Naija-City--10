@@ -33,10 +33,10 @@ jobs:
       - name: Verify Stage 05 rendering, assets and build
         run: |
           npm run verify
-          npx playwright install --with-deps chromium
-          npm run test:browser
           npm run build
           npm run analyze:bundle
+          npx playwright install --with-deps chromium
+          npm run test:browser
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
