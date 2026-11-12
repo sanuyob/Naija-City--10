@@ -10,7 +10,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   const options = new pc.AppOptions();
   options.graphicsDevice = device;
   options.componentSystems = [pc.RenderComponentSystem, pc.CameraComponentSystem, pc.LightComponentSystem];
-  options.resourceHandlers = [pc.TextureHandler, pc.ContainerHandler];
+  // No external textures or GLB assets are loaded in this procedural blockout; keep asset handlers out of the bundle.
   const app = new pc.AppBase(canvas);
   app.init(options);
   app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
