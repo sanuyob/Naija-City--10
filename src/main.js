@@ -9,7 +9,7 @@ const perfToggle = document.getElementById('perf-toggle');
 const perfPanel = document.getElementById('perf-panel');
 
 async function start() {
-  statusLabel.textContent = 'Loading driving scene…';
+  statusLabel.textContent = 'Preparing WebGL viewport…';
   // The PlayCanvas runtime is fetched only after the small page shell is ready.
   const { startGame } = await import('./game.js');
   await startGame({ statusLabel, perfToggle, perfPanel });
