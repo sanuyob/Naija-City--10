@@ -152,6 +152,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       else window.__NAIJA_RPG_UI__?.showToast('Nothing nearby to interact with.');
     }
   });
+  window.__NAIJA_INTERACT__=()=>playerController.interact();
   statusLabel.textContent='Third-person character ready — WASD / touch joystick';
 
   // Stage 06: city traffic continues as lightweight kinematic scenery.
@@ -209,6 +210,6 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
   window.__NAIJA_GAME__={ready:true,stage:6,hudStage:7,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
-  window.addEventListener('pagehide',()=>playerController.destroy(),{once:true});
+  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;playerController.destroy();},{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
 }
