@@ -1,10 +1,11 @@
-name: Stage 05 RPG foundation verification
+name: Stage 06 third-person character verification
 
 on:
   push:
     branches:
       - feature/naija-city-drive-stage-01
       - feature/naija-city-stage-05-rpg-foundation
+      - feature/naija-city-stage-06-third-person
   pull_request:
     branches:
       - main
