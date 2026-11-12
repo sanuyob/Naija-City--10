@@ -2,6 +2,7 @@ import * as pc from 'playcanvas';
 import { createThirdPersonController } from './third-person-controller.js';
 import { loadSceneAssets } from './asset-loader.js';
 import { createStage08ACityExpansion } from './stage-08a-city-expansion.js';
+import { createStage08BBuildingDetail } from './stage-08b-building-detail.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -60,6 +61,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
 
   box('ground',[0,-0.35,-18],[46,0.5,154],m.ground);
   const stage08A = createStage08ACityExpansion({ app, box, material, m });
+  const stage08B = createStage08BBuildingDetail({ app, box, material });
   box('main-road',[0,-0.07,-18],[11,0.16,150],m.asphalt);
   box('left-footpath',[-6.1,0.02,-18],[1.1,0.2,150],m.concrete);
   box('right-footpath',[6.1,0.02,-18],[1.1,0.2,150],m.concrete);
@@ -210,7 +212,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-48,-1,-205],max:[48,10,169]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,stage08B,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
   window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;playerController.destroy();},{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
