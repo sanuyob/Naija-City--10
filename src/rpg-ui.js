@@ -83,6 +83,7 @@ export function mountRPGInterface() {
     pause.hidden = true;
   };
   root.addEventListener('click', event => {
+    if (event.target.closest('#interact-button')) { window.__NAIJA_INTERACT__?.(); return; }
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
