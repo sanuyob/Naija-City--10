@@ -207,7 +207,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     heading=car.getEulerAngles().y;
     const rad=heading*Math.PI/180;
     desiredCamera.set(position.x-Math.sin(rad)*2.2,position.y+6.2,position.z+Math.cos(rad)*11);
-    cameraPosition.copy(camera.getPosition()).lerp(desiredCamera,Math.min(1,step*4));
+    cameraPosition.lerp(camera.getPosition(),desiredCamera,Math.min(1,step*4));
     camera.setPosition(cameraPosition);camera.lookAt(position.x,position.y+0.8,position.z-5);
     speedLabel.textContent=`${Math.round(Math.abs(physics.getSpeedKmh()))} km/h`;
   });
