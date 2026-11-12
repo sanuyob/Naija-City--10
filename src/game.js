@@ -86,7 +86,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   box('bus-stop-bench',[7.9,0.65,-37],[1.6,0.16,0.48],m.metal);
   // High-contrast scene marker: if this is absent, inspect the camera/device path;
   // if it appears while imported assets do not, inspect the asset pipeline.
-  box('render-diagnostic-marker',[0,1.65,20],[1.4,3.3,1.4],m.yellow);
+  box('render-diagnostic-marker',[0,1.65,-18],[1.4,3.3,1.4],m.yellow);
   for(const z of [-12,-39,-62]){box('streetlight-pole',[-7.2,3.3,z],[0.12,6.6,0.12],m.metal);box('streetlight-arm',[-6.8,6.45,z],[0.9,0.12,0.12],m.metal);box('streetlight-head',[-6.35,6.35,z],[0.55,0.18,0.32],m.yellow);}
   for(const x of [-6.9,6.9]) for(const z of [junctionZ-7,junctionZ+7]) box('junction-bollard',[x,0.55,z],[0.28,1.1,0.28],m.yellow);
 
