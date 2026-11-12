@@ -1,11 +1,12 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101820; font-family: system-ui, sans-serif; touch-action: none; }
 #application { display: block; width: 100%; height: 100%; }
-#hud { position: fixed; inset: 14px 14px auto; display: flex; align-items: flex-start; justify-content: space-between; color: white; pointer-events: none; text-shadow: 0 2px 8px #000; }
+#hud { position: fixed; inset: 14px 14px auto; display: flex; align-items: flex-start; justify-content: space-between; color: white; pointer-events: none; text-shadow: 0 2px 8px #000; gap: 8px; }
 .brand { font-weight: 900; letter-spacing: .12em; font-size: 13px; }
 .brand span { display: block; color: #ffbf47; font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
 #speed { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
 #status { position: fixed; top: 72px; left: 14px; max-width: calc(100vw - 28px); font-size: 11px; opacity: .9; }
+#performance { position: fixed; top: 92px; left: 14px; max-width: calc(100vw - 28px); font-size: 10px; opacity: .82; font-variant-numeric: tabular-nums; }
 .hint { position: fixed; top: 52px; left: 14px; font-size: 10px; opacity: .75; }
 #controls { position: fixed; inset: auto 0 18px; display: flex; justify-content: space-between; padding: 0 18px; gap: 16px; }
 .steering, .pedals { display: flex; gap: 10px; align-items: end; }
