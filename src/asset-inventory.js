@@ -13,12 +13,12 @@ const INVENTORY = [
     ['Junction bollards', '4']
   ]},
   { title: 'VEHICLES & TRAFFIC', items: [
-    ['Player car', '1'], ['Scripted AI traffic cars', '6'],
+    ['Player car', '1'], ['Scripted AI traffic cars', '6'], ['Imported diagnostic GLB model', '1'],
     ['Traffic signal poles / heads', '2 / 2'], ['Traffic signal lamps', '6']
   ]},
   { title: 'PHYSICS & GAME SYSTEMS', items: [
     ['Raycast vehicle wheels', '4'], ['Physical traffic colliders', '6'],
-    ['Vehicle physics', 'Ammo.js / Bullet'], ['Traffic control', '2-phase signals']
+    ['Vehicle physics', 'Ammo.js / Bullet'], ['External texture map', '1'], ['Traffic control', '2-phase signals']
   ]}
 ];
 
@@ -37,8 +37,8 @@ export function mountAssetInventory() {
       `).join('')}
     </section>
   `).join('') + `
-    <p class="asset-note">These are the assets present in the current scene, built from procedural low-poly geometry and materials. The shop buildings are blockout shapes, not detailed storefront models.</p>
-    <p class="asset-note asset-missing"><strong>Not in this build:</strong> pedestrians, keke, motorcycles, buses, detailed shop interiors, imported GLB/FBX models, external texture maps, vehicle audio and advanced traffic AI.</p>
+    <p class="asset-note">The current scene combines procedural low-poly geometry with one imported GLB diagnostic model and a separately loaded texture. The shop buildings remain blockout shapes, not detailed storefront models.</p>
+    <p class="asset-note asset-missing"><strong>Not in this build:</strong> pedestrians, keke, motorcycles, buses, detailed shop interiors, production GLB/FBX models, detailed texture libraries, vehicle audio and advanced traffic AI.</p>
   `;
 
   const setOpen = open => {
