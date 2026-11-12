@@ -36,7 +36,7 @@ export function mountRPGInterface() {
         <button id="jump-button" aria-label="Jump">↑<small>JUMP</small></button>
         <button id="sprint-button" aria-label="Hold to sprint">»<small>SPRINT</small></button>
         <button id="crouch-button" aria-label="Toggle crouch" aria-pressed="false">↓<small>CROUCH</small></button>
-        <button id="interact-button" aria-label="Interact" onclick="window.__NAIJA_RPG_UI__?.showToast('Checking nearby…');window.__NAIJA_INTERACT__?.()">◎<small>INTERACT</small></button>
+        <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
       </div>
     </div>
     <div class="quick-slots" aria-label="Quick access slots">
@@ -52,7 +52,7 @@ export function mountRPGInterface() {
     </nav>
     <div class="hud-toast" id="hud-toast" role="status" aria-live="polite"></div>
     <section class="panel" id="rpg-panel" hidden><header><div><small id="panel-kicker"></small><h2 id="panel-title"></h2></div><button data-close aria-label="Close panel">×</button></header><div id="panel-content"></div><footer>NAIJA CITY <span>STAGE 07 · LANDSCAPE HUD</span></footer></section>
-    <section class="pause" id="rpg-pause" hidden><div class="pause-card"><div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small>PAUSED</small></div></div><h2>Take a moment.</h2><p>Your city is waiting.</p><button class="resume" data-resume>RESUME GAME　→</button><button data-open="map">CITY MAP</button><button data-open="settings">SETTINGS</button><small>STAGE 07 · LANDSCAPE MOBILE HUD</small></div></section>
+    <section class="pause" id="rpg-pause" hidden><div class="pause-card"><div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small>PAUSED</small></div></div><h2>Take a moment.</h2><p>Your city is waiting.</p><button class="resume" data-resume>RESUME GAME　→</button><div class="pause-links" aria-label="Game menus"><button data-open="inventory">INVENTORY</button><button data-open="quests">MISSIONS</button><button data-open="map">CITY MAP</button><button data-open="character">PLAYER</button></div><button data-open="settings">SETTINGS</button><small>NAIJA CITY · PAUSED</small></div></section>
   `;
 
   let paused = false;
@@ -86,6 +86,11 @@ export function mountRPGInterface() {
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
+    if (event.target.closest('#interact-button')) {
+      showToast('Checking nearby…');
+      window.__NAIJA_INTERACT__?.();
+      return;
+    }
     const setting = event.target.closest('[data-setting]');
     if (setting) {
       const enabled = setting.getAttribute('aria-pressed') !== 'true';

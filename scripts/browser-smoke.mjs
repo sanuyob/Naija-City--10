@@ -52,14 +52,17 @@ try {
  },screenshot.toString('base64'));
  if(visual.width<800||visual.height<360||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels<20)throw new Error('Canvas screenshot visual assertion failed; scene may be blank: '+JSON.stringify(visual));
  if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.objective').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
- for(const [button,title] of [['inventory','Inventory'],['quests','Missions'],['map','District map'],['character','Character']]){await page.locator('[data-open="'+button+'"]').first().click();await page.locator('#rpg-panel').waitFor({state:'visible'});if(!(await page.locator('#panel-title').textContent()).includes(title))throw new Error('RPG menu failed: '+button);await page.locator('[data-close]').click();}
+ const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','#jump-button','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
+ if(hudBoxes['#move-joystick'].x>140||hudBoxes['#jump-button'].x<innerWidth-150||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
+ if(await page.locator('.nav').isVisible())throw new Error('Legacy bottom navigation should be removed from active gameplay HUD');
+ for(const [button,title] of [['inventory','Inventory'],['quests','Missions'],['map','District map'],['character','Character']]){await page.locator('[data-open="pause"]').click();await page.locator('[data-open="'+button+'"]:visible').last().click();await page.locator('#rpg-panel').waitFor({state:'visible'});if(!(await page.locator('#panel-title').textContent()).includes(title))throw new Error('RPG menu failed: '+button);await page.locator('[data-close]').click();}
  await page.locator('[data-open="pause"]').click();await page.locator('#rpg-pause').waitFor({state:'visible'});if(await page.evaluate(()=>window.__NAIJA_RPG_PAUSED__)!==true)throw new Error('Pause menu did not pause the simulation');await page.locator('[data-resume]').click();if(await page.evaluate(()=>window.__NAIJA_RPG_PAUSED__)!==false)throw new Error('Resume did not restore the simulation');
  await page.locator('[data-open="pause"]').click();await page.locator('[data-open="settings"]').click();await page.locator('[data-setting="motion"]').click();if(await page.locator('[data-setting="motion"]').getAttribute('aria-pressed')!=='true')throw new Error('Settings toggle did not respond');await page.locator('[data-close]').click();
- await page.locator('#assets-toggle').click();await page.locator('#assets-panel[open]').waitFor({state:'visible'});
+ await page.evaluate(()=>document.querySelector('#assets-toggle').click());await page.locator('#assets-panel[open]').waitFor({state:'visible'});
  const inventory=await page.locator('#assets-panel').textContent();
  if(!inventory?.includes('Low-poly shop building blocks')||!inventory.includes('Not in this build'))throw new Error('Asset inventory contents are incomplete');
  await page.locator('#assets-close').click();
- await page.locator('#perf-toggle').click();await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1200);
+ await page.evaluate(()=>document.querySelector('#perf-toggle').click());await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1200);
  if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
