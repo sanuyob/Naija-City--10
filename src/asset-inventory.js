@@ -12,13 +12,14 @@ const INVENTORY = [
     ['Drain covers', '10'], ['Drain grates', '10'], ['Streetlight assemblies', '3'],
     ['Junction bollards', '4']
   ]},
-  { title: 'VEHICLES & TRAFFIC', items: [
-    ['Player car', '1'], ['Scripted AI traffic cars', '6'], ['Imported diagnostic GLB model', '1'],
+  { title: 'PLAYER & TRAFFIC', items: [
+    ['Procedural human player', '1'], ['Scripted AI traffic cars', '6'], ['Imported diagnostic GLB model', '1'],
     ['Traffic signal poles / heads', '2 / 2'], ['Traffic signal lamps', '6']
   ]},
-  { title: 'PHYSICS & GAME SYSTEMS', items: [
-    ['Raycast vehicle wheels', '4'], ['Physical traffic colliders', '6'],
-    ['Vehicle physics', 'Ammo.js / Bullet'], ['External texture map', '1'], ['Traffic control', '2-phase signals']
+  { title: 'STAGE 06 CHARACTER SYSTEM', items: [
+    ['Walk / run movement', 'Active'], ['Sprint and jump', 'Active'],
+    ['Procedural gait animation', 'Active'], ['Orbit-follow camera', 'Active'],
+    ['Mobile joystick / action buttons', 'Active'], ['External diagnostic texture map', '1']
   ]}
 ];
 
@@ -37,8 +38,8 @@ export function mountAssetInventory() {
       `).join('')}
     </section>
   `).join('') + `
-    <p class="asset-note">The current scene combines procedural low-poly geometry with one imported GLB diagnostic model and a separately loaded texture. The shop buildings remain blockout shapes, not detailed storefront models.</p>
-    <p class="asset-note asset-missing"><strong>Not in this build:</strong> pedestrians, keke, motorcycles, buses, detailed shop interiors, production GLB/FBX models, detailed texture libraries, vehicle audio and advanced traffic AI.</p>
+    <p class="asset-note">The player is now a lightweight human character built from primitive meshes with procedural movement animations. The imported GLB is still a diagnostic asset, not the player model. Shop buildings remain blockout shapes, not detailed storefront models.</p>
+    <p class="asset-note asset-missing"><strong>Not in this build:</strong> production rigged humanoid GLB, motion-capture animation clips, robust building collision, stairs/slopes, foot IK, pedestrians, keke, motorcycles, buses, detailed shop interiors, production building assets, detailed texture libraries and advanced traffic AI.</p>
   `;
 
   const setOpen = open => {
