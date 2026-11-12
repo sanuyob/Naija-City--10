@@ -40,3 +40,5 @@ button:active { transform: scale(.96); filter: brightness(1.2); }
 
 #asset-status { position: fixed; z-index: 4; top: 110px; left: 14px; max-width: calc(100vw - 28px); color: #a9f2d0; font: 10px/1.4 ui-monospace, monospace; text-shadow: 0 2px 8px #000; pointer-events: none; }
 #asset-status[data-state="error"] { color: #ff9d8e; }
+
+@import './rpg-ui.css';
