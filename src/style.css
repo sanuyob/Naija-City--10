@@ -1,0 +1,15 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101820; font-family: system-ui, sans-serif; touch-action: none; }
+#application { display: block; width: 100%; height: 100%; }
+#hud { position: fixed; inset: 14px 14px auto; display: flex; align-items: flex-start; justify-content: space-between; color: white; pointer-events: none; text-shadow: 0 2px 8px #000; }
+.brand { font-weight: 900; letter-spacing: .12em; font-size: 13px; }
+.brand span { display: block; color: #ffbf47; font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
+#speed { font-size: 20px; font-weight: 800; }
+.hint { position: fixed; top: 52px; left: 14px; font-size: 10px; opacity: .75; }
+#controls { position: fixed; inset: auto 0 18px; display: flex; justify-content: space-between; padding: 0 18px; gap: 16px; }
+.steering, .pedals { display: flex; gap: 10px; align-items: end; }
+button { border: 1px solid #ffffff55; background: #14232ddd; color: white; border-radius: 14px; min-width: 62px; min-height: 58px; font-weight: 800; font-size: 18px; box-shadow: 0 4px 16px #0006; touch-action: none; }
+button[data-control="accelerate"] { background: #087e55ee; min-width: 76px; }
+button[data-control="brake"] { background: #a33b35ee; font-size: 12px; }
+button:active { transform: scale(.96); filter: brightness(1.2); }
+@media (min-width: 850px) { #controls { max-width: 720px; left: 50%; transform: translateX(-50%); } }
