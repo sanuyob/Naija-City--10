@@ -77,6 +77,62 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   for(const z of [-12,-39,-62]){box('streetlight-pole',[-7.2,3.3,z],[0.12,6.6,0.12],m.metal);box('streetlight-arm',[-6.8,6.45,z],[0.9,0.12,0.12],m.metal);box('streetlight-head',[-6.35,6.35,z],[0.55,0.18,0.32],m.yellow);}
   for(const x of [-6.9,6.9]) for(const z of [junctionZ-7,junctionZ+7]) box('junction-bollard',[x,0.55,z],[0.28,1.1,0.28],m.yellow);
 
+  // Stage 03 traffic: a small, pooled set of low-poly vehicles follows lane paths.
+  const trafficMaterials=[
+    material([0.12,0.34,0.68],0.4),material([0.82,0.68,0.12],0.4),
+    material([0.18,0.46,0.28],0.4),material([0.68,0.18,0.12],0.4)
+  ];
+  const traffic=[];
+  function makeTrafficCar(name,color,x,z,yaw=0){
+    const entity=new pc.Entity(name);app.root.addChild(entity);
+    const body=new pc.Entity(name+'-body');body.addComponent('render',{type:'box',material:color});
+    body.setLocalScale(1.65,0.58,3.15);body.setLocalPosition(0,0.62,0);entity.addChild(body);
+    const cabin=new pc.Entity(name+'-cabin');cabin.addComponent('render',{type:'box',material:glass});
+    cabin.setLocalScale(1.32,0.62,1.45);cabin.setLocalPosition(0,1.17,-0.18);entity.addChild(cabin);
+    entity.setPosition(x,0,z);entity.setEulerAngles(0,yaw,0);
+    return entity;
+  }
+  const mainTraffic=[
+    {x:-2.65,z:-64,dir:1,speed:7.0},
+    {x:2.65,z:-48,dir:-1,speed:6.2},
+    {x:-2.65,z:5,dir:1,speed:7.8},
+    {x:2.65,z:35,dir:-1,speed:6.8}
+  ];
+  mainTraffic.forEach((v,i)=>traffic.push({entity:makeTrafficCar('traffic-main-'+i,trafficMaterials[i%4],v.x,v.z,v.dir<0?180:0),...v,route:'main'}));
+  const crossTraffic=[
+    {x:-17,z:junctionZ-2.2,dir:1,speed:5.5},
+    {x:17,z:junctionZ+2.2,dir:-1,speed:5.0}
+  ];
+  crossTraffic.forEach((v,i)=>traffic.push({entity:makeTrafficCar('traffic-cross-'+i,trafficMaterials[(i+1)%4],v.x,v.z,v.dir>0?90:-90),...v,route:'cross'}));
+
+  // Traffic signal phases are deliberately simple and deterministic for repeatable mobile tests.
+  const signalRed=material([0.9,0.04,0.025]),signalAmber=material([0.95,0.55,0.04]),signalGreen=material([0.05,0.75,0.2]);
+  const signalLamps=[];
+  for(const side of [-1,1]){
+    const poleEntity=box('traffic-signal-pole',[side*7.5,3.0,junctionZ+side*8],[0.16,6,0.16],m.metal);
+    const head=box('traffic-signal-head',[side*7.5,5.0,junctionZ+side*8],[0.72,1.8,0.55],m.dark);
+    const lamps=[
+      box('signal-red',[side*7.5,5.55,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalRed,head),
+      box('signal-amber',[side*7.5,5.0,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalAmber,head),
+      box('signal-green',[side*7.5,4.45,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalGreen,head)
+    ];
+    signalLamps.push(lamps);
+  }
+  let signalClock=0,mainGreen=true;
+  const trafficStatus=document.getElementById('traffic-status');
+  function updateSignal(dt){
+    signalClock+=dt;
+    if(signalClock>=14){signalClock=0;mainGreen=!mainGreen;}
+    const active=mainGreen?2:0,inactive=mainGreen?0:2;
+    for(const lamps of signalLamps){
+      lamps[0].render.material=mainGreen?signalRed:signalGreen;
+      lamps[1].render.material=signalAmber;
+      lamps[2].render.material=mainGreen?signalGreen:signalRed;
+    }
+    if(trafficStatus)trafficStatus.textContent=mainGreen?'TRAFFIC: MAIN ROAD GREEN':'TRAFFIC: CROSS STREET GREEN';
+    return mainGreen;
+  }
+
   const car=new pc.Entity('player-car'); app.root.addChild(car);
   const carPaint=material([0.72,0.12,0.08],0.35), glass=material([0.10,0.20,0.24],0.25), rubber=material([0.025,0.028,0.03]);
   box('car-body',[0,0.65,0],[1.8,0.62,3.6],carPaint,car);
@@ -108,6 +164,40 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
     if(!onMain&&!onCross)speed*=Math.max(0,1-5*step);
     position.set(pc.math.clamp(nx,-20.2,20.2),0,nz);
     if(position.z < -88)position.z=52;if(position.z>58)position.z=-84;
+
+    // Advance traffic on fixed lanes. Vehicles yield at the junction when their signal is red.
+    const greenForMain=updateSignal(step);
+    for(const vehicle of traffic){
+      const v=vehicle.entity.getPosition();
+      if(vehicle.route==='main'){
+        const approaching=Math.abs(v.z-junctionZ)<12;
+        const allowed=greenForMain;
+        if(!(approaching&&!allowed)){
+          v.z+=vehicle.dir*vehicle.speed*step;
+          if(v.z < -88)v.z=52;if(v.z>58)v.z=-84;
+          vehicle.entity.setPosition(v);
+        }
+      }else{
+        const approaching=Math.abs(v.x)<12;
+        const allowed=!greenForMain;
+        if(!(approaching&&!allowed)){
+          v.x+=vehicle.dir*vehicle.speed*step;
+          if(v.x < -22)v.x=22;if(v.x>22)v.x=-22;
+          vehicle.entity.setPosition(v);
+        }
+      }
+    }
+    // Low-cost broad-phase proximity collision: keeps this prototype light without loading Ammo.
+    let collision=false;
+    for(const vehicle of traffic){
+      const v=vehicle.entity.getPosition(),dx=position.x-v.x,dz=position.z-v.z;
+      if(dx*dx+dz*dz<5.0){
+        collision=true;
+        speed*=Math.max(0,1-12*step);
+        position.x+=Math.sign(dx||1)*0.35*step;
+      }
+    }
+    if(collision&&trafficStatus)trafficStatus.textContent='TRAFFIC: VEHICLE CONTACT — SLOW DOWN';
     car.setPosition(position);car.setEulerAngles(0,heading,0);
     desiredCamera.set(position.x+Math.sin(rad)*2.2,6.2,position.z+11);
     cameraPosition.copy(camera.getPosition()).lerp(desiredCamera,Math.min(1,step*4));
@@ -128,6 +218,6 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   }
   app.on('frameend',samplePerformance);
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:2,junction:true,stats};
-  app.start();statusLabel.textContent='Ready — hold GO to drive';
+  window.__NAIJA_GAME__={ready:true,stage:3,junction:true,traffic:traffic.length,stats};
+  app.start();statusLabel.textContent='Stage 03 ready — live traffic and signal junction';
 }
