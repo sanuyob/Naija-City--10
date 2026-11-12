@@ -78,7 +78,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   for(const x of [-6.9,6.9]) for(const z of [junctionZ-7,junctionZ+7]) box('junction-bollard',[x,0.55,z],[0.28,1.1,0.28],m.yellow);
 
   // Stage 03 traffic: a small, pooled set of low-poly vehicles follows lane paths.
-  const trafficMaterials=[
+  const trafficGlass=material([0.10,0.20,0.24],0.25);\n  const trafficMaterials=[
     material([0.12,0.34,0.68],0.4),material([0.82,0.68,0.12],0.4),
     material([0.18,0.46,0.28],0.4),material([0.68,0.18,0.12],0.4)
   ];
@@ -87,7 +87,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
     const entity=new pc.Entity(name);app.root.addChild(entity);
     const body=new pc.Entity(name+'-body');body.addComponent('render',{type:'box',material:color});
     body.setLocalScale(1.65,0.58,3.15);body.setLocalPosition(0,0.62,0);entity.addChild(body);
-    const cabin=new pc.Entity(name+'-cabin');cabin.addComponent('render',{type:'box',material:glass});
+    const cabin=new pc.Entity(name+'-cabin');cabin.addComponent('render',{type:'box',material:trafficGlass});
     cabin.setLocalScale(1.32,0.62,1.45);cabin.setLocalPosition(0,1.17,-0.18);entity.addChild(cabin);
     entity.setPosition(x,0,z);entity.setEulerAngles(0,yaw,0);
     return entity;
@@ -109,7 +109,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   const signalRed=material([0.9,0.04,0.025]),signalAmber=material([0.95,0.55,0.04]),signalGreen=material([0.05,0.75,0.2]);
   const signalLamps=[];
   for(const side of [-1,1]){
-    const poleEntity=box('traffic-signal-pole',[side*7.5,3.0,junctionZ+side*8],[0.16,6,0.16],m.metal);
+    box('traffic-signal-pole',[side*7.5,3.0,junctionZ+side*8],[0.16,6,0.16],m.metal);
     const head=box('traffic-signal-head',[side*7.5,5.0,junctionZ+side*8],[0.72,1.8,0.55],m.dark);
     const lamps=[
       box('signal-red',[side*7.5,5.55,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalRed,head),
@@ -218,6 +218,6 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   }
   app.on('frameend',samplePerformance);
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:3,junction:true,traffic:traffic.length,stats};
+  window.__NAIJA_GAME__={ready:true,stage:3,junction:true,traffic:traffic.length,trafficAI:true,proximityCollisions:true,stats};
   app.start();statusLabel.textContent='Stage 03 ready — live traffic and signal junction';
 }
