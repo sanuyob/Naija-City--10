@@ -42,10 +42,15 @@ export function mountAssetInventory() {
   `;
 
   const setOpen = open => {
-    panel.hidden = !open;
+    if (open && !panel.open) panel.showModal();
+    if (!open && panel.open) panel.close();
     toggle.setAttribute('aria-expanded', String(open));
   };
-  toggle.addEventListener('click', () => setOpen(panel.hidden));
+  toggle.addEventListener('click', () => setOpen(!panel.open));
   close.addEventListener('click', () => setOpen(false));
+  panel.addEventListener('click', event => {
+    if (event.target === panel) setOpen(false);
+  });
+  panel.addEventListener('close', () => toggle.setAttribute('aria-expanded', 'false'));
   return INVENTORY.map(group => ({ category: group.title, items: group.items.map(([name, count]) => ({ name, count })) }));
 }
