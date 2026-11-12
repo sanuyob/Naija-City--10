@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: github-pages-preview
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
           path: dist
 
   deploy:
+    if: github.ref == 'refs/heads/fix/stage-05-rendering-asset-pipeline'
     needs: build
     runs-on: ubuntu-latest
     environment:
