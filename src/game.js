@@ -7,17 +7,26 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Missing #application canvas');
   statusLabel.textContent = 'Starting 3D engine…';
   const device = await pc.createGraphicsDevice(canvas, { deviceTypes: [pc.DEVICETYPE_WEBGL2] });
-  device.maxPixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
+  device.maxPixelRatio = Math.min(window.devicePixelRatio || 1, 1.0);
   const options = new pc.AppOptions();
   options.graphicsDevice = device;
   options.componentSystems = [pc.RenderComponentSystem, pc.CameraComponentSystem, pc.LightComponentSystem];
-  // No external textures or GLB assets are loaded in this procedural blockout; keep asset handlers out of the bundle.
+  // AppBase is tree-shaken: GLB containers and textures need explicit handlers.
+  options.resourceHandlers = [pc.TextureHandler, pc.ContainerHandler];
   const app = new pc.AppBase(canvas);
   app.init(options);
-  app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
+  app.setCanvasFillMode(pc.FILLMODE_NONE);
   app.setCanvasResolution(pc.RESOLUTION_AUTO);
   app.scene.ambientLight = new pc.Color(0.42, 0.43, 0.45);
-  window.addEventListener('resize', () => app.resizeCanvas());
+  const resizeCanvas = () => {
+    const width = Math.max(1, Math.floor(window.innerWidth));
+    const height = Math.max(1, Math.floor(window.innerHeight));
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    app.resizeCanvas();
+  };
+  window.addEventListener('resize', resizeCanvas, { passive: true });
+  resizeCanvas();
   canvas.addEventListener('webglcontextlost', event => { event.preventDefault(); statusLabel.textContent = 'Graphics context lost. Reload this page to try again.'; });
 
   function material(color, roughness = 0.85) {
@@ -75,6 +84,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   box('bus-stop-post',[7.3,1.65,-37],[0.12,3.3,0.12],m.metal);
   box('bus-stop-sign',[7.3,3,-37],[1.25,0.65,0.12],m.blue);
   box('bus-stop-bench',[7.9,0.65,-37],[1.6,0.16,0.48],m.metal);
+  // High-contrast scene marker: if this is absent, inspect the camera/device path;
+  // if it appears while imported assets do not, inspect the asset pipeline.
+  box('render-diagnostic-marker',[0,1.65,20],[1.4,3.3,1.4],m.yellow);
   for(const z of [-12,-39,-62]){box('streetlight-pole',[-7.2,3.3,z],[0.12,6.6,0.12],m.metal);box('streetlight-arm',[-6.8,6.45,z],[0.9,0.12,0.12],m.metal);box('streetlight-head',[-6.35,6.35,z],[0.55,0.18,0.32],m.yellow);}
   for(const x of [-6.9,6.9]) for(const z of [junctionZ-7,junctionZ+7]) box('junction-bollard',[x,0.55,z],[0.28,1.1,0.28],m.yellow);
 
@@ -157,6 +169,12 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   statusLabel.textContent='Loading real vehicle physics (Ammo.js)…';
   const physics=await createVehiclePhysics(car,traffic,wheelRoots);
   statusLabel.textContent='Physics ready — four raycast wheels and suspension';
+  const { loadSceneAssets } = await import('./scene-assets.js');
+  const assetStatus = document.getElementById('asset-status');
+  const loadedAssets = await loadSceneAssets(app, (progress) => {
+    if (assetStatus) assetStatus.textContent = `ASSETS ${progress.loaded}/${progress.total} · ${progress.failed} failed`;
+  });
+  if (assetStatus) assetStatus.textContent = `ASSETS ${loadedAssets.loaded.length} loaded · ${loadedAssets.failed.length} failed`;
 
   // Stage 04: Ammo/Bullet owns chassis motion, wheel raycasts, suspension,
   // tyre friction, braking and contacts. Traffic remains kinematic AI with Bullet colliders.
@@ -216,8 +234,34 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
     perf.elapsed=0;perf.samples=0;perf.frameTotal=0;perf.framePeak=0;perf.cpuTotal=0;perf.drawTotal=0;
   }
   app.on('frameend',samplePerformance);
+  function getRenderDiagnostics() {
+    const rect = canvas.getBoundingClientRect();
+    const renderComponents = app.root.findComponents('render');
+    const meshInstances = renderComponents.flatMap(component => component.meshInstances || []);
+    let min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+    for (const mesh of meshInstances) {
+      const aabb = mesh.aabb;
+      if (!aabb) continue;
+      const lo = aabb.getMin(), hi = aabb.getMax();
+      min = min.map((value, i) => Math.min(value, [lo.x, lo.y, lo.z][i]));
+      max = max.map((value, i) => Math.max(value, [hi.x, hi.y, hi.z][i]));
+    }
+    const gl = device.gl;
+    return {
+      canvas: { cssWidth: rect.width, cssHeight: rect.height, pixelWidth: canvas.width, pixelHeight: canvas.height },
+      camera: { position: camera.getPosition().toString(), euler: camera.getEulerAngles().toString(), fov: camera.camera.fov, nearClip: camera.camera.nearClip, farClip: camera.camera.farClip },
+      sceneBounds: { min, max }, meshInstances: meshInstances.length,
+      drawCalls: stats.drawCallCount || 0,
+      glViewport: gl ? Array.from(gl.getParameter(gl.VIEWPORT)) : null,
+      drawingBuffer: gl ? [gl.drawingBufferWidth, gl.drawingBufferHeight] : null,
+      diagnosticMarker: Boolean(app.root.findByName('render-diagnostic-marker'))
+    };
+  }
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:4,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,stats};
-  window.addEventListener('pagehide',()=>physics.cleanup(),{once:true});
-  app.start();statusLabel.textContent='Ready — Stage 04 real vehicle physics';
+  window.__NAIJA_GAME__={ready:true,stage:5,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:loadedAssets,stats};
+  window.__NAIJA_RENDER_DIAGNOSTICS__ = getRenderDiagnostics();
+  app.on('frameend', () => { window.__NAIJA_RENDER_DIAGNOSTICS__ = getRenderDiagnostics(); });
+  window.addEventListener('pagehide',()=>{window.removeEventListener('resize',resizeCanvas);physics.cleanup();},{once:true});
+  app.start();
+  statusLabel.textContent='Ready — Stage 05 rendering diagnostics';
 }
