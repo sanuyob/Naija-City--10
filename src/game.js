@@ -78,7 +78,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   for(const x of [-6.9,6.9]) for(const z of [junctionZ-7,junctionZ+7]) box('junction-bollard',[x,0.55,z],[0.28,1.1,0.28],m.yellow);
 
   // Stage 03 traffic: a small, pooled set of low-poly vehicles follows lane paths.
-  const trafficGlass=material([0.10,0.20,0.24],0.25);\n  const trafficMaterials=[
+  const trafficGlass=material([0.10,0.20,0.24],0.25);
+  const trafficMaterials=[
     material([0.12,0.34,0.68],0.4),material([0.82,0.68,0.12],0.4),
     material([0.18,0.46,0.28],0.4),material([0.68,0.18,0.12],0.4)
   ];
