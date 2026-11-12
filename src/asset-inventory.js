@@ -4,7 +4,7 @@ const INVENTORY = [
     ['Projecting shop awnings and fascia', '8 / 8'], ['Roller shutters and security doors', '8 / 8'],
     ['Residential balconies and open balustrades', '8'], ['Window security grilles', '8'],
     ['External AC condensers', '8'], ['Rooftop water tanks', '16'],
-    ['Shared architectural material families', '12']
+    ['Shared architectural material families', '11']
   ]},
   { title: 'STAGE 08A CITY EXPANSION', items: [
     ['Expanded playable ground footprint (approx.)', '96 × 374 m'],
