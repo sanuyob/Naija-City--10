@@ -1,8 +1,8 @@
 import './style.css';
 import { mountAssetInventory } from './asset-inventory.js';
 import { mountRPGInterface } from './rpg-ui.js';
-window.__NAIJA_ASSET_INVENTORY__ = mountAssetInventory();
 window.__NAIJA_RPG_UI__ = mountRPGInterface();
+window.__NAIJA_ASSET_INVENTORY__ = mountAssetInventory();
 const statusLabel=document.getElementById('status')||document.createElement('div');
 const perfToggle=document.getElementById('perf-toggle');
 const perfPanel=document.getElementById('perf-panel');
