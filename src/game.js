@@ -219,5 +219,5 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   app.on('frameend',samplePerformance);
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
   window.__NAIJA_GAME__={ready:true,stage:3,junction:true,traffic:traffic.length,trafficAI:true,proximityCollisions:true,stats};
-  app.start();statusLabel.textContent='Stage 03 ready — live traffic and signal junction';
+  app.start();statusLabel.textContent='Ready — Stage 03 live traffic and signal junction';
 }
