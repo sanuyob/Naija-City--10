@@ -4,23 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#101820" />
+  <meta name="description" content="A phone-first Nigerian city driving game prototype." />
   <title>Naija City Drive — Prototype</title>
 </head>
 <body>
-  <canvas id="application"></canvas>
+  <canvas id="application" aria-label="Naija City Drive 3D game scene"></canvas>
   <div id="hud">
-    <div class="brand">NAIJA CITY DRIVE <span>EARLY BUILD</span></div>
-    <div id="speed">0 km/h</div>
-    <div class="hint">WASD / ARROWS · MOBILE: hold the controls</div>
+    <div class="brand">NAIJA CITY DRIVE <span>STAGE 01 PROTOTYPE</span></div>
+    <div id="speed" aria-live="polite">0 km/h</div>
+    <div id="status" role="status">Loading 3D scene…</div>
+    <div class="hint">WASD / ARROWS · MOBILE: HOLD THE CONTROLS</div>
   </div>
   <div id="controls" aria-label="Driving controls">
     <div class="steering">
-      <button data-control="left" aria-label="Steer left">◀</button>
-      <button data-control="right" aria-label="Steer right">▶</button>
+      <button type="button" data-control="left" aria-label="Steer left">◀</button>
+      <button type="button" data-control="right" aria-label="Steer right">▶</button>
     </div>
     <div class="pedals">
-      <button data-control="brake" aria-label="Brake">BRAKE</button>
-      <button data-control="accelerate" aria-label="Accelerate">GO</button>
+      <button type="button" data-control="brake" aria-label="Brake">BRAKE</button>
+      <button type="button" data-control="accelerate" aria-label="Accelerate">GO</button>
     </div>
   </div>
   <script type="module" src="/src/main.js"></script>
