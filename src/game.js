@@ -223,7 +223,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     const fps=Math.round(1000/Math.max(avg,0.01));
     window.__NAIJA_ANDROID_BASELINE__={userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight},devicePixelRatio:window.devicePixelRatio,canvas:{width:canvas.width,height:canvas.height},fps,averageFrameMs:avg,drawCalls:stats.drawCallCount,meshInstances:renderDiag?.scene?.meshInstances??null,gpuMemoryMiB:stats.vramTotalBytes/(1024*1024),jsHeapMiB:heap?heap/1048576:null,gpu:device.unmaskedRenderer||'Not exposed'};
     const vram=stats.vramTotalBytes/(1024*1024);
-    perfPanel.textContent=`FPS ${Math.round(1000/Math.max(avg,0.01))} · Frame ${avg.toFixed(1)} ms (peak ${perf.framePeak.toFixed(1)}) · CPU ${(perf.cpuTotal/perf.samples).toFixed(1)} ms\nDraw calls ${Math.round(perf.drawTotal/perf.samples)} · GPU resources ${Number.isFinite(vram)?vram.toFixed(1):'N/A'} MiB · JS heap ${heap?(heap/1048576).toFixed(1):'N/A'} MiB\nGPU: ${device.unmaskedRenderer||'Not exposed by browser'}`;
+    perfPanel.textContent=`FPS ${fps} · Frame ${avg.toFixed(1)} ms (peak ${perf.framePeak.toFixed(1)}) · CPU ${(perf.cpuTotal/perf.samples).toFixed(1)} ms\nDraw calls ${Math.round(perf.drawTotal/perf.samples)} · GPU resources ${Number.isFinite(vram)?vram.toFixed(1):'N/A'} MiB · JS heap ${heap?(heap/1048576).toFixed(1):'N/A'} MiB\nCanvas ${canvas.width}×${canvas.height} · Viewport ${innerWidth}×${innerHeight} · DPR ${devicePixelRatio} · Meshes ${renderDiag?.scene?.meshInstances??'N/A'}\nGPU: ${device.unmaskedRenderer||'Not exposed by browser'}`;
     perf.elapsed=0;perf.samples=0;perf.frameTotal=0;perf.framePeak=0;perf.cpuTotal=0;perf.drawTotal=0;
   }
   app.on('frameend',samplePerformance);
