@@ -32,6 +32,8 @@ jobs:
       - name: Verify Stage 04 and build
         run: |
           npm run verify
+          npx playwright install --with-deps chromium
+          npm run test:browser
           npm run build
           npm run analyze:bundle
       - name: Upload GitHub Pages artifact
