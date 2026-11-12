@@ -1,0 +1,38 @@
+name: Stage 06 third-person character verification
+
+on:
+  push:
+    branches:
+      - feature/naija-city-drive-stage-01
+      - feature/naija-city-stage-05-rpg-foundation
+      - feature/naija-city-stage-06-third-person
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Run source and project checks
+        run: npm run verify
+      - name: Build production bundle
+        run: npm run build
+      - name: Enforce production JavaScript budgets
+        run: npm run analyze:bundle
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run mobile browser smoke test
+        run: npm run test:browser

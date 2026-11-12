@@ -1,0 +1,43 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101820; font-family: system-ui, sans-serif; touch-action: none; }
+#application { position: fixed !important; inset: 0 !important; display: block; width: 100vw !important; height: min(100dvh, 1600px) !important; min-width: 100vw; min-height: 0 !important; max-width: 100vw; max-height: 1600px !important; }
+#hud { position: fixed; inset: 14px 14px auto; display: flex; align-items: flex-start; justify-content: space-between; color: white; pointer-events: none; text-shadow: 0 2px 8px #000; }
+.brand { font-weight: 900; letter-spacing: .12em; font-size: 13px; }
+.brand span { display: block; color: #ffbf47; font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
+#speed { font-size: 20px; font-weight: 800; font-variant-numeric: tabular-nums; }
+#status { position: fixed; top: 72px; left: 14px; max-width: calc(100vw - 28px); font-size: 11px; opacity: .9; }
+#traffic-status { position: fixed; top: 91px; left: 14px; max-width: calc(100vw - 28px); font-size: 10px; font-weight: 800; color: #ffcf68; letter-spacing: .05em; text-shadow: 0 2px 8px #000; }
+.hint { position: fixed; top: 52px; left: 14px; font-size: 10px; opacity: .75; }
+#perf-toggle { position: fixed; top: 70px; right: 14px; min-width: 54px; min-height: 34px; padding: 5px 10px; font-size: 11px; pointer-events: auto; }
+#perf-panel { position: fixed; top: 110px; right: 14px; max-width: calc(100vw - 28px); padding: 9px 11px; border: 1px solid #ffffff55; border-radius: 9px; background: #101820ef; color: #d9f4e8; font: 10px/1.55 ui-monospace, monospace; white-space: pre-wrap; pointer-events: none; }
+#controls { position: fixed; inset: auto 0 18px; display: flex; justify-content: space-between; padding: 0 18px; gap: 16px; }
+.steering, .pedals { display: flex; gap: 10px; align-items: end; }
+button { border: 1px solid #ffffff55; background: #14232ddd; color: white; border-radius: 14px; min-width: 62px; min-height: 58px; font-weight: 800; font-size: 18px; box-shadow: 0 4px 16px #0006; touch-action: none; user-select: none; -webkit-user-select: none; pointer-events: auto; }
+button[data-control="accelerate"] { background: #087e55ee; min-width: 76px; }
+button[data-control="brake"] { background: #a33b35ee; font-size: 12px; }
+button:active { transform: scale(.96); filter: brightness(1.2); }
+@media (min-width: 850px) { #controls { max-width: 720px; left: 50%; transform: translateX(-50%); } }
+@media (max-height: 480px) { #controls { bottom: 8px; } button { min-height: 48px; } }
+
+
+/* In-game scene asset inventory */
+#assets-toggle { position: fixed; top: 70px; right: 78px; min-width: 66px; min-height: 34px; padding: 5px 9px; font-size: 10px; pointer-events: auto; }
+#assets-panel { position: fixed; inset: 0; z-index: 1000; width: min(360px, calc(100vw - 28px)); max-width: calc(100vw - 28px); max-height: min(70dvh, 560px); margin: auto; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: 13px; border: 1px solid #ffffff55; border-radius: 13px; background: #101820; color: #f2f5f4; box-shadow: 0 12px 36px #0009; text-shadow: none; pointer-events: auto; touch-action: pan-y; }
+#assets-panel:not([open]) { display: none; }
+#assets-panel[open] { display: block; }
+#assets-panel::backdrop { background: #050b10bb; }
+.assets-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.assets-heading h2 { margin: 0; font-size: 12px; letter-spacing: .1em; }
+.assets-heading p { margin: 4px 0 0; color: #ffbf47; font-size: 10px; }
+#assets-close { min-width: 30px; min-height: 30px; width: 30px; height: 30px; padding: 0; border-radius: 8px; font-size: 20px; }
+.asset-group { margin: 10px 0 0; padding-top: 9px; border-top: 1px solid #ffffff24; }
+.asset-group h3 { margin: 0 0 6px; color: #8ee0bd; font-size: 10px; letter-spacing: .1em; }
+.asset-row { display: flex; justify-content: space-between; gap: 12px; padding: 3px 0; font-size: 11px; line-height: 1.35; }
+.asset-row strong { color: #ffcf68; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.asset-note { margin: 10px 0 0; padding: 8px; border-radius: 8px; background: #ffffff0d; color: #cbd5d1; font-size: 10px; line-height: 1.45; }
+.asset-missing { color: #ffb5a8; }
+@media (max-width: 390px) { #assets-toggle { right: 76px; } #assets-panel { max-height: 70dvh; } }
+
+#asset-status { position: fixed; z-index: 4; top: 110px; left: 14px; max-width: calc(100vw - 28px); color: #a9f2d0; font: 10px/1.4 ui-monospace, monospace; text-shadow: 0 2px 8px #000; pointer-events: none; }
+#asset-status[data-state="error"] { color: #ff9d8e; }
+

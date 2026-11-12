@@ -1,0 +1,26 @@
+{
+  "models": [
+    {
+      "name": "diagnostic-cube",
+      "url": "/assets/diagnostic-cube.glb",
+      "position": [
+        2.8,
+        1.35,
+        -13
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
+  ],
+  "textures": [
+    {
+      "name": "diagnostic-checker",
+      "url": "/assets/diagnostic-checker.png",
+      "applyTo": "diagnostic-cube",
+      "map": "diffuseMap"
+    }
+  ]
+}
