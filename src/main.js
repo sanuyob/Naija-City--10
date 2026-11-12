@@ -7,12 +7,13 @@ window.__NAIJA_ASSET_INVENTORY__ = mountAssetInventory();
 const statusLabel = document.getElementById('status');
 const perfToggle = document.getElementById('perf-toggle');
 const perfPanel = document.getElementById('perf-panel');
+const assetStatusLabel = document.getElementById('asset-status');
 
 async function start() {
   statusLabel.textContent = 'Loading driving scene…';
   // The PlayCanvas runtime is fetched only after the small page shell is ready.
   const { startGame } = await import('./game.js');
-  await startGame({ statusLabel, perfToggle, perfPanel });
+  await startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel });
 }
 
 start().catch(error => {
