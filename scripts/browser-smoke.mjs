@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
-const port=4173,origin=`http://127.0.0.1:${port}`;
+const port=4173,basePath=process.env.GITHUB_ACTIONS==='true'?'/Naija-City--10/':'/',origin=`http://127.0.0.1:${port}${basePath}`;
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
 let browser;
 try {
