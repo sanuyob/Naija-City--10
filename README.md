@@ -20,7 +20,7 @@ A phone-first Nigerian city driving prototype built with the PlayCanvas Engine a
 GitHub Actions runs source checks, a production build, a JavaScript raw/gzip budget gate, and a headless Chromium test at 390 × 844. The browser test checks WebGL 2 startup, Stage 02 readiness, the performance HUD and accelerator input.
 
 ## Performance budgets
-The analyzer reports total production JavaScript and enforces 1,400 KiB minified / 400 KiB gzip budgets. Vite's own chunk warning is intentionally not hidden or raised to make the build appear optimized. The current measured result will be recorded in the Actions log.
+Latest verified build: 1,201.1 KiB total minified JavaScript and 320.0 KiB gzip across two chunks. The HTML entry's game bootstrap is only about 2.29 KiB; the PlayCanvas game/engine chunk remains about 1,227.64 KiB (327.27 KiB gzip) and still triggers Vite's 500 KiB warning. Lazy-loading improves initial shell loading and caching, but does not remove the engine payload. The analyzer enforces 1,400 KiB raw / 400 KiB gzip budgets. Vite's warning is intentionally not hidden or raised. Further engine-level trimming is still a performance task.
 
 ## Physical Android qualification
 The headless browser test is not a substitute for a physical phone test. On the target Android device, open the deployed game, allow shaders to settle, drive the same junction loop for at least two minutes, and record the HUD's FPS, frame time, draw calls and GPU memory. Also note startup time, stutter, heat and whether the browser reloads. GPU memory is an engine estimate, not total Android RAM.
