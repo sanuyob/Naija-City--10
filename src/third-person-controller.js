@@ -5,7 +5,7 @@ import * as pc from 'playcanvas';
  * Character geometry is assembled from primitive meshes; gait is procedural
  * so no large external rig or animation download is required.
  */
-export function createThirdPersonController(app, camera, canvas) {
+export function createThirdPersonController(app, camera, canvas, { onInteract } = {}) {
   const mat = (color, metalness = 0) => {
     const material = new pc.StandardMaterial();
     material.diffuse = new pc.Color(...color);
@@ -55,12 +55,14 @@ export function createThirdPersonController(app, camera, canvas) {
   part(rightLeg, 'right-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
   part(rightLeg, 'right-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
 
-  const input = { x: 0, y: 0, sprint: false, jumpQueued: false };
+  const input = { x: 0, y: 0, sprint: false, jumpQueued: false, crouch: false };
   const keys = Object.create(null);
   const joystick = document.getElementById('move-joystick');
   const knob = document.getElementById('move-knob');
   const jumpButton = document.getElementById('jump-button');
   const sprintButton = document.getElementById('sprint-button');
+  const crouchButton = document.getElementById('crouch-button');
+  const interactButton = document.getElementById('interact-button');
   let joystickPointer = null;
   let orbitPointer = null;
   let orbitLastX = 0, orbitLastY = 0;
@@ -71,6 +73,7 @@ export function createThirdPersonController(app, camera, canvas) {
   const smoothedCamera = camera.getPosition().clone();
   const velocity = new pc.Vec3();
   let grounded = true;
+  let stamina = 100;
   let gaitTime = 0;
   let moving = false;
   let running = false;
@@ -112,11 +115,21 @@ export function createThirdPersonController(app, camera, canvas) {
   sprintButton?.addEventListener('pointerup', sprintOff);
   sprintButton?.addEventListener('pointercancel', sprintOff);
   sprintButton?.addEventListener('lostpointercapture', sprintOff);
+  const toggleCrouch = event => {
+    event?.preventDefault?.();
+    input.crouch = !input.crouch;
+    crouchButton?.setAttribute('aria-pressed', String(input.crouch));
+  };
+  crouchButton?.addEventListener('click', toggleCrouch);
+  const interactPress = event => { event.preventDefault(); onInteract?.(getState()); };
+  interactButton?.addEventListener('pointerdown', interactPress);
 
   const onKeyDown = event => {
     const key = event.key.toLowerCase();
     keys[key] = true;
     if (key === ' ' || key === 'space') { event.preventDefault(); input.jumpQueued = true; }
+    if (key === 'c' && !event.repeat) toggleCrouch(event);
+    if (key === 'e' && !event.repeat) onInteract?.(getState());
   };
   const onKeyUp = event => { keys[event.key.toLowerCase()] = false; };
   const onBlur = () => {
@@ -154,8 +167,10 @@ export function createThirdPersonController(app, camera, canvas) {
     const magnitude = Math.hypot(axisX, axisY);
     if (magnitude > 1) { axisX /= magnitude; axisY /= magnitude; }
     moving = Math.hypot(axisX, axisY) > 0.12;
-    running = moving && (input.sprint || keys.shift);
-    const speed = running ? 6.0 : 3.15;
+    running = moving && !input.crouch && (input.sprint || keys.shift) && stamina > 0;
+    if (running) stamina = Math.max(0, stamina - 26 * step);
+    else stamina = Math.min(100, stamina + 19 * step);
+    const speed = input.crouch ? 1.55 : running ? 6.0 : 3.15;
 
     // Camera-relative movement: joystick up moves toward the camera's forward direction.
     forward.set(-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw));
@@ -176,6 +191,7 @@ export function createThirdPersonController(app, camera, canvas) {
     p.y += velocity.y * step;
     if (p.y <= 0) { p.y = 0; velocity.y = 0; grounded = true; }
     player.setPosition(p);
+    player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
 
     if (moving) {
       const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
@@ -221,11 +237,13 @@ export function createThirdPersonController(app, camera, canvas) {
     canvas.removeEventListener('pointermove', onPointerMove);
     canvas.removeEventListener('pointerup', onPointerUp);
     canvas.removeEventListener('pointercancel', onPointerUp);
+    crouchButton?.removeEventListener('click', toggleCrouch);
+    interactButton?.removeEventListener('pointerdown', interactPress);
     player.destroy();
   }
 
   return {
     player, update, destroy,
-    getState: () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, cameraYaw, cameraPitch })
+    getState: () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch })
   };
 }
