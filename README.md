@@ -3,7 +3,7 @@
 Naija City is a Nigerian-inspired third-person open-world RPG prototype built with PlayCanvas.
 
 ## Stage 08A — City expansion
-- Expanded the environment footprint to approximately 96 m wide by 370 m long, including the original Yaba blockout.
+- Expanded the environment footprint to approximately 96 m wide by 374 m long, including the original Yaba blockout.
 - Continued the central avenue and added two parallel distributor roads plus three connecting cross streets.
 - Added eight commercial and eight residential low-poly neighbourhood buildings, with three pocket parks.
 - Kept the new geometry procedural and modular for iteration; these are expansion blockouts, not finished PBR buildings.
