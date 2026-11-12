@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #101820; font-family: system-ui, sans-serif; touch-action: none; }
-#application { display: block; width: 100%; height: 100%; }
+#application { position: fixed !important; inset: 0 !important; display: block; width: 100vw !important; height: 100dvh !important; min-width: 100vw; min-height: 100dvh; max-width: 100vw; max-height: 100dvh; }
 #hud { position: fixed; inset: 14px 14px auto; display: flex; align-items: flex-start; justify-content: space-between; color: white; pointer-events: none; text-shadow: 0 2px 8px #000; }
 .brand { font-weight: 900; letter-spacing: .12em; font-size: 13px; }
 .brand span { display: block; color: #ffbf47; font-size: 9px; letter-spacing: .18em; margin-top: 3px; }
@@ -37,3 +37,6 @@ button:active { transform: scale(.96); filter: brightness(1.2); }
 .asset-note { margin: 10px 0 0; padding: 8px; border-radius: 8px; background: #ffffff0d; color: #cbd5d1; font-size: 10px; line-height: 1.45; }
 .asset-missing { color: #ffb5a8; }
 @media (max-width: 390px) { #assets-toggle { right: 76px; } #assets-panel { max-height: 70dvh; } }
+
+#asset-status { position: fixed; z-index: 4; top: 110px; left: 14px; max-width: calc(100vw - 28px); color: #a9f2d0; font: 10px/1.4 ui-monospace, monospace; text-shadow: 0 2px 8px #000; pointer-events: none; }
+#asset-status[data-state="error"] { color: #ff9d8e; }
