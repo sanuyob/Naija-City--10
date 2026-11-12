@@ -1,4 +1,4 @@
-name: Stage 06 third-person playable preview
+name: Naija City playable preview
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
       - feature/naija-city-drive-stage-01
       - feature/naija-city-stage-05-rpg-foundation
       - feature/naija-city-stage-06-third-person
+      - feature/naija-city-stage-07-landscape-hud
   workflow_dispatch:
 
 permissions:
@@ -31,11 +32,15 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm install --no-audit --no-fund
-      - name: Verify Stage 06 third-person character system and build
+      - name: Verify gameplay, build and mobile browser smoke test
         run: |
           npm run verify
           npm run build
           npm run analyze:bundle
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run landscape mobile browser smoke test
+        run: npm run test:browser
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

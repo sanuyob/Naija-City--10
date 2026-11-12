@@ -1,0 +1,11 @@
+{
+  "name": "Naija City",
+  "short_name": "Naija City",
+  "description": "Nigerian-inspired third-person open-world RPG prototype",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#07110f",
+  "theme_color": "#0b1110"
+}
