@@ -20,8 +20,14 @@ try {
  if(render.canvas.cssWidth!==390||render.canvas.cssHeight!==844)throw new Error('Canvas CSS viewport mismatch: '+JSON.stringify(render.canvas));
  if(render.canvas.pixelWidth<390||render.canvas.pixelHeight<844)throw new Error('Canvas drawing buffer is smaller than the mobile viewport: '+JSON.stringify(render.canvas));
  if(render.drawCalls<1||render.meshInstances<20||!render.diagnosticMarker)throw new Error('No real scene geometry submitted to renderer: '+JSON.stringify(render));
+ if(!render.camera||render.camera.cameraToMarkerDot<0.6)throw new Error('Camera is not aimed toward the diagnostic object: '+JSON.stringify(render.camera));
+ if(!render.sceneBounds.min.every(Number.isFinite)||!render.sceneBounds.max.every(Number.isFinite)||render.sceneBounds.min[2]>-80||render.sceneBounds.max[2]<50)throw new Error('Visible scene bounds are invalid or incomplete: '+JSON.stringify(render.sceneBounds));
+ if(!render.glViewport||render.glViewport[2]<390||render.glViewport[3]<844)throw new Error('WebGL viewport does not cover the mobile canvas: '+JSON.stringify(render.glViewport));
  const screenshot=await page.screenshot({fullPage:false});
  if(screenshot.length<8000||screenshot[0]!==0x89||screenshot[1]!==0x50||screenshot[2]!==0x4e||screenshot[3]!==0x47)throw new Error('Rendered mobile screenshot is missing or unexpectedly empty');
+ const screenshotVisual=await page.evaluate(async dataUrl=>{const image=new Image();image.src=dataUrl;await image.decode();const sample=document.createElement('canvas');sample.width=image.width;sample.height=image.height;const ctx=sample.getContext('2d',{willReadFrequently:true});ctx.drawImage(image,0,0);const pixels=ctx.getImageData(0,0,sample.width,sample.height).data;const colors=new Set();let varied=0;for(let y=Math.floor(sample.height*0.2);y<Math.floor(sample.height*0.78);y+=4){for(let x=Math.floor(sample.width*0.08);x<Math.floor(sample.width*0.92);x+=4){const i=(y*sample.width+x)*4;const key=[pixels[i]>>3,pixels[i+1]>>3,pixels[i+2]>>3].join(':');colors.add(key);if(pixels[i]<235||pixels[i+1]<235||pixels[i+2]<235)varied++;}}return {width:image.width,height:image.height,uniqueSceneColors:colors.size,nonBrightSamples:varied};},'data:image/png;base64,'+screenshot.toString('base64'));
+ if(screenshotVisual.width!==390||screenshotVisual.height!==844||screenshotVisual.uniqueSceneColors<20||screenshotVisual.nonBrightSamples<100)throw new Error('Screenshot visual assertion failed: '+JSON.stringify(screenshotVisual));
+ if(!await page.locator('#baseline-toggle').isVisible())throw new Error('On-device performance baseline control is missing');
  const go=page.locator('[data-control="accelerate"]'),b=await go.boundingBox();if(!b)throw new Error('GO control is not visible');
  await page.mouse.move(b.x+b.width/2,b.y+b.height/2);await page.mouse.down();await page.waitForTimeout(1400);
  const speed=parseInt((await page.locator('#speed').textContent())??'0',10);await page.mouse.up();if(!(speed>0))throw new Error('Accelerator did not increase speed');
@@ -39,6 +45,6 @@ try {
  await page.locator('#perf-toggle').click();await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1300);
  if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
  if(errors.length)throw new Error(`Browser errors: ${errors.join(' | ')}`);
- console.log(`Stage 05 browser smoke passed: 390x844 viewport, WebGL 2, ${render.drawCalls} draw calls, ${render.meshInstances} mesh instances, visible diagnostic marker, screenshot ${screenshot.length} bytes, Ammo vehicle + four wheels, six physical traffic colliders, GO (${speed} km/h), live performance panel.`);
+ console.log(`Stage 05 browser smoke passed: 390x844 viewport, WebGL 2, ${render.drawCalls} draw calls, ${render.meshInstances} mesh instances, visible diagnostic marker, screenshot ${screenshot.length} bytes / ${screenshotVisual.uniqueSceneColors} scene colors, Ammo vehicle + four wheels, six physical traffic colliders, GO (${speed} km/h), live performance panel.`);
  await context.close();
 } finally {if(browser)await browser.close();server.kill('SIGTERM');}
