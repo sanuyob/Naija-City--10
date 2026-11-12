@@ -180,6 +180,13 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
   // tyre friction, braking and contacts. Traffic remains kinematic AI with Bullet colliders.
   let heading=0;
   const position=new pc.Vec3(),desiredCamera=new pc.Vec3(),cameraPosition=new pc.Vec3();
+  // Start with the camera behind the physics chassis; do not spend the first seconds looking away from the road.
+  position.copy(car.getPosition());
+  heading=car.getEulerAngles().y;
+  const initialRad=heading*Math.PI/180;
+  cameraPosition.set(position.x+Math.sin(initialRad)*2.2,position.y+6.2,position.z-Math.cos(initialRad)*11);
+  camera.setPosition(cameraPosition);
+  camera.lookAt(position.x,position.y+0.8,position.z-2);
   app.on('update',dt=>{
     const step=Math.min(dt,0.05);
     const accelerate=held.accelerate||keys.w||keys.arrowup;
@@ -267,7 +274,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel }) {
     };
   }
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:5,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:loadedAssets,stats};
+  window.__NAIJA_GAME__={ready:true,stage:5,junction:true,traffic:traffic.length,trafficAI:true,physics:true,vehiclePhysics:'Ammo.btRaycastVehicle',wheelCount:4,trafficPhysicsBodies:physics.trafficBodies.length,assets:loadedAssets,stats,app};
   window.__NAIJA_RENDER_DIAGNOSTICS__ = getRenderDiagnostics();
   app.on('frameend', () => { window.__NAIJA_RENDER_DIAGNOSTICS__ = getRenderDiagnostics(); });
   const { mountDeviceBaseline } = await import('./device-baseline.js');
