@@ -101,7 +101,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
 
   return {
     stage: '08A',
-    expansionBounds: { min: [-48, -1, -205], max: [48, 8, 160] },
+    expansionBounds: { min: [-48, -1, -205], max: [48, 8, 169] },
     parallelRoads: 2,
     crossStreets: 3,
     commercialBuildings: 8,
