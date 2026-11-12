@@ -33,6 +33,9 @@ assert.doesNotMatch(entry,/from ['"]playcanvas['"]/,'Initial entry must not eage
 assert.match(game,/createGraphicsDevice/);
 assert.match(game,/createStage08ACityExpansion/,'Stage 08A city expansion must be mounted in the live scene');
 assert.match(game,/createStage08BBuildingDetail/,'Stage 08B building detail must be mounted in the live scene');
+assert.match(game,/options\.batchManager = pc\.BatchManager/,'PlayCanvas static batching must be enabled before app initialization');
+assert.match(facade,/app\.batcher\?\.addGroup\('stage08b-static-facades', false, 96\)/,'Stage 08B static facades must use a spatially bounded static batch group');
+assert.match(facade,/entity\.render\.batchGroupId = batchGroup\.id/,'Stage 08B detail meshes must join the static batch group');
 for(const feature of ['stage08b-shop-sign-fascia','stage08b-shop-awning','stage08b-shop-roller-shutter','stage08b-shop-security-door','stage08b-home-balcony-slab','stage08b-home-balcony-baluster','stage08b-home-security-grille-bar','stage08b-home-external-ac','stage08b-home-roof-water-tank']) assert.ok(facade.includes(feature),`Missing Stage 08B facade feature: ${feature}`);
 assert.match(facade,/commercialFacades: 8/);
 assert.match(facade,/residentialFacades: 8/);
