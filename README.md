@@ -1,14 +1,15 @@
-# Naija City Drive — Stage 02
+# Naija City Drive — Stage 03
 Phone-first Nigerian city driving prototype using PlayCanvas Engine and Vite.
 
-## Stage 02 changes
-- Lazy-loads PlayCanvas after the small page shell, reducing the initial entry chunk and deferring engine download until scene startup.
-- Removes unused texture and GLB resource handlers because the current procedural scene loads no external assets.
-- Adds a four-way junction, connected cross street, zebra crossings, stop lines and kerbs.
-- Adds roadside drainage covers, kiosk, bus-stop sign/bench, streetlights and junction bollards.
-- Improves arcade handling with forward/reverse movement, progressive steering, coasting, braking and shoulder drag.
-- Adds a PERF panel with FPS, frame interval, peak frame interval, CPU update+render, draw calls, estimated GPU resource memory, optional JS heap and GPU renderer.
-- Uses a conservative 1.25 device-pixel-ratio cap for mobile.
+## Stage 03 — traffic and collision update
+- Adds six low-poly AI traffic vehicles on main-road and cross-street lanes.
+- Adds a deterministic two-phase traffic signal. Main-road and cross-street traffic yield at the junction on red.
+- Adds player-to-traffic proximity collision response that slows the player and nudges the car away.
+- Adds live traffic status text and exposes Stage 03 readiness for automated testing.
+- Keeps the existing mobile controls, performance panel and conservative 1.25 device-pixel-ratio cap.
+
+## Important physics decision
+This stage uses lightweight scripted/kinematic traffic and proximity collision checks. It does **not** claim to deliver full rigid-body vehicle physics or suspension. Official PlayCanvas documentation says physics requires the Ammo.js WebAssembly module, which adds several hundred kilobytes and must be loaded before physics components work. Given the project's current mobile bundle/performance constraints, adding Ammo blindly would be a poor trade. The next physics upgrade should be an optional, lazy-loaded Ammo module after the target Android baseline is measured. The official RaycastVehicle tutorial is the reference for that later upgrade.
 
 ## Run and verify
 ```bash
@@ -21,12 +22,12 @@ npm run dev
 ```
 
 ## Bundle budgets
-The initial page entry must stay below 50 KiB raw / 20 KiB gzip. All JavaScript chunks together must stay below 1,400 KiB raw / 400 KiB gzip. The Vite per-chunk warning is calibrated at 1,200 KiB for this standalone PlayCanvas runtime; the separate CI budgets are the actual regression gates and report each emitted chunk. The game runtime is lazy-loaded, but still downloads before 3D gameplay starts.
+The initial page entry must stay below 50 KiB raw / 20 KiB gzip. All JavaScript chunks together must stay below 1,400 KiB raw / 400 KiB gzip. The PlayCanvas runtime is lazy-loaded after the small page shell. The current chunk warning threshold is calibrated at 1,200 KiB; the separate CI budgets remain the regression gates.
 
 ## Performance interpretation
-The PERF panel uses documented PlayCanvas AppStats getters. GPU resource memory estimates tracked graphics resources, not total physical GPU memory. JavaScript heap appears only where the browser exposes `performance.memory`; otherwise it displays N/A. GPU time is not shown unless supported and enabled.
+The PERF panel uses documented PlayCanvas AppStats getters. GPU resource memory estimates tracked graphics resources, not total physical GPU memory. JavaScript heap appears only where the browser exposes `performance.memory`; otherwise it displays N/A.
 
-For a real-phone baseline, open the game on the same Android device, keep it foregrounded, let shaders warm up, then drive the same route for at least 60 seconds. Record average FPS, frame time, peak frame time, draw calls and GPU resource memory. The headless Chromium check is functional QA, not Android performance certification.
+For a real-phone baseline, open the game on the target Android device, allow shaders to warm up, then drive for at least 60 seconds. Record average FPS, frame time, peak frame time, draw calls and GPU resource memory. Headless Chromium is functional QA, not Android performance certification.
 
 ## Controls
 - W / Up: accelerate
@@ -35,11 +36,15 @@ For a real-phone baseline, open the game on the same Android device, keep it for
 - Mobile: hold the on-screen controls
 - PERF: show live performance telemetry
 
-## Limitations
-Handling remains arcade-style, not rigid-body/suspension physics. Junction boundaries use soft road-edge drag rather than physical collision meshes. Traffic AI, pedestrians, production vehicle models, audio and save systems are not included.
+## Known limitations
+- No full rigid-body vehicle physics, suspension, wheel-ground raycasts or physically simulated tire grip yet.
+- Traffic uses six scripted vehicles on fixed routes, not complex lane-changing AI.
+- Player collision uses distance-based contact checks, not full physical collision meshes.
+- No pedestrian simulation, licensed production vehicle models, audio or save system.
 
 ## Engine references
-- https://developer.playcanvas.com/user-manual/engine/standalone/
+- https://developer.playcanvas.com/user-manual/physics/physics-basics/
+- https://developer.playcanvas.com/user-manual/physics/rigid-bodies/
+- https://developer.playcanvas.com/tutorials/vehicle-physics/
 - https://developer.playcanvas.com/user-manual/optimization/guidelines/
-- https://developer.playcanvas.com/user-manual/optimization/runtime-devicepixelratio/
-- https://developer.playcanvas.com/user-manual/optimization/app-stats.md
+- https://developer.playcanvas.com/user-manual/optimization/app-stats/
