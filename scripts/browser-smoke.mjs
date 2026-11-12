@@ -13,13 +13,14 @@ try {
  const page=await context.newPage(),errors=[];
  page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  await page.goto(origin,{waitUntil:'networkidle'});await page.locator('#status').filter({hasText:'Ready'}).waitFor({timeout:45000});
- await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCalls>0&&window.__NAIJA_RENDER_DIAGNOSTICS__?.meshInstances>20&&window.__NAIJA_RENDER_DIAGNOSTICS__?.camera?.cameraToMarkerDot>0.6,{timeout:20000});
+ await page.waitForTimeout(1500);
  if(!await page.locator('#application').evaluate(c=>Boolean(c.getContext('webgl2'))))throw new Error('WebGL 2 unavailable');
  if(!await page.evaluate(()=>window.__NAIJA_GAME__?.ready&&window.__NAIJA_GAME__?.junction&&window.__NAIJA_GAME__?.stage===5&&window.__NAIJA_GAME__?.traffic===6&&window.__NAIJA_GAME__?.physics===true&&window.__NAIJA_GAME__?.wheelCount===4&&window.__NAIJA_GAME__?.trafficPhysicsBodies===6))throw new Error('Stage 04 Ammo vehicle or traffic physics readiness missing');
  const render=await page.evaluate(()=>window.__NAIJA_RENDER_DIAGNOSTICS__);
+ console.log('MOBILE RENDER DIAGNOSTICS:',JSON.stringify({render,errors,status:await page.locator('#status').textContent()}));
  if(render.canvas.cssWidth!==390||render.canvas.cssHeight!==844)throw new Error('Canvas CSS viewport mismatch: '+JSON.stringify(render.canvas));
  if(render.canvas.pixelWidth<390||render.canvas.pixelHeight<844)throw new Error('Canvas drawing buffer is smaller than the mobile viewport: '+JSON.stringify(render.canvas));
- if(render.drawCalls<1||render.meshInstances<20||!render.diagnosticMarker)throw new Error('No real scene geometry submitted to renderer: '+JSON.stringify(render));
+ if(!render||render.drawCalls<1||render.meshInstances<20||!render.diagnosticMarker)throw new Error('No real scene geometry submitted to renderer: '+JSON.stringify({render,errors}));
  if(!render.camera||render.camera.cameraToMarkerDot<0.6)throw new Error('Camera is not aimed toward the diagnostic object: '+JSON.stringify(render.camera));
  if(!render.sceneBounds.min.every(Number.isFinite)||!render.sceneBounds.max.every(Number.isFinite)||render.sceneBounds.min[2]>-80||render.sceneBounds.max[2]<50)throw new Error('Visible scene bounds are invalid or incomplete: '+JSON.stringify(render.sceneBounds));
  if(!render.glViewport||render.glViewport[2]<390||render.glViewport[3]<844)throw new Error('WebGL viewport does not cover the mobile canvas: '+JSON.stringify(render.glViewport));
