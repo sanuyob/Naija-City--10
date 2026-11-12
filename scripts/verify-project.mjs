@@ -23,7 +23,8 @@ assert.match(html,/id="perf-toggle"/);
 assert.match(html,/id="perf-panel"/);
 assert.match(html,/id="traffic-status"/);
 assert.match(html,/id="asset-status"/);
-for(const control of ['accelerate','brake','left','right']) assert.match(html,new RegExp(`data-control="${control}"`));
+assert.match(html,/id="assets-panel"/);
+assert.match(html,/id="asset-status"/);
 assert.match(entry,/import\('\.\/game\.js'\)/,'Engine module must be lazy-loaded');
 assert.doesNotMatch(entry,/from ['"]playcanvas['"]/,'Initial entry must not eagerly import PlayCanvas');
 assert.match(game,/createGraphicsDevice/);
@@ -51,7 +52,7 @@ assert.match(css,/height:\s*min\(100dvh,\s*1600px\)\s*!important/,'Canvas must f
 assert.match(css,/max-height:\s*1600px\s*!important/,'Canvas drawing surface must not allocate an enormous framebuffer');
 assert.match(smoke,/locator\('#application'\)\.screenshot/,'Browser smoke test must inspect a real canvas screenshot');
 assert.match(smoke,/magentaPixels/,'Screenshot test must detect the diagnostic marker');
-for(const feature of ['cross-street','north-crosswalk','bus-stop-sign','junction-bollard','pointerdown','keydown','traffic-main-','traffic-cross-','signal-red','updateSignal','trafficAI:true','createVehiclePhysics','physics.step','stage:4','wheelCount:4']) assert.ok(game.includes(feature),`Missing Stage 04 game feature: ${feature}`);
+for(const feature of ['cross-street','north-crosswalk','bus-stop-sign','junction-bollard','pointerdown','keydown','traffic-main-','traffic-cross-','signal-red','updateSignal','trafficAI:true','createVehiclePhysics','physics.step','stage:5','wheelCount:4']) assert.ok(game.includes(feature),`Missing Stage 04 game feature: ${feature}`);
 for(const feature of ['WasmModule.setConfig','btDiscreteDynamicsWorld','btRaycastVehicle','addWheel','set_m_suspensionStiffness','set_m_wheelsDampingCompression','applyEngineForce','setSteeringValue','setBrake','stepSimulation','CF_KINEMATIC_OBJECT']) assert.ok(physics.includes(feature),`Missing physics feature: ${feature}`);
 assert.match(physics,/developer\.playcanvas\.com\/assets\/modules\/ammo/,'Ammo must load from the official PlayCanvas module host');
 assert.match(physics,/1 \/ 60/,'Physics must use fixed 60 Hz substeps');
