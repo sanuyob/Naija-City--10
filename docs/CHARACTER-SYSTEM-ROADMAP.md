@@ -62,7 +62,7 @@ Preferred first deliverable is a single hero GLB with mesh, skeleton, skinning, 
 ## Current execution state (2026-11-13)
 
 - Character 01A merged as PR #12 (squash commit 45646ca3fc1d12134c89bc78dca70b1619212610). Its GitHub Actions verification passed. The job emitted a non-blocking warning that actions/checkout@v4, actions/cache@v4 and actions/setup-node@v4 are being forced from Node.js 20 to Node.js 24; track this as CI maintenance, not a build failure.
-- Character 01B has its own development branch character-stage-01b-original-hero-rig and private Blender project [Naija City — Hero Character 01B](https://blendstra.com/studio?workspace=wsp_a570bc495f2b652cccd702269f77dafd1b1ea057&project=befd196a-6cbf-4539-8671-f92446cab835). The first asset-generation operation is queued; no GLB has been accepted yet.
+- Character 01B has its own development branch character-stage-01b-original-hero-rig and private Blender project [Naija City — Hero Character 01B](https://blendstra.com/studio?workspace=wsp_a570bc495f2b652cccd702269f77dafd1b1ea057&project=befd196a-6cbf-4539-8671-f92446cab835). First GLB revision succeeded (8.57 MB, 46,604 triangles, 103 delivered objects, zero animations), but visual inspection rejected the torso and trouser fit because the garments sat inside the body; a bounded fitting correction is running. This model is not accepted or imported into the game yet.
 - An older private project named GIDI Main Protagonist V1 was inspected and rejected for this role: its delivered model has a visual mismatch with the streetwear brief and its delivered GLB reports no animation clips. It is not being imported or reused.
 
 ## Deferred work / explicit dependencies
