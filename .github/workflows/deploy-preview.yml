@@ -12,6 +12,7 @@ on:
       - feature/naija-city-stage-08d-semi-photoreal-buildings
       - feature/naija-city-stage-08e-handcrafted-buildings
       - feature/naija-city-stage-08f-final-artistry
+      - feature/naija-city-stage-08g-ikeja-street-life
   workflow_dispatch:
 
 permissions:
