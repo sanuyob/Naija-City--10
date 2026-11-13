@@ -142,7 +142,8 @@
         "color": "Basis ETC1S quality 255",
         "normalAndOrm": "Basis UASTC level 3 with Zstandard 18",
         "mipmaps": true
-      }
+      },
+      "sourceAspectRatio": "preserved from source images; do not square-crop 2:1 PBR maps"
     },
     "license": "CC0-1.0",
     "generatedArtifact": "public/assets/buildings/yaba-core-01.glb",

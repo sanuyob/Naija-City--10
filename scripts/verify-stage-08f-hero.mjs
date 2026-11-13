@@ -35,6 +35,8 @@ for(const image of ktxImages) {
   assert.ok(view&&view.buffer===0,'KTX2 image must reference the embedded GLB buffer.');
   const offset=binaryChunkStart+(view.byteOffset||0);
   assert.deepEqual(bytes.subarray(offset,offset+12),ktxMagic,'Embedded image must have a valid KTX2 identifier.');
+  const width=bytes.readUInt32LE(offset+20),height=bytes.readUInt32LE(offset+24);
+  assert.ok(width>0&&height>0&&width%4===0&&height%4===0,'KTX2 image dimensions must be valid and divisible by four.');
 }
 for(const material of json.materials.filter(item=>item.pbrMetallicRoughness?.baseColorTexture)) {
   assert.ok(material.normalTexture,'PBR hero material must include its normal map.');

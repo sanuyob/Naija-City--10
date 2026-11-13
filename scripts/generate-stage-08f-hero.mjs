@@ -103,8 +103,10 @@ function getMap(entries, assetIdValue, candidates, description) {
 
 function readPng(map, label) {
   const png = PNG.sync.read(map.bytes);
-  if (png.width !== 2048 || png.height !== 2048) {
-    throw new Error(label + ' must be a 2048x2048 source map; received ' + png.width + 'x' + png.height);
+  const longestSide = Math.max(png.width, png.height);
+  const shortestSide = Math.min(png.width, png.height);
+  if (longestSide !== 2048 || shortestSide < 512 || png.width % 4 !== 0 || png.height % 4 !== 0) {
+    throw new Error(label + ' must be a 2K source map with dimensions divisible by four; received ' + png.width + 'x' + png.height);
   }
   return png;
 }
@@ -116,6 +118,11 @@ function flipNormalGreen(png) {
 
 function packOrm(roughness, metalness, ao) {
   const width = roughness.width, height = roughness.height;
+  for (const map of [metalness, ao].filter(Boolean)) {
+    if (map.width !== width || map.height !== height) {
+      throw new Error('PBR source maps must share dimensions before ORM packing.');
+    }
+  }
   const packed = new PNG({ width, height });
   for (let i = 0; i < packed.data.length; i += 4) {
     packed.data[i] = ao ? ao.data[i] : 255;
@@ -510,6 +517,7 @@ async function buildHeroSource() {
   const plasterNormal=readPng(plasterNormalMap,'Concrete034 normal');
   if(plasterNormalMap.name.toLowerCase().includes('normaldx'))flipNormalGreen(plasterNormal);
   const plasterRough=readPng(getMap(plasterEntries,'Concrete034',['roughness'],'roughness'),'Concrete034 roughness');
+  for(const map of [plasterNormal,plasterRough])if(map.width!==plasterColor.width||map.height!==plasterColor.height)throw new Error('Concrete034 PBR maps do not share matching dimensions.');
   const plasterOrm=packOrm(plasterRough,null,null);
 
   const steelColor=readPng(getMap(steelEntries,'CorrugatedSteel009',['color'],'base color'),'CorrugatedSteel009 color');
@@ -519,6 +527,7 @@ async function buildHeroSource() {
   const steelRough=readPng(getMap(steelEntries,'CorrugatedSteel009',['roughness'],'roughness'),'CorrugatedSteel009 roughness');
   const steelMetal=readPng(getMap(steelEntries,'CorrugatedSteel009',['metalness','metallic'],'metalness'),'CorrugatedSteel009 metalness');
   const steelAo=readPng(getMap(steelEntries,'CorrugatedSteel009',['ambientocclusion','occlusion','_ao'],'ambient occlusion'),'CorrugatedSteel009 ambient occlusion');
+  for(const map of [steelNormal,steelRough,steelMetal,steelAo])if(map.width!==steelColor.width||map.height!==steelColor.height)throw new Error('CorrugatedSteel009 PBR maps do not share matching dimensions.');
   const steelOrm=packOrm(steelRough,steelMetal,steelAo);
 
   const images=[
