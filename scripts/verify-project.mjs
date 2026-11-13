@@ -135,6 +135,12 @@ assert.match(game,/createStage08HIkejaPropRealism/,'Stage 08H prop realism must 
 assert.match(game,/stage08H,stage08F/,'Stage 08H material audit metadata must be exposed at runtime');
 for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','vehicle-front-bumper','jerrycan-cap','jerrycan-handle-grip','wheelbarrow-handle','handcart-upright-frame','blue-market-crate','yellow-poly-jerrycan','green-pos-kiosk','red-vendor-canvas','natural-brown-skin-tone','ochre-shop-plaster']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
 assert.match(stage08h,/textureResolutions:\{asphalt:512,otherFamilies:256\}/,'Stage 08H texture resolution contract must remain mobile-conscious');
+assert.match(stage08h,/texturedMaterialFamilies:10/,'Stage 08H must report ten textured material families, including the drain-silt variant.');
+assert.match(stage08h,/textureMapSets:mapCache\.size/,'Stage 08H must expose its actual generated map-set count.');
+assert.match(stage08h,/generatedTextureCount:mapCache\.size \* 3/,'Stage 08H must expose all generated albedo, normal and gloss textures.');
+assert.match(stage08h,/08H-matte-silhouette-skin/,'Static pedestrian silhouettes must use a matte skin material, not plastic surface maps.');
+assert.match(stage08h,/detail\('chair-leg',[^\n]*seatMat\)/,'Plastic chair supports must use moulded-plastic material.');
+assert.match(stage08h,/parked-\.\*\-\(body\|roof\)/,'Vehicle roofs and bodies must share the same paint assignment.');
 assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
 
 assert.match(game,/farClip:520/,'Camera range must include the Ikeja extension');
