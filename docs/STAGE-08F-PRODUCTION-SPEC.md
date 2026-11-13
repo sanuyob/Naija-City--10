@@ -36,6 +36,12 @@ Use low-cost collision shapes, not render geometry:
 - Ammo must be initialized before AppBase; register CollisionComponentSystem and RigidBodyComponentSystem when using AppBase/AppOptions.
 - Test walking against walls, doorways, kerbs, slopes and building corners. Check that no collider moves when a streamed render asset unloads.
 
+### Current collision implementation status
+
+The runtime now resolves the player's horizontal movement against persistent circle-versus-AABB building bounds derived from all 48 manifest placements. These bounds remain active even when a building's visual GLB is streamed out, so unloading render geometry does not make the building walk-through. The player footprint radius and body height are explicit constants in the Stage 08E building manager.
+
+This is a lightweight static world-collision layer, not a full Ammo/Bullet rigid-body simulation. The GLB `COLLISION_PROXY` meshes remain separate authoring references and are not yet instantiated as physics bodies. Dynamic rigid bodies, capsule contacts, vertical obstacle interaction, slopes and physical doorway tests remain a separate physics gate; do not describe this implementation as Ammo physics.
+
 ## 5. Mobile performance acceptance
 Automated Chromium smoke tests are regression checks only. Physical Android acceptance must record:
 - cold and warm first-load time;
