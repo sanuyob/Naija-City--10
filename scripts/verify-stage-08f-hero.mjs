@@ -33,7 +33,12 @@ assert.equal(collision.extras.physicsRuntimeIntegrated,false,'Do not claim the h
 assert.equal(json.materials.length,7,'Hero must keep the seven-material building contract.');
 assert.ok(json.materials.some(material=>material.name.includes('Concrete034')),'Real concrete/plaster PBR material is missing.');
 assert.ok(json.materials.some(material=>material.name.includes('CorrugatedSteel009')),'Real corrugated-steel PBR material is missing.');
-assert.ok(json.materials.some(material=>material.name.includes('PaintedPlaster017')),'Photogrammetry-based painted-facade PBR material is missing.');
+const paintedFacadeIndex=json.materials.findIndex(material=>material.name==='painted-facade-PaintedPlaster017');
+assert.equal(paintedFacadeIndex,6,'Photogrammetry-based facade must occupy the newly-added geometry material slot 6.');
+const signageIndex=json.materials.findIndex(material=>material.name==='computer-village-emissive-signage');
+assert.equal(signageIndex,5,'Existing Computer Village signage must retain its original material slot 5.');
+assert.ok(json.meshes.flatMap(mesh=>mesh.primitives||[]).some(primitive=>primitive.material===paintedFacadeIndex),'Photogrammetry-based painted facade material must be assigned to actual hero geometry.');
+assert.ok(json.meshes.flatMap(mesh=>mesh.primitives||[]).some(primitive=>primitive.material===signageIndex),'Computer Village signage material must remain assigned to its original geometry slot.');
 assert.ok(hero.materialSources?.includes('PaintedPlaster017'),'Hero manifest must record PaintedPlaster017 source provenance.');
 assert.ok(json.materials.every(material=>material.pbrMetallicRoughness),'Every hero material must use glTF metallic-roughness PBR.');
 
@@ -63,7 +68,7 @@ for(const material of surfaceMaterials) {
   assert.ok(material.normalTexture,'Physical surface material must include its normal map: '+material.name);
   assert.ok(material.pbrMetallicRoughness.metallicRoughnessTexture,'Physical surface material must include packed ORM/metallic-roughness data: '+material.name);
 }
-assert.ok(json.meshes.flatMap(mesh=>mesh.primitives||[]).some(primitive=>primitive.material===6),'Photogrammetry-based painted facade material must be assigned to actual hero geometry.');
+
 const signage=json.materials.find(material=>material.name==='computer-village-emissive-signage');
 assert.ok(signage?.emissiveTexture,'Computer Village signage must retain its emissive artwork.');
 const report=await validator.validateBytes(new Uint8Array(bytes),{uri:'yaba-core-01.glb',format:'glb',writeTimestamp:false,maxIssues:100});
