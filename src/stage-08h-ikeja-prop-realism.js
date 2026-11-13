@@ -323,7 +323,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     const mats = wear === 'clean' ? clean : wear === 'weathered' ? weathered : used;
     if (/pedestrian-head/.test(name)) return skin;
     if (/pedestrian-torso/.test(name)) {
-      const shirt = position[2] < 285 ? 0 : position[2] < 320 ? 1 : 2;
+      const shirt = position[2] > 350 || position[2] < 285 ? 0 : position[2] < 320 ? 1 : 2;
       return shirts[shirt][wear];
     }
     if (/pedestrian-leg/.test(name)) return trousers[wear];
