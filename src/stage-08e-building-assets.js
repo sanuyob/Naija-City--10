@@ -15,7 +15,7 @@ function hideLegacyBuildings(app) {
 }
 
 export function createStage08EBuildings({app}) {
-  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,failures:[],textureEncoding:'embedded PNG; Basis/KTX2 compression pending'};
+  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'embedded PNG; Basis/KTX2 compression pending'};
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
   const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,96);
@@ -81,6 +81,7 @@ export function createStage08EBuildings({app}) {
 
   function update(position) {
     if(!state.ready||!position) return;
+    state.lastPlayerPosition=[position[0],position[1],position[2]];
     tick++;
     if(tick%8===0) {
       state.lod0=state.lod1=state.lod2=0;
@@ -107,6 +108,7 @@ export function createStage08EBuildings({app}) {
       .map(item=>({...item,distance:Math.hypot(position[0]-item.position[0],position[2]-item.position[2])}))
       .filter(item=>item.distance<=150)
       .sort((a,b)=>a.distance-b.distance);
+    state.lastCandidateCount=candidates.length;
     state.activeDistricts=[...new Set(candidates.map(item=>item.district).filter(Boolean))];
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
   }
