@@ -8,6 +8,7 @@ import { createStage08DBuildingRealism } from './stage-08d-building-realism.js';
 import { createStage08EBuildings } from './stage-08e-building-assets.js';
 import { createStage08FDeviceProfiler } from './stage-08f-device-profiler.js';
 import { createStage08GIkejaStreetLife } from './stage-08g-ikeja-street-life.js';
+import { createStage08HIkejaPropRealism } from './stage-08h-ikeja-prop-realism.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -191,6 +192,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const stage08E=createStage08EBuildings({app});
   await stage08E.initialize();
   const stage08G=createStage08GIkejaStreetLife({app,box,material});
+  const stage08H=createStage08HIkejaPropRealism({app,graphicsDevice:device});
   const playerController=createThirdPersonController(app,camera,canvas,{
     resolveMovement:stage08E.resolveMovement,
     onInteract:state=>{
@@ -263,7 +265,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
   window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
