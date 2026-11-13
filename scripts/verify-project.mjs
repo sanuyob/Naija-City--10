@@ -43,6 +43,7 @@ assert.match(html,/id="asset-status"/);
 assert.match(entry,/import\('\.\/game\.js'\)/,'Engine module must be lazy-loaded');
 assert.doesNotMatch(entry,/from ['"]playcanvas['"]/,'Initial entry must not eagerly import PlayCanvas');
 assert.match(game,/createGraphicsDevice/);
+assert.match(game,/pc\.AnimComponentSystem/,'PlayCanvas animation component system must be registered before rigged hero integration');
 assert.match(game,/createStage08ACityExpansion/,'Stage 08A city expansion must be mounted in the live scene');
 assert.match(game,/createStage08BBuildingDetail/,'Stage 08B building detail must be mounted in the live scene');
 assert.match(game,/createStage08CStreetInfrastructure/,'Stage 08C street infrastructure must be mounted in the live scene');
