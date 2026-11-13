@@ -11,6 +11,9 @@ const facade=await readFile(new URL('../src/stage-08b-building-detail.js',import
 const street=await readFile(new URL('../src/stage-08c-street-infrastructure.js',import.meta.url),'utf8');
 const realism=await readFile(new URL('../src/stage-08d-building-realism.js',import.meta.url),'utf8');
 const stage08e=await readFile(new URL('../src/stage-08e-building-assets.js',import.meta.url),'utf8');
+const stage08fProfiler=await readFile(new URL('../src/stage-08f-device-profiler.js',import.meta.url),'utf8');
+const stage08fSpec=await readFile(new URL('../docs/STAGE-08F-PRODUCTION-SPEC.md',import.meta.url),'utf8');
+const stage08fMaterials=JSON.parse(await readFile(new URL('../public/assets/stage-08f-material-library.json',import.meta.url),'utf8'));
 const generator=await readFile(new URL('./generate-stage-08e-assets.mjs',import.meta.url),'utf8');
 const stage08eManifest=JSON.parse(await readFile(new URL('../public/assets/stage-08e-manifest.json',import.meta.url),'utf8'));
 const buildingFiles=(await readdir(new URL('../public/assets/buildings/',import.meta.url))).filter(name=>name.endsWith('.glb'));
@@ -125,6 +128,17 @@ assert.match(vite,/chunkSizeWarningLimit:\s*1200/);
 assert.ok(pkg.dependencies?.playcanvas);
 assert.ok(pkg.devDependencies?.vite);
 assert.match(game,/createStage08EBuildings/,'Stage 08E GLB architecture must be mounted in the live scene');
+assert.match(game,/createStage08FDeviceProfiler/,'Stage 08F device profiler must be mounted in the live scene');
+assert.match(game,/getStage08FProfile/,'Stage 08F profile snapshot must be exposed at runtime');
+assert.match(stage08fProfiler,/p95Ms/,'Stage 08F must report p95 frame time');
+assert.match(stage08fProfiler,/firstBuildingMs/,'Stage 08F must report first building load time');
+assert.match(stage08fProfiler,/devicePixelRatio/,'Stage 08F must capture device pixel ratio');
+assert.match(stage08fProfiler,/physical-device test/,'Stage 08F must clearly distinguish browser automation from physical-device profiling');
+assert.ok(stage08fSpec.includes('KTX2 / Basis delivery') && stage08fSpec.includes('Collision and physics') && stage08fSpec.includes('Mobile performance acceptance'),'Stage 08F production gates are incomplete');
+assert.equal(stage08fMaterials.targetResolution.hero,2048,'Stage 08F hero PBR maps must target 2K');
+assert.equal(stage08fMaterials.materials.length,8,'Stage 08F material authoring contract must define eight surface families');
+assert.equal(stage08fMaterials.heroPilot.sourceMaterials.length,3,'Stage 08F hero pilot must record all three real PBR source assets');
+assert.ok(stage08fMaterials.heroPilot.sourceMaterials.some(source=>source.id==='PaintedPlaster017'&&source.license==='CC0-1.0'&&source.maps.includes('Normal')&&source.maps.includes('Roughness')),'Photogrammetry painted-plaster source provenance must be complete');
 assert.match(game,/stage08E\.update/,'Stage 08E must update distance-based LOD and streaming');
 assert.match(stage08e,/COLLISION_PROXY/,'GLB collision proxies must remain separate from visual geometry');
 assert.match(stage08e,/LOD0/,'Stage 08E must select LOD0/1/2 by camera distance');
@@ -145,12 +159,18 @@ for(const filename of buildingFiles){
  const jsonLength=asset.readUInt32LE(12),json=JSON.parse(asset.subarray(20,20+jsonLength).toString('utf8').trim());
  assert.ok(json.nodes.some(node=>node.name==='LOD0')&&json.nodes.some(node=>node.name==='LOD1')&&json.nodes.some(node=>node.name==='LOD2'),filename+' must contain three LOD levels');
  assert.ok(json.nodes.some(node=>node.name==='COLLISION_PROXY'),filename+' must contain a separate collision proxy');
- assert.equal(json.images.length,7,filename+' must embed its PBR texture images');
+ if(filename==='yaba-core-01.glb') {
+  assert.ok(json.images.filter(image=>image.mimeType==='image/ktx2').length===10,filename+' must embed ten KTX2 Basis textures');
+  assert.ok(json.extensionsUsed?.includes('KHR_texture_basisu'),filename+' must declare the KTX2 Basis extension');
+  assert.ok(json.images.length>=7&&json.images.length<=14,filename+' must keep the expected embedded KTX2 image set and optional PNG fallbacks');
+ } else {
+  assert.equal(json.images.length,7,filename+' must embed its PBR texture images');
+ }
  assert.ok(json.accessors.some(accessor=>accessor.type==='VEC2'),filename+' must include UV coordinates');
  assert.ok(json.accessors.some(accessor=>accessor.type==='VEC4'),filename+' must include tangent vectors for normal mapping');
  assert.ok(json.bufferViews.every(view=>view.buffer===0),filename+' buffer views must reference the embedded GLB buffer');
  assert.ok(json.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes.TANGENT!==undefined)),filename+' mesh primitives must include tangent attributes');
- assert.equal(json.materials.length,6,filename+' must use the shared six-family material library');
+ assert.equal(json.materials.length,filename==='yaba-core-01.glb'?7:6,filename+' must use the expected material-family count (seven for the Stage 08F hero, six for Stage 08E buildings)');
 }
 console.log('Stage 08E checks passed: 48 unique Nigerian commercial, mixed-use and residential GLBs, embedded PBR maps, UVs, three LODs and separate collision proxies.');
 console.log('Stage 08A checks passed: expanded terrain, connected road grid, 16 neighbourhood buildings and pocket parks.');

@@ -1,0 +1,178 @@
+{
+  "stage": "08F",
+  "status": "hero pilot generated from real 2K CC0 PBR source maps; the other 47 building GLBs still use the Stage 08E embedded procedural maps",
+  "targetResolution": {
+    "hero": 2048,
+    "fallback": 1024
+  },
+  "colorSpace": {
+    "baseColor": "sRGB",
+    "emissive": "sRGB",
+    "normal": "linear",
+    "occlusion": "linear",
+    "roughness": "linear",
+    "metallic": "linear"
+  },
+  "compression": {
+    "baseColor": "KTX2 Basis ETC1S high quality after visual review",
+    "emissive": "KTX2 Basis ETC1S high quality after visual review",
+    "normal": "KTX2 Basis UASTC",
+    "orm": "KTX2 Basis UASTC"
+  },
+  "materials": [
+    {
+      "id": "weathered-plaster",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Layered paint, subtle patch repairs, rain streaking and dust deposits; avoid uniform procedural noise."
+    },
+    {
+      "id": "cast-concrete",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Formwork variation, aggregate scale appropriate to viewing distance, restrained edge wear."
+    },
+    {
+      "id": "tinted-glass",
+      "maps": [
+        "baseColor",
+        "metallicRoughness"
+      ],
+      "authoringNotes": "Physically plausible tint and roughness; no fake mirror reflections."
+    },
+    {
+      "id": "painted-steel",
+      "maps": [
+        "baseColor",
+        "normal",
+        "metallicRoughness"
+      ],
+      "authoringNotes": "Painted metal with localized chips and oxidation; metallic values belong to exposed metal, not paint."
+    },
+    {
+      "id": "galvanized-roofing",
+      "maps": [
+        "baseColor",
+        "normal",
+        "metallicRoughness"
+      ],
+      "authoringNotes": "Subtle corrugation and weathering, low-frequency variation."
+    },
+    {
+      "id": "timber",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Directional grain, sun fading and edge wear."
+    },
+    {
+      "id": "ceramic-terrazzo",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Scale-correct tiles and joints, used selectively."
+    },
+    {
+      "id": "asphalt-paving",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Fine aggregate and patch variation; keep normal intensity low for mobile readability."
+    }
+  ],
+  "provenanceRequired": [
+    "sourceUrl",
+    "license",
+    "author",
+    "modifications"
+  ],
+  "note": "Eight surface families remain the district-wide authoring contract. The first hero pilot now contains embedded 2K CC0 PBR data from three real source materials, compressed as KTX2/Basis. Do not treat the remaining 47 Stage 08E assets or the unimplemented material families as upgraded.",
+  "heroPilot": {
+    "assetId": "yaba-core-01",
+    "name": "Computer Village Electronics Plaza",
+    "sourceMaterials": [
+      {
+        "id": "Concrete034",
+        "url": "https://ambientcg.com/view?id=Concrete034",
+        "license": "CC0-1.0",
+        "resolution": 2048,
+        "maps": [
+          "Color",
+          "NormalGL",
+          "Roughness"
+        ],
+        "usage": "exterior plaster/concrete; roughness packed into glTF ORM"
+      },
+      {
+        "id": "CorrugatedSteel009",
+        "url": "https://ambientcg.com/view?id=CorrugatedSteel009",
+        "license": "CC0-1.0",
+        "resolution": 2048,
+        "maps": [
+          "Color",
+          "NormalGL",
+          "Roughness",
+          "Metalness",
+          "AmbientOcclusion"
+        ],
+        "usage": "corrugated roof and industrial metal; AO/roughness/metalness packed into ORM"
+      },
+      {
+        "id": "PaintedPlaster017",
+        "url": "https://ambientcg.com/view?id=PaintedPlaster017",
+        "license": "CC0-1.0",
+        "resolution": 2048,
+        "maps": [
+          "Color",
+          "Normal",
+          "Roughness"
+        ],
+        "technique": "surface-photogrammetry",
+        "usage": "painted facade/cladding panels; source has no AO or metalness maps, so neutral AO=1 and metalness=0 are packed with its roughness into glTF ORM"
+      }
+    ],
+    "textures": {
+      "targetResolution": 2048,
+      "normalConvention": "OpenGL; DirectX green channel is inverted during import when required",
+      "ormChannels": {
+        "red": "ambient occlusion",
+        "green": "roughness",
+        "blue": "metallic"
+      },
+      "compression": {
+        "color": "Basis ETC1S quality 255",
+        "normalAndOrm": "Basis UASTC level 3 with Zstandard 18",
+        "mipmaps": true
+      },
+      "sourceAspectRatio": "preserved from source images; do not square-crop 2:1 PBR maps"
+    },
+    "license": "CC0-1.0",
+    "generatedArtifact": "public/assets/buildings/yaba-core-01.glb",
+    "runtimeExtension": "KHR_texture_basisu",
+    "status": "generated by the reproducible build pipeline; physical Itel A90 visual and performance acceptance is still pending",
+    "basisRuntime": {
+      "sourceRepository": "https://github.com/playcanvas/engine/tree/v2.24.0/examples/assets/wasm/basis",
+      "version": "v2.24.0",
+      "license": "MIT",
+      "files": [
+        "basis.wasm.js",
+        "basis.wasm.wasm",
+        "basis.js"
+      ],
+      "runtimeInitialization": "pc.basisInitialize before graphics-device creation; one worker",
+      "publicPath": "public/assets/wasm/basis/"
+    }
+  }
+}
