@@ -2,8 +2,8 @@ const INVENTORY = [
   { title: 'STAGE 08D SEMI-PHOTOREAL BUILDING REALISM', items: [
     ['Original Yaba shopfronts upgraded', '32'], ['Expansion commercial buildings upgraded', '8'],
     ['Residential buildings upgraded', '8'], ['Shared PBR material families', '10'],
-    ['Shared procedural albedo / normal / gloss maps', '3 × 256²'],
-    ['Original business-sign variants', '4'], ['Weathered concrete, steel, glazing and roof finishes', 'Shared'],
+    ['Shared procedural albedo / normal / gloss maps', '13 maps (512² + 256²)'],
+    ['Original business-sign variants', '4'], ['Separate plaster, concrete, roof, steel and tinted-glass maps', 'Shared'],
     ['Modular facade details', 'Runtime diagnostic']
   ]},
   { title: 'STAGE 08C NIGERIAN STREET INFRASTRUCTURE', items: [
