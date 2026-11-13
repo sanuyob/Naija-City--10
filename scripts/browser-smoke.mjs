@@ -123,8 +123,10 @@ try {
  const profileAfterWarmup=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
  if(!profileAfterWarmup||profileAfterWarmup.stage!=='08F'||profileAfterWarmup.sampleCount<1||!profileAfterWarmup.frame||!('p95Ms' in profileAfterWarmup.frame))throw new Error('Stage 08F frame-time sampling did not start: '+JSON.stringify(profileAfterWarmup));
  if(!(await page.locator('#profile-export').isVisible()))throw new Error('Physical-device profile export control is not visible when the performance panel is open');
- window.__NAIJA_RPG_PAUSED__=true;
- await page.evaluate(()=>window.__NAIJA_GAME__.debugSetCameraForSmoke([0,10,382],[0,1.5,310]));
+ await page.evaluate(()=>{
+  window.__NAIJA_RPG_PAUSED__=true;
+  window.__NAIJA_GAME__.debugSetCameraForSmoke([0,10,382],[0,1.5,310]);
+ });
  await page.waitForTimeout(160);
  const ikejaScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
  const ikejaVisual=await page.evaluate(async encoded=>{
@@ -137,7 +139,7 @@ try {
   return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,nonBluePixels:nonBlue};
  },ikejaScreenshot.toString('base64'));
  if(ikejaVisual.width<800||ikejaVisual.height<360||ikejaVisual.uniqueColorBuckets<18||ikejaVisual.nonBluePixels<1000)throw new Error('Ikeja material/prop camera screenshot failed: '+JSON.stringify(ikejaVisual));
- window.__NAIJA_RPG_PAUSED__=false;
+ await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
  console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
