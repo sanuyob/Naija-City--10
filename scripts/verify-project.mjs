@@ -41,6 +41,11 @@ assert.match(game,/coreBuildings\.push/,'All original Yaba shop blocks must be r
 assert.match(game,/findByTag\('stage08a-building'\)/,'All Stage 08A expansion buildings must be registered for Stage 08D');
 assert.match(realism,/stage08d-static-architecture/,'Stage 08D must use a dedicated static architecture batch group');
 assert.match(realism,/new pc\.Texture/,'Stage 08D must generate shared GPU texture assets');
+assert.match(realism,/makeSurfaceMaps/,'Stage 08D must generate distinct material-specific surface maps');
+assert.match(realism,/makeGlassMap/,'Stage 08D must add a tinted glazing surface map');
+assert.match(realism,/stage08d-core-roof-cap/,'Original Yaba shops must receive finished flat-roof geometry');
+assert.match(realism,/stage08d-side-window-recess/,'All buildings must have side-elevation depth');
+assert.match(expansion,/stage08a-roof/,'Expansion roofs must be upgraded to the Stage 08D PBR roof finish');
 assert.match(realism,/diffuseMap/,'Stage 08D must apply PBR albedo maps');
 assert.match(realism,/normalMap/,'Stage 08D must apply normal maps');
 assert.match(realism,/glossMap/,'Stage 08D must apply gloss maps');
