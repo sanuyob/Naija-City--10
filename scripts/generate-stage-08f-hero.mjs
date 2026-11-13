@@ -574,7 +574,7 @@ const hero=manifest.models.find(item=>item.id===assetId);
 if(!hero)throw new Error('Stage 08E manifest is missing required hero placement ' + assetId);
 hero.hero=true;
 hero.name='Computer Village Electronics Plaza';
-hero.size=[5.2,16.2,6.8];
+hero.size=[6.5,16.1,6.8];
 hero.textureEncoding='KTX2 Basis Universal (KHR_texture_basisu)';
 hero.pbrMaterials=['weathered-plaster','corrugated-roofing','tinted-shopfront-glass','painted-steel','cast-concrete','signage'];
 hero.pbrResolution=2048;
