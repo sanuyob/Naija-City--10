@@ -384,6 +384,18 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     detail('discarded-bottle-cap', 'cylinder', [p.x,p.y+0.2,p.z], [0.08,0.035,0.08], paintMetal);
   }
 
+  // Jerrycans gain necks, screw caps and moulded carry handles.
+  for (const [canIndex, entity] of entities.filter(item => item.name === 'stage08g-jerrycan').entries()) {
+    const p = entity.getPosition();
+    const canMaterial = [clean.plastic,used.plastic,weathered.plastic][canIndex % 3];
+    detail('jerrycan-neck', 'cylinder', [p.x-0.08,p.y+0.39,p.z], [0.12,0.12,0.12], canMaterial);
+    detail('jerrycan-cap', 'cylinder', [p.x-0.08,p.y+0.47,p.z], [0.15,0.045,0.15], galvanized);
+    for (const dz of [-0.085,0.085]) {
+      detail('jerrycan-handle-riser', 'box', [p.x+0.11,p.y+0.39,p.z+dz], [0.07,0.16,0.07], canMaterial);
+    }
+    detail('jerrycan-handle-grip', 'box', [p.x+0.11,p.y+0.47,p.z], [0.075,0.055,0.2], canMaterial);
+  }
+
   // More legible generator: cooling vents, service controls and a short exhaust.
   for (const entity of entities.filter(item => item.name === 'stage08g-small-generator')) {
     const p = entity.getPosition();
@@ -407,6 +419,36 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
       detail('crate-side-rail', 'box', [p.x,p.y-0.12+slot*0.13,p.z+0.31],
         [0.62,0.035,0.045], clean.plastic);
     }
+  }
+
+  // Wheelbarrow and handcart receive their real working silhouette cues.
+  for (const entity of entities.filter(item => item.name === 'stage08g-wheelbarrow-tray')) {
+    const p = entity.getPosition();
+    for (const dx of [-0.42,0.42]) {
+      detail('wheelbarrow-handle', 'box', [p.x+dx,p.y+0.02,p.z+0.78],
+        [0.07,0.07,1.12], paintMetal, [7,0,0]);
+      detail('wheelbarrow-grip', 'cylinder', [p.x+dx,p.y+0.02,p.z+1.31],
+        [0.085,0.24,0.085], rubber, [90,0,0]);
+      detail('wheelbarrow-support', 'cylinder', [p.x+dx,p.y-0.29,p.z+0.22],
+        [0.055,0.58,0.055], galvanized, [0,0,7]);
+    }
+    detail('wheelbarrow-front-lip', 'box', [p.x,p.y+0.15,p.z-0.34],
+      [1.26,0.08,0.08], galvanized);
+  }
+  for (const entity of entities.filter(item => item.name === 'stage08g-handcart-platform')) {
+    const p = entity.getPosition();
+    for (const dx of [-0.58,0.58]) {
+      detail('handcart-upright-frame', 'cylinder', [p.x+dx,p.y+0.65,p.z+0.42],
+        [0.055,1.25,0.055], galvanized);
+      detail('handcart-side-rail', 'cylinder', [p.x+dx,p.y+0.62,p.z-0.12],
+        [0.05,0.95,0.05], paintMetal, [90,0,0]);
+    }
+    detail('handcart-push-grip', 'cylinder', [p.x,p.y+1.27,p.z+0.42],
+      [0.065,1.2,0.065], rubber, [0,0,90]);
+  }
+  for (const entity of entities.filter(item => item.name === 'stage08g-wheelbarrow-wheel' || item.name === 'stage08g-handcart-wheel')) {
+    const p = entity.getPosition();
+    detail('small-cart-wheel-hub', 'cylinder', [p.x,p.y,p.z], [0.075,0.13,0.13], galvanized, [0,0,90]);
   }
 
   // Packaging has tape seams and folded top flaps; these stay localized, not repeated everywhere.
