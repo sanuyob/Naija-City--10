@@ -28,8 +28,8 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 
 ## Stage 08D — Semi-photoreal Nigerian building realism
 - Upgraded all 48 building bodies: 32 original Yaba roadside shops, 8 expansion commercial buildings and 8 residential buildings.
-- Replaced flat facade colours with five shared painted-plaster variants using 256×256 procedural albedo, normal and gloss maps, including restrained grime and surface variation.
-- Applied shared PBR material families for rendered concrete, roof concrete, painted/galvanized steel, tinted glazing and rooftop tank plastic.
+- Replaced flat facade colours with five shared painted-plaster variants using 512×512 procedural albedo, normal and gloss maps, including restrained grime and surface variation.
+- Added separate 256×256 albedo, normal and gloss maps for weathered concrete, roof concrete and steel, plus a tinted-glass reflection/albedo map and rooftop tank plastic finish.
 - Added four readable local business sign variants, original shop display glazing/security treatment, canopies, plinths, cornices and rainwater downpipes.
 - Added residential lintels, sills, facade mullions and more finished entry doors/canopies; existing Stage 08B balconies, grilles, shutters, awnings, AC units and tanks now share the PBR finish families.
 - Uses generated shared textures and bounded static batching rather than downloading 48 separate high-resolution material sets.
@@ -71,7 +71,7 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
 - `src/stage-08b-building-detail.js`: Nigerian-inspired commercial and residential facade detail, balconies, security grilles, AC units and rooftop tanks.
 - `src/stage-08c-street-infrastructure.js`: static kerbs, drainage, utility poles/wires, streetlights, signs, park furniture, bus shelters and roadside stalls.
-- `src/stage-08d-building-realism.js`: shared procedural PBR maps, building material families, business signs and modular facade detailing for all 48 building bodies.
+- `src/stage-08d-building-realism.js`: material-specific procedural PBR maps, building material families, business signs, roof detailing and modular facade dressing for all 48 building bodies.
 - `src/rpg-ui.js` / `src/rpg-ui.css`: HUD, menus, safe areas and touch controls.
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
