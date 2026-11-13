@@ -1,4 +1,11 @@
 const INVENTORY = [
+  { title: 'STAGE 08C NIGERIAN STREET INFRASTRUCTURE', items: [
+    ['Utility poles and overhead service wire spans', '16 poles / 42 wire runs'],
+    ['Distributor-road streetlight assemblies', '16'], ['Kerbs and storm-water drain covers', 'Extended network'],
+    ['Raised speed-table approaches and tactile paving', '12'], ['Junction and district sign assemblies', '8'],
+    ['Pocket-park benches, bins and planters', '3 parks'], ['Bus shelters', '2'],
+    ['Static roadside market stalls', '2'], ['Static street-detail meshes', 'Runtime diagnostic']
+  ]},
   { title: 'STAGE 08B NIGERIAN BUILDING DETAIL', items: [
     ['Detailed commercial shopfronts', '8'], ['Residential facade upgrades', '8'],
     ['Projecting shop awnings and fascia', '8 / 8'], ['Roller shutters and security doors', '8 / 8'],

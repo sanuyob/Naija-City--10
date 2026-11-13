@@ -16,6 +16,16 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - Shared low-poly material families and modular box geometry keep the pass editable and avoid downloading large texture sets.
 - This is a geometry/material detail pass, not the final PBR pass. Readable shop names, interiors, texture baking, collision refinement and street vendor dressing remain future work.
 
+## Stage 08C — Nigerian street infrastructure and roadside environment
+- Added raised kerbs, storm-water channels, drain covers and grates along the expanded road network.
+- Added raised speed-table approaches and tactile paving at distributor-road junctions.
+- Added 16 utility poles, insulators and static overhead service-wire runs along the central avenue.
+- Added 16 low-cost streetlight assemblies along the distributor streets; these are static fixtures, not dynamic light sources.
+- Added junction/district road signs, benches, bins and planters for all three pocket parks.
+- Added two compact bus shelters and two static roadside market-stall fixtures.
+- Kept the pass static: no new moving vehicles, pedestrians or animated vendors.
+- Reused material families and a bounded static PlayCanvas batch group; physical Android profiling remains necessary.
+
 ## Landscape HUD
 - Landscape-first mobile layout with a portrait rotation notice and web-app manifest orientation hint.
 - Left thumb zone: camera-relative movement joystick.
@@ -51,6 +61,7 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback and Stage 08A expansion integration.
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
 - `src/stage-08b-building-detail.js`: Nigerian-inspired commercial and residential facade detail, balconies, security grilles, AC units and rooftop tanks.
+- `src/stage-08c-street-infrastructure.js`: static kerbs, drainage, utility poles/wires, streetlights, signs, park furniture, bus shelters and roadside stalls.
 - `src/rpg-ui.js` / `src/rpg-ui.css`: HUD, menus, safe areas and touch controls.
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
