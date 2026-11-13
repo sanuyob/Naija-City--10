@@ -14,11 +14,23 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     material.update();
     return material;
   };
-  const skin = mat([0.36, 0.19, 0.105]);
-  const shirt = mat([0.12, 0.25, 0.32]);
-  const trousers = mat([0.075, 0.095, 0.11]);
-  const shoes = mat([0.035, 0.04, 0.045]);
-  const accent = mat([0.72, 0.48, 0.18], 0.15);
+  // Native PlayCanvas character build: original Nigerian city-resident design.
+  // Kept as a lightweight entity-pivot rig so the existing mobile controller survives.
+  const skin = mat([0.39, 0.205, 0.12]);
+  const skinShadow = mat([0.28, 0.125, 0.075]);
+  const shirt = mat([0.075, 0.19, 0.20]);
+  const overshirt = mat([0.44, 0.385, 0.27]);
+  const overshirtDark = mat([0.32, 0.285, 0.20]);
+  const trousers = mat([0.085, 0.095, 0.105]);
+  const trouserSeam = mat([0.15, 0.16, 0.17]);
+  const shoes = mat([0.055, 0.06, 0.065]);
+  const sole = mat([0.72, 0.70, 0.64]);
+  const hair = mat([0.035, 0.029, 0.025]);
+  const eyes = mat([0.025, 0.022, 0.02]);
+  const eyeWhite = mat([0.72, 0.66, 0.56]);
+  const bag = mat([0.13, 0.15, 0.105]);
+  const bagTrim = mat([0.27, 0.28, 0.20], 0.1);
+  const accent = mat([0.63, 0.46, 0.22], 0.12);
 
   const player = new pc.Entity('player-character');
   player.setPosition(0, 0, 0);
@@ -32,28 +44,95 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     parent.addChild(entity);
     return entity;
   }
-  // A compact, readable human silhouette built from low-cost primitive meshes.
-  const torso = part(player, 'player-torso', 'box', [0.62, 0.78, 0.34], [0, 1.22, 0], shirt);
-  part(torso, 'chest-panel', 'box', [0.62, 0.18, 1.025], [0, 0.12, 0], accent);
-  part(player, 'player-neck', 'cylinder', [0.17, 0.18, 0.17], [0, 1.69, 0], skin);
-  part(player, 'player-head', 'sphere', [0.25, 0.31, 0.24], [0, 1.94, 0], skin);
-  part(player, 'player-hair', 'sphere', [0.255, 0.13, 0.245], [0, 2.12, -0.015], shoes);
+
+  // The torso is a pivot. All jacket, face and accessory detail follows its idle bob.
+  const torso = new pc.Entity('player-torso');
+  torso.setLocalPosition(0, 1.22, 0);
+  player.addChild(torso);
+  part(torso, 'player-tshirt-body', 'box', [0.62, 0.72, 0.34], [0, 0, 0], shirt);
+  part(torso, 'player-jacket-back', 'box', [0.70, 0.74, 0.12], [0, 0, 0.15], overshirtDark);
+  part(torso, 'player-jacket-front-left', 'box', [0.18, 0.70, 0.065], [-0.215, 0, -0.19], overshirt);
+  part(torso, 'player-jacket-front-right', 'box', [0.18, 0.70, 0.065], [0.215, 0, -0.19], overshirt);
+  part(torso, 'player-jacket-lapel-left', 'box', [0.085, 0.28, 0.055], [-0.105, 0.22, -0.226], overshirtDark).setLocalEulerAngles(0, 0, -13);
+  part(torso, 'player-jacket-lapel-right', 'box', [0.085, 0.28, 0.055], [0.105, 0.22, -0.226], overshirtDark).setLocalEulerAngles(0, 0, 13);
+  part(torso, 'player-shirt-neckline', 'box', [0.19, 0.055, 0.035], [0, 0.335, -0.183], overshirtDark);
+  part(torso, 'player-jacket-pocket', 'box', [0.11, 0.105, 0.018], [0.235, -0.12, -0.229], overshirtDark);
+  part(torso, 'player-jacket-pocket-flap', 'box', [0.12, 0.025, 0.022], [0.235, -0.065, -0.241], overshirt);
+  for (const y of [0.10, -0.02, -0.14]) {
+    part(torso, 'player-jacket-button', 'sphere', [0.018, 0.018, 0.012], [-0.11, y, -0.235], accent);
+  }
+
+  // Neck and compact low-taper hairstyle.
+  part(torso, 'player-neck', 'cylinder', [0.145, 0.17, 0.145], [0, 0.43, 0], skin);
+  const head = new pc.Entity('player-head-root');
+  head.setLocalPosition(0, 0.70, -0.005);
+  torso.addChild(head);
+  part(head, 'player-head', 'sphere', [0.235, 0.285, 0.215], [0, 0, 0], skin);
+  part(head, 'player-ear-left', 'sphere', [0.047, 0.072, 0.04], [-0.225, -0.015, 0], skin);
+  part(head, 'player-ear-right', 'sphere', [0.047, 0.072, 0.04], [0.225, -0.015, 0], skin);
+  part(head, 'player-hair-cap', 'sphere', [0.245, 0.13, 0.225], [0, 0.19, 0.005], hair);
+  part(head, 'player-hair-low-left', 'sphere', [0.045, 0.12, 0.205], [-0.205, 0.095, 0.018], hair);
+  part(head, 'player-hair-low-right', 'sphere', [0.045, 0.12, 0.205], [0.205, 0.095, 0.018], hair);
+  for (const [x, z, size] of [[-0.14,-0.08,0.07],[-0.07,-0.13,0.075],[0,-0.145,0.075],[0.07,-0.13,0.075],[0.14,-0.08,0.07]]) {
+    part(head, 'player-hair-coil', 'sphere', [size, 0.075, size], [x, 0.245, z], hair);
+  }
+  // Face is intentionally restrained at mobile resolution: brows, eyes, nose and mouth.
+  for (const x of [-0.083, 0.083]) {
+    part(head, 'player-eye-socket', 'sphere', [0.043, 0.026, 0.018], [x, 0.015, -0.198], skinShadow);
+    part(head, 'player-eye-white', 'sphere', [0.028, 0.014, 0.012], [x, 0.015, -0.211], eyeWhite);
+    part(head, 'player-eye-pupil', 'sphere', [0.010, 0.012, 0.008], [x, 0.015, -0.222], eyes);
+    part(head, 'player-eyebrow', 'box', [0.065, 0.014, 0.014], [x, 0.064, -0.202], hair);
+  }
+  part(head, 'player-nose', 'sphere', [0.035, 0.052, 0.035], [0, -0.045, -0.225], skin);
+  part(head, 'player-mouth', 'box', [0.052, 0.009, 0.008], [0, -0.112, -0.209], skinShadow);
+
+  // Crossbody strap sits over the open overshirt; the pouch is attached near the hip.
+  const strap = part(torso, 'player-crossbody-strap', 'box', [0.052, 0.76, 0.035], [0.115, -0.015, -0.235], bag);
+  strap.setLocalEulerAngles(0, 0, -22);
+  part(torso, 'player-crossbody-adjuster', 'box', [0.07, 0.085, 0.045], [0.215, -0.16, -0.258], bagTrim);
+  part(torso, 'player-crossbody-pouch', 'box', [0.25, 0.30, 0.12], [0.30, -0.34, 0.12], bag);
+  part(torso, 'player-crossbody-pouch-flap', 'box', [0.255, 0.08, 0.13], [0.30, -0.22, 0.105], bagTrim);
+  part(torso, 'player-crossbody-clasp', 'box', [0.045, 0.035, 0.018], [0.30, -0.255, -0.15], accent);
+
   const leftArm = new pc.Entity('left-arm-pivot');
-  leftArm.setLocalPosition(-0.39, 1.49, 0); player.addChild(leftArm);
-  part(leftArm, 'left-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
-  part(leftArm, 'left-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
+  leftArm.setLocalPosition(-0.37, 0.23, 0);
+  torso.addChild(leftArm);
+  part(leftArm, 'left-jacket-sleeve', 'cylinder', [0.145, 0.27, 0.145], [0, -0.14, 0], overshirt);
+  part(leftArm, 'left-sleeve-cuff', 'cylinder', [0.119, 0.045, 0.119], [0, -0.30, 0], overshirtDark);
+  part(leftArm, 'left-forearm', 'cylinder', [0.105, 0.25, 0.105], [0, -0.435, 0], skin);
+  part(leftArm, 'left-hand', 'sphere', [0.105, 0.125, 0.095], [0, -0.57, -0.005], skin);
+  part(leftArm, 'left-hand-thumb', 'sphere', [0.045, 0.075, 0.05], [-0.075, -0.55, -0.035], skin);
   const rightArm = new pc.Entity('right-arm-pivot');
-  rightArm.setLocalPosition(0.39, 1.49, 0); player.addChild(rightArm);
-  part(rightArm, 'right-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
-  part(rightArm, 'right-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
+  rightArm.setLocalPosition(0.37, 0.23, 0);
+  torso.addChild(rightArm);
+  part(rightArm, 'right-jacket-sleeve', 'cylinder', [0.145, 0.27, 0.145], [0, -0.14, 0], overshirt);
+  part(rightArm, 'right-sleeve-cuff', 'cylinder', [0.119, 0.045, 0.119], [0, -0.30, 0], overshirtDark);
+  part(rightArm, 'right-forearm', 'cylinder', [0.105, 0.25, 0.105], [0, -0.435, 0], skin);
+  part(rightArm, 'right-hand', 'sphere', [0.105, 0.125, 0.095], [0, -0.57, -0.005], skin);
+  part(rightArm, 'right-hand-thumb', 'sphere', [0.045, 0.075, 0.05], [0.075, -0.55, -0.035], skin);
+
+  // Hip block, tapered trouser legs and layered low-top sneakers.
+  part(player, 'player-trouser-waist', 'box', [0.53, 0.23, 0.31], [0, 0.82, 0], trousers);
+  part(player, 'player-belt', 'box', [0.54, 0.045, 0.325], [0, 0.91, 0], overshirtDark);
+  part(player, 'player-belt-buckle', 'box', [0.07, 0.06, 0.025], [0, 0.91, -0.17], accent);
   const leftLeg = new pc.Entity('left-leg-pivot');
-  leftLeg.setLocalPosition(-0.17, 0.88, 0); player.addChild(leftLeg);
-  part(leftLeg, 'left-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
-  part(leftLeg, 'left-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
+  leftLeg.setLocalPosition(-0.16, 0.79, 0);
+  player.addChild(leftLeg);
+  part(leftLeg, 'left-trouser-leg', 'cylinder', [0.16, 0.48, 0.16], [0, -0.25, 0], trousers);
+  part(leftLeg, 'left-trouser-knee-panel', 'box', [0.27, 0.12, 0.035], [0, -0.29, -0.14], trouserSeam);
+  part(leftLeg, 'left-trouser-hem', 'cylinder', [0.16, 0.055, 0.16], [0, -0.49, 0], trouserSeam);
+  part(leftLeg, 'left-shoe-sole', 'box', [0.24, 0.065, 0.37], [0, -0.70, -0.065], sole);
+  part(leftLeg, 'left-shoe-upper', 'box', [0.225, 0.13, 0.33], [0, -0.63, -0.075], shoes);
+  part(leftLeg, 'left-shoe-tongue', 'box', [0.105, 0.055, 0.12], [0, -0.585, -0.19], bagTrim);
   const rightLeg = new pc.Entity('right-leg-pivot');
-  rightLeg.setLocalPosition(0.17, 0.88, 0); player.addChild(rightLeg);
-  part(rightLeg, 'right-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
-  part(rightLeg, 'right-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
+  rightLeg.setLocalPosition(0.16, 0.79, 0);
+  player.addChild(rightLeg);
+  part(rightLeg, 'right-trouser-leg', 'cylinder', [0.16, 0.48, 0.16], [0, -0.25, 0], trousers);
+  part(rightLeg, 'right-trouser-knee-panel', 'box', [0.27, 0.12, 0.035], [0, -0.29, -0.14], trouserSeam);
+  part(rightLeg, 'right-trouser-hem', 'cylinder', [0.16, 0.055, 0.16], [0, -0.49, 0], trouserSeam);
+  part(rightLeg, 'right-shoe-sole', 'box', [0.24, 0.065, 0.37], [0, -0.70, -0.065], sole);
+  part(rightLeg, 'right-shoe-upper', 'box', [0.225, 0.13, 0.33], [0, -0.63, -0.075], shoes);
+  part(rightLeg, 'right-shoe-tongue', 'box', [0.105, 0.055, 0.12], [0, -0.585, -0.19], bagTrim);
 
   const input = { x: 0, y: 0, sprint: false, jumpQueued: false, crouch: false };
   const keys = Object.create(null);
