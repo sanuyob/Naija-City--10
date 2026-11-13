@@ -8,6 +8,7 @@ on:
       - feature/naija-city-stage-06-third-person
       - feature/naija-city-stage-07-landscape-hud
       - feature/naija-city-stage-08a-city-expansion
+      - feature/naija-city-stage-08b-nigerian-building-detail
   pull_request:
     branches:
       - main
