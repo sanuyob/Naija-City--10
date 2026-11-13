@@ -295,12 +295,33 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     colorWearSet('fabric','green-shirt',[0.42,1.08,0.52])
   ];
   const trousers = colorWearSet('fabric','dark-trousers',[0.24,0.28,0.32]);
-  const skin = tintedVariant(plastic,'08H-natural-brown-skin-tone',[0.68,0.42,0.28],0.58);
+  const skin = new pc.StandardMaterial();
+  skin.name = '08H-matte-silhouette-skin';
+  skin.diffuse = new pc.Color(0.36,0.19,0.105);
+  skin.gloss = 0.12;
+  skin.update();
   const facadePalette = [
     colorWearSet('plaster','ochre-shop-plaster',[1.04,0.82,0.62]),
     colorWearSet('plaster','cool-grey-shop-plaster',[0.75,0.9,0.93]),
     colorWearSet('plaster','warm-stone-shop-plaster',[0.94,0.93,0.78])
   ];
+  const vehiclePaints = {
+    danfo: {
+      clean: tintedVariant(clean.paintMetal,'08H-danfo-yellow-clean',[1.24,1.04,0.62]),
+      used: tintedVariant(used.paintMetal,'08H-danfo-yellow-used',[1.13,0.98,0.58]),
+      weathered: tintedVariant(weathered.paintMetal,'08H-danfo-yellow-weathered',[1.02,0.92,0.55])
+    },
+    keke: {
+      clean: tintedVariant(clean.paintMetal,'08H-keke-green-clean',[0.62,1.08,0.72]),
+      used: tintedVariant(used.paintMetal,'08H-keke-green-used',[0.58,0.98,0.67]),
+      weathered: tintedVariant(weathered.paintMetal,'08H-keke-green-weathered',[0.54,0.88,0.61])
+    },
+    sedan: {
+      clean: tintedVariant(clean.paintMetal,'08H-sedan-light-clean',[1.12,1.12,1.08]),
+      used: tintedVariant(used.paintMetal,'08H-sedan-light-used',[1.02,1.02,0.99]),
+      weathered: tintedVariant(weathered.paintMetal,'08H-sedan-light-weathered',[0.92,0.92,0.9])
+    }
+  };
 
   const entities = app.root.findByTag('stage08g-ikeja-street-life') || [];
   let texturedProps = 0, cleanProps = 0, usedProps = 0, weatheredProps = 0;
@@ -310,7 +331,8 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     if (/bottle-litter|carton-litter|sachet-litter|gutter-silt|shallow-road-depression/.test(name)) return 'weathered';
     if (/generator|open-gutter|drain-cover|utility-pole|pole-crossarm|asphalt-repair|security-grille/.test(name)) return 'weathered';
     if (/shopfront-glazing|upper-window|direction-sign-board/.test(name)) return 'clean';
-    if (/plastic-chair|vendor-table|beverage-crate|jerrycan|handcart|wheelbarrow|parked-|awning|umbrella/.test(name)) {
+    if (/parked-/.test(name)) return 'used';
+    if (/plastic-chair|vendor-table|beverage-crate|jerrycan|handcart|wheelbarrow|awning|umbrella/.test(name)) {
       return index % 3 === 0 ? 'clean' : index % 3 === 1 ? 'used' : 'weathered';
     }
     if (/mixed-use-shop-shell|shop-sign-fascia|sidewalk|approach-.*walkway|kerb/.test(name)) {
@@ -321,6 +343,10 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
 
   function getMaterial(name, wear, index, position) {
     const mats = wear === 'clean' ? clean : wear === 'weathered' ? weathered : used;
+    if (/parked-.*-(body|roof)$/.test(name)) {
+      const vehicleType = name.includes('danfo') ? 'danfo' : name.includes('keke') ? 'keke' : 'sedan';
+      return vehiclePaints[vehicleType][wear];
+    }
     if (/pedestrian-head/.test(name)) return skin;
     if (/pedestrian-torso/.test(name)) {
       const shirt = position[2] > 350 || position[2] < 285 ? 0 : position[2] < 320 ? 1 : 2;
@@ -379,22 +405,12 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     const position = [pos.x, pos.y, pos.z];
     const wear = selectWear(name, position, index);
     entity.render.material = getMaterial(name, wear, index, position);
-    if (/parked-.*-body$/.test(name)) {
-      const bodyPaint = name.includes('danfo')
-        ? tintedVariant(paintMetal,'08H-danfo-yellow-painted-metal',[1.24,1.04,0.62])
-        : name.includes('keke')
-          ? tintedVariant(paintMetal,'08H-keke-green-painted-metal',[0.62,1.08,0.72])
-          : tintedVariant(paintMetal,'08H-sedan-light-painted-metal',[1.12,1.12,1.08]);
-      entity.render.material = bodyPaint;
-      const roof = entities.find(candidate => candidate.name === entity.name.replace('-body','-roof'));
-      if (roof?.render) roof.render.material = bodyPaint;
-    }
     if (group && entity.render) entity.render.batchGroupId = group.id;
     texturedProps++;
     if (wear === 'clean') cleanProps++;
     else if (wear === 'weathered') weatheredProps++;
     else usedProps++;
-    assigned.push({ name, wear });
+    assigned.push({ name, wear, material: entity.render.material?.name || 'unnamed' });
   }
 
   // Add small, batchable shape details to break up the box-only silhouette language.
@@ -448,7 +464,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     detail('chair-seat', 'box', [p.x,p.y-0.035,p.z], [0.56,0.095,0.52], seatMat);
     detail('chair-back', 'box', [p.x,p.y+0.19,p.z+0.205], [0.56,0.43,0.085], seatMat, [-5,0,0]);
     for (const dx of [-0.21,0.21]) for (const dz of [-0.19,0.19]) {
-      detail('chair-leg', 'cylinder', [p.x+dx,p.y-0.25,p.z+dz], [0.055,0.48,0.055], paintMetal);
+      detail('chair-leg', 'cylinder', [p.x+dx,p.y-0.25,p.z+dz], [0.055,0.48,0.055], seatMat);
     }
   }
 
@@ -543,11 +559,8 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   for (const entity of entities.filter(item => /stage08g-parked-.*-body$/.test(item.name))) {
     const p = entity.getPosition();
     const zSize = entity.getLocalScale().z;
-    const vehiclePaint = entity.name.includes('danfo')
-      ? tintedVariant(paintMetal,'08H-danfo-yellow-painted-metal',[1.24,1.04,0.62])
-      : entity.name.includes('keke')
-        ? tintedVariant(paintMetal,'08H-keke-green-painted-metal',[0.62,1.08,0.72])
-        : tintedVariant(paintMetal,'08H-sedan-light-painted-metal',[1.12,1.12,1.08]);
+    const vehicleType = entity.name.includes('danfo') ? 'danfo' : entity.name.includes('keke') ? 'keke' : 'sedan';
+    const vehiclePaint = vehiclePaints[vehicleType].used;
     detail('vehicle-front-bumper', 'box', [p.x,p.y-0.27,p.z-zSize*0.48],
       [entity.getLocalScale().x*0.96,0.16,0.12], weathered.paintMetal);
     detail('vehicle-rear-bumper', 'box', [p.x,p.y-0.27,p.z+zSize*0.48],
@@ -557,6 +570,12 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     detail('vehicle-headlamp-right', 'box', [p.x+entity.getLocalScale().x*0.38,p.y+0.12,p.z-zSize*0.5],
       [0.22,0.16,0.035], glass);
   }
+
+  const materialAssignmentCounts = assigned.reduce((counts, item) => {
+    counts[item.material] = (counts[item.material] || 0) + 1;
+    return counts;
+  }, {});
+  const unrenderedTaggedProps = entities.filter(entity => !entity.render).length;
 
   return {
     stage:'08H',
@@ -568,8 +587,12 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     wearDistribution:{clean:cleanProps,used:usedProps,weathered:weatheredProps},
     addedDetailMeshes:addedDetails,
     textureResolutions:{asphalt:512,otherFamilies:256},
-    texturedMaterialFamilies:9,
+    texturedMaterialFamilies:10,
+    textureMapSets:mapCache.size,
+    generatedTextureCount:mapCache.size * 3,
     textureMapsPerFamily:3,
+    materialAssignmentCounts,
+    unrenderedTaggedProps,
     staticBatching:Boolean(group),
     sourceAttribution:'Original procedural maps generated in project; no third-party image textures.',
     limitations:[
