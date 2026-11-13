@@ -17,7 +17,7 @@ Stage 08H is a street-prop material and shape-art pass over the Stage 08G Ikeja 
 | Cartons and litter | Solid-colour cuboids | Kraft-paper/cardboard appearance, folds/tape and worn ground-contact variation |
 | Bottles | Cuboid stand-ins | Cylindrical bottle, neck and cap |
 | Vehicles | Low-detail body boxes | Keep original vehicle types/colours, add bumpers, headlamps and wheel hubs |
-| Glass | Flat tinted colour | Restrained smoked-glass finish; avoid mirror-like fake reflections |
+| Glass | Flat tinted colour | Semi-transparent smoked-glass finish with alpha blending and depth writes disabled; avoid mirror-like fake reflections |
 | Mobile delivery | Existing static batching | Shared maps, controlled texture sizes, no extra dynamic lights or external runtime downloads |
 
 ## Implemented material system
@@ -67,6 +67,6 @@ Automated Chromium success does not equal an Itel A90 physical test. A real-devi
 - Procedural maps are authored approximations, not photogrammetry or scans of actual Ikeja surfaces.
 - Some props remain simple low-poly meshes even after material improvement.
 - Four pedestrians and three parked vehicles remain static environment props; no crowd AI or live traffic is added.
-- Glass is a restrained material approximation; there is no ray-traced reflection.
+- Glass is a restrained translucent material approximation; there is no ray-traced reflection.
 - Stage 08F Computer Village hero placement remains a separate outstanding geography correction and is not fixed by 08H.
 - Do not merge the stacked PR or claim phone-tested until the user reviews the preview on the physical device.
