@@ -188,6 +188,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   });
   const stage08E=createStage08EBuildings({app});
   await stage08E.initialize();
+  stage08E.update(playerController.getState().position);
   window.__NAIJA_INTERACT__=()=>playerController.interact();
   statusLabel.textContent='Third-person character ready — WASD / touch joystick';
 
