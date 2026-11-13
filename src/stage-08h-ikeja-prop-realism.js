@@ -159,7 +159,7 @@ function createPbrMaterial(name, color, maps, options = {}) {
   return material;
 }
 
-function tintedVariant(source, name, tint) {
+function tintedVariant(source, name, tint, glossFactor = 1) {
   const variant = source.clone();
   variant.name = name;
   variant.diffuse = new pc.Color(
@@ -167,6 +167,8 @@ function tintedVariant(source, name, tint) {
     source.diffuse.g * tint[1],
     source.diffuse.b * tint[2]
   );
+  variant.gloss = source.gloss * glossFactor;
+  variant.bumpiness = source.bumpiness;
   variant.update();
   return variant;
 }
@@ -229,26 +231,26 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   };
   const used = {
     ...clean,
-    plaster: tintedVariant(plaster, '08H-plaster-with-rain-and-dust', [0.87,0.84,0.77]),
-    concrete: tintedVariant(concrete, '08H-used-concrete', [0.87,0.86,0.82]),
-    metal: tintedVariant(galvanized, '08H-dull-galvanized-metal', [0.88,0.88,0.84]),
-    paintMetal: tintedVariant(paintMetal, '08H-worn-painted-metal', [0.88,0.84,0.78]),
-    wood: tintedVariant(wood, '08H-scuffed-market-wood', [0.84,0.78,0.68]),
-    plastic: tintedVariant(plastic, '08H-used-plastic', [0.88,0.87,0.82]),
-    fabric: tintedVariant(fabric, '08H-sun-faded-fabric', [0.86,0.82,0.73]),
-    cardboard: tintedVariant(cardboard, '08H-worn-cardboard', [0.87,0.82,0.74])
+    plaster: tintedVariant(plaster, '08H-plaster-with-rain-and-dust', [0.87,0.84,0.77],0.78),
+    concrete: tintedVariant(concrete, '08H-used-concrete', [0.87,0.86,0.82],0.82),
+    metal: tintedVariant(galvanized, '08H-dull-galvanized-metal', [0.88,0.88,0.84],0.72),
+    paintMetal: tintedVariant(paintMetal, '08H-worn-painted-metal', [0.88,0.84,0.78],0.72),
+    wood: tintedVariant(wood, '08H-scuffed-market-wood', [0.84,0.78,0.68],0.76),
+    plastic: tintedVariant(plastic, '08H-used-plastic', [0.88,0.87,0.82],0.82),
+    fabric: tintedVariant(fabric, '08H-sun-faded-fabric', [0.86,0.82,0.73],0.68),
+    cardboard: tintedVariant(cardboard, '08H-worn-cardboard', [0.87,0.82,0.74],0.68)
   };
   const weathered = {
     ...used,
-    concrete: tintedVariant(concrete, '08H-drain-edge-concrete-grime', [0.65,0.64,0.59]),
-    plaster: tintedVariant(plaster, '08H-weathered-low-wall-plaster', [0.69,0.65,0.57]),
-    metal: tintedVariant(galvanized, '08H-oxidised-and-dirty-metal', [0.67,0.58,0.48]),
-    paintMetal: tintedVariant(paintMetal, '08H-chipped-and-dirty-painted-metal', [0.69,0.61,0.52]),
-    wood: tintedVariant(wood, '08H-weathered-market-wood', [0.67,0.58,0.48]),
-    plastic: tintedVariant(plastic, '08H-dirty-ground-contact-plastic', [0.68,0.65,0.58]),
-    rubber: tintedVariant(rubber, '08H-dust-coated-rubber', [0.78,0.76,0.71]),
-    cardboard: tintedVariant(cardboard, '08H-damp-stained-cardboard', [0.67,0.57,0.46]),
-    silt: tintedVariant(silt, '08H-dark-drain-silt', [0.73,0.68,0.6])
+    concrete: tintedVariant(concrete, '08H-drain-edge-concrete-grime', [0.65,0.64,0.59],0.52),
+    plaster: tintedVariant(plaster, '08H-weathered-low-wall-plaster', [0.69,0.65,0.57],0.48),
+    metal: tintedVariant(galvanized, '08H-oxidised-and-dirty-metal', [0.67,0.58,0.48],0.55),
+    paintMetal: tintedVariant(paintMetal, '08H-chipped-and-dirty-painted-metal', [0.69,0.61,0.52],0.52),
+    wood: tintedVariant(wood, '08H-weathered-market-wood', [0.67,0.58,0.48],0.55),
+    plastic: tintedVariant(plastic, '08H-dirty-ground-contact-plastic', [0.68,0.65,0.58],0.6),
+    rubber: tintedVariant(rubber, '08H-dust-coated-rubber', [0.78,0.76,0.71],0.65),
+    cardboard: tintedVariant(cardboard, '08H-damp-stained-cardboard', [0.67,0.57,0.46],0.45),
+    silt: tintedVariant(silt, '08H-dark-drain-silt', [0.73,0.68,0.6],0.42)
   };
 
   const entities = app.root.findByTag('stage08g-ikeja-street-life') || [];
