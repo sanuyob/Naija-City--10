@@ -2,6 +2,17 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import validator from 'gltf-validator';
 
+const basisRoot=new URL('../public/assets/wasm/basis/',import.meta.url);
+const basisFiles=[
+  {name:'basis.wasm.js',minimumBytes:50000},
+  {name:'basis.wasm.wasm',minimumBytes:500000,wasm:true},
+  {name:'basis.js',minimumBytes:1000000}
+];
+for(const item of basisFiles) {
+  const data=await readFile(new URL(item.name,basisRoot));
+  assert.ok(data.length>=item.minimumBytes,'PlayCanvas Basis runtime asset is missing or truncated: '+item.name+' ('+data.length+' bytes).');
+  if(item.wasm)assert.deepEqual([...data.subarray(0,4)],[0x00,0x61,0x73,0x6d],'PlayCanvas Basis WASM runtime asset has an invalid WebAssembly header.');
+}
 const manifest=JSON.parse(await readFile(new URL('../public/assets/stage-08e-manifest.json',import.meta.url),'utf8'));
 const hero=manifest.models.find(item=>item.id==='yaba-core-01');
 assert.ok(hero?.hero,'The Computer Village hero placement is missing from Stage 08E.');

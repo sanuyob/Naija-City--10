@@ -14,6 +14,26 @@ const heroFile = assetId + '.glb';
 const cacheVersion = 'computer-village-plaza-pbr-v1';
 const outputCache = join(cacheDir, 'computer-village-plaza.ktx2.glb');
 const markerPath = join(cacheDir, 'computer-village-plaza-cache.json');
+const basisCacheDir = join(cacheDir, 'basis');
+const basisPublicDir = join(root, 'public', 'assets', 'wasm', 'basis');
+const basisRuntimeFiles = [
+  {
+    file: 'basis.wasm.js',
+    url: 'https://raw.githubusercontent.com/playcanvas/engine/v2.24.0/examples/assets/wasm/basis/basis.wasm.js',
+    minimumBytes: 50000
+  },
+  {
+    file: 'basis.wasm.wasm',
+    url: 'https://raw.githubusercontent.com/playcanvas/engine/v2.24.0/examples/assets/wasm/basis/basis.wasm.wasm',
+    minimumBytes: 500000,
+    wasm: true
+  },
+  {
+    file: 'basis.js',
+    url: 'https://raw.githubusercontent.com/playcanvas/engine/v2.24.0/examples/assets/wasm/basis/basis.js',
+    minimumBytes: 1000000
+  }
+];
 
 const sources = {
   plaster: {
@@ -34,6 +54,50 @@ const sources = {
 
 async function exists(path) {
   try { await access(path); return true; } catch { return false; }
+}
+
+function validateBasisRuntimeFile(file, bytes) {
+  if (bytes.length < file.minimumBytes) {
+    throw new Error('PlayCanvas Basis runtime file ' + file.file + ' is unexpectedly small (' + bytes.length + ' bytes).');
+  }
+  if (file.wasm && !Buffer.from(bytes.subarray(0, 4)).equals(Buffer.from([0x00, 0x61, 0x73, 0x6d]))) {
+    throw new Error('PlayCanvas Basis WASM file has an invalid WebAssembly magic header.');
+  }
+}
+
+async function ensureBasisRuntime() {
+  await mkdir(basisCacheDir, { recursive: true });
+  await mkdir(basisPublicDir, { recursive: true });
+  for (const file of basisRuntimeFiles) {
+    const cachePath = join(basisCacheDir, file.file);
+    const publicPath = join(basisPublicDir, file.file);
+    let bytes = null;
+
+    if (await exists(cachePath)) {
+      try {
+        bytes = new Uint8Array(await readFile(cachePath));
+        validateBasisRuntimeFile(file, bytes);
+      } catch {
+        bytes = null;
+      }
+    }
+
+    if (!bytes) {
+      const response = await fetch(file.url, {
+        redirect: 'follow',
+        signal: AbortSignal.timeout(120000)
+      });
+      if (!response.ok) {
+        throw new Error('Could not download the pinned PlayCanvas v2.24.0 Basis runtime file ' + file.file + ': HTTP ' + response.status);
+      }
+      bytes = new Uint8Array(await response.arrayBuffer());
+      validateBasisRuntimeFile(file, bytes);
+      await writeFile(cachePath, bytes);
+    }
+
+    await copyFile(cachePath, publicPath);
+    console.log('PlayCanvas Basis runtime ready: ' + file.file + ' (' + bytes.length + ' bytes).');
+  }
 }
 
 async function downloadZip(source, cacheName) {
@@ -553,6 +617,7 @@ function compressHero(input, interim, output) {
 
 await mkdir(cacheDir,{recursive:true});
 await mkdir(buildingDir,{recursive:true});
+await ensureBasisRuntime();
 let cached=false;
 if(await exists(outputCache)&&await exists(markerPath)) {
   try {

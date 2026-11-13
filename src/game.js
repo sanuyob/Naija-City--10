@@ -12,6 +12,15 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const canvas = document.getElementById('application');
   const speedLabel = document.getElementById('speed');
   if (!(canvas instanceof HTMLCanvasElement)) throw new Error('Missing #application canvas');
+  statusLabel.textContent = 'Preparing texture decoder…';
+  const publicBase = new URL(import.meta.env.BASE_URL || '/', window.location.origin);
+  const basisBase = new URL('assets/wasm/basis/', publicBase);
+  pc.basisInitialize({
+    glueUrl: new URL('basis.wasm.js', basisBase).href,
+    wasmUrl: new URL('basis.wasm.wasm', basisBase).href,
+    fallbackUrl: new URL('basis.js', basisBase).href,
+    numWorkers: 1
+  });
   statusLabel.textContent = 'Starting 3D engine…';
   const device = await pc.createGraphicsDevice(canvas, { deviceTypes: [pc.DEVICETYPE_WEBGL2] });
   device.maxPixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
