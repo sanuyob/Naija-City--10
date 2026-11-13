@@ -147,6 +147,9 @@ for(const filename of buildingFiles){
  assert.ok(json.nodes.some(node=>node.name==='COLLISION_PROXY'),filename+' must contain a separate collision proxy');
  assert.equal(json.images.length,7,filename+' must embed its PBR texture images');
  assert.ok(json.accessors.some(accessor=>accessor.type==='VEC2'),filename+' must include UV coordinates');
+ assert.ok(json.accessors.some(accessor=>accessor.type==='VEC4'),filename+' must include tangent vectors for normal mapping');
+ assert.ok(json.bufferViews.every(view=>view.buffer===0),filename+' buffer views must reference the embedded GLB buffer');
+ assert.ok(json.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes.TANGENT!==undefined)),filename+' mesh primitives must include tangent attributes');
  assert.equal(json.materials.length,6,filename+' must use the shared six-family material library');
 }
 console.log('Stage 08E checks passed: 48 unique Nigerian commercial, mixed-use and residential GLBs, embedded PBR maps, UVs, three LODs and separate collision proxies.');
