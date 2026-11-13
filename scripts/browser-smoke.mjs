@@ -13,7 +13,7 @@ try {
  const page=await context.newPage(),errors=[];
  page.on('pageerror',error=>errors.push(error.message));
  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
- await page.goto(origin,{waitUntil:'networkidle'});
+ await page.goto(origin+'?smoke=1',{waitUntil:'networkidle'});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
  const state=await page.evaluate(()=>{
@@ -123,11 +123,27 @@ try {
  const profileAfterWarmup=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
  if(!profileAfterWarmup||profileAfterWarmup.stage!=='08F'||profileAfterWarmup.sampleCount<1||!profileAfterWarmup.frame||!('p95Ms' in profileAfterWarmup.frame))throw new Error('Stage 08F frame-time sampling did not start: '+JSON.stringify(profileAfterWarmup));
  if(!(await page.locator('#profile-export').isVisible()))throw new Error('Physical-device profile export control is not visible when the performance panel is open');
+ window.__NAIJA_RPG_PAUSED__=true;
+ await page.evaluate(()=>window.__NAIJA_GAME__.debugSetCameraForSmoke([0,10,382],[0,1.5,310]));
+ await page.waitForTimeout(160);
+ const ikejaScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ const ikejaVisual=await page.evaluate(async encoded=>{
+  const image=new Image();image.src='data:image/png;base64,'+encoded;await image.decode();
+  const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+  const context=canvas.getContext('2d',{willReadFrequently:true});context.drawImage(image,0,0);
+  const pixels=context.getImageData(0,0,canvas.width,canvas.height).data;
+  const colors=new Set();let nonBlue=0;
+  for(let i=0;i<pixels.length;i+=4){const r=pixels[i],g=pixels[i+1],b=pixels[i+2],a=pixels[i+3];if(!a)continue;colors.add((r>>3)+','+(g>>3)+','+(b>>3));if(!(b>r*1.05&&b>g*1.02))nonBlue++;}
+  return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,nonBluePixels:nonBlue};
+ },ikejaScreenshot.toString('base64'));
+ if(ikejaVisual.width<800||ikejaVisual.height<360||ikejaVisual.uniqueColorBuckets<18||ikejaVisual.nonBluePixels<1000)throw new Error('Ikeja material/prop camera screenshot failed: '+JSON.stringify(ikejaVisual));
+ window.__NAIJA_RPG_PAUSED__=false;
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
  console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
  console.log('Stage 08G passed: Ikeja commercial corridor, vendor props, POS kiosk, wheelbarrow, handcart, litter hotspots, open drainage, parked public transport and static pedestrian silhouettes.');
- console.log('Stage 08H passed: procedural PBR surfaces, varied clean/used/weathered props, umbrella/chair/bottle/generator/crate detailing and static batching.');
+ console.log('Stage 08H passed: procedural PBR surfaces, varied clean/used/weathered props, material assignment coverage, translucent glazing, detailed props and an Ikeja camera-view screenshot assertion.');
+ console.log('Ikeja screenshot metrics: '+JSON.stringify(ikejaVisual));
  console.log('Stage 08C passed: static Nigerian street infrastructure, utilities, drainage, street furniture and bus shelters with mobile-oriented static batching.');
  console.log('Stage 08D passed: semi-photoreal PBR materials and modular facade upgrades across all 48 Yaba district buildings.');
  console.log('Stage 06 character movement/jump and Stage 05 RPG UI / Stage 04 environment verification passed: landscape 844x390 canvas, camera direction, mesh instances, nonzero draw calls, screenshot pixel assertion, GLB + texture loaded, physics, Stage 07 touch actions and portrait rotation notice.');
