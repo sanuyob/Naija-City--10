@@ -29,6 +29,7 @@ try {
     stage08B:scalarFields(game.stage08B),
     stage08C:scalarFields(game.stage08C),
     stage08D:scalarFields(game.stage08D),
+    stage08G:scalarFields(game.stage08G),
     assets:{modelsLoaded:game.assets?.modelsLoaded,texturesLoaded:game.assets?.texturesLoaded,failures:game.assets?.failures||[]},
     thirdPersonCharacter:game.thirdPersonCharacter,
     movement:game.movement,
@@ -40,6 +41,7 @@ try {
    }:null
   };
  });
+ if(state.game?.stage08G?.stage!=='08G'||state.game?.stage08G?.district!=='Ikeja'||state.game?.stage08G?.roadLengthMetres!==150||state.game?.stage08G?.vendorStalls!==4||state.game?.stage08G?.parkedVehicles!==3||state.game?.stage08G?.staticPedestrianSilhouettes!==4||state.game?.stage08G?.litterHotspots!==4||state.game?.stage08G?.liveNpcAI!==false||state.game?.stage08G?.liveTrafficSimulation!==false)throw new Error('Stage 08G Ikeja street-life prototype metadata is incomplete: '+JSON.stringify(state.game?.stage08G));
  if(state.game?.stage!==8||state.game?.stage08A?.stage!=='08A'||state.game?.stage08A?.parallelRoads!==2||state.game?.stage08A?.crossStreets!==3||state.game?.stage08A?.commercialBuildings!==8||state.game?.stage08A?.residentialBuildings!==8)throw new Error('Stage 08A expansion metadata is incomplete: '+JSON.stringify(state.game?.stage08A));
  if(state.game?.stage08B?.stage!=='08B'||state.game?.stage08B?.commercialFacades!==8||state.game?.stage08B?.residentialFacades!==8||state.game?.stage08B?.detailMeshes<200||state.game?.stage08B?.batching!==true)throw new Error('Stage 08B facade detail metadata is incomplete: '+JSON.stringify(state.game?.stage08B));
  if(state.game?.stage08C?.stage!=='08C'||state.game?.stage08C?.utilityPoles!==16||state.game?.stage08C?.busShelters!==2||state.game?.stage08C?.pocketParksFurnished!==3||state.game?.stage08C?.batching!==true||state.game?.stage08C?.dynamicActorsAdded!==0||state.game?.stage08C?.detailMeshes<150)throw new Error('Stage 08C street infrastructure metadata is incomplete: '+JSON.stringify(state.game?.stage08C));
@@ -67,7 +69,7 @@ try {
  if(!stage08FProfile||stage08FProfile.stage!=='08F'||!Array.isArray(stage08FProfile.limitations)||!stage08FProfile.rendering)throw new Error('Stage 08F device profiling API is not exposed: '+JSON.stringify(stage08FProfile));
  if(stage08EState?.stage!=='08E'||stage08EState.expectedBuildings!==48||stage08EState.legacyBodiesHidden<48||stage08EState.loadedBuildings<1||stage08EState.staticBatching!==true)throw new Error('Stage 08E GLB streaming did not replace blockout buildings: '+JSON.stringify(stage08EState));
  if(stage08EState.heroBuildingId!=='yaba-core-01'||!stage08EState.heroTextureEncoding.includes('KHR_texture_basisu')||stage08EState.heroPbrMaterials.length!==7||stage08EState.heroLoadError)throw new Error('Computer Village hero GLB/KTX2 runtime load failed: '+JSON.stringify(stage08EState));
- if(state.diag.scene.knownBounds.max[2]!==169||state.diag.scene.knownBounds.min[2]!==-205)throw new Error('Expanded city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
+ if(state.diag.scene.knownBounds.max[2]!==402||state.diag.scene.knownBounds.min[2]!==-205)throw new Error('Expanded city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
  if(state.viewport.w!==844||state.viewport.h!==390)throw new Error('Test viewport is not landscape 844x390: '+JSON.stringify(state.viewport));
  if(!state.canvas.webgl2||state.canvas.w<800||state.canvas.h<360||state.canvas.h>450||state.canvas.y>1)throw new Error('Canvas does not fit the mobile viewport: '+JSON.stringify(state.canvas));
  if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||!state.diag.scene.diagnosticMarker.inFront)throw new Error('No actual scene geometry submitted for rendering: '+JSON.stringify(state.diag));
@@ -122,6 +124,7 @@ try {
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
  console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
+ console.log('Stage 08G passed: Ikeja commercial corridor, vendor props, POS kiosk, wheelbarrow, handcart, litter hotspots, open drainage, parked public transport and static pedestrian silhouettes.');
  console.log('Stage 08C passed: static Nigerian street infrastructure, utilities, drainage, street furniture and bus shelters with mobile-oriented static batching.');
  console.log('Stage 08D passed: semi-photoreal PBR materials and modular facade upgrades across all 48 Yaba district buildings.');
  console.log('Stage 06 character movement/jump and Stage 05 RPG UI / Stage 04 environment verification passed: landscape 844x390 canvas, camera direction, mesh instances, nonzero draw calls, screenshot pixel assertion, GLB + texture loaded, physics, Stage 07 touch actions and portrait rotation notice.');
