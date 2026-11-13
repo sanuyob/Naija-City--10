@@ -101,7 +101,7 @@ assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerH
 assert.match(game,/render-diagnostic-marker/,'A visible diagnostic render object must be present');
 assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
 assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
-for(const feature of ['player-character','player-head','left-leg-pivot','right-arm-pivot','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','velocity.y -=','running ? 6.0 : 3.15','smoothedCamera.lerp(smoothedCamera, desiredCamera']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
+for(const feature of ['player-character','player-head','player-jacket-front-left','player-jacket-front-right','player-hair-coil','player-eye-pupil','player-crossbody-strap','player-crossbody-pouch','left-forearm','right-forearm','left-trouser-leg','right-shoe-sole','left-leg-pivot','right-arm-pivot','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','velocity.y -=','running ? 6.0 : 3.15','smoothedCamera.lerp(smoothedCamera, desiredCamera']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
 assert.match(controller,/pointerdown/,'Touch movement and orbit must use pointer events');
 assert.match(controller,/stamina = Math.max/,'Sprint must consume stamina');
 assert.match(controller,/input.crouch/,'Crouch must affect player movement');
@@ -200,7 +200,7 @@ console.log('Stage 08A checks passed: expanded terrain, connected road grid, 16 
 console.log('Stage 08B checks passed: Nigerian shopfronts, awnings, roller shutters, balconies, security grilles, AC units and rooftop water tanks.');
 console.log('Stage 08C checks passed: static kerbs, storm drains, utility poles and wires, streetlights, road signs, park furniture, bus shelters and roadside stalls with bounded static batching.');
 console.log('Stage 08D checks passed: all 48 building bodies use shared PBR surface maps, original Yaba shopfront upgrades, local business signs and residential facade treatment.');
-console.log('Stage 06 checks passed: procedural human, locomotion, sprint, jump, gait animation, orbit camera and touch controls.');
+console.log('Stage 06 checks passed: native PlayCanvas composite hero, layered streetwear, face and hair detail, crossbody bag, locomotion, sprint, jump, gait animation, orbit camera and touch controls.');
 console.log('Stage 07 checks passed: landscape HUD, safe areas, stamina feedback, crouch/interact controls and quick slots.');
 console.log('Stage 05 RPG UI checks passed: responsive HUD, menus, touch layout and settings.');
 console.log('Stage 04 environment checks passed: viewport canvas, camera direction, render witness, GLB/texture handlers, screenshot assertions and signal-controlled traffic. Legacy vehicle physics remains available but is no longer the player controller.');
