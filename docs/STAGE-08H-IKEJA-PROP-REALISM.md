@@ -42,7 +42,7 @@ Textures are generated at 512×512 for asphalt and 256×256 for the other textur
 
 ## Wear distribution
 
-The pass explicitly separates clean, used and weathered items. Clean shop glass and some signs remain maintained. Vendor chairs, awnings, crates and market equipment vary by position/index. Stronger grime is concentrated around open gutters, drain covers, generator equipment, utility metalwork, road repairs and litter hotspots. The entire district is not covered in uniform dirt.
+The pass explicitly separates clean, used and weathered items. Used and weathered material variants also become progressively less glossy, so grime is not represented by colour darkening alone. Clean shop glass and some signs remain maintained. Vendor chairs, awnings, crates and market equipment vary by position/index. Stronger grime is concentrated around open gutters, drain covers, generator equipment, utility metalwork, road repairs and litter hotspots. The entire district is not covered in uniform dirt.
 
 ## Shape upgrades
 
