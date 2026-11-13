@@ -15,8 +15,9 @@ function hideLegacyBuildings(app) {
 }
 
 export function createStage08EBuildings({app}) {
-  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,failures:[],textureEncoding:'embedded PNG; Basis/KTX2 compression pending'};
-  const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map();
+  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,failures:[],textureEncoding:'embedded PNG; Basis/KTX2 compression pending'};
+  const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
+  let masterAssetId=null;
   const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,96);
   let tick=0,activeLoads=0;
   const maxConcurrent=2;
@@ -24,14 +25,15 @@ export function createStage08EBuildings({app}) {
   async function loadOne(item) {
     if(loading.has(item.id)||loaded.has(item.id)) return;
     loading.add(item.id); activeLoads++; state.loadingBuildings=loading.size;
-    const asset=new pc.Asset(item.id,'container',{url:assetUrl(item.url)});
-    app.assets.add(asset);
+    let asset=assetsById.get(item.id);
+    if(!asset) { asset=new pc.Asset(item.id,'container',{url:assetUrl(item.url)}); assetsById.set(item.id,asset); app.assets.add(asset); }
     try {
       await new Promise((resolve,reject)=>{
         asset.once('load',resolve);
         asset.once('error',error=>reject(new Error(error?.message||String(error||'GLB load failed'))));
         app.assets.load(asset);
       });
+      if(!asset.resource) throw new Error('GLB container loaded without a resource');
       const entity=asset.resource.instantiateRenderEntity();
       entity.name='stage08e-'+item.id;
       entity.setPosition(item.position[0],item.position[1],item.position[2]);
@@ -52,6 +54,7 @@ export function createStage08EBuildings({app}) {
         if(batchGroup) component.batchGroupId=batchGroup.id;
       }
       app.root.addChild(entity);
+      if(masterAssetId===null) masterAssetId=item.id;
       loaded.set(item.id,{entity,asset,lods,position:item.position,kind:item.kind,distance:Infinity});
       state.loadedBuildings=loaded.size;
       state.staticBatching=Boolean(batchGroup);
@@ -83,6 +86,14 @@ export function createStage08EBuildings({app}) {
       for(const item of loaded.values()) {
         const dx=position[0]-item.position[0],dz=position[2]-item.position[2];
         const distance=Math.hypot(dx,dz); item.distance=distance;
+        if(distance>210&&item.asset!==undefined&&item.entity&&item.asset.name!==masterAssetId) {
+          item.entity.destroy();
+          item.asset.unload();
+          loaded.delete(item.asset.name);
+          state.unloadedBuildings++;
+          state.loadedBuildings=loaded.size;
+          continue;
+        }
         item.entity.enabled=distance<=210;
         const level=distance<75?0:distance<145?1:2;
         item.lods.forEach((lod,i)=>{lod.enabled=item.entity.enabled&&i===level;});
@@ -98,5 +109,5 @@ export function createStage08EBuildings({app}) {
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
   }
 
-  return {initialize:async()=>{await initialize();state.ready=true;return state;},update,getState:()=>({...state,streaming:'distance-based progressive district loading',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size})};
+  return {initialize:async()=>{await initialize();state.ready=true;return state;},update,getState:()=>({...state,streaming:'distance-based progressive loading with unload/eviction outside 210m (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterMaterialAsset:masterAssetId})};
 }
