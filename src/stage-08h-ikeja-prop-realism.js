@@ -269,6 +269,39 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     silt: tintedVariant(silt, '08H-dark-drain-silt', [0.73,0.68,0.6],0.42)
   };
 
+  const colorWearSet = (family, label, tint) => ({
+    clean: tintedVariant(clean[family], '08H-' + label + '-clean', tint, 0.96),
+    used: tintedVariant(used[family], '08H-' + label + '-used', tint, 0.78),
+    weathered: tintedVariant(weathered[family], '08H-' + label + '-weathered', tint, 0.56)
+  });
+  const signBlue = colorWearSet('paintMetal','blue-sign-paint',[0.42,0.66,1.35]);
+  const signGreen = colorWearSet('paintMetal','green-sign-paint',[0.38,1.12,0.58]);
+  const signYellow = colorWearSet('paintMetal','yellow-streetlight-paint',[1.28,1.08,0.46]);
+  const signWhite = colorWearSet('paintMetal','white-pos-sign-paint',[1.18,1.16,1.06]);
+  const bluePlastic = colorWearSet('plastic','blue-market-crate',[0.38,0.62,1.3]);
+  const yellowPlastic = colorWearSet('plastic','yellow-poly-jerrycan',[1.28,1.08,0.45]);
+  const greenPlastic = colorWearSet('plastic','green-pos-kiosk',[0.4,1.14,0.56]);
+  const greenBottle = colorWearSet('plastic','green-discarded-bottle',[0.48,0.96,0.64]);
+  const whiteSachet = colorWearSet('plastic','off-white-sachet-film',[1.12,1.1,1.02]);
+  const fabricColors = {
+    red: colorWearSet('fabric','red-vendor-canvas',[1.28,0.5,0.42]),
+    green: colorWearSet('fabric','green-vendor-canvas',[0.46,1.12,0.58]),
+    blue: colorWearSet('fabric','blue-vendor-canvas',[0.46,0.68,1.32]),
+    yellow: colorWearSet('fabric','yellow-vendor-canvas',[1.28,1.08,0.44])
+  };
+  const shirts = [
+    colorWearSet('fabric','blue-shirt',[0.42,0.68,1.28]),
+    colorWearSet('fabric','red-shirt',[1.2,0.48,0.36]),
+    colorWearSet('fabric','green-shirt',[0.42,1.08,0.52])
+  ];
+  const trousers = colorWearSet('fabric','dark-trousers',[0.24,0.28,0.32]);
+  const skin = tintedVariant(plastic,'08H-natural-brown-skin-tone',[0.68,0.42,0.28],0.58);
+  const facadePalette = [
+    colorWearSet('plaster','ochre-shop-plaster',[1.04,0.82,0.62]),
+    colorWearSet('plaster','cool-grey-shop-plaster',[0.75,0.9,0.93]),
+    colorWearSet('plaster','warm-stone-shop-plaster',[0.94,0.93,0.78])
+  ];
+
   const entities = app.root.findByTag('stage08g-ikeja-street-life') || [];
   let texturedProps = 0, cleanProps = 0, usedProps = 0, weatheredProps = 0;
   const assigned = [];
@@ -286,8 +319,39 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     return 'used';
   }
 
-  function getMaterial(name, wear) {
+  function getMaterial(name, wear, index, position) {
     const mats = wear === 'clean' ? clean : wear === 'weathered' ? weathered : used;
+    if (/pedestrian-head/.test(name)) return skin;
+    if (/pedestrian-torso/.test(name)) {
+      const shirt = position[2] < 285 ? 0 : position[2] < 320 ? 1 : 2;
+      return shirts[shirt][wear];
+    }
+    if (/pedestrian-leg/.test(name)) return trousers[wear];
+    if (/mixed-use-shop-shell/.test(name)) {
+      const facadeIndex = Math.abs(Math.floor((position[2] - 250) / 20)) % facadePalette.length;
+      return facadePalette[facadeIndex][wear];
+    }
+    if (/shop-sign-fascia/.test(name)) {
+      const signIndex = Math.abs(Math.floor((position[2] + 6.94 - 250) / 20));
+      return (signIndex % 2 === 0 ? signBlue : signGreen)[wear];
+    }
+    if (/direction-sign-board/.test(name)) return signBlue[wear];
+    if (/pos-sign/.test(name)) return signWhite[wear];
+    if (/streetlight-head/.test(name)) return signYellow[wear];
+    if (/umbrella-canopy/.test(name)) {
+      const color = position[2] < 270 ? 'red' : position[2] < 310 ? 'green' : position[2] < 345 ? 'blue' : 'yellow';
+      return fabricColors[color][wear];
+    }
+    if (/awning/.test(name)) {
+      const awningIndex = Math.abs(Math.floor((position[2] + 6.2 - 250) / 20));
+      return (awningIndex % 2 === 0 ? fabricColors.red : fabricColors.yellow)[wear];
+    }
+    if (/pos-kiosk/.test(name)) return greenPlastic[wear];
+    if (/beverage-crate/.test(name)) return bluePlastic[wear];
+    if (/jerrycan/.test(name)) return yellowPlastic[wear];
+    if (/bottle-litter/.test(name)) return greenBottle[wear];
+    if (/sachet-litter/.test(name)) return whiteSachet[wear];
+    if (/goods-display/.test(name)) return mats.cardboard;
     if (/main-road|approach-road|asphalt-repair|shallow-road/.test(name)) {
       return /repair/.test(name) ? mats.roadPatch : mats.asphalt;
     }
@@ -295,19 +359,15 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     if (/open-gutter|drainage/.test(name)) return mats.concrete;
     if (/drain-cover/.test(name)) return mats.metal;
     if (/sidewalk|kerb|approach-.*walkway/.test(name)) return mats.concrete;
-    if (/mixed-use-shop-shell/.test(name)) return mats.plaster;
     if (/shopfront-glazing|upper-window|window/.test(name)) return mats.glass;
     if (/security-grille|utility-pole|pole-crossarm|streetlight|direction-sign-post|generator-frame|table-leg/.test(name)) return mats.paintMetal;
-    if (/direction-sign-board|shop-sign-fascia|pos-sign/.test(name)) return mats.paintMetal;
     if (/vendor-table|handcart-platform/.test(name)) return mats.wood;
-    if (/umbrella-canopy|awning/.test(name)) return mats.fabric;
-    if (/plastic-chair|beverage-crate|jerrycan|pos-kiosk|bottle-litter|sachet-litter/.test(name)) return mats.plastic;
+    if (/plastic-chair/.test(name)) return mats.plastic;
     if (/carton/.test(name)) return mats.cardboard;
     if (/wheel|tyre/.test(name)) return mats.rubber;
     if (/wheelbarrow-tray|handcart|generator/.test(name)) return mats.paintMetal;
     if (/parked-.*window/.test(name)) return mats.glass;
     if (/parked-/.test(name)) return mats.paintMetal;
-    if (/pedestrian/.test(name)) return mats.plastic;
     return mats.concrete;
   }
 
@@ -318,7 +378,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     const pos = entity.getPosition();
     const position = [pos.x, pos.y, pos.z];
     const wear = selectWear(name, position, index);
-    entity.render.material = getMaterial(name, wear);
+    entity.render.material = getMaterial(name, wear, index, position);
     if (/parked-.*-body$/.test(name)) {
       const bodyPaint = name.includes('danfo')
         ? tintedVariant(paintMetal,'08H-danfo-yellow-painted-metal',[1.24,1.04,0.62])
@@ -362,7 +422,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     const p = entity.getPosition();
     entity.render.enabled = false;
     detail('umbrella-canopy', 'cone', [p.x,p.y+0.08,p.z], [2.7,0.62,2.7],
-      [clean.fabric,used.fabric,weathered.fabric][canopyIndex % 3],
+      fabricColors[['red','green','blue','yellow'][canopyIndex % 4]][selectWear(entity.name,[p.x,p.y,p.z],canopyIndex)],
       [0,0,0]);
     detail('umbrella-finial', 'sphere', [p.x,p.y+0.4,p.z], [0.11,0.12,0.11], galvanized);
     for (let rib = 0; rib < 8; rib++) {
