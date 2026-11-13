@@ -106,6 +106,7 @@ export function createStage08EBuildings({app}) {
       .map(item=>({...item,distance:Math.hypot(position[0]-item.position[0],position[2]-item.position[2])}))
       .filter(item=>item.distance<=150)
       .sort((a,b)=>a.distance-b.distance);
+    state.activeDistricts=[...new Set(candidates.map(item=>item.district).filter(Boolean))];
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
   }
 
