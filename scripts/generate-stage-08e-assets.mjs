@@ -57,12 +57,14 @@ function box(groups, x,y,z, sx,sy,sz, mat) {
     {n:[0,1,0],p:[[-1,1,1],[1,1,1],[1,1,-1],[-1,1,-1]]},
     {n:[0,-1,0],p:[[-1,-1,-1],[1,-1,-1],[1,-1,1],[-1,-1,1]]}
   ];
-  const g=groups[mat] ||= {p:[],n:[],uv:[],i:[]};
+  const g=groups[mat] ||= {p:[],n:[],uv:[],t:[],i:[]};
   for(const f of faces) {
     const base=g.p.length/3;
+    const a=f.p[1],b=f.p[0],tx=a[0]-b[0],ty=a[1]-b[1],tz=a[2]-b[2],tl=Math.hypot(tx,ty,tz)||1;
+    const tangent=[tx/tl,ty/tl,tz/tl,1];
     for(let k=0;k<4;k++) {
       const v=f.p[k]; g.p.push(x+v[0]*sx/2,y+v[1]*sy/2,z+v[2]*sz/2);
-      g.n.push(...f.n); g.uv.push(k===1||k===2?1:0,k>=2?1:0);
+      g.n.push(...f.n); g.uv.push(k===1||k===2?1:0,k>=2?1:0); g.t.push(...tangent);
     }
     g.i.push(base,base+1,base+2,base,base+2,base+3);
   }
@@ -138,7 +140,7 @@ function appendAligned(chunks, bytes) {
   if(pad) chunks.push(Buffer.alloc(pad));
   const offset=chunks.reduce((n,b)=>n+b.length,0);
   chunks.push(Buffer.from(bytes));
-  return {byteOffset:offset,byteLength:bytes.length};
+  return {buffer:0,byteOffset:offset,byteLength:bytes.length};
 }
 function makeGlb(kind,w,h,d,seed) {
   const chunks=[],views=[],accessors=[],meshes=[],nodes=[];
@@ -157,16 +159,18 @@ function makeGlb(kind,w,h,d,seed) {
     const primitives=[];
     for(const [mat,g] of Object.entries(groups)) {
       if(!g.i.length) continue;
-      const position=Float32Array.from(g.p), normal=Float32Array.from(g.n), uv=Float32Array.from(g.uv), indices=Uint16Array.from(g.i);
+      const position=Float32Array.from(g.p), normal=Float32Array.from(g.n), uv=Float32Array.from(g.uv), tangent=Float32Array.from(g.t), indices=Uint16Array.from(g.i);
       const posView=appendAligned(chunks,Buffer.from(position.buffer)); views.push({...posView,target:34962});
       const posIndex=accessors.push({bufferView:views.length-1,componentType:5126,count:position.length/3,type:'VEC3',min:[Math.min(...g.p.filter((_,i)=>i%3===0)),Math.min(...g.p.filter((_,i)=>i%3===1)),Math.min(...g.p.filter((_,i)=>i%3===2))],max:[Math.max(...g.p.filter((_,i)=>i%3===0)),Math.max(...g.p.filter((_,i)=>i%3===1)),Math.max(...g.p.filter((_,i)=>i%3===2))]})-1;
       const normView=appendAligned(chunks,Buffer.from(normal.buffer)); views.push({...normView,target:34962});
       const normIndex=accessors.push({bufferView:views.length-1,componentType:5126,count:normal.length/3,type:'VEC3'})-1;
       const uvView=appendAligned(chunks,Buffer.from(uv.buffer)); views.push({...uvView,target:34962});
       const uvIndex=accessors.push({bufferView:views.length-1,componentType:5126,count:uv.length/2,type:'VEC2'})-1;
+      const tangentView=appendAligned(chunks,Buffer.from(tangent.buffer)); views.push({...tangentView,target:34962});
+      const tangentIndex=accessors.push({bufferView:views.length-1,componentType:5126,count:tangent.length/4,type:'VEC4'})-1;
       const idxView=appendAligned(chunks,Buffer.from(indices.buffer)); views.push({...idxView,target:34963});
       const idxIndex=accessors.push({bufferView:views.length-1,componentType:5123,count:indices.length,type:'SCALAR',min:[0],max:[indices.length?Math.max(...g.i):0]})-1;
-      primitives.push({attributes:{POSITION:posIndex,NORMAL:normIndex,TEXCOORD_0:uvIndex},indices:idxIndex,material:Number(mat),mode:4});
+      primitives.push({attributes:{POSITION:posIndex,NORMAL:normIndex,TANGENT:tangentIndex,TEXCOORD_0:uvIndex},indices:idxIndex,material:Number(mat),mode:4});
     }
     const meshIndex=meshes.push({name,primitives})-1;
     return meshIndex;
