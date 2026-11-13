@@ -121,18 +121,18 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   part(leftLeg, 'left-trouser-leg', 'cylinder', [0.16, 0.48, 0.16], [0, -0.25, 0], trousers);
   part(leftLeg, 'left-trouser-knee-panel', 'box', [0.27, 0.12, 0.035], [0, -0.29, -0.14], trouserSeam);
   part(leftLeg, 'left-trouser-hem', 'cylinder', [0.16, 0.055, 0.16], [0, -0.49, 0], trouserSeam);
-  part(leftLeg, 'left-shoe-sole', 'box', [0.24, 0.065, 0.37], [0, -0.56, -0.065], sole);
-  part(leftLeg, 'left-shoe-upper', 'box', [0.225, 0.13, 0.33], [0, -0.49, -0.075], shoes);
-  part(leftLeg, 'left-shoe-tongue', 'box', [0.105, 0.055, 0.12], [0, -0.445, -0.19], bagTrim);
+  part(leftLeg, 'left-shoe-sole', 'box', [0.24, 0.065, 0.37], [0, -0.70, -0.065], sole);
+  part(leftLeg, 'left-shoe-upper', 'box', [0.225, 0.13, 0.33], [0, -0.63, -0.075], shoes);
+  part(leftLeg, 'left-shoe-tongue', 'box', [0.105, 0.055, 0.12], [0, -0.585, -0.19], bagTrim);
   const rightLeg = new pc.Entity('right-leg-pivot');
   rightLeg.setLocalPosition(0.16, 0.79, 0);
   player.addChild(rightLeg);
   part(rightLeg, 'right-trouser-leg', 'cylinder', [0.16, 0.48, 0.16], [0, -0.25, 0], trousers);
   part(rightLeg, 'right-trouser-knee-panel', 'box', [0.27, 0.12, 0.035], [0, -0.29, -0.14], trouserSeam);
   part(rightLeg, 'right-trouser-hem', 'cylinder', [0.16, 0.055, 0.16], [0, -0.49, 0], trouserSeam);
-  part(rightLeg, 'right-shoe-sole', 'box', [0.24, 0.065, 0.37], [0, -0.56, -0.065], sole);
-  part(rightLeg, 'right-shoe-upper', 'box', [0.225, 0.13, 0.33], [0, -0.49, -0.075], shoes);
-  part(rightLeg, 'right-shoe-tongue', 'box', [0.105, 0.055, 0.12], [0, -0.445, -0.19], bagTrim);
+  part(rightLeg, 'right-shoe-sole', 'box', [0.24, 0.065, 0.37], [0, -0.70, -0.065], sole);
+  part(rightLeg, 'right-shoe-upper', 'box', [0.225, 0.13, 0.33], [0, -0.63, -0.075], shoes);
+  part(rightLeg, 'right-shoe-tongue', 'box', [0.105, 0.055, 0.12], [0, -0.585, -0.19], bagTrim);
 
   const input = { x: 0, y: 0, sprint: false, jumpQueued: false, crouch: false };
   const keys = Object.create(null);
