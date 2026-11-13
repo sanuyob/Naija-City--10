@@ -56,6 +56,13 @@ try {
   throw new Error('Computer Village KTX2 hero failed to load within 60 seconds: '+JSON.stringify({diagnostic,errors})+'; '+error.message);
  }
  const stage08EState=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08EState?.());
+ const collisionTest=await page.evaluate(()=>{
+  const state=window.__NAIJA_GAME__?.getStage08EState?.();
+  const resolve=window.__NAIJA_GAME__?.resolveBuildingMovement;
+  const current=[-5.3,0,-82],attempt=[-6.3,0,-82];
+  return {count:state?.collisionProxyCount,mode:state?.collisionMode,radius:state?.collisionRadius,result:resolve?.(current,attempt)};
+ });
+ if(collisionTest.count!==48||!collisionTest.mode?.includes('persistent')||Math.abs(collisionTest.result?.[0]-(-5.3))>0.001)throw new Error('Persistent building collision test failed: '+JSON.stringify(collisionTest));
  const stage08FProfile=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
  if(!stage08FProfile||stage08FProfile.stage!=='08F'||!Array.isArray(stage08FProfile.limitations)||!stage08FProfile.rendering)throw new Error('Stage 08F device profiling API is not exposed: '+JSON.stringify(stage08FProfile));
  if(stage08EState?.stage!=='08E'||stage08EState.expectedBuildings!==48||stage08EState.legacyBodiesHidden<48||stage08EState.loadedBuildings<1||stage08EState.staticBatching!==true)throw new Error('Stage 08E GLB streaming did not replace blockout buildings: '+JSON.stringify(stage08EState));
