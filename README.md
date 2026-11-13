@@ -26,6 +26,15 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - Kept the pass static: no new moving vehicles, pedestrians or animated vendors.
 - Reused material families and a bounded static PlayCanvas batch group; physical Android profiling remains necessary.
 
+## Stage 08D — Semi-photoreal Nigerian building realism
+- Upgraded all 48 building bodies: 32 original Yaba roadside shops, 8 expansion commercial buildings and 8 residential buildings.
+- Replaced flat facade colours with five shared painted-plaster variants using 512×512 procedural albedo, normal and gloss maps, including restrained grime and surface variation.
+- Added separate 256×256 albedo, normal and gloss maps for weathered concrete, roof concrete and steel, plus a tinted-glass reflection/albedo map and rooftop tank plastic finish.
+- Added four readable local business sign variants, original shop display glazing/security treatment, canopies, plinths, cornices and rainwater downpipes.
+- Added residential lintels, sills, facade mullions and more finished entry doors/canopies; existing Stage 08B balconies, grilles, shutters, awnings, AC units and tanks now share the PBR finish families.
+- Uses generated shared textures and bounded static batching rather than downloading 48 separate high-resolution material sets.
+- This is a semi-photoreal procedural facade/PBR pass, not photogrammetry or 48 individually authored high-detail GLB building models. Unique building interiors, custom 2K/4K materials, final collision and physical Android performance checks remain future work.
+
 ## Landscape HUD
 - Landscape-first mobile layout with a portrait rotation notice and web-app manifest orientation hint.
 - Left thumb zone: camera-relative movement joystick.
@@ -62,6 +71,7 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
 - `src/stage-08b-building-detail.js`: Nigerian-inspired commercial and residential facade detail, balconies, security grilles, AC units and rooftop tanks.
 - `src/stage-08c-street-infrastructure.js`: static kerbs, drainage, utility poles/wires, streetlights, signs, park furniture, bus shelters and roadside stalls.
+- `src/stage-08d-building-realism.js`: material-specific procedural PBR maps, building material families, business signs, roof detailing and modular facade dressing for all 48 building bodies.
 - `src/rpg-ui.js` / `src/rpg-ui.css`: HUD, menus, safe areas and touch controls.
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
@@ -69,4 +79,4 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 `npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser`
 
 ## Honest status
-The character remains a lightweight procedural placeholder. Stage 08A establishes the city blockout, while Stage 08B adds low-poly facade detail; neither stage is a final photorealistic or PBR environment. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for touch comfort, safe-area behavior and performance.
+The character remains a lightweight procedural placeholder. Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for texture loading, touch comfort, safe-area behavior and performance.

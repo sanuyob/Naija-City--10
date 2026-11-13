@@ -4,6 +4,7 @@ import { loadSceneAssets } from './asset-loader.js';
 import { createStage08ACityExpansion } from './stage-08a-city-expansion.js';
 import { createStage08BBuildingDetail } from './stage-08b-building-detail.js';
 import { createStage08CStreetInfrastructure } from './stage-08c-street-infrastructure.js';
+import { createStage08DBuildingRealism } from './stage-08d-building-realism.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -81,7 +82,17 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   box('south-stop-line',[0,0.04,junctionZ+6],[7.8,0.035,0.18],m.white);
   box('junction-center-mark',[0,0.035,junctionZ],[0.22,0.025,0.22],m.yellow);
 
-  for(let i=0;i<16;i++){const z=-82+i*9.5,lh=4+(i%3)*1.3,rh=4.5+((i+1)%3)*1.1;box('street-shop-left',[-9.2,lh/2,z],[5.2,lh,6.8],m.shops[i%4]);box('street-shop-right',[9.2,rh/2,z-2],[5.2,rh,6.8],m.shops[(i+2)%4]);}
+  // Keep explicit plot metadata for all original Yaba commercial buildings.
+  const coreBuildings=[];
+  for(let i=0;i<16;i++){
+    const z=-82+i*9.5,lh=4+(i%3)*1.3,rh=4.5+((i+1)%3)*1.1;
+    const left=box('street-shop-left',[-9.2,lh/2,z],[5.2,lh,6.8],m.shops[i%4]);
+    const right=box('street-shop-right',[9.2,rh/2,z-2],[5.2,rh,6.8],m.shops[(i+2)%4]);
+    left.tags.add('stage08d-core-building');
+    right.tags.add('stage08d-core-building');
+    coreBuildings.push({entity:left,kind:'commercial',x:-9.2,z,width:5.2,height:lh,depth:6.8,side:-1,source:'core'});
+    coreBuildings.push({entity:right,kind:'commercial',x:9.2,z:z-2,width:5.2,height:rh,depth:6.8,side:1,source:'core'});
+  }
   for(const side of [-1,1]) for(let z=-68;z<48;z+=24){box('drain-cover',[side*6.35,0.14,z],[0.45,0.06,1.5],m.dark);box('drain-grate',[side*6.35,0.18,z],[0.34,0.025,1.1],m.metal);}
   box('roadside-kiosk',[-7.9,1.15,-17],[2.3,2.3,2.4],m.green);
   box('kiosk-awning',[-7.9,2.42,-17],[2.7,0.18,2.8],m.red);
@@ -133,6 +144,21 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     ];
     signalLamps.push(lamps);
   }
+  // Stage 08D upgrades every original Yaba shop plus the 16 Stage 08A buildings.
+  const expansionBuildings=(app.root.findByTag('stage08a-building')||[]).map(entity=>{
+    const position=entity.getPosition();
+    const scale=entity.getLocalScale();
+    const residential=entity.name.includes('residential');
+    return {
+      entity,kind:residential?'residential':'commercial',
+      x:position.x,z:position.z,width:scale.x,height:scale.y,depth:scale.z,
+      side:position.x<0?-1:1,source:'08A'
+    };
+  });
+  const stage08D=createStage08DBuildingRealism({
+    app,box,graphicsDevice:device,buildings:[...coreBuildings,...expansionBuildings]
+  });
+
   let signalClock=0,mainGreen=true;
   const trafficStatus=document.getElementById('traffic-status');
   function updateSignal(dt){
@@ -215,7 +241,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-48,-1,-205],max:[48,10,169]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,stage08D,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
   window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;playerController.destroy();},{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';

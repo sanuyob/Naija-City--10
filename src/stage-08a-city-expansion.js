@@ -71,7 +71,8 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
       body.tags.add('stage08a-building');
       const frontX = x - side * 4.28;
       box('stage08-shopfront-glazing', [frontX, 1.45, z], [0.12, 1.65, 8.6], extra.storefront);
-      box('stage08-commercial-roof', [x, height + 0.12, z], [8.8, 0.24, 13.9], extra.roof);
+      const roof = box('stage08-commercial-roof', [x, height + 0.12, z], [8.8, 0.24, 13.9], extra.roof);
+      roof.tags.add('stage08a-roof');
     });
   }
 
@@ -82,7 +83,8 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
       const height = 4.1 + (index % 3) * 0.45;
       const body = box('stage08-residential-building', [x, height / 2, z], [9.5, height, 14.5], extra.residential[index % extra.residential.length]);
       body.tags.add('stage08a-building');
-      box('stage08-residential-roof', [x, height + 0.13, z], [9.8, 0.26, 14.8], extra.roof);
+      const roof = box('stage08-residential-roof', [x, height + 0.13, z], [9.8, 0.26, 14.8], extra.roof);
+      roof.tags.add('stage08a-roof');
     });
   }
 
