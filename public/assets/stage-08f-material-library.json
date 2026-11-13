@@ -98,7 +98,7 @@
     "author",
     "modifications"
   ],
-  "note": "Eight surface families remain the district-wide authoring contract. The first hero pilot now contains embedded 2K CC0 PBR data for two real source materials, compressed as KTX2/Basis. Do not treat the remaining 47 Stage 08E assets or the unimplemented material families as upgraded.",
+  "note": "Eight surface families remain the district-wide authoring contract. The first hero pilot now contains embedded 2K CC0 PBR data from three real source materials, compressed as KTX2/Basis. Do not treat the remaining 47 Stage 08E assets or the unimplemented material families as upgraded.",
   "heroPilot": {
     "assetId": "yaba-core-01",
     "name": "Computer Village Electronics Plaza",
@@ -128,6 +128,19 @@
           "AmbientOcclusion"
         ],
         "usage": "corrugated roof and industrial metal; AO/roughness/metalness packed into ORM"
+      },
+      {
+        "id": "PaintedPlaster017",
+        "url": "https://ambientcg.com/view?id=PaintedPlaster017",
+        "license": "CC0-1.0",
+        "resolution": 2048,
+        "maps": [
+          "Color",
+          "Normal",
+          "Roughness"
+        ],
+        "technique": "surface-photogrammetry",
+        "usage": "painted facade/cladding panels; source has no AO or metalness maps, so neutral AO=1 and metalness=0 are packed with its roughness into glTF ORM"
       }
     ],
     "textures": {
