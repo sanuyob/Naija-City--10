@@ -5,7 +5,7 @@ import * as pc from 'playcanvas';
  * Character geometry is assembled from primitive meshes; gait is procedural
  * so no large external rig or animation download is required.
  */
-export function createThirdPersonController(app, camera, canvas, { onInteract } = {}) {
+export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement } = {}) {
   const mat = (color, metalness = 0) => {
     const material = new pc.StandardMaterial();
     material.diffuse = new pc.Color(...color);
@@ -183,9 +183,16 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
     input.jumpQueued = false;
     if (!grounded) velocity.y -= 17.5 * step;
     const p = player.getPosition();
-    p.x = pc.math.clamp(p.x + velocity.x * step, -46, 46);
-    p.z = pc.math.clamp(p.z + velocity.z * step, -195, 160);
-    p.y += velocity.y * step;
+    const currentPosition=[p.x,p.y,p.z];
+    const proposedPosition=[
+      pc.math.clamp(p.x + velocity.x * step, -46, 46),
+      p.y + velocity.y * step,
+      pc.math.clamp(p.z + velocity.z * step, -195, 160)
+    ];
+    const resolvedPosition=typeof resolveMovement==='function'
+      ? resolveMovement(currentPosition,proposedPosition)
+      : proposedPosition;
+    p.set(resolvedPosition[0],resolvedPosition[1],resolvedPosition[2]);
     if (p.y <= 0) { p.y = 0; velocity.y = 0; grounded = true; }
     player.setPosition(p);
     player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
