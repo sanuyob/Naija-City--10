@@ -11,7 +11,7 @@ const buildingDir = join(root, 'public', 'assets', 'buildings');
 const manifestPath = join(root, 'public', 'assets', 'stage-08e-manifest.json');
 const assetId = 'yaba-core-01';
 const heroFile = assetId + '.glb';
-const cacheVersion = 'computer-village-plaza-pbr-v2-painted-facade';
+const cacheVersion = 'computer-village-plaza-pbr-v3-architectural-articulation';
 const outputCache = join(cacheDir, 'computer-village-plaza.ktx2.glb');
 const markerPath = join(cacheDir, 'computer-village-plaza-cache.json');
 const basisCacheDir = join(cacheDir, 'basis');
@@ -453,6 +453,23 @@ function buildLod(level) {
     // Rainwater downpipe, conduit clips and shop-front security grille.
     box(3,[-2.87,1.8,-3.15],[0.11,3.4,0.11]);
     for(let bar=-4;bar<=4;bar++) box(3,[-2.86,1.75,-1.55+bar*0.3],[0.07,2.45,0.045]);
+
+    // Stage 08F artistry pass: articulated pilasters, service louvres and canopy hardware.
+    for(const z of [-2.95,0,2.95]) {
+      box(4,[-2.91,8.55,z],[0.16,8.15,0.22]);
+      for(const y of [4.2,7.2,10.2]) box(4,[-3.0,y,z],[0.34,0.12,0.3]);
+    }
+    // Layered storefront shutter ribs and visible awning brackets.
+    for(let y=0.62;y<=2.82;y+=0.18) box(3,[-2.82,y,2.8],[0.07,0.035,0.68]);
+    for(const z of [-2.7,2.7]) {
+      box(3,[-3.12,3.12,z],[0.08,0.56,0.08]);
+      box(3,[-3.28,3.28,z],[0.34,0.08,0.08]);
+    }
+    // Rear service louvre bank, roof plant screening and maintenance access.
+    box(3,[2.63,8.0,-2.25],[0.09,2.4,1.2]);
+    for(let slat=0;slat<10;slat++) box(3,[2.70,6.95+slat*0.22,-2.25],[0.08,0.045,1.12]);
+    for(const z of [-2.8,2.8]) box(4,[1.85,14.35,z],[1.0,0.18,0.18]);
+    box(3,[1.45,14.8,-2.5],[1.1,0.08,0.08]);
   }
   return groups;
 }
@@ -547,10 +564,11 @@ function makeGlb(images) {
     children:[...lodIndices,collisionNode],
     extras:{
       archetype:'Computer Village electronics and repair plaza',
-      authoring:'procedural architectural blockout with individually authored facade modules',
+      authoring:'procedurally assembled architectural asset with individually authored facade modules and a dedicated articulation pass',
       units:'meters',
       frontAxis:'-X',
       floorCount:4,
+      artistryPass:'08F-v3 articulated pilasters, layered shop shutter, canopy brackets, rear service louvres and rooftop plant screening',
       collision:'separate simplified envelope; not yet connected to live physics'
     }
   })-1;
