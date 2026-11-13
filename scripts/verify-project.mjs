@@ -129,6 +129,8 @@ assert.match(stage08e,/COLLISION_PROXY/,'GLB collision proxies must remain separ
 assert.match(stage08e,/LOD0/,'Stage 08E must select LOD0/1/2 by camera distance');
 assert.match(stage08e,/stage08e-static-buildings/,'Compatible static building geometry must use a dedicated batch group');
 assert.match(stage08e,/maxConcurrent=2/,'Progressive building streaming must limit concurrent loads');
+assert.match(stage08e,/\.unload\(\)/,'Distant GLB containers must be evicted from memory');
+assert.ok(stage08eManifest.models.every(model=>typeof model.district==='string'),'Every building must be assigned to a spatial streaming district');
 assert.match(generator,/KHR_texture_basisu|Basis\/KTX2 compression is a remaining optimization task/,'Texture compression status must be explicit');
 assert.equal(stage08eManifest.models.length,48,'Stage 08E must produce an individual GLB placement for all 48 existing buildings');
 assert.equal(buildingFiles.length,48,'All 48 generated building GLBs must exist');
