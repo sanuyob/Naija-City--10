@@ -22,7 +22,7 @@ Stage 08H is a street-prop material and shape-art pass over the Stage 08G Ikeja 
 
 ## Implemented material system
 
-The 08H runtime creates original deterministic procedural surface maps in the browser. Nine textured surface families use three maps each: base colour/albedo, tangent-space normal, and gloss/smoothness. A separate tuned glass material does not use image maps.
+The 08H runtime creates original deterministic procedural surface maps in the browser. Ten textured surface families use three maps each: base colour/albedo, tangent-space normal, and gloss/smoothness. A separate tuned glass material does not use image maps.
 
 | Material family | Typical assignments | Base wear |
 |---|---|---|
@@ -38,7 +38,7 @@ The 08H runtime creates original deterministic procedural surface maps in the br
 | Cardboard | Shipping cartons and discarded packaging | Kraft colour, scuffs and damp-stain tint |
 | Smoked glass | Shop windows and vehicle glazing | Restrained tint and gloss; no fake mirror reflection |
 
-Textures are generated at 512×512 for asphalt and 256×256 for the other textured families, with mipmaps and anisotropy capped at 2. Materials share maps to reduce repeated texture allocations. All procedural surface maps are generated from project code; no third-party image maps are downloaded at runtime.
+Textures are generated at 512×512 for asphalt and 256×256 for the other nine textured families, with mipmaps and anisotropy capped at 2. The ten texture-map sets generate 30 GPU texture objects (three maps per set); the silt set is a separate concrete-derived variant. The glass material is constant-parameter only. Materials share maps to reduce repeated texture allocations. All procedural surface maps are generated from project code; no third-party image maps are downloaded at runtime.
 
 ## Wear distribution
 
@@ -47,18 +47,18 @@ The pass explicitly separates clean, used and weathered items. Used and weathere
 ## Shape upgrades
 
 - Umbrella slabs become shallow cone canopies with fabric ribs, finials and cylindrical metal masts.
-- Plastic chair blocks become seat/back pieces with narrow supports.
+- Plastic chair blocks become seat/back pieces with narrow moulded-plastic supports.
 - Bottle litter becomes cylindrical bottles with necks and caps.
 - Generator gets vent slots, a control panel and exhaust detail.
 - Beverage crates get a top rim and visible side rails.
 - Cartons get tape seams.
-- Parked vehicles receive bumpers, headlamps and wheel hubs while preserving danfo, keke and sedan paint colours.
+- Parked vehicles receive bumpers, headlamps and wheel hubs while preserving danfo, keke and sedan paint colours; body and roof paint use the same clean/used state.
 
 New details use a dedicated bounded static batch group. No dynamic lights are added.
 
 ## Verification gates
 
-The source check verifies the Stage 08H module and its material/geometry contract. The automated Chromium smoke test verifies that the game mounts Stage 08H, reports a non-zero textured-prop count and all three wear categories, creates prop details, and retains static batching. Production build and bundle-budget checks remain required.
+The source check verifies the Stage 08H module, ten textured map sets, 30 generated maps, prop assignment counts and material/geometry contract. The automated Chromium smoke test verifies that the game mounts Stage 08H, reports a non-zero textured-prop count and all three wear categories, creates prop details, and retains static batching. Production build and bundle-budget checks remain required.
 
 Automated Chromium success does not equal an Itel A90 physical test. A real-device review is still needed for material readability, loading, frame time, memory pressure, thermal behaviour and texture shimmer.
 
