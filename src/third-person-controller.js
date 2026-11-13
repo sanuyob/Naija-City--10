@@ -187,7 +187,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     const proposedPosition=[
       pc.math.clamp(p.x + velocity.x * step, -46, 46),
       p.y + velocity.y * step,
-      pc.math.clamp(p.z + velocity.z * step, -195, 160)
+      pc.math.clamp(p.z + velocity.z * step, -195, 420)
     ];
     const resolvedPosition=typeof resolveMovement==='function'
       ? resolveMovement(currentPosition,proposedPosition)
