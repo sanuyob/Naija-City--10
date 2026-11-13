@@ -75,11 +75,13 @@ The private asset project is the source of truth until its GLB is validated and 
 
 ## Cross-check log
 
+**Revision 1 visual failure (2026-11-13):** Rendered front/rear/side views showed the T-shirt shell sitting inside the anatomy at the front and the cargo trouser shell exposing parts of the body. This is a real visual acceptance failure, despite successful Blender execution and GLB export. Source geometry bounds confirm the body reaches Y=-0.2075 m while the original T-shirt only reached Y=-0.126 m. The sleeve/cuff and trouser shell dimensions also needed more depth. A targeted revision expanded and offset the garment shells, repositioned trouser pockets, made trainer uppers rounder with ground-contact soles, and shortened/recurved the hair locks. The previous revision remains saved and unchanged as a rollback point. Do not ship Revision 1.
+
 | Check | Result |
 |---|---|
 | Prior Stage 01A CI | Passed; one non-blocking GitHub Actions Node.js 20 deprecation warning |
 | Prior GIDI Main Protagonist V1 candidate | Rejected for this brief; not reused |
-| Original Character 01B generation | Queued; pending |
+| Original Character 01B generation | Revision 1 exported (8.57 MB, 46,604 triangles, 103 delivered objects, 0 clips); visual gate failed due chest and leg clothing penetration. Revision 2 fitting correction in progress. |
 | GLB / rig / texture validation | Not run yet |
 | PlayCanvas runtime import | Not run yet |
 | Android visual/performance test | Not run yet |
