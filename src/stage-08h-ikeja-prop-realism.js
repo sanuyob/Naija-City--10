@@ -355,6 +355,13 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     }
   }
 
+  // The umbrella mast is round metal tubing rather than a square post.
+  for (const entity of entities.filter(item => item.name === 'stage08g-umbrella-pole')) {
+    const p = entity.getPosition();
+    entity.render.enabled = false;
+    detail('umbrella-mast', 'cylinder', [p.x,p.y,p.z], [0.07,1.9,0.07], galvanized);
+  }
+
   // Replace the blocky chair with a moulded seat, back, and narrow supports.
   for (const [chairIndex, entity] of entities.filter(item => item.name === 'stage08g-plastic-chair').entries()) {
     const p = entity.getPosition();
