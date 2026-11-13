@@ -137,6 +137,8 @@ assert.match(stage08fProfiler,/physical-device test/,'Stage 08F must clearly dis
 assert.ok(stage08fSpec.includes('KTX2 / Basis delivery') && stage08fSpec.includes('Collision and physics') && stage08fSpec.includes('Mobile performance acceptance'),'Stage 08F production gates are incomplete');
 assert.equal(stage08fMaterials.targetResolution.hero,2048,'Stage 08F hero PBR maps must target 2K');
 assert.equal(stage08fMaterials.materials.length,8,'Stage 08F material authoring contract must define eight surface families');
+assert.equal(stage08fMaterials.heroPilot.sourceMaterials.length,3,'Stage 08F hero pilot must record all three real PBR source assets');
+assert.ok(stage08fMaterials.heroPilot.sourceMaterials.some(source=>source.id==='PaintedPlaster017'&&source.license==='CC0-1.0'&&source.maps.includes('Normal')&&source.maps.includes('Roughness')),'Photogrammetry painted-plaster source provenance must be complete');
 assert.match(game,/stage08E\.update/,'Stage 08E must update distance-based LOD and streaming');
 assert.match(stage08e,/COLLISION_PROXY/,'GLB collision proxies must remain separate from visual geometry');
 assert.match(stage08e,/LOD0/,'Stage 08E must select LOD0/1/2 by camera distance');
