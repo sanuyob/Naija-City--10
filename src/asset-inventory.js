@@ -1,4 +1,11 @@
 const INVENTORY = [
+  { title: 'STAGE 08D SEMI-PHOTOREAL BUILDING REALISM', items: [
+    ['Original Yaba shopfronts upgraded', '32'], ['Expansion commercial buildings upgraded', '8'],
+    ['Residential buildings upgraded', '8'], ['Shared PBR material families', '10'],
+    ['Shared procedural albedo / normal / gloss maps', '3 × 256²'],
+    ['Original business-sign variants', '4'], ['Weathered concrete, steel, glazing and roof finishes', 'Shared'],
+    ['Modular facade details', 'Runtime diagnostic']
+  ]},
   { title: 'STAGE 08C NIGERIAN STREET INFRASTRUCTURE', items: [
     ['Utility poles and overhead service wire spans', '16 poles / 42 wire runs'],
     ['Distributor-road streetlight assemblies', '16'], ['Kerbs and storm-water drain covers', 'Extended network'],
@@ -58,8 +65,8 @@ export function mountAssetInventory() {
       `).join('')}
     </section>
   `).join('') + `
-    <p class="asset-note">Stage 08A adds connected road extensions, commercial and residential blockout buildings, and pocket parks. Buildings are still procedural blockout geometry, not final detailed architecture. The player is now a lightweight human character built from primitive meshes with procedural movement animations. The imported GLB is still a diagnostic asset, not the player model. Shop buildings remain blockout shapes, not detailed storefront models.</p>
-    <p class="asset-note asset-missing"><strong>Not in this build:</strong> production rigged humanoid GLB, motion-capture animation clips, robust building collision, stairs/slopes, foot IK, pedestrians, keke, motorcycles, buses, detailed shop interiors, baked PBR texture libraries, readable business-name signage, detailed shop interiors and advanced traffic AI.</p>
+    <p class="asset-note">Stage 08D adds shared procedural PBR surface maps and modular architectural dressing across all 48 building bodies: 32 original Yaba shops, 8 expansion shops and 8 homes. The pass adds weathered plaster, painted concrete, tinted glazing, metal finishes, business signs, rainwater details and residential entry/window treatment. Buildings remain replaceable procedural plot assets rather than scanned or individually authored high-detail GLBs.</p>
+    <p class="asset-note asset-missing"><strong>Still not in this build:</strong> production rigged humanoid GLB, motion-capture animation clips, robust final building collision, stairs/slopes, foot IK, pedestrians, keke, motorcycles, buses, detailed shop interiors, individually authored high-detail building GLBs, baked unique per-building 2K/4K PBR texture sets and advanced traffic AI.</p>
   `;
 
   const setOpen = open => {
