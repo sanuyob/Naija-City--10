@@ -193,6 +193,8 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     map('metal', 256, 0x9021, [123,129,125]), { metalness:0.18, gloss:0.43, bumpiness:0.16 });
   const galvanized = createPbrMaterial('08H-galvanized-metal', [0.82,0.85,0.83],
     map('metal', 256, 0x9021, [145,151,148]), { metalness:0.62, gloss:0.5, bumpiness:0.1 });
+  const silt = createPbrMaterial('08H-drain-silt-and-street-dust', [0.88,0.82,0.7],
+    map('concrete', 256, 0x3348, [111,91,66]), { gloss:0.06, bumpiness:0.24 });
   const wood = createPbrMaterial('08H-market-wood-grain', [0.93,0.88,0.76],
     map('wood', 256, 0x1173, [128,91,58]), { gloss:0.18, bumpiness:0.14 });
   const plastic = createPbrMaterial('08H-moulded-plastic-surface', [0.95,0.97,0.96],
@@ -213,7 +215,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
 
   const clean = {
     asphalt, concrete, plaster, metal: galvanized, paintMetal, wood, plastic, rubber,
-    fabric, cardboard, glass,
+    fabric, cardboard, glass, silt,
     roadPatch: patchAsphalt
   };
   const used = {
@@ -236,7 +238,8 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     wood: tintedVariant(wood, '08H-weathered-market-wood', [0.67,0.58,0.48]),
     plastic: tintedVariant(plastic, '08H-dirty-ground-contact-plastic', [0.68,0.65,0.58]),
     rubber: tintedVariant(rubber, '08H-dust-coated-rubber', [0.78,0.76,0.71]),
-    cardboard: tintedVariant(cardboard, '08H-damp-stained-cardboard', [0.67,0.57,0.46])
+    cardboard: tintedVariant(cardboard, '08H-damp-stained-cardboard', [0.67,0.57,0.46]),
+    silt: tintedVariant(silt, '08H-dark-drain-silt', [0.73,0.68,0.6])
   };
 
   const entities = app.root.findByTag('stage08g-ikeja-street-life') || [];
@@ -261,7 +264,9 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     if (/main-road|approach-road|asphalt-repair|shallow-road/.test(name)) {
       return /repair/.test(name) ? mats.roadPatch : mats.asphalt;
     }
-    if (/open-gutter|gutter-silt|drain-cover|drainage/.test(name)) return /cover/.test(name) ? mats.metal : mats.concrete;
+    if (/gutter-silt/.test(name)) return mats.silt;
+    if (/open-gutter|drainage/.test(name)) return mats.concrete;
+    if (/drain-cover/.test(name)) return mats.metal;
     if (/sidewalk|kerb|approach-.*walkway/.test(name)) return mats.concrete;
     if (/mixed-use-shop-shell/.test(name)) return mats.plaster;
     if (/shopfront-glazing|upper-window|window/.test(name)) return mats.glass;
@@ -316,11 +321,11 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   };
 
   // Vendor umbrellas: replace the flat square lid with a shallow segmented canopy form.
-  for (const entity of entities.filter(item => item.name === 'stage08g-umbrella-canopy')) {
+  for (const [canopyIndex, entity] of entities.filter(item => item.name === 'stage08g-umbrella-canopy').entries()) {
     const p = entity.getPosition();
     entity.render.enabled = false;
     detail('umbrella-canopy', 'cone', [p.x,p.y+0.08,p.z], [2.7,0.62,2.7],
-      selectWear(entity.name, [p.x,p.y,p.z], 1) === 'weathered' ? weathered.fabric : fabric,
+      [clean.fabric,used.fabric,weathered.fabric][canopyIndex % 3],
       [0,0,0]);
     detail('umbrella-finial', 'sphere', [p.x,p.y+0.4,p.z], [0.11,0.12,0.11], galvanized);
     for (let rib = 0; rib < 8; rib++) {
@@ -332,10 +337,10 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   }
 
   // Replace the blocky chair with a moulded seat, back, and narrow supports.
-  for (const entity of entities.filter(item => item.name === 'stage08g-plastic-chair')) {
+  for (const [chairIndex, entity] of entities.filter(item => item.name === 'stage08g-plastic-chair').entries()) {
     const p = entity.getPosition();
     entity.render.enabled = false;
-    const seatMat = clean.plastic;
+    const seatMat = [clean.plastic,used.plastic,weathered.plastic][chairIndex % 3];
     detail('chair-seat', 'box', [p.x,p.y-0.035,p.z], [0.56,0.095,0.52], seatMat);
     detail('chair-back', 'box', [p.x,p.y+0.19,p.z+0.205], [0.56,0.43,0.085], seatMat, [-5,0,0]);
     for (const dx of [-0.21,0.21]) for (const dz of [-0.19,0.19]) {
@@ -381,7 +386,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   // Packaging has tape seams and folded top flaps; these stay localized, not repeated everywhere.
   for (const entity of entities.filter(item => item.name === 'stage08g-stacked-carton' || item.name === 'stage08g-carton-litter')) {
     const p = entity.getPosition();
-    detail('carton-tape-seam', 'box', [p.x,p.y+0.02,p.z], [0.045,0.13,0.27], used.paintMetal);
+    detail('carton-tape-seam', 'box', [p.x,p.y+0.02,p.z], [0.045,0.13,0.27], used.cardboard);
   }
 
   // Tyres and public-transport shells get small reflective hardware, not extra dynamic lights.
@@ -392,10 +397,15 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   for (const entity of entities.filter(item => /stage08g-parked-.*-body$/.test(item.name))) {
     const p = entity.getPosition();
     const zSize = entity.getLocalScale().z;
+    const vehiclePaint = entity.name.includes('danfo')
+      ? tintedVariant(paintMetal,'08H-danfo-yellow-painted-metal',[1.24,1.04,0.62])
+      : entity.name.includes('keke')
+        ? tintedVariant(paintMetal,'08H-keke-green-painted-metal',[0.62,1.08,0.72])
+        : tintedVariant(paintMetal,'08H-sedan-light-painted-metal',[1.12,1.12,1.08]);
     detail('vehicle-front-bumper', 'box', [p.x,p.y-0.27,p.z-zSize*0.48],
       [entity.getLocalScale().x*0.96,0.16,0.12], weathered.paintMetal);
     detail('vehicle-rear-bumper', 'box', [p.x,p.y-0.27,p.z+zSize*0.48],
-      [entity.getLocalScale().x*0.96,0.16,0.12], paintMetal);
+      [entity.getLocalScale().x*0.96,0.16,0.12], vehiclePaint);
     detail('vehicle-headlamp-left', 'box', [p.x-entity.getLocalScale().x*0.38,p.y+0.12,p.z-zSize*0.5],
       [0.22,0.16,0.035], glass);
     detail('vehicle-headlamp-right', 'box', [p.x+entity.getLocalScale().x*0.38,p.y+0.12,p.z-zSize*0.5],
