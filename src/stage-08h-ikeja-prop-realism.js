@@ -175,22 +175,31 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   const group = app.batcher?.addGroup('stage08h-ikeja-realistic-prop-details', false, 72);
   const mapCache = new Map();
   const map = (type, size, seed, color) => {
-    if (!mapCache.has(type)) {
-      mapCache.set(type, makeSurfaceMaps(graphicsDevice, size, seed, color, type));
+    const key = type + ':' + seed;
+    if (!mapCache.has(key)) {
+      mapCache.set(key, makeSurfaceMaps(graphicsDevice, size, seed, color, type));
     }
-    return mapCache.get(type);
+    return mapCache.get(key);
   };
 
-  // Eight compact texture families cover the material differences visible at street level.
+  // Nine compact procedural texture families plus a physically tuned glass material cover street-level surfaces.
   const asphalt = createPbrMaterial('08H-asphalt-aggregate-and-bitumen', [0.98,0.98,0.98],
     map('asphalt', 512, 0x81a5, [111,113,111]), { gloss:0.12, bumpiness:0.34 });
+  asphalt.diffuseMapTiling = new pc.Vec2(8, 74);
+  asphalt.normalMapTiling = new pc.Vec2(8, 74);
+  asphalt.glossMapTiling = new pc.Vec2(8, 74);
+  asphalt.update();
   const patchAsphalt = tintedVariant(asphalt, '08H-recent-asphalt-repair', [0.72,0.75,0.74]);
   const concrete = createPbrMaterial('08H-cast-concrete-dust-and-aggregate', [0.91,0.89,0.83],
     map('concrete', 256, 0x73b2, [159,157,147]), { gloss:0.14, bumpiness:0.28 });
+  concrete.diffuseMapTiling = new pc.Vec2(2.6, 30);
+  concrete.normalMapTiling = new pc.Vec2(2.6, 30);
+  concrete.glossMapTiling = new pc.Vec2(2.6, 30);
+  concrete.update();
   const plaster = createPbrMaterial('08H-faded-painted-plaster', [0.98,0.96,0.88],
     map('plaster', 256, 0x14c3, [191,178,151]), { gloss:0.1, bumpiness:0.2 });
   const paintMetal = createPbrMaterial('08H-painted-steel-chipped-edges', [0.74,0.78,0.76],
-    map('metal', 256, 0x9021, [123,129,125]), { metalness:0.18, gloss:0.43, bumpiness:0.16 });
+    map('metal', 256, 0x9021, [123,129,125]), { metalness:0, gloss:0.43, bumpiness:0.16 });
   const galvanized = createPbrMaterial('08H-galvanized-metal', [0.82,0.85,0.83],
     map('metal', 256, 0x9021, [145,151,148]), { metalness:0.62, gloss:0.5, bumpiness:0.1 });
   const silt = createPbrMaterial('08H-drain-silt-and-street-dust', [0.88,0.82,0.7],
@@ -292,6 +301,16 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     const position = [pos.x, pos.y, pos.z];
     const wear = selectWear(name, position, index);
     entity.render.material = getMaterial(name, wear);
+    if (/parked-.*-body$/.test(name)) {
+      const bodyPaint = name.includes('danfo')
+        ? tintedVariant(paintMetal,'08H-danfo-yellow-painted-metal',[1.24,1.04,0.62])
+        : name.includes('keke')
+          ? tintedVariant(paintMetal,'08H-keke-green-painted-metal',[0.62,1.08,0.72])
+          : tintedVariant(paintMetal,'08H-sedan-light-painted-metal',[1.12,1.12,1.08]);
+      entity.render.material = bodyPaint;
+      const roof = entities.find(candidate => candidate.name === entity.name.replace('-body','-roof'));
+      if (roof?.render) roof.render.material = bodyPaint;
+    }
     if (group && entity.render) entity.render.batchGroupId = group.id;
     texturedProps++;
     if (wear === 'clean') cleanProps++;
@@ -422,6 +441,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     wearDistribution:{clean:cleanProps,used:usedProps,weathered:weatheredProps},
     addedDetailMeshes:addedDetails,
     textureResolutions:{asphalt:512,otherFamilies:256},
+    texturedMaterialFamilies:9,
     textureMapsPerFamily:3,
     staticBatching:Boolean(group),
     sourceAttribution:'Original procedural maps generated in project; no third-party image textures.',
