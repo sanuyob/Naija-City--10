@@ -13,6 +13,7 @@ const realism=await readFile(new URL('../src/stage-08d-building-realism.js',impo
 const stage08e=await readFile(new URL('../src/stage-08e-building-assets.js',import.meta.url),'utf8');
 const stage08fProfiler=await readFile(new URL('../src/stage-08f-device-profiler.js',import.meta.url),'utf8');
 const stage08g=await readFile(new URL('../src/stage-08g-ikeja-street-life.js',import.meta.url),'utf8');
+const stage08h=await readFile(new URL('../src/stage-08h-ikeja-prop-realism.js',import.meta.url),'utf8');
 const stage08fSpec=await readFile(new URL('../docs/STAGE-08F-PRODUCTION-SPEC.md',import.meta.url),'utf8');
 const stage08fMaterials=JSON.parse(await readFile(new URL('../public/assets/stage-08f-material-library.json',import.meta.url),'utf8'));
 const generator=await readFile(new URL('./generate-stage-08e-assets.mjs',import.meta.url),'utf8');
@@ -130,6 +131,12 @@ assert.ok(pkg.dependencies?.playcanvas);
 assert.ok(pkg.devDependencies?.vite);
 assert.match(game,/createStage08EBuildings/,'Stage 08E GLB architecture must be mounted in the live scene');
 assert.match(game,/createStage08GIkejaStreetLife/,'Stage 08G Ikeja street life must be mounted in the live scene');
+assert.match(game,/createStage08HIkejaPropRealism/,'Stage 08H prop realism must be mounted in the live scene');
+assert.match(game,/stage08H,stage08F/,'Stage 08H material audit metadata must be exposed at runtime');
+for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','vehicle-front-bumper']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
+assert.match(stage08h,/textureResolutions:\{asphalt:512,otherFamilies:256\}/,'Stage 08H texture resolution contract must remain mobile-conscious');
+assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
+
 assert.match(game,/farClip:520/,'Camera range must include the Ikeja extension');
 assert.match(game,/max:\[48,10,402\]/,'Runtime diagnostics must include the Ikeja district bounds');
 for(const feature of ['vendorStalls:stalls.length','parkedVehicles:3','staticPedestrianSilhouettes:people.length','litterHotspots:4','openDrainageRuns:2','liveNpcAI:false','liveTrafficSimulation:false','stage:\'08G\'','district:\'Ikeja\'']) assert.ok(stage08g.includes(feature),`Missing Stage 08G feature contract: ${feature}`);
