@@ -73,4 +73,4 @@ const signage=json.materials.find(material=>material.name==='computer-village-em
 assert.ok(signage?.emissiveTexture,'Computer Village signage must retain its emissive artwork.');
 const report=await validator.validateBytes(new Uint8Array(bytes),{uri:'yaba-core-01.glb',format:'glb',writeTimestamp:false,maxIssues:100});
 assert.equal(report.issues.numErrors,0,'Khronos validator errors: '+JSON.stringify(report.issues.messages));
-console.log('Stage 08F hero validation passed: '+(bytes.length/1024/1024).toFixed(2)+' MiB GLB, '+ktxImages.length+' embedded KTX2 maps, six PBR materials, three LODs and separate collision proxy.');
+console.log('Stage 08F hero validation passed: '+(bytes.length/1024/1024).toFixed(2)+' MiB GLB, '+ktxImages.length+' embedded KTX2 maps, seven PBR materials, three LODs and separate collision proxy.');
