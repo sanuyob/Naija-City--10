@@ -12,6 +12,7 @@ const street=await readFile(new URL('../src/stage-08c-street-infrastructure.js',
 const realism=await readFile(new URL('../src/stage-08d-building-realism.js',import.meta.url),'utf8');
 const stage08e=await readFile(new URL('../src/stage-08e-building-assets.js',import.meta.url),'utf8');
 const stage08fProfiler=await readFile(new URL('../src/stage-08f-device-profiler.js',import.meta.url),'utf8');
+const stage08g=await readFile(new URL('../src/stage-08g-ikeja-street-life.js',import.meta.url),'utf8');
 const stage08fSpec=await readFile(new URL('../docs/STAGE-08F-PRODUCTION-SPEC.md',import.meta.url),'utf8');
 const stage08fMaterials=JSON.parse(await readFile(new URL('../public/assets/stage-08f-material-library.json',import.meta.url),'utf8'));
 const generator=await readFile(new URL('./generate-stage-08e-assets.mjs',import.meta.url),'utf8');
@@ -128,6 +129,10 @@ assert.match(vite,/chunkSizeWarningLimit:\s*1200/);
 assert.ok(pkg.dependencies?.playcanvas);
 assert.ok(pkg.devDependencies?.vite);
 assert.match(game,/createStage08EBuildings/,'Stage 08E GLB architecture must be mounted in the live scene');
+assert.match(game,/createStage08GIkejaStreetLife/,'Stage 08G Ikeja street life must be mounted in the live scene');
+assert.match(game,/farClip:520/,'Camera range must include the Ikeja extension');
+assert.match(game,/max:\[48,10,402\]/,'Runtime diagnostics must include the Ikeja district bounds');
+for(const feature of ['vendorStalls:stalls.length','parkedVehicles:3','staticPedestrianSilhouettes:people.length','litterHotspots:4','openDrainageRuns:2','liveNpcAI:false','liveTrafficSimulation:false','stage:\'08G\'','district:\'Ikeja\'']) assert.ok(stage08g.includes(feature),`Missing Stage 08G feature contract: ${feature}`);
 assert.match(game,/createStage08FDeviceProfiler/,'Stage 08F device profiler must be mounted in the live scene');
 assert.match(game,/getStage08FProfile/,'Stage 08F profile snapshot must be exposed at runtime');
 assert.match(stage08fProfiler,/p95Ms/,'Stage 08F must report p95 frame time');
