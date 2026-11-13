@@ -30,13 +30,15 @@ assert.ok(json.nodes.some(node=>node.name==='LOD0')&&json.nodes.some(node=>node.
 const collision=json.nodes.find(node=>node.name==='COLLISION_PROXY');
 assert.ok(collision?.extras?.collisionProxy,'Hero must contain a separate simplified collision proxy.');
 assert.equal(collision.extras.physicsRuntimeIntegrated,false,'Do not claim the hero collision proxy is connected to live physics.');
-assert.equal(json.materials.length,6,'Hero must keep the shared six-material building contract.');
+assert.equal(json.materials.length,7,'Hero must keep the seven-material building contract.');
 assert.ok(json.materials.some(material=>material.name.includes('Concrete034')),'Real concrete/plaster PBR material is missing.');
 assert.ok(json.materials.some(material=>material.name.includes('CorrugatedSteel009')),'Real corrugated-steel PBR material is missing.');
+assert.ok(json.materials.some(material=>material.name.includes('PaintedPlaster017')),'Photogrammetry-based painted-facade PBR material is missing.');
+assert.ok(hero.materialSources?.includes('PaintedPlaster017'),'Hero manifest must record PaintedPlaster017 source provenance.');
 assert.ok(json.materials.every(material=>material.pbrMetallicRoughness),'Every hero material must use glTF metallic-roughness PBR.');
 
 const ktxImages=json.images.filter(image=>image.mimeType==='image/ktx2');
-assert.equal(ktxImages.length,7,'Expected seven embedded KTX2 maps, one per authored 2K texture.');
+assert.equal(ktxImages.length,10,'Expected ten embedded KTX2 maps across the three PBR material sets and signage.');
 const jsonChunkPadded=jsonLength;
 const binaryChunkStart=20+jsonChunkPadded+8;
 const ktxMagic=Buffer.from([0xab,0x4b,0x54,0x58,0x20,0x32,0x30,0xbb,0x0d,0x0a,0x1a,0x0a]);
@@ -53,13 +55,15 @@ const surfaceMaterials=json.materials.filter(material=>[
   'weathered-plaster-Concrete034',
   'corrugated-roofing-CorrugatedSteel009',
   'painted-steel-frames-and-security-grilles',
-  'cast-concrete-trim-and-water-tanks'
+  'cast-concrete-trim-and-water-tanks',
+  'painted-facade-PaintedPlaster017'
 ].includes(material.name));
-assert.equal(surfaceMaterials.length,4,'Expected four texture-driven PBR surface materials.');
+assert.equal(surfaceMaterials.length,5,'Expected five texture-driven PBR surface materials.');
 for(const material of surfaceMaterials) {
   assert.ok(material.normalTexture,'Physical surface material must include its normal map: '+material.name);
   assert.ok(material.pbrMetallicRoughness.metallicRoughnessTexture,'Physical surface material must include packed ORM/metallic-roughness data: '+material.name);
 }
+assert.ok(json.meshes.flatMap(mesh=>mesh.primitives||[]).some(primitive=>primitive.material===6),'Photogrammetry-based painted facade material must be assigned to actual hero geometry.');
 const signage=json.materials.find(material=>material.name==='computer-village-emissive-signage');
 assert.ok(signage?.emissiveTexture,'Computer Village signage must retain its emissive artwork.');
 const report=await validator.validateBytes(new Uint8Array(bytes),{uri:'yaba-core-01.glb',format:'glb',writeTimestamp:false,maxIssues:100});
