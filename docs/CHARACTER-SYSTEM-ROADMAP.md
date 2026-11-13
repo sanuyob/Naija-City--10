@@ -14,7 +14,7 @@ Each stage has its own scope, acceptance gate and follow-up stage. A stage is co
 | Stage | Scope | Exit gate |
 |---|---|---|
 | Character 01A — Animation runtime foundation | Register PlayCanvas AnimComponentSystem; document the asset contract and integration boundary. | Build/verification pass; current placeholder gameplay remains unchanged. |
-| Character 01B — Hero model, materials and rig | Create the original Nigerian streetwear hero, production mesh, UVs, PBR materials, reusable humanoid skeleton, facial controls and attachment sockets. | GLB validates; scale/orientation/materials/skeleton/skin weights reviewed; model loads in a test scene. |
+| Character 01B — Hero model, materials and rig | **IN PROGRESS.** Create the original Nigerian streetwear hero, production mesh, UVs, PBR materials, reusable humanoid skeleton, facial controls and attachment sockets. | GLB validates; scale/orientation/materials/skeleton/skin weights reviewed; model loads in a PlayCanvas test scene and passes visual inspection. |
 | Character 02 — Core locomotion | Replace procedural limb swing with rigged idle, walk, jog, sprint, strafe, start/stop and turns; preserve existing input, stamina, camera and collision behaviour. | Smooth transitions, no broken bindings, no unacceptable foot sliding; browser and Android test. |
 | Character 03 — Contextual parkour | Traversal detection and the 18 approved grounded traversal clips, with geometry checks and controlled movement handoff. | Valid obstacle tests, no arbitrary climbing, target alignment and collision tests. |
 | Character 04 — Everyday interactions and face | Phone, greeting, pickup, inspect, door, sit/stand; facial expressions, eye/head look and dialogue cues. | Interaction clips trigger correctly and restore locomotion; facial controls remain lightweight. |
@@ -58,6 +58,12 @@ Preferred first deliverable is a single hero GLB with mesh, skeleton, skinning, 
 - public/assets/manifest.json currently contains only diagnostic cube/checker assets; there is no rigged hero GLB or animation library yet.
 - The current controller includes input, stamina, jump, crouch, camera orbit and a movement resolver. These behaviours must be preserved while replacing only the visual body.
 - Character 01A adds the animation component system only. It does not claim that a hero model, rig, animation clip, parkour or crew feature has been implemented.
+
+## Current execution state (2026-11-13)
+
+- Character 01A merged as PR #12 (squash commit 45646ca3fc1d12134c89bc78dca70b1619212610). Its GitHub Actions verification passed. The job emitted a non-blocking warning that actions/checkout@v4, actions/cache@v4 and actions/setup-node@v4 are being forced from Node.js 20 to Node.js 24; track this as CI maintenance, not a build failure.
+- Character 01B has its own development branch character-stage-01b-original-hero-rig and private Blender project [Naija City — Hero Character 01B](https://blendstra.com/studio?workspace=wsp_a570bc495f2b652cccd702269f77dafd1b1ea057&project=befd196a-6cbf-4539-8671-f92446cab835). The first asset-generation operation is queued; no GLB has been accepted yet.
+- An older private project named GIDI Main Protagonist V1 was inspected and rejected for this role: its delivered model has a visual mismatch with the streetwear brief and its delivered GLB reports no animation clips. It is not being imported or reused.
 
 ## Deferred work / explicit dependencies
 
