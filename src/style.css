@@ -42,5 +42,5 @@ button:active { transform: scale(.96); filter: brightness(1.2); }
 #asset-status[data-state="error"] { color: #ff9d8e; }
 
 
-#profile-export { position: fixed; z-index: 20; top: 70px; right: 140px; min-width: 118px; min-height: 34px; padding: 5px 8px; font-size: 9px; letter-spacing: .04em; pointer-events: auto; }
-@media (max-width: 390px) { #profile-export { right: 136px; min-width: 108px; } }
+#profile-export { position: fixed; z-index: 20; top: 70px; right: 145px; min-width: 100px; min-height: 34px; padding: 5px 8px; font-size: 9px; letter-spacing: .04em; pointer-events: auto; }
+@media (max-width: 390px) { #profile-export { right: 145px; min-width: 100px; } }
