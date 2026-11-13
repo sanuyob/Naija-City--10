@@ -58,7 +58,7 @@ New details use a dedicated bounded static batch group. No dynamic lights are ad
 
 ## Verification gates
 
-The source check verifies the Stage 08H module, ten textured map sets, 30 generated maps, prop assignment counts and material/geometry contract. The automated Chromium smoke test verifies that the game mounts Stage 08H, reports a non-zero textured-prop count and all three wear categories, creates prop details, and retains static batching. Production build and bundle-budget checks remain required.
+The source check verifies the Stage 08H module, ten textured map sets, 30 generated maps, prop assignment counts and material/geometry contract. The automated Chromium smoke test verifies that the game mounts Stage 08H, reports a non-zero textured-prop count and all three wear categories, validates material assignment coverage and generated map counts, and captures a separate camera-framed screenshot of the Ikeja corridor. Production build and bundle-budget checks remain required.
 
 Automated Chromium success does not equal an Itel A90 physical test. A real-device review is still needed for material readability, loading, frame time, memory pressure, thermal behaviour and texture shimmer.
 
