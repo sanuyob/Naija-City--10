@@ -11,7 +11,7 @@ const buildingDir = join(root, 'public', 'assets', 'buildings');
 const manifestPath = join(root, 'public', 'assets', 'stage-08e-manifest.json');
 const assetId = 'yaba-core-01';
 const heroFile = assetId + '.glb';
-const cacheVersion = 'computer-village-plaza-pbr-v1';
+const cacheVersion = 'computer-village-plaza-pbr-v2-painted-facade';
 const outputCache = join(cacheDir, 'computer-village-plaza.ktx2.glb');
 const markerPath = join(cacheDir, 'computer-village-plaza-cache.json');
 const basisCacheDir = join(cacheDir, 'basis');
@@ -49,6 +49,13 @@ const sources = {
     zip: 'https://ambientcg.com/get?file=CorrugatedSteel009_2K-PNG.zip',
     license: 'CC0-1.0',
     attribution: 'Created using Corrugated Steel 009 from ambientCG.com, licensed under the Creative Commons CC0 1.0 Universal License.'
+  },
+  cladding: {
+    id: 'PaintedPlaster017',
+    page: 'https://ambientcg.com/view?id=PaintedPlaster017',
+    zip: 'https://ambientcg.com/get?file=PaintedPlaster017_2K-PNG.zip',
+    license: 'CC0-1.0',
+    attribution: 'Created using Painted Plaster 017 from ambientCG.com, licensed under the Creative Commons CC0 1.0 Universal License.'
   }
 };
 
@@ -289,7 +296,7 @@ const faceDefinitions = [
 ];
 
 function emptyGroups() {
-  return Array.from({ length: 6 }, () => ({ p:[], n:[], uv:[], t:[], i:[] }));
+  return Array.from({ length: 7 }, () => ({ p:[], n:[], uv:[], t:[], i:[] }));
 }
 
 function addBox(groups, material, center, size, stretchUv = false) {
@@ -379,7 +386,7 @@ function buildLod(level) {
   box(4,[0,13.55,0],[5.25,0.3,6.8]);
 
   // Ground-floor electronics shops, recessed-looking glazing, roller shutters and canopy.
-  box(0,[-2.52,1.75,0],[0.22,2.75,6.25]);
+  box(6,[-2.52,1.75,0],[0.22,2.75,6.25]);
   for(const z of [-1.55,1.55]) {
     box(2,[-2.67,1.75,z],[0.07,2.38,2.48]);
     for(const side of [-1,1]) box(3,[-2.73,1.75,z+side*1.25],[0.12,2.65,0.12]);
@@ -395,6 +402,8 @@ function buildLod(level) {
   // Upper office floors: paired glazed bays, deep reveals, concrete sills and shading.
   for(let floor=0;floor<3;floor++) {
     const baseY=4.0+floor*3.0, centerY=baseY+1.65;
+    // Photogrammetry-based painted-plaster pier between the two glazed office bays.
+    box(6,[-2.58,centerY,0],[0.1,1.82,0.54]);
     for(const z of [-1.55,1.55]) {
       box(2,[-2.68,centerY,z],[0.07,1.7,1.55]);
       for(const side of [-1,1]) box(3,[-2.75,centerY,z+side*0.82],[0.12,1.92,0.12]);
@@ -482,6 +491,7 @@ function makeGlb(images) {
   const imageDefs=images.map((_,i)=>({bufferView:i,mimeType:'image/png',name:[
     'plaster-base-color','plaster-normal-gl','plaster-orm',
     'corrugated-steel-base-color','corrugated-steel-normal-gl','corrugated-steel-orm',
+    'painted-plaster-base-color','painted-plaster-normal-gl','painted-plaster-orm',
     'computer-village-signage'
   ][i]}));
   const textures=images.map((_,i)=>({sampler:0,source:i,name:imageDefs[i].name}));
@@ -522,7 +532,7 @@ function makeGlb(images) {
     const groups=buildLod(level),children=[];
     for(let material=0;material<groups.length;material++) {
       if(!groups[material].i.length)continue;
-      const paddedGroups=Array.from({length:6},(_,index)=>index===material?groups[material]:({p:[],n:[],uv:[],t:[],i:[]}));
+      const paddedGroups=Array.from({length:7},(_,index)=>index===material?groups[material]:({p:[],n:[],uv:[],t:[],i:[]}));
       const mesh=addMesh(paddedGroups,'lod'+level+'-'+material);
       children.push(nodes.push({name:'LOD'+level+'-material-'+material,mesh})-1);
     }
@@ -551,7 +561,8 @@ function makeGlb(images) {
     {name:'tinted-shopfront-glass',pbrMetallicRoughness:{baseColorFactor:[0.25,0.43,0.48,1],metallicFactor:0.12,roughnessFactor:0.18},doubleSided:true},
     {name:'painted-steel-frames-and-security-grilles',pbrMetallicRoughness:{baseColorTexture:{index:3},metallicRoughnessTexture:{index:5},metallicFactor:0.72,roughnessFactor:0.58},normalTexture:{index:4,scale:0.55},occlusionTexture:{index:5,strength:0.65}},
     {name:'cast-concrete-trim-and-water-tanks',pbrMetallicRoughness:{baseColorTexture:{index:0},metallicRoughnessTexture:{index:2},baseColorFactor:[0.74,0.72,0.66,1],metallicFactor:0,roughnessFactor:1},normalTexture:{index:1,scale:0.42},occlusionTexture:{index:2,strength:0.85}},
-    {name:'computer-village-emissive-signage',pbrMetallicRoughness:{baseColorTexture:{index:6},metallicFactor:0.08,roughnessFactor:0.56},emissiveTexture:{index:6},emissiveFactor:[0.08,0.1,0.1],doubleSided:true}
+    {name:'painted-facade-PaintedPlaster017',pbrMetallicRoughness:{baseColorTexture:{index:6},metallicRoughnessTexture:{index:8},metallicFactor:0,roughnessFactor:1},normalTexture:{index:7,scale:0.78},occlusionTexture:{index:8,strength:0.5}},
+    {name:'computer-village-emissive-signage',pbrMetallicRoughness:{baseColorTexture:{index:9},metallicFactor:0.08,roughnessFactor:0.56},emissiveTexture:{index:9},emissiveFactor:[0.08,0.1,0.1],doubleSided:true}
   ];
   const json={
     asset:{version:'2.0',generator:'Naija City Stage 08F hero architecture and ambientCG PBR pipeline'},
@@ -559,7 +570,7 @@ function makeGlb(images) {
     samplers:[{magFilter:9729,minFilter:9987,wrapS:10497,wrapT:10497}],
     buffers:[{byteLength:chunks.reduce((n,b)=>n+b.length,0)}],
     bufferViews,accessors,
-    extras:{stage:'08F',hero:true,materialResolution:2048,sourceMaterials:['Concrete034','CorrugatedSteel009']}
+    extras:{stage:'08F',hero:true,materialResolution:2048,sourceMaterials:['Concrete034','CorrugatedSteel009','PaintedPlaster017']}
   };
   const jsonBytes=Buffer.from(JSON.stringify(json));
   const jsonPad=(4-jsonBytes.length%4)%4;
@@ -571,11 +582,12 @@ function makeGlb(images) {
 }
 
 async function buildHeroSource() {
-  const [plasterZip,steelZip]=await Promise.all([
+  const [plasterZip,steelZip,claddingZip]=await Promise.all([
     downloadZip(sources.plaster,'Concrete034_2K-PNG.zip'),
-    downloadZip(sources.roofing,'CorrugatedSteel009_2K-PNG.zip')
+    downloadZip(sources.roofing,'CorrugatedSteel009_2K-PNG.zip'),
+    downloadZip(sources.cladding,'PaintedPlaster017_2K-PNG.zip')
   ]);
-  const plasterEntries=unzipPngEntries(plasterZip),steelEntries=unzipPngEntries(steelZip);
+  const plasterEntries=unzipPngEntries(plasterZip),steelEntries=unzipPngEntries(steelZip),claddingEntries=unzipPngEntries(claddingZip);
   const plasterColor=readPng(getMap(plasterEntries,'Concrete034',['color'],'base color'),'Concrete034 color');
   const plasterNormalMap=getMap(plasterEntries,'Concrete034',['normalgl','normal'],'normal');
   const plasterNormal=readPng(plasterNormalMap,'Concrete034 normal');
@@ -594,9 +606,19 @@ async function buildHeroSource() {
   for(const map of [steelNormal,steelRough,steelMetal,steelAo])if(map.width!==steelColor.width||map.height!==steelColor.height)throw new Error('CorrugatedSteel009 PBR maps do not share matching dimensions.');
   const steelOrm=packOrm(steelRough,steelMetal,steelAo);
 
+  const claddingColor=readPng(getMap(claddingEntries,'PaintedPlaster017',['color'],'base color'),'PaintedPlaster017 color');
+  const claddingNormalMap=getMap(claddingEntries,'PaintedPlaster017',['normalgl','normal'],'normal');
+  const claddingNormal=readPng(claddingNormalMap,'PaintedPlaster017 normal');
+  if(claddingNormalMap.name.toLowerCase().includes('normaldx'))flipNormalGreen(claddingNormal);
+  const claddingRough=readPng(getMap(claddingEntries,'PaintedPlaster017',['roughness'],'roughness'),'PaintedPlaster017 roughness');
+  for(const map of [claddingNormal,claddingRough])if(map.width!==claddingColor.width||map.height!==claddingColor.height)throw new Error('PaintedPlaster017 PBR maps do not share matching dimensions.');
+  // This source has no AO or metalness map: pack neutral AO and zero metalness with its real roughness map.
+  const claddingOrm=packOrm(claddingRough,null,null);
+
   const images=[
     PNG.sync.write(plasterColor),PNG.sync.write(plasterNormal),plasterOrm,
     PNG.sync.write(steelColor),PNG.sync.write(steelNormal),steelOrm,
+    PNG.sync.write(claddingColor),PNG.sync.write(claddingNormal),claddingOrm,
     makeSignTexture()
   ];
   return makeGlb(images);
@@ -630,7 +652,7 @@ if(!cached) {
   const interim=join(cacheDir,'computer-village-plaza.uastc.glb');
   await writeFile(sourceGlb,await buildHeroSource());
   compressHero(sourceGlb,interim,outputCache);
-  await writeFile(markerPath,JSON.stringify({version:cacheVersion,sourceIds:[sources.plaster.id,sources.roofing.id],output:'computer-village-plaza.ktx2.glb'})+'\n');
+  await writeFile(markerPath,JSON.stringify({version:cacheVersion,sourceIds:[sources.plaster.id,sources.roofing.id,sources.cladding.id],output:'computer-village-plaza.ktx2.glb'})+'\n');
 }
 await copyFile(outputCache,join(buildingDir,heroFile));
 
@@ -641,9 +663,9 @@ hero.hero=true;
 hero.name='Computer Village Electronics Plaza';
 hero.size=[6.5,16.1,6.8];
 hero.textureEncoding='KTX2 Basis Universal (KHR_texture_basisu)';
-hero.pbrMaterials=['weathered-plaster','corrugated-roofing','tinted-shopfront-glass','painted-steel','cast-concrete','signage'];
+hero.pbrMaterials=['weathered-plaster','corrugated-roofing','tinted-shopfront-glass','painted-steel','cast-concrete','painted-facade','signage'];
 hero.pbrResolution=2048;
-hero.materialSources=[sources.plaster.id,sources.roofing.id];
+hero.materialSources=[sources.plaster.id,sources.roofing.id,sources.cladding.id];
 hero.collision='COLLISION_PROXY';
 manifest.textureEncoding='hero pilot KTX2 Basis Universal; remaining 47 GLBs retain Stage 08E embedded PNG maps';
 manifest.heroPilot={id:assetId,name:hero.name,textureEncoding:hero.textureEncoding,resolution:2048,materials:hero.pbrMaterials,sourceIds:hero.materialSources,license:'CC0-1.0',collisionProxy:'separate simplified envelope; physics runtime integration pending'};
