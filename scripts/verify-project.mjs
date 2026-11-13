@@ -133,7 +133,7 @@ assert.match(game,/createStage08EBuildings/,'Stage 08E GLB architecture must be 
 assert.match(game,/createStage08GIkejaStreetLife/,'Stage 08G Ikeja street life must be mounted in the live scene');
 assert.match(game,/createStage08HIkejaPropRealism/,'Stage 08H prop realism must be mounted in the live scene');
 assert.match(game,/stage08H,stage08F/,'Stage 08H material audit metadata must be exposed at runtime');
-for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','vehicle-front-bumper']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
+for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','vehicle-front-bumper','jerrycan-cap','jerrycan-handle-grip','wheelbarrow-handle','handcart-upright-frame']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
 assert.match(stage08h,/textureResolutions:\{asphalt:512,otherFamilies:256\}/,'Stage 08H texture resolution contract must remain mobile-conscious');
 assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
 
