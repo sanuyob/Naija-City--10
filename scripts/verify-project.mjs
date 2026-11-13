@@ -139,6 +139,9 @@ assert.match(stage08h,/texturedMaterialFamilies:10/,'Stage 08H must report ten t
 assert.match(stage08h,/textureMapSets:mapCache\.size/,'Stage 08H must expose its actual generated map-set count.');
 assert.match(stage08h,/generatedTextureCount:mapCache\.size \* 3/,'Stage 08H must expose all generated albedo, normal and gloss textures.');
 assert.match(stage08h,/08H-matte-silhouette-skin/,'Static pedestrian silhouettes must use a matte skin material, not plastic surface maps.');
+assert.match(stage08h,/glass\.blendType = pc\.BLEND_NORMAL/,'Shop and vehicle glass must use alpha blending.');
+assert.match(stage08h,/glass\.opacity = 0\.56/,'Smoked glass must remain translucent rather than opaque.');
+assert.match(stage08h,/glass\.depthWrite = false/,'Translucent glass must not occlude objects behind it in the depth buffer.');
 assert.match(stage08h,/detail\('chair-leg',[^\n]*seatMat\)/,'Plastic chair supports must use moulded-plastic material.');
 assert.ok(stage08h.includes("if (/parked-.*-(body|roof)$/.test(name))"),'Vehicle roofs and bodies must share the same paint assignment.');
 assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
