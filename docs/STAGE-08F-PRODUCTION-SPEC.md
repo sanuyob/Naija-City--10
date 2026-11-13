@@ -16,6 +16,8 @@ Target 2K (2048px) maps for hero materials, with 1K fallback variants where prof
 
 Required material families: weathered painted plaster, cast concrete, tinted/clear glass, painted steel, galvanized roofing, timber, ceramic/terrazzo floor surfaces, asphalt and paving. Every externally sourced texture must record its source URL, license, author and modification notes. Prefer CC0 sources or user-authored work; do not silently bundle assets with unclear licenses.
 
+- The Computer Village hero pilot adds a photogrammetry-based painted-plaster facade (ambientCG Painted Plaster 017, CC0) as a separate surface family. It supplies colour, normal and roughness maps; neutral AO/metalness channels are packed deliberately because that source does not provide those maps.
+
 ## 3. KTX2 / Basis delivery
 Use glTF's KHR_texture_basisu extension with a complete mip pyramid. Initial quality policy:
 - Base color / emissive: ETC1S at high quality where visual review accepts the result.
