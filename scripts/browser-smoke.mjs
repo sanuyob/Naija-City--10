@@ -30,7 +30,7 @@ try {
     stage08C:scalarFields(game.stage08C),
     stage08D:scalarFields(game.stage08D),
     stage08G:scalarFields(game.stage08G),
-    stage08H:scalarFields(game.stage08H),
+    stage08H:{...scalarFields(game.stage08H),wearDistribution:game.stage08H?.wearDistribution||null},
     assets:{modelsLoaded:game.assets?.modelsLoaded,texturesLoaded:game.assets?.texturesLoaded,failures:game.assets?.failures||[]},
     thirdPersonCharacter:game.thirdPersonCharacter,
     movement:game.movement,
