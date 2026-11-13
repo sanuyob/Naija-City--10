@@ -7,20 +7,17 @@ on:
       - feature/naija-city-stage-05-rpg-foundation
       - feature/naija-city-stage-06-third-person
       - feature/naija-city-stage-07-landscape-hud
+      - feature/naija-city-stage-08a-city-expansion
       - feature/naija-city-stage-08b-nigerian-building-detail
       - feature/naija-city-stage-08c-street-infrastructure
       - feature/naija-city-stage-08d-semi-photoreal-buildings
       - feature/naija-city-stage-08e-handcrafted-buildings
       - feature/naija-city-stage-08f-final-artistry
       - feature/naija-city-stage-08g-ikeja-street-life
-      - feature/naija-city-stage-08g-ikeja-street-life
       - feature/naija-city-stage-08h-ikeja-prop-realism
   pull_request:
     branches:
       - main
-      - feature/naija-city-stage-08d-semi-photoreal-buildings
-      - feature/naija-city-stage-08e-handcrafted-buildings
-      - feature/naija-city-stage-08f-final-artistry
   workflow_dispatch:
 
 permissions:
