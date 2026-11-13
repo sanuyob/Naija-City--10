@@ -1,0 +1,102 @@
+{
+  "stage": "08F",
+  "status": "authoring specification; no final textures bundled yet",
+  "targetResolution": {
+    "hero": 2048,
+    "fallback": 1024
+  },
+  "colorSpace": {
+    "baseColor": "sRGB",
+    "emissive": "sRGB",
+    "normal": "linear",
+    "occlusion": "linear",
+    "roughness": "linear",
+    "metallic": "linear"
+  },
+  "compression": {
+    "baseColor": "KTX2 Basis ETC1S high quality after visual review",
+    "emissive": "KTX2 Basis ETC1S high quality after visual review",
+    "normal": "KTX2 Basis UASTC",
+    "orm": "KTX2 Basis UASTC"
+  },
+  "materials": [
+    {
+      "id": "weathered-plaster",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Layered paint, subtle patch repairs, rain streaking and dust deposits; avoid uniform procedural noise."
+    },
+    {
+      "id": "cast-concrete",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Formwork variation, aggregate scale appropriate to viewing distance, restrained edge wear."
+    },
+    {
+      "id": "tinted-glass",
+      "maps": [
+        "baseColor",
+        "metallicRoughness"
+      ],
+      "authoringNotes": "Physically plausible tint and roughness; no fake mirror reflections."
+    },
+    {
+      "id": "painted-steel",
+      "maps": [
+        "baseColor",
+        "normal",
+        "metallicRoughness"
+      ],
+      "authoringNotes": "Painted metal with localized chips and oxidation; metallic values belong to exposed metal, not paint."
+    },
+    {
+      "id": "galvanized-roofing",
+      "maps": [
+        "baseColor",
+        "normal",
+        "metallicRoughness"
+      ],
+      "authoringNotes": "Subtle corrugation and weathering, low-frequency variation."
+    },
+    {
+      "id": "timber",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Directional grain, sun fading and edge wear."
+    },
+    {
+      "id": "ceramic-terrazzo",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Scale-correct tiles and joints, used selectively."
+    },
+    {
+      "id": "asphalt-paving",
+      "maps": [
+        "baseColor",
+        "normal",
+        "roughness"
+      ],
+      "authoringNotes": "Fine aggregate and patch variation; keep normal intensity low for mobile readability."
+    }
+  ],
+  "provenanceRequired": [
+    "sourceUrl",
+    "license",
+    "author",
+    "modifications"
+  ],
+  "note": "This is a production contract, not a claim that final art or KTX2 files have already been produced."
+}
