@@ -23,6 +23,8 @@ try {
  if(state.game?.stage08D?.stage!=='08D'||state.game?.stage08D?.buildingsTextured!==48||state.game?.stage08D?.commercialBuildingsDetailed!==40||state.game?.stage08D?.residentialBuildingsDetailed!==8||state.game?.stage08D?.originalYabaBuildings!==32||state.game?.stage08D?.expansionBuildings!==16||state.game?.stage08D?.pbrMaterialFamilies!==10||state.game?.stage08D?.proceduralTextureMaps!==13||state.game?.stage08D?.signVariants!==4||state.game?.stage08D?.textureResolution!==512||state.game?.stage08D?.secondaryTextureResolution!==256||state.game?.stage08D?.batching!==true||state.game?.stage08D?.detailMeshes<550)throw new Error('Stage 08D building realism metadata is incomplete: '+JSON.stringify(state.game?.stage08D));
  await page.waitForFunction(()=>{const s=window.__NAIJA_GAME__?.getStage08EState?.();return !!s&&(s.loadedBuildings>0||s.failedBuildings>0);},null,{timeout:30000});
  const stage08EState=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08EState?.());
+ const stage08FProfile=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
+ if(!stage08FProfile||stage08FProfile.stage!=='08F'||!Array.isArray(stage08FProfile.limitations)||!stage08FProfile.rendering)throw new Error('Stage 08F device profiling API is not exposed: '+JSON.stringify(stage08FProfile));
  if(stage08EState?.stage!=='08E'||stage08EState.expectedBuildings!==48||stage08EState.legacyBodiesHidden<48||stage08EState.loadedBuildings<1||stage08EState.staticBatching!==true)throw new Error('Stage 08E GLB streaming did not replace blockout buildings: '+JSON.stringify(stage08EState));
  if(state.diag.scene.knownBounds.max[2]!==169||state.diag.scene.knownBounds.min[2]!==-205)throw new Error('Expanded city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
  if(state.viewport.w!==844||state.viewport.h!==390)throw new Error('Test viewport is not landscape 844x390: '+JSON.stringify(state.viewport));
@@ -73,6 +75,8 @@ try {
  await page.locator('#assets-close').click();
  await page.evaluate(()=>document.querySelector('#perf-toggle').click());await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1200);
  if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
+ const profileAfterWarmup=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
+ if(!profileAfterWarmup||profileAfterWarmup.stage!=='08F'||profileAfterWarmup.sampleCount<1||!profileAfterWarmup.frame||!('p95Ms' in profileAfterWarmup.frame))throw new Error('Stage 08F frame-time sampling did not start: '+JSON.stringify(profileAfterWarmup));
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
  console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
