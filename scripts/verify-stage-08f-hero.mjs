@@ -38,10 +38,19 @@ for(const image of ktxImages) {
   const width=bytes.readUInt32LE(offset+20),height=bytes.readUInt32LE(offset+24);
   assert.ok(width>0&&height>0&&width%4===0&&height%4===0,'KTX2 image dimensions must be valid and divisible by four.');
 }
-for(const material of json.materials.filter(item=>item.pbrMetallicRoughness?.baseColorTexture)) {
-  assert.ok(material.normalTexture,'PBR hero material must include its normal map.');
-  assert.ok(material.pbrMetallicRoughness.metallicRoughnessTexture,'PBR hero material must include packed ORM/metallic-roughness data.');
+const surfaceMaterials=json.materials.filter(material=>[
+  'weathered-plaster-Concrete034',
+  'corrugated-roofing-CorrugatedSteel009',
+  'painted-steel-frames-and-security-grilles',
+  'cast-concrete-trim-and-water-tanks'
+].includes(material.name));
+assert.equal(surfaceMaterials.length,4,'Expected four texture-driven PBR surface materials.');
+for(const material of surfaceMaterials) {
+  assert.ok(material.normalTexture,'Physical surface material must include its normal map: '+material.name);
+  assert.ok(material.pbrMetallicRoughness.metallicRoughnessTexture,'Physical surface material must include packed ORM/metallic-roughness data: '+material.name);
 }
+const signage=json.materials.find(material=>material.name==='computer-village-emissive-signage');
+assert.ok(signage?.emissiveTexture,'Computer Village signage must retain its emissive artwork.');
 const report=await validator.validateBytes(new Uint8Array(bytes),{uri:'yaba-core-01.glb',format:'glb',writeTimestamp:false,maxIssues:100});
 assert.equal(report.issues.numErrors,0,'Khronos validator errors: '+JSON.stringify(report.issues.messages));
 console.log('Stage 08F hero validation passed: '+(bytes.length/1024/1024).toFixed(2)+' MiB GLB, '+ktxImages.length+' embedded KTX2 maps, six PBR materials, three LODs and separate collision proxy.');

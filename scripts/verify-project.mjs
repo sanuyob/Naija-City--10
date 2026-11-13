@@ -157,7 +157,13 @@ for(const filename of buildingFiles){
  const jsonLength=asset.readUInt32LE(12),json=JSON.parse(asset.subarray(20,20+jsonLength).toString('utf8').trim());
  assert.ok(json.nodes.some(node=>node.name==='LOD0')&&json.nodes.some(node=>node.name==='LOD1')&&json.nodes.some(node=>node.name==='LOD2'),filename+' must contain three LOD levels');
  assert.ok(json.nodes.some(node=>node.name==='COLLISION_PROXY'),filename+' must contain a separate collision proxy');
- assert.equal(json.images.length,7,filename+' must embed its PBR texture images');
+ if(filename==='yaba-core-01.glb') {
+  assert.ok(json.images.filter(image=>image.mimeType==='image/ktx2').length===7,filename+' must embed seven KTX2 Basis textures');
+  assert.ok(json.extensionsUsed?.includes('KHR_texture_basisu'),filename+' must declare the KTX2 Basis extension');
+  assert.ok(json.images.length>=7&&json.images.length<=14,filename+' must keep the expected embedded KTX2 image set and optional PNG fallbacks');
+ } else {
+  assert.equal(json.images.length,7,filename+' must embed its PBR texture images');
+ }
  assert.ok(json.accessors.some(accessor=>accessor.type==='VEC2'),filename+' must include UV coordinates');
  assert.ok(json.accessors.some(accessor=>accessor.type==='VEC4'),filename+' must include tangent vectors for normal mapping');
  assert.ok(json.bufferViews.every(view=>view.buffer===0),filename+' buffer views must reference the embedded GLB buffer');
