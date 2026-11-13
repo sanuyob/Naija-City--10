@@ -28,7 +28,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   device.maxPixelRatio = Math.min(window.devicePixelRatio || 1, 1.25);
   const options = new pc.AppOptions();
   options.graphicsDevice = device;
-  options.componentSystems = [pc.RenderComponentSystem, pc.CameraComponentSystem, pc.LightComponentSystem];
+  options.componentSystems = [pc.RenderComponentSystem, pc.CameraComponentSystem, pc.LightComponentSystem, pc.AnimComponentSystem];
   options.resourceHandlers = [pc.TextureHandler, pc.ContainerHandler];
   options.batchManager = pc.BatchManager;
   const app = new pc.AppBase(canvas);
