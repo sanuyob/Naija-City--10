@@ -238,6 +238,9 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   glass.useMetalness = true;
   glass.metalness = 0.04;
   glass.gloss = 0.82;
+  glass.blendType = pc.BLEND_NORMAL;
+  glass.opacity = 0.56;
+  glass.depthWrite = false;
   glass.update();
 
   const clean = {
