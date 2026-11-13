@@ -3,7 +3,7 @@
 **Specification:** Hero Character & Crew System v0.1  
 **Approved decisions:** two active companions; grounded contextual parkour; balanced action presentation.  
 **Target runtime:** PlayCanvas 2.24, browser and Android.  
-**Status:** staged implementation; no hero GLB or animation source files are currently present in the repository.
+**Status:** native PlayCanvas Hero 01 visual prototype implemented; production hero GLB and animation source files are still absent.
 
 ## Delivery rule
 
@@ -52,13 +52,13 @@ Preferred first deliverable is a single hero GLB with mesh, skeleton, skinning, 
 
 ## Current repository findings
 
-- The live player is created from primitive meshes in src/third-person-controller.js; its gait is procedural.
+- The live player is a more detailed native PlayCanvas composite built from primitive meshes in src/third-person-controller.js; its gait still uses entity-pivot procedural animation, not a skinned skeleton.
 - src/game.js creates the PlayCanvas app and wires the controller.
 - src/asset-loader.js loads manifest models as container assets and instantiates render entities.
 - public/assets/manifest.json currently contains only diagnostic cube/checker assets; there is no rigged hero GLB or animation library yet.
-- The current controller includes input, stamina, jump, crouch, camera orbit and a movement resolver. These behaviours must be preserved while replacing only the visual body.
+- The current controller includes input, stamina, jump, crouch, camera orbit and a movement resolver. The visual body is now a native PlayCanvas streetwear prototype; all of those gameplay behaviours remain in the same controller.
 - Character 01A adds the animation component system only. It does not claim that a hero model, rig, animation clip, parkour or crew feature has been implemented.
 
 ## Deferred work / explicit dependencies
 
-Character 01B cannot be completed until an original hero mesh and rig are produced and added to the repository. The project currently has no approved hero model source asset. Do not substitute an unrelated downloaded character or silently change the approved appearance. If the mesh/rig is not ready when the runtime foundation closes, keep 01B as its own open stage and proceed only with asset-independent documentation or test scaffolding.
+Character 01B production acceptance cannot be completed from the procedural prototype alone. It still requires an original UV-mapped hero mesh, skin weights, a reusable humanoid skeleton, facial controls and attachment sockets. The project currently has no production hero GLB or animation source asset. Do not substitute an unrelated downloaded character or silently change the approved appearance. If the mesh/rig is not ready when the runtime foundation closes, keep 01B as its own open stage and proceed only with asset-independent documentation or test scaffolding.
