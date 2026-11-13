@@ -561,8 +561,8 @@ function makeGlb(images) {
     {name:'tinted-shopfront-glass',pbrMetallicRoughness:{baseColorFactor:[0.25,0.43,0.48,1],metallicFactor:0.12,roughnessFactor:0.18},doubleSided:true},
     {name:'painted-steel-frames-and-security-grilles',pbrMetallicRoughness:{baseColorTexture:{index:3},metallicRoughnessTexture:{index:5},metallicFactor:0.72,roughnessFactor:0.58},normalTexture:{index:4,scale:0.55},occlusionTexture:{index:5,strength:0.65}},
     {name:'cast-concrete-trim-and-water-tanks',pbrMetallicRoughness:{baseColorTexture:{index:0},metallicRoughnessTexture:{index:2},baseColorFactor:[0.74,0.72,0.66,1],metallicFactor:0,roughnessFactor:1},normalTexture:{index:1,scale:0.42},occlusionTexture:{index:2,strength:0.85}},
-    {name:'painted-facade-PaintedPlaster017',pbrMetallicRoughness:{baseColorTexture:{index:6},metallicRoughnessTexture:{index:8},metallicFactor:0,roughnessFactor:1},normalTexture:{index:7,scale:0.78},occlusionTexture:{index:8,strength:0.5}},
-    {name:'computer-village-emissive-signage',pbrMetallicRoughness:{baseColorTexture:{index:9},metallicFactor:0.08,roughnessFactor:0.56},emissiveTexture:{index:9},emissiveFactor:[0.08,0.1,0.1],doubleSided:true}
+    {name:'computer-village-emissive-signage',pbrMetallicRoughness:{baseColorTexture:{index:9},metallicFactor:0.08,roughnessFactor:0.56},emissiveTexture:{index:9},emissiveFactor:[0.08,0.1,0.1],doubleSided:true},
+    {name:'painted-facade-PaintedPlaster017',pbrMetallicRoughness:{baseColorTexture:{index:6},metallicRoughnessTexture:{index:8},metallicFactor:0,roughnessFactor:1},normalTexture:{index:7,scale:0.78},occlusionTexture:{index:8,strength:0.5}}
   ];
   const json={
     asset:{version:'2.0',generator:'Naija City Stage 08F hero architecture and ambientCG PBR pipeline'},
