@@ -39,6 +39,23 @@ jobs:
           key: stage-08f-pbr-v1-${{ runner.os }}-node22-${{ hashFiles('scripts/generate-stage-08f-hero.mjs') }}
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Install Khronos KTX-Software 4.4.2
+        shell: bash
+        run: |
+          archive="${RUNNER_TEMP}/KTX-Software-4.4.2-Linux-x86_64.tar.bz2"
+          install_dir="${RUNNER_TEMP}/ktx-software"
+          curl --fail --location --silent --show-error "https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.tar.bz2" --output "$archive"
+          echo "a8781bad05f9624edbf910b7f258cd0a4ba7d3e63b49ecc0a0ab440bf6a0a245  $archive" | sha256sum --check
+          mkdir -p "$install_dir"
+          tar -xjf "$archive" -C "$install_dir"
+          ktx_bin="$(find "$install_dir" -type f -name ktx -perm -u+x -print -quit)"
+          test -n "$ktx_bin"
+          echo "$(dirname "$ktx_bin")" >> "$GITHUB_PATH"
+          ktx_lib="$(find "$install_dir" -type d -name lib -print -quit)"
+          if [ -n "$ktx_lib" ]; then
+            echo "LD_LIBRARY_PATH=$ktx_lib:${LD_LIBRARY_PATH:-}" >> "$GITHUB_ENV"
+          fi
+          "$ktx_bin" --version
       - name: Run source and project checks
         run: npm run verify
       - name: Build production bundle
