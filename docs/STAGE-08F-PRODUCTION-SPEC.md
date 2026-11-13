@@ -63,3 +63,11 @@ G. Scale the approved pipeline across all 48 placements.
 - Khronos KTX artist guide: https://github.com/KhronosGroup/3D-Formats-Guidelines/blob/main/KTXArtistGuide.md
 - glTF Transform CLI: https://gltf-transform.dev/cli
 - glTF Validator: https://github.com/KhronosGroup/glTF-Validator
+
+
+## 7. First hero-building pilot — Computer Village Electronics Plaza
+The first Stage 08F asset replaces only the existing `yaba-core-01` placement, preserving the 48-building manifest and the Stage 08E streaming contract. It is a four-storey, meter-scaled commercial plaza with paired shopfront bays, upper-office glazing, window reveals, security grilles, balconies, sunshades, rooftop water tanks, AC condensers, service conduits and a Computer Village sign. The model is procedurally authored from distinct architectural modules; it is not represented as a hand-sculpted or photogrammetry building.
+
+The pilot consumes 2K PNG map sets from ambientCG Concrete 034 and Corrugated Steel 009 (both CC0 1.0). Color images are treated as sRGB; normal and packed ORM data are linear. The ORM channels are AO=R, roughness=G and metalness=B. glTF Transform 4.5.0 encodes normal/ORM slots to UASTC and remaining color slots to ETC1S, with mipmaps enabled. The generated GLB is embedded in the regular Stage 08E asset stream and is checked by Khronos glTF Validator plus the mobile Chromium runtime smoke test.
+
+**Pilot boundaries:** only `yaba-core-01` has the new authored geometry and real 2K PBR maps. The other 47 GLBs remain unchanged. Its simplified `COLLISION_PROXY` is present but deliberately remains disconnected from live physics. A passing desktop Chromium load is not a physical Itel A90 test; Android visual review, load-time, memory and sustained frame-time acceptance remain open gates.

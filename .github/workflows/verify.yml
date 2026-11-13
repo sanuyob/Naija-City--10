@@ -32,6 +32,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Restore Stage 08F PBR source and artifact cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/stage-08f
+          key: stage-08f-pbr-v1-${{ runner.os }}-node22-${{ hashFiles('scripts/generate-stage-08f-hero.mjs') }}
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Run source and project checks

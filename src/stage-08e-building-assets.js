@@ -15,7 +15,7 @@ function hideLegacyBuildings(app) {
 }
 
 export function createStage08EBuildings({app}) {
-  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'embedded PNG; Basis/KTX2 compression pending'};
+  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'embedded PNG; hero KTX2 pilot pending',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
   const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,96);
@@ -24,6 +24,7 @@ export function createStage08EBuildings({app}) {
 
   async function loadOne(item) {
     if(loading.has(item.id)||loaded.has(item.id)) return;
+    const loadStarted=performance.now();
     loading.add(item.id); activeLoads++; state.loadingBuildings=loading.size;
     let asset=assetsById.get(item.id);
     if(!asset) { asset=new pc.Asset(item.id,'container',{url:assetUrl(item.url)}); assetsById.set(item.id,asset); app.assets.add(asset); }
@@ -55,11 +56,13 @@ export function createStage08EBuildings({app}) {
       }
       app.root.addChild(entity);
       if(masterAssetId===null) masterAssetId=item.id;
-      loaded.set(item.id,{entity,asset,lods,position:item.position,kind:item.kind,distance:Infinity});
+      loaded.set(item.id,{entity,asset,lods,position:item.position,kind:item.kind,distance:Infinity,hero:Boolean(item.hero)});
+      if(item.hero){state.heroBuildingId=item.id;state.heroBuildingLoaded=true;state.heroLoadMs=Math.round(performance.now()-loadStarted);state.heroTextureEncoding=item.textureEncoding||'unknown';state.heroPbrMaterials=[...(item.pbrMaterials||[])];}
       state.loadedBuildings=loaded.size;
       state.staticBatching=Boolean(batchGroup);
     } catch(error) {
       state.failedBuildings++;
+      if(item.hero)state.heroLoadError=error.message;
       state.failures.push(item.id+': '+error.message);
       console.error('Stage 08E GLB load failed:',item.id,error);
     } finally {
@@ -107,7 +110,7 @@ export function createStage08EBuildings({app}) {
       .filter(item=>!loaded.has(item.id)&&!loading.has(item.id)&&!state.failures.some(f=>f.startsWith(item.id+':')))
       .map(item=>({...item,distance:Math.hypot(position[0]-item.position[0],position[2]-item.position[2])}))
       .filter(item=>item.distance<=150)
-      .sort((a,b)=>a.distance-b.distance);
+      .sort((a,b)=>Number(Boolean(b.hero))-Number(Boolean(a.hero))||a.distance-b.distance);
     state.lastCandidateCount=candidates.length;
     state.activeDistricts=[...new Set(candidates.map(item=>item.district).filter(Boolean))];
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);

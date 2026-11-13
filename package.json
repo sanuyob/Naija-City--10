@@ -6,11 +6,12 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "assets:08e": "node scripts/generate-stage-08e-assets.mjs",
-    "build": "npm run assets:08e && vite build",
+    "build": "npm run assets:08e && npm run assets:08f && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "verify": "npm run assets:08e && node --check src/main.js && node --check src/game.js && node --check src/stage-08a-city-expansion.js && node --check src/stage-08b-building-detail.js && node --check src/stage-08c-street-infrastructure.js && node --check src/stage-08d-building-realism.js && node --check src/stage-08e-building-assets.js && node --check src/stage-08f-device-profiler.js && node --check scripts/generate-stage-08e-assets.mjs && node --check src/third-person-controller.js && node --check src/asset-loader.js && node --check src/rpg-ui.js && node scripts/verify-project.mjs",
+    "verify": "npm run assets:08e && npm run assets:08f && node --check scripts/generate-stage-08f-hero.mjs && node scripts/verify-stage-08f-hero.mjs && node --check src/main.js && node --check src/game.js && node --check src/stage-08a-city-expansion.js && node --check src/stage-08b-building-detail.js && node --check src/stage-08c-street-infrastructure.js && node --check src/stage-08d-building-realism.js && node --check src/stage-08e-building-assets.js && node --check src/stage-08f-device-profiler.js && node --check scripts/generate-stage-08e-assets.mjs && node --check src/third-person-controller.js && node --check src/asset-loader.js && node --check src/rpg-ui.js && node scripts/verify-project.mjs",
     "test:browser": "node scripts/browser-smoke.mjs",
-    "analyze:bundle": "node scripts/analyze-bundle.mjs"
+    "analyze:bundle": "node scripts/analyze-bundle.mjs",
+    "assets:08f": "node scripts/generate-stage-08f-hero.mjs"
   },
   "dependencies": {
     "playcanvas": "^2.24.0"
@@ -18,6 +19,8 @@
   "devDependencies": {
     "playwright": "^1.56.1",
     "vite": "^7.2.2",
-    "gltf-validator": "^2.0.0-dev.3.10"
+    "gltf-validator": "^2.0.0-dev.3.10",
+    "@gltf-transform/cli": "4.5.0",
+    "pngjs": "7.0.0"
   }
 }
