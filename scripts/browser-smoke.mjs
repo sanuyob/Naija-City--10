@@ -16,7 +16,30 @@ try {
  await page.goto(origin,{waitUntil:'networkidle'});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
- const state=await page.evaluate(()=>({viewport:{w:innerWidth,h:innerHeight},canvas:(()=>{const c=document.querySelector('#application'),r=c.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bufferW:c.width,bufferH:c.height,webgl2:!!c.getContext('webgl2')};})(),diag:window.__NAIJA_RENDER_DIAGNOSTICS__,game:window.__NAIJA_GAME__}));
+ const state=await page.evaluate(()=>{
+  const game=window.__NAIJA_GAME__;
+  const scalarFields=source=>Object.fromEntries(Object.entries(source||{}).filter(([,value])=>value===null||['string','number','boolean'].includes(typeof value)));
+  return {
+   viewport:{w:innerWidth,h:innerHeight},
+   canvas:(()=>{const c=document.querySelector('#application'),r=c.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height,bufferW:c.width,bufferH:c.height,webgl2:!!c.getContext('webgl2')};})(),
+   diag:window.__NAIJA_RENDER_DIAGNOSTICS__||null,
+   game:game?{
+    stage:game.stage,
+    stage08A:scalarFields(game.stage08A),
+    stage08B:scalarFields(game.stage08B),
+    stage08C:scalarFields(game.stage08C),
+    stage08D:scalarFields(game.stage08D),
+    assets:{modelsLoaded:game.assets?.modelsLoaded,texturesLoaded:game.assets?.texturesLoaded,failures:game.assets?.failures||[]},
+    thirdPersonCharacter:game.thirdPersonCharacter,
+    movement:game.movement,
+    sprint:game.sprint,
+    jump:game.jump,
+    proceduralAnimations:game.proceduralAnimations,
+    mobileJoystick:game.mobileJoystick,
+    cameraOrbit:game.cameraOrbit
+   }:null
+  };
+ });
  if(state.game?.stage!==8||state.game?.stage08A?.stage!=='08A'||state.game?.stage08A?.parallelRoads!==2||state.game?.stage08A?.crossStreets!==3||state.game?.stage08A?.commercialBuildings!==8||state.game?.stage08A?.residentialBuildings!==8)throw new Error('Stage 08A expansion metadata is incomplete: '+JSON.stringify(state.game?.stage08A));
  if(state.game?.stage08B?.stage!=='08B'||state.game?.stage08B?.commercialFacades!==8||state.game?.stage08B?.residentialFacades!==8||state.game?.stage08B?.detailMeshes<200||state.game?.stage08B?.batching!==true)throw new Error('Stage 08B facade detail metadata is incomplete: '+JSON.stringify(state.game?.stage08B));
  if(state.game?.stage08C?.stage!=='08C'||state.game?.stage08C?.utilityPoles!==16||state.game?.stage08C?.busShelters!==2||state.game?.stage08C?.pocketParksFurnished!==3||state.game?.stage08C?.batching!==true||state.game?.stage08C?.dynamicActorsAdded!==0||state.game?.stage08C?.detailMeshes<150)throw new Error('Stage 08C street infrastructure metadata is incomplete: '+JSON.stringify(state.game?.stage08C));
