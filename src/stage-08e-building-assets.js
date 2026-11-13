@@ -82,6 +82,32 @@ export function createStage08EBuildings({app}) {
     return state;
   }
 
+  // Persistent, low-cost world collision is derived from the full manifest, not loaded render assets.
+  // This keeps buildings solid while their visual GLBs are streamed out of memory.
+  const collisionRadius=0.38;
+  const collisionHeight=1.8;
+  function overlapsBuilding(x,z,y,item) {
+    const size=item.size||[5,5,6];
+    const center=item.position||[0,0,0];
+    const bottom=center[1]||0, top=bottom+size[1];
+    if(y+collisionHeight<=bottom||y>=top) return false;
+    const nearestX=Math.max(center[0]-size[0]/2,Math.min(center[0]+size[0]/2,x));
+    const nearestZ=Math.max(center[2]-size[2]/2,Math.min(center[2]+size[2]/2,z));
+    const dx=x-nearestX,dz=z-nearestZ;
+    return dx*dx+dz*dz<collisionRadius*collisionRadius;
+  }
+  function collides(x,z,y) {
+    return entries.some(item=>overlapsBuilding(x,z,y,item));
+  }
+  function resolveMovement(current,proposed) {
+    let x=proposed[0],z=proposed[2];
+    const y=proposed[1];
+    // Resolve axes separately so the player can slide along a facade instead of sticking.
+    if(collides(x,current[2],y)) x=current[0];
+    if(collides(x,z,y)) z=current[2];
+    return [x,y,z];
+  }
+
   function update(position) {
     if(!state.ready||!position) return;
     state.lastPlayerPosition=[position[0],position[1],position[2]];
@@ -116,5 +142,5 @@ export function createStage08EBuildings({app}) {
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
   }
 
-  return {initialize:async()=>{await initialize();state.ready=true;return state;},update,getState:()=>({...state,streaming:'distance-based progressive loading with unload/eviction outside 210m (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterMaterialAsset:masterAssetId})};
+  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static circle-vs-AABB building colliders';state.collisionRadius=collisionRadius;return state;},update,resolveMovement,getState:()=>({...state,streaming:'distance-based progressive loading with unload/eviction outside 210m (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterMaterialAsset:masterAssetId})};
 }
