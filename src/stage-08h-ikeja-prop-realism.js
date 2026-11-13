@@ -1,7 +1,7 @@
 import * as pc from 'playcanvas';
 
 // Stage 08H: material and prop-art pass for the Ikeja street-life prototype.
-// Textures are original, deterministic, tileable procedural PBR maps; no external
+// Textures are original, deterministic, procedural PBR maps; no external
 // image rights or runtime downloads are required for this stage.
 function seeded(seed) {
   let state = seed >>> 0;
