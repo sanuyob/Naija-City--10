@@ -1,5 +1,6 @@
 import { readFile, readdir } from 'node:fs/promises';
 import assert from 'node:assert/strict';
+import validator from 'gltf-validator';
 const html=await readFile(new URL('../index.html',import.meta.url),'utf8');
 const rpg=await readFile(new URL('../src/rpg-ui.js',import.meta.url),'utf8');
 const rpgCss=await readFile(new URL('../src/rpg-ui.css',import.meta.url),'utf8');
@@ -139,6 +140,8 @@ assert.equal(stage08eManifest.models.filter(model=>model.kind==='mixed-use').len
 for(const filename of buildingFiles){
  const asset=await readFile(new URL('../public/assets/buildings/'+filename,import.meta.url));
  assert.equal(asset.readUInt32LE(0),0x46546c67,filename+' must be a GLB 2.0 container');
+ const report=await validator.validateBytes(new Uint8Array(asset),{uri:filename,format:'glb',writeTimestamp:false,maxIssues:100});
+ assert.equal(report.issues.numErrors,0,filename+' Khronos glTF validation errors: '+JSON.stringify(report.issues.messages));
  const jsonLength=asset.readUInt32LE(12),json=JSON.parse(asset.subarray(20,20+jsonLength).toString('utf8').trim());
  assert.ok(json.nodes.some(node=>node.name==='LOD0')&&json.nodes.some(node=>node.name==='LOD1')&&json.nodes.some(node=>node.name==='LOD2'),filename+' must contain three LOD levels');
  assert.ok(json.nodes.some(node=>node.name==='COLLISION_PROXY'),filename+' must contain a separate collision proxy');
