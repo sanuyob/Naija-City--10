@@ -192,6 +192,10 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   asphalt.glossMapTiling = new pc.Vec2(8, 74);
   asphalt.update();
   const patchAsphalt = tintedVariant(asphalt, '08H-recent-asphalt-repair', [0.72,0.75,0.74]);
+  patchAsphalt.diffuseMapTiling = new pc.Vec2(2, 6);
+  patchAsphalt.normalMapTiling = new pc.Vec2(2, 6);
+  patchAsphalt.glossMapTiling = new pc.Vec2(2, 6);
+  patchAsphalt.update();
   const concrete = createPbrMaterial('08H-cast-concrete-dust-and-aggregate', [0.91,0.89,0.83],
     map('concrete', 256, 0x73b2, [159,157,147]), { gloss:0.14, bumpiness:0.28 });
   concrete.diffuseMapTiling = new pc.Vec2(2.6, 30);
@@ -200,10 +204,22 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
   concrete.update();
   const plaster = createPbrMaterial('08H-faded-painted-plaster', [0.98,0.96,0.88],
     map('plaster', 256, 0x14c3, [191,178,151]), { gloss:0.1, bumpiness:0.2 });
+  plaster.diffuseMapTiling = new pc.Vec2(2.4, 4.5);
+  plaster.normalMapTiling = new pc.Vec2(2.4, 4.5);
+  plaster.glossMapTiling = new pc.Vec2(2.4, 4.5);
+  plaster.update();
   const paintMetal = createPbrMaterial('08H-painted-steel-chipped-edges', [0.74,0.78,0.76],
     map('metal', 256, 0x9021, [123,129,125]), { metalness:0, gloss:0.43, bumpiness:0.16 });
+  paintMetal.diffuseMapTiling = new pc.Vec2(2.8, 4.8);
+  paintMetal.normalMapTiling = new pc.Vec2(2.8, 4.8);
+  paintMetal.glossMapTiling = new pc.Vec2(2.8, 4.8);
+  paintMetal.update();
   const galvanized = createPbrMaterial('08H-galvanized-metal', [0.82,0.85,0.83],
     map('metal', 256, 0x9021, [145,151,148]), { metalness:0.62, gloss:0.5, bumpiness:0.1 });
+  galvanized.diffuseMapTiling = new pc.Vec2(2.8, 4.8);
+  galvanized.normalMapTiling = new pc.Vec2(2.8, 4.8);
+  galvanized.glossMapTiling = new pc.Vec2(2.8, 4.8);
+  galvanized.update();
   const silt = createPbrMaterial('08H-drain-silt-and-street-dust', [0.88,0.82,0.7],
     map('concrete', 256, 0x3348, [111,91,66]), { gloss:0.06, bumpiness:0.24 });
   const wood = createPbrMaterial('08H-market-wood-grain', [0.93,0.88,0.76],
