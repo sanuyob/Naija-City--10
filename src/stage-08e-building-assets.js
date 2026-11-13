@@ -61,6 +61,7 @@ export function createStage08EBuildings({app}) {
     } catch(error) {
       state.failedBuildings++;
       state.failures.push(item.id+': '+error.message);
+      console.error('Stage 08E GLB load failed:',item.id,error);
     } finally {
       loading.delete(item.id); activeLoads=Math.max(0,activeLoads-1); state.loadingBuildings=loading.size;
     }
