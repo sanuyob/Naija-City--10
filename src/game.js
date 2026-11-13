@@ -1,6 +1,7 @@
 import * as pc from 'playcanvas';
 import { createThirdPersonController } from './third-person-controller.js';
 import { loadSceneAssets } from './asset-loader.js';
+import { createStage08ACityExpansion } from './stage-08a-city-expansion.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -48,7 +49,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   };
 
   const camera = new pc.Entity('chase-camera');
-  camera.addComponent('camera',{clearColor:new pc.Color(0.49,0.72,0.88),fov:62,farClip:190});
+  camera.addComponent('camera',{clearColor:new pc.Color(0.49,0.72,0.88),fov:62,farClip:420});
   camera.setPosition(0,7,13); camera.lookAt(0,0,0); app.root.addChild(camera);
   const diagnosticMaterial=material([1,0,1],0.2);
   diagnosticMaterial.useLighting=false;diagnosticMaterial.emissive=new pc.Color(1,0,1);diagnosticMaterial.update();
@@ -58,6 +59,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   sun.setEulerAngles(48,28,0); app.root.addChild(sun);
 
   box('ground',[0,-0.35,-18],[46,0.5,154],m.ground);
+  const stage08A = createStage08ACityExpansion({ app, box, material, m });
   box('main-road',[0,-0.07,-18],[11,0.16,150],m.asphalt);
   box('left-footpath',[-6.1,0.02,-18],[1.1,0.2,150],m.concrete);
   box('right-footpath',[6.1,0.02,-18],[1.1,0.2,150],m.concrete);
@@ -205,10 +207,10 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     const rect=canvas.getBoundingClientRect(),cameraPos=camera.getPosition(),forward=camera.forward;
     const renderComponents=app.root.findComponents('render');
     const meshInstances=renderComponents.reduce((sum,component)=>sum+(component.meshInstances?.length||0),0);
-    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-23,-1,-90],max:[23,10,58]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
+    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-48,-1,-205],max:[48,10,169]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));});
-  window.__NAIJA_GAME__={ready:true,stage:6,hudStage:7,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  window.__NAIJA_GAME__={ready:true,stage:8,hudStage:7,stage08A,landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
   window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;playerController.destroy();},{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';

@@ -183,8 +183,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract } 
     input.jumpQueued = false;
     if (!grounded) velocity.y -= 17.5 * step;
     const p = player.getPosition();
-    p.x = pc.math.clamp(p.x + velocity.x * step, -18, 18);
-    p.z = pc.math.clamp(p.z + velocity.z * step, -86, 50);
+    p.x = pc.math.clamp(p.x + velocity.x * step, -46, 46);
+    p.z = pc.math.clamp(p.z + velocity.z * step, -195, 160);
     p.y += velocity.y * step;
     if (p.y <= 0) { p.y = 0; velocity.y = 0; grounded = true; }
     player.setPosition(p);
