@@ -80,3 +80,21 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 
 ## Honest status
 The character remains a lightweight procedural placeholder. Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for texture loading, touch comfort, safe-area behavior and performance.
+
+
+## Stage 08E — Individually designed Nigerian building assets
+
+Stage 08E introduces a generated, validated GLB asset pipeline for the 48 existing Yaba and neighbourhood building plots:
+- 32 original Yaba commercial plots, with selected mixed-use variants.
+- 8 Stage 08A commercial plots, including mixed-use variants.
+- 8 residential plots.
+- Six reusable PBR material families: weathered plaster, cast concrete, tinted glazing, painted metal, roofing and timber.
+- Embedded texture images and UV coordinates in every GLB.
+- Three mesh detail levels (LOD0/LOD1/LOD2) and a separate hidden collision-proxy mesh.
+- Distance-based progressive loading with at most two concurrent GLB requests.
+- Shared material references and a dedicated PlayCanvas static batch group where compatible.
+- Legacy blockout bodies and Stage 08B/08D facade dressing are disabled when the GLB replacement system initializes.
+
+Generate the assets with `npm run assets:08e`. The build and verification commands generate them automatically. Structural checks inspect every GLB header, embedded image, UV accessor, material family, LOD node and collision proxy.
+
+**Known remaining work:** the current generator embeds PNG maps; Basis/KTX2 GPU texture compression and true GPU-memory savings are not yet complete. The collision proxies are authored as separate hidden meshes but are not yet wired into a world collision system. Distant entities are hidden after streaming; aggressive asset unloading and district-memory eviction still need profiling. Automated Chromium checks are not a substitute for loading, memory and frame-rate measurements on the actual Itel A90.
