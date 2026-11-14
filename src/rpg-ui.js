@@ -6,7 +6,7 @@ const views = {
   inventory: ['FIELD KIT', 'Inventory', '<div class="tiles"><article><b>01</b><strong>Supplies</strong><small>No items collected</small></article><article><b>02</b><strong>Key items</strong><small>No key items yet</small></article><article><b>03</b><strong>Resources</strong><small>0 collected</small></article><article><b>04</b><strong>Quick slots</strong><small>Tap a slot to select it</small></article></div>'],
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
   map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
-  character: ['PLAYER PROFILE', 'Character', '<div class="profile"><b>NC</b><div><strong>ROOKIE</strong><p>Level 01 · City newcomer</p><small>0 / 100 XP TO LEVEL 02</small></div></div><div class="mission character-import-card"><small>DEFAULT PLAYER MODEL</small><b>SET ARA CHARACTER AS DEFAULT</b><p>Select The_Female_Executive.fbx from your downloads. The game converts it to GLB, saves it in this browser and loads it as your player on future visits to this device.</p><form id="player-character-form"><label for="player-character-file">CHARACTER FBX FILE</label><input id="player-character-file" type="file" accept=".fbx,application/octet-stream" required><button id="player-character-import" type="submit">CONVERT + SET AS DEFAULT</button></form><p id="player-character-status" role="status">Your imported player is saved only in this browser on this device.</p><button id="player-character-reset" type="button">RESET TO BUNDLED CHARACTER</button></div><div class="stat">Strength <b>01</b></div><div class="stat">Mobility <b>01</b></div><div class="stat">Awareness <b>01</b></div><div class="stat">Street reputation <b>00</b></div>'],
+  character: ['PLAYER PROFILE', 'Character', '<div class="profile"><b>NC</b><div><strong>ROOKIE</strong><p>Level 01 · City newcomer</p><small>0 / 100 XP TO LEVEL 02</small></div></div><div class="character-roster" id="character-roster"><article class="character-card" data-player-card="hero01"><div class="character-number">01</div><div class="character-info"><small>AVAILABLE · BUNDLED</small><b>HERO 01</b><p>Original Naija City player</p><em data-player-main>MAIN CHARACTER</em></div><div class="character-actions"><button data-player-action="switch" data-player-id="hero01">SWITCH TO</button><button data-player-action="main" data-player-id="hero01">SET AS MAIN</button></div></article><article class="character-card is-locked" data-player-card="ara-female"><div class="character-number">02</div><div class="character-info"><small data-player-status="ara-female">SECOND SLOT · IMPORT REQUIRED</small><b>ARA 3D FEMALE</b><p>The_Female_Executive from Ara 3D Gen</p><em data-player-main>SECOND CHARACTER</em></div><div class="character-actions"><button data-player-action="switch" data-player-id="ara-female" disabled>SWITCH TO</button><button data-player-action="main" data-player-id="ara-female" disabled>SET AS MAIN</button></div></article></div><div class="mission character-import-card"><small>ADD SECOND CHARACTER</small><b>ARA 3D GEN · FEMALE PLAYER</b><p>Choose The_Female_Executive.fbx once. It is converted and saved as your second character on this device. Hero 01 stays available, and you can switch between both at any time.</p><form id="player-character-form"><label for="player-character-file">ARA CHARACTER FBX</label><input id="player-character-file" type="file" accept=".fbx,application/octet-stream" required><button id="player-character-import" type="submit">ADD TO CHARACTER ROSTER</button></form><p id="player-character-status" role="status">Your roster is stored in this browser on this device.</p><button id="player-character-reset" type="button">REMOVE ARA FROM ROSTER</button></div><div class="stat">Strength <b>01</b></div><div class="stat">Mobility <b>01</b></div><div class="stat">Awareness <b>01</b></div><div class="stat">Street reputation <b>00</b></div>'],
   settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><p class="muted">Landscape-first controls. Gameplay settings are expanded in later stages.</p>'],
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
@@ -18,6 +18,7 @@ export function mountRPGInterface() {
     <header class="topbar">
       <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small data-genre="third-person open-world action RPG">THIRD-PERSON OPEN-WORLD ACTION RPG</small></div></div>
       <div class="district"><small>CURRENT DISTRICT</small><b>YABA · LAGOS</b></div>
+      <button id="character-switch-button" class="character-switch-button" type="button" aria-label="Switch player character" title="Quick character switch" disabled>⇄<small>SWAP</small></button>
       <button class="menu" data-open="pause" aria-label="Pause game">Ⅱ<small>PAUSE</small></button>
     </header>
     <section class="status" aria-label="Player status">
@@ -77,6 +78,9 @@ export function mountRPGInterface() {
     root.querySelector('#panel-kicker').textContent = view[0];
     root.querySelector('#panel-title').textContent = view[1];
     root.querySelector('#panel-content').innerHTML = view[2];
+    if (name === 'character') {
+      window.__NAIJA_GAME__?.getCharacterRoster?.().then(setCharacterRoster).catch(() => {});
+    }
     panel.hidden = false;
     pause.hidden = true;
   };
@@ -98,12 +102,15 @@ export function mountRPGInterface() {
     try {
       status.textContent = 'Preparing character import…';
       const metadata = await importPlayerCharacter(file, message => { status.textContent = message; });
-      status.textContent = 'Saved · ' + metadata.boneCount + ' bones · ' + metadata.animationNames.join(', ') +
-        ' · ' + (metadata.glbBytes / 1048576).toFixed(1) + ' MB. Reload to activate it.';
-      button.textContent = 'RELOAD WITH NEW PLAYER';
+      status.textContent = 'Added to second slot · ' + metadata.boneCount + ' bones · ' +
+        metadata.animationNames.join(', ') + ' · ' + (metadata.glbBytes / 1048576).toFixed(1) +
+        ' MB. Hero 01 remains your main character.';
+      button.textContent = 'UPDATE ARA CHARACTER';
       button.disabled = false;
-      button.dataset.reloadPlayer = 'true';
-      showToast('Ara character saved on this device.');
+      await window.__NAIJA_REFRESH_CHARACTERS__?.();
+      const roster = await window.__NAIJA_GAME__?.getCharacterRoster?.();
+      setCharacterRoster(roster);
+      showToast('Ara added as your second character.');
     } catch (error) {
       status.textContent = 'Import failed: ' + (error?.message || error);
       button.disabled = false;
@@ -114,7 +121,39 @@ export function mountRPGInterface() {
   root.addEventListener('click', async event => {
     const importButton = event.target.closest('#player-character-import');
     if (importButton?.dataset.reloadPlayer === 'true') {
-      window.location.reload();
+      importButton.dataset.reloadPlayer = 'false';
+      return;
+    }
+    const playerAction = event.target.closest('[data-player-action]');
+    if (playerAction) {
+      const id = playerAction.dataset.playerId;
+      const makeMain = playerAction.dataset.playerAction === 'main';
+      playerAction.disabled = true;
+      try {
+        const result = await window.__NAIJA_SWITCH_PLAYER__?.(id, makeMain);
+        if (!result?.ok) showToast(result?.message || 'Character switch failed.');
+        else showToast(result.displayName + (makeMain ? ' is now your main character.' : ' switched in.'));
+        const roster = await window.__NAIJA_GAME__?.getCharacterRoster?.();
+        setCharacterRoster(roster);
+      } catch (error) {
+        showToast(error?.message || 'Character switch failed.');
+      } finally {
+        playerAction.disabled = false;
+      }
+      return;
+    }
+    if (event.target.closest('#character-switch-button')) {
+      const button = event.target.closest('#character-switch-button');
+      button.disabled = true;
+      try {
+        const result = await window.__NAIJA_SWITCH_PLAYER__?.();
+        if (!result?.ok) showToast(result?.message || 'Quick switch unavailable.');
+        else showToast('Switched to ' + result.displayName + '.');
+        const roster = await window.__NAIJA_GAME__?.getCharacterRoster?.();
+        setCharacterRoster(roster);
+      } finally {
+        button.disabled = !(await window.__NAIJA_GAME__?.getCharacterRoster?.())?.characters?.some(item => item.id === 'ara-female' && item.available);
+      }
       return;
     }
     if (event.target.closest('#player-character-reset')) {
@@ -122,7 +161,7 @@ export function mountRPGInterface() {
       button.disabled = true;
       try {
         await clearSavedPlayerCharacter();
-        showToast('Default character reset. Reloading…');
+        showToast('Ara removed. Hero 01 restored. Reloading…');
         window.location.reload();
       } catch (error) {
         button.disabled = false;
@@ -194,8 +233,33 @@ export function mountRPGInterface() {
     const el=root.querySelector('#hud-world-activity');
     if(el)el.textContent='CITY LIFE · '+(state.pedestrians??0)+' PEDESTRIANS · CREW '+(state.companions??0)+'/2';
   }
+  function setCharacterRoster(roster={}) {
+    const cards=root.querySelectorAll('[data-player-card]');
+    cards.forEach(card=>{
+      const id=card.dataset.playerCard;
+      const data=roster.characters?.find(item=>item.id===id);
+      if(!data)return;
+      card.classList.toggle('is-active',!!data.active);
+      card.classList.toggle('is-main',!!data.isMain);
+      card.classList.toggle('is-locked',!data.available);
+      card.querySelectorAll('[data-player-action]').forEach(button=>{
+        button.disabled=!data.available || (!!data.active && button.dataset.playerAction==='switch');
+        button.textContent=button.dataset.playerAction==='main'
+          ? (data.isMain?'MAIN CHARACTER':'SET AS MAIN')
+          : (data.active?'CURRENTLY ACTIVE':'SWITCH TO');
+      });
+      const status=card.querySelector('[data-player-status]');
+      if(status)status.textContent=data.available
+        ? (data.active?'CURRENTLY PLAYING':data.isMain?'SAVED MAIN CHARACTER':'READY TO SWITCH')
+        : 'SECOND SLOT · IMPORT REQUIRED';
+      const main=card.querySelector('[data-player-main]');
+      if(main)main.textContent=data.isMain?'MAIN CHARACTER':'AVAILABLE IN ROSTER';
+    });
+    const quick=root.querySelector('#character-switch-button');
+    if(quick)quick.disabled=!(roster.characters||[]).some(item=>item.id==='ara-female'&&item.available);
+  }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, setCharacterRoster, showToast,
     open, close
   };
 }
