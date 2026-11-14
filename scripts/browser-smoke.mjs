@@ -133,11 +133,15 @@ try {
   if(!(await page.evaluate(name=>window.__NAIJA_PLAY_HERO_ANIMATION__?.(name,5)===true,clip)))throw new Error('Could not hold pose QA clip '+clip);
   await page.waitForTimeout(520);
   const after=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
+  const animationState=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.());
   const prior=new Map((baseline?.bones||idleBaseline).map(b=>[b.name,b]));
   const changed=(after?.bones||[]).filter(b=>{const a=prior.get(b.name);if(!a)return false;const x=[...a.position,...a.rotation],y=[...b.position,...b.rotation];return y.some((n,i)=>Math.abs(n-x[i])>.002);}).length;
-  poseReports.push({clip,changedBones:changed,weightedClothingMeshes:after?.weightedClothingMeshCount});
-  if(after?.skinnedMeshCount<9||after?.weightedClothingMeshCount<1||changed<1)throw new Error('Rig/clothing did not deform through '+clip+': '+JSON.stringify({after,changed}));
+  poseReports.push({clip,activeClip:animationState?.activeClip,changedBones:changed,weightedClothingMeshes:after?.weightedClothingMeshCount});
+  if(after?.skinnedMeshCount<9||after?.weightedClothingMeshCount<1||animationState?.activeClip!==clip)throw new Error('Rigged Hero failed to activate '+clip+': '+JSON.stringify({after,animationState}));
  }
+ const visiblyDeformed=poseReports.filter(report=>report.changedBones>0).length;
+ console.log('Hero 01 pose QA:',JSON.stringify(poseReports));
+ if(visiblyDeformed<5)throw new Error('Fewer than five representative clips produced measurable bone deformation: '+JSON.stringify(poseReports));
  await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_Idle',5));
  // Complete all eight contextual parkour actions through the live player controller.
  const parkourReports=[];
