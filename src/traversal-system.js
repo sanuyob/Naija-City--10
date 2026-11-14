@@ -18,7 +18,10 @@ export function createTraversalSystem({playerController,physics=null,obstacles=[
   const yaw=(Number(state.facingYaw)||0)*Math.PI/180,fx=Math.sin(yaw),fz=-Math.cos(yaw),[x,y,z]=state.position;let best=null;
   for(const o of list){const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.2||along>3.8||lateral>Math.abs(s.x)*.5+.82)continue;if(!best||along<best.along)best={o,along};}
   if(!best){blocked="Face a marked step, vault, ledge, ladder or wall";return false;}
-  const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72,destination=[x+fx*clearance,Math.max(0,y),z+fz*clearance];
+  const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72;
+  const climbToTop=new Set(["step","mantle","ledge","ladder"]).has(best.o.type);
+  const targetY=climbToTop?Math.max(y,Number(best.o.height)||0):Math.max(0,y);
+  const destination=[x+fx*clearance,targetY,z+fz*clearance];
   const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
   const requiredApex=Math.min(4.0,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
   const colliderIndex=list.indexOf(best.o);
