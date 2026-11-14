@@ -21,7 +21,8 @@ export function createTraversalSystem({playerController,physics=null,obstacles=[
   const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72;
   const climbToTop=new Set(["step","mantle","ledge","ladder"]).has(best.o.type);
   const targetY=climbToTop?Math.max(y,Number(best.o.height)||0):Math.max(0,y);
-  const destination=[x+fx*clearance,targetY,z+fz*clearance];
+  const travelDistance=climbToTop?best.along:clearance;
+  const destination=[x+fx*travelDistance,targetY,z+fz*travelDistance];
   const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
   const requiredApex=Math.min(4.0,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
   const colliderIndex=list.indexOf(best.o);
