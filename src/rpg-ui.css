@@ -138,3 +138,7 @@
  .objective { width:min(180px,24vw); } .status { width:138px; } .player-status>span { display:none; } .minimap { width:90px; }
 }
 @media (prefers-reduced-motion:reduce) { #rpg-interface *,#rpg-interface *::before,#rpg-interface *::after { transition:none !important;animation:none !important; } }
+
+#parkour-button{border-color:#e6bb67a8;background:rgba(91,62,20,.88)}
+.world-live-status{display:block;margin-top:6px;color:#9ce7c5!important;font:700 8px/1.35 ui-monospace,monospace;letter-spacing:.03em}
+@media(max-width:600px){#parkour-button{min-width:48px}.actions{gap:6px}.actions button{font-size:15px}}
