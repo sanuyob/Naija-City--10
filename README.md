@@ -78,8 +78,16 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 ## Verify
 `npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser`
 
+## Hero 01 rigged-character integration
+
+The `feature/hero01-18clips-player-integration` branch now includes the original Hero 01 GLB asset and a PlayCanvas ContainerAsset loader. The GLB contains one skinned mesh hierarchy, a 20-joint humanoid rig and 18 separately named clips. The existing third-person controller remains authoritative for position, collision, stamina, touch input and camera; its visual body can now use the rigged hero and select Idle, Walk, Sprint, Crouch, CrouchWalk, Jump, Landing and Interact clips. The procedural character remains as a fallback if the asset fails to load.
+
+The GLB is stored as a base64 text payload in the repository and decoded to a Blob URL at runtime. This avoids losing the binary file through the repository text-file connector, but adds a small decode and memory overhead at startup.
+
 ## Honest status
-The character remains a lightweight procedural placeholder. Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for texture loading, touch comfort, safe-area behavior and performance.
+This feature branch has passed Blender export and Blender re-import checks for all 18 named animation clips, and the three changed JavaScript modules pass Node syntax checks. The repository verification now checks the GLB header, all 18 clip names, 60 channels per clip and the 20-joint skin. **A production build, browser PlayCanvas runtime test, Khronos validator run, skin-deformation review and physical Android test are still required.** The target Itel A90 must be profiled for startup time, memory, frame rate and touch comfort before merging this branch into `main`.
+
+Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets.
 
 
 ## Stage 08E — Individually designed Nigerian building assets
