@@ -8,7 +8,7 @@ const AMMO_ASSETS = {
   fallbackUrl: 'https://developer.playcanvas.com/assets/modules/ammo/ammo.js'
 };
 
-async function loadAmmo() {
+export async function loadAmmo() {
   pc.WasmModule.setConfig('Ammo', AMMO_ASSETS);
   await new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Ammo physics module timed out while loading. Check your connection and reload.')), 25000);
