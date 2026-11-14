@@ -19,7 +19,9 @@ export function createTraversalSystem({playerController,obstacles=[],onEffect}={
   for(const o of list){const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.2||along>3.8||lateral>Math.abs(s.x)*.5+.82)continue;if(!best||along<best.along)best={o,along};}
   if(!best){blocked="Face a marked step, vault, ledge, ladder or wall";return false;}
   const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72,destination=[x+fx*clearance,Math.max(0,y),z+fz*clearance];
-  const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:profile.apex,mode:profile.mode,clips:profile.clips});
+  const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
+  const requiredApex=Math.min(4.0,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
+  const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:requiredApex,mode:profile.mode,clips:profile.clips,obstacleId:best.o.id,obstacleHeight:best.o.height});
   if(!ok){blocked="Get closer to the obstacle and face it";return false;}activeId=best.o.id;timer=profile.duration+.22;started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
  }
  function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));if(timer===0){activeId=null;completed++;}}
