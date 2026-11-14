@@ -93,7 +93,7 @@ try {
  const before=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().position);
  await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height/2);await page.mouse.down();await page.mouse.move(stick.x+stick.width/2,stick.y+stick.height*0.12,{steps:5});await page.waitForTimeout(650);await page.mouse.up();
  const after=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState().position);
- if(Math.hypot(after[0]-before[0],after[2]-before[2])<0.25)throw new Error('Movement joystick did not move the human player: '+JSON.stringify({before,after}));
+ if(Math.hypot(after[0]-before[0],after[2]-before[2])<0.10)throw new Error('Movement joystick did not move the human player at the tuned Ara walking speed: '+JSON.stringify({before,after}));
  await page.locator('#jump-button').tap();
  await page.waitForFunction(()=>{const state=window.__NAIJA_GAME__?.getPlayerState();return !!state&&(state.position[1]>0.05||!state.grounded);},null,{timeout:1500});
  const jumpState=await page.evaluate(()=>window.__NAIJA_GAME__.getPlayerState());
