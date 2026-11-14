@@ -114,7 +114,8 @@ try {
  const traversalStarted=await page.evaluate(()=>window.__NAIJA_TRAVERSE__?.()===true);
  if(!traversalStarted)throw new Error('Hero 01 could not start contextual step-up traversal');
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted===1,null,{timeout:3000});
- await page.waitForFunction(()=>window.__NAIJA_GAME__?.getPlayerState?.().traversing===false,null,{timeout:4000});
+ const traversalAdvance=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(32));
+ if(!traversalAdvance||traversalAdvance.player.traversing||traversalAdvance.traversal.traversalsStarted!==1)throw new Error('Traversal did not complete its bounded movement sequence: '+JSON.stringify(traversalAdvance));
 
  // Verify remote-entry companions, the two-person cap and approved squad commands.
  const techSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Summon')===true);
