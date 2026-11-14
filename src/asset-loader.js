@@ -122,8 +122,12 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
  */
 export async function loadHeroCharacter(app, {
   urls = ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
+  characterId = 'hero01',
   statusLabel
 } = {}) {
+  if (!['hero01', 'ara-female'].includes(characterId)) {
+    throw new Error('Unknown character in player roster: ' + characterId);
+  }
   const setStatus = message => {
     if (statusLabel) statusLabel.textContent = message;
   };
@@ -134,18 +138,18 @@ export async function loadHeroCharacter(app, {
   let metadata = null;
 
   try {
-    const saved = await loadSavedPlayerCharacter().catch(error => {
-      console.warn('Local character storage unavailable:', error);
-      return null;
-    });
-
-    if (saved?.buffer instanceof ArrayBuffer && saved.buffer.byteLength > 20) {
-      source = 'local-import';
+    if (characterId === 'ara-female') {
+      const saved = await loadSavedPlayerCharacter('ara-female');
+      if (!(saved?.buffer instanceof ArrayBuffer) || saved.buffer.byteLength <= 20) {
+        throw new Error('Ara 3D female is not installed yet. Import The_Female_Executive.fbx from the Player menu first.');
+      }
+      source = 'ara-3d-gen-female';
       metadata = saved.metadata || null;
       blobUrl = URL.createObjectURL(new Blob([saved.buffer], { type: 'model/gltf-binary' }));
-      setStatus('Loading saved Ara player character…');
+      setStatus('Loading Ara 3D female character…');
     } else {
-      setStatus('Loading bundled Hero 01 character…');
+      source = 'bundled-hero-01';
+      setStatus('Loading Hero 01 character…');
       const responses = await Promise.all(urls.map(path => fetch(
         new URL(String(path).replace(/^\//, ''), new URL(base, window.location.origin)),
         { cache: 'no-store' }
@@ -167,7 +171,7 @@ export async function loadHeroCharacter(app, {
     }
 
     asset = new pc.Asset(
-      source === 'local-import' ? 'naija-city-imported-player' : 'naija-city-hero-01',
+      characterId === 'ara-female' ? 'naija-city-ara-female' : 'naija-city-hero-01',
       'container',
       { url: blobUrl }
     );
@@ -236,7 +240,7 @@ export async function loadHeroCharacter(app, {
       return instanceRoot;
     }
 
-    const root = createAnimatedInstance(source === 'local-import' ? 'AraDefaultPlayer' : 'NaijaCityHero01');
+    const root = createAnimatedInstance(characterId === 'ara-female' ? 'Ara3DFemale' : 'NaijaCityHero01');
     const morphInstances = [];
     const morphNames = new Set();
     for (const render of root.findComponents('render')) {
@@ -286,10 +290,10 @@ export async function loadHeroCharacter(app, {
       return applied;
     };
 
-    setStatus((source === 'local-import' ? 'Ara player ready' : 'Hero 01 ready') +
+    setStatus((characterId === 'ara-female' ? 'Ara 3D female ready' : 'Hero 01 ready') +
       ' · ' + clipNames.length + ' animation clips');
     return {
-      root, asset, clipNames, clipDurations, defaultClips, source, metadata,
+      root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
       morphNames: Array.from(morphNames).sort(),
       setFaceExpression, getRigSnapshot, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
