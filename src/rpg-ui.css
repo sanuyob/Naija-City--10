@@ -156,3 +156,29 @@
 #player-character-import:disabled { opacity:.5; cursor:wait; }
 #player-character-status { overflow-wrap:anywhere; }
 
+
+
+/* Character gate: never let the player operate an invisible avatar. */
+#rpg-interface.character-required .touch,
+#rpg-interface.character-required .quick-slots {
+  opacity: .22;
+  filter: grayscale(.85);
+  pointer-events: none !important;
+}
+#rpg-interface.character-required .actions button { pointer-events: none !important; }
+#rpg-interface.character-required .panel {
+  inset: 7% 8%;
+  z-index: 60;
+  max-height: 86vh;
+  overflow: auto;
+}
+#rpg-interface.character-required .panel header > button,
+#rpg-interface.character-required .panel footer { display: none !important; }
+#rpg-interface.character-required .panel #player-character-form,
+#rpg-interface.character-required .panel #player-character-form * { pointer-events: auto; }
+#rpg-interface.character-required .panel #player-character-import { min-height: 48px; font-weight: 700; }
+@media (max-width: 700px) and (orientation: landscape) {
+  #rpg-interface.character-required .panel { inset: 4% 4%; padding: 12px; }
+  #rpg-interface.character-required .profile { margin: 8px 0; }
+  #rpg-interface.character-required .character-import-card { padding: 9px; }
+}
