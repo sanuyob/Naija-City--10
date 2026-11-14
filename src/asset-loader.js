@@ -121,18 +121,24 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
  * it is decoded once at runtime to a Blob URL before PlayCanvas ContainerHandler loads it.
  */
 export async function loadHeroCharacter(app, {
-  url = 'assets/hero/NaijaCityHero01_18clips.glb.b64',
+  urls = [
+    'assets/hero/NaijaCityHero01_60clips.part1.b64',
+    'assets/hero/NaijaCityHero01_60clips.part2.b64'
+  ],
   statusLabel
 } = {}) {
   const setStatus = message => {
     if (statusLabel) statusLabel.textContent = message;
   };
   setStatus('Loading Hero 01 character and animation library…');
-  const response = await fetch(new URL(String(url).replace(/^\//, ''), new URL(base, window.location.origin)), {
-    cache: 'no-store'
-  });
-  if (!response.ok) throw new Error('Hero GLB payload HTTP ' + response.status);
-  const encoded = (await response.text()).replace(/\s+/g, '');
+  const responses = await Promise.all(urls.map(path => fetch(
+    new URL(String(path).replace(/^\//, ''), new URL(base, window.location.origin)),
+    { cache: 'no-store' }
+  )));
+  for (let i = 0; i < responses.length; i++) {
+    if (!responses[i].ok) throw new Error('Hero GLB payload part ' + (i + 1) + ' HTTP ' + responses[i].status);
+  }
+  const encoded = (await Promise.all(responses.map(response => response.text()))).join('').replace(/\s+/g, '');
   if (!encoded || encoded.length % 4 !== 0 || !/^[A-Za-z0-9+/=]+$/.test(encoded)) {
     throw new Error('Hero GLB base64 payload is incomplete or invalid');
   }
@@ -162,8 +168,10 @@ export async function loadHeroCharacter(app, {
     const clipNames = [];
     const clipDurations = {};
     const loopable = new Set([
-      'Hero01_Idle', 'Hero01_Walk', 'Hero01_Run', 'Hero01_Sprint',
-      'Hero01_Crouch', 'Hero01_CrouchWalk', 'Hero01_TiredIdle', 'Hero01_SitIdle'
+      'Hero01_Idle', 'Hero01_Walk', 'Hero01_Jog', 'Hero01_Run', 'Hero01_Sprint',
+      'Hero01_Crouch', 'Hero01_CrouchWalk', 'Hero01_TiredIdle', 'Hero01_SitIdle',
+      'Hero01_BalanceBeamWalk', 'Hero01_BalanceBeamIdle', 'Hero01_LedgeHang',
+      'Hero01_LadderClimb', 'Hero01_HoldTablet'
     ]);
     const animationAssets = asset.resource.animations || [];
     for (const animation of animationAssets) {
@@ -177,9 +185,37 @@ export async function loadHeroCharacter(app, {
     if (!clipNames.includes('Hero01_Idle')) {
       throw new Error('Hero GLB did not expose its expected Hero01_Idle animation');
     }
+    const morphInstances = [];
+    const morphNames = new Set();
+    for (const render of root.findComponents('render')) {
+      for (const meshInstance of render.meshInstances || []) {
+        const morphInstance = meshInstance.morphInstance;
+        if (!morphInstance) continue;
+        morphInstances.push(morphInstance);
+        for (const target of morphInstance.morph?.targets || []) {
+          if (target.name) morphNames.add(target.name);
+        }
+      }
+    }
+    const setFaceExpression = (name, weight = 1) => {
+      const normalized = Math.max(0, Math.min(1, Number(weight) || 0));
+      let applied = false;
+      for (const morphInstance of morphInstances) {
+        const hasTarget = (morphInstance.morph?.targets || []).some(target => target.name === name);
+        if (!hasTarget) continue;
+        morphInstance.setWeight(name, normalized);
+        applied = true;
+      }
+      return applied;
+    };
+
     root.anim.baseLayer.transition('Hero01_Idle', 0.1);
-    setStatus('Hero 01 ready · ' + clipNames.length + ' named animations loaded');
-    return { root, asset, clipNames, clipDurations };
+    setStatus('Hero 01 ready · ' + clipNames.length + ' clips · ' + morphNames.size + ' facial morphs');
+    return {
+      root, asset, clipNames, clipDurations,
+      morphNames: Array.from(morphNames).sort(),
+      setFaceExpression
+    };
   } catch (error) {
     asset.unload?.();
     app.assets.remove(asset);
