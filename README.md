@@ -80,9 +80,13 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 
 ## Hero 01 rigged-character integration
 
-The `feature/hero01-18clips-player-integration` branch now includes the original Hero 01 GLB asset and a PlayCanvas ContainerAsset loader. The GLB contains one skinned mesh hierarchy, a 20-joint humanoid rig and 18 separately named clips. The existing third-person controller remains authoritative for position, collision, stamina, touch input and camera; its visual body can now use the rigged hero and select Idle, Walk, Sprint, Crouch, CrouchWalk, Jump, Landing and Interact clips. The procedural character remains as a fallback if the asset fails to load.
+The feature branch includes the original Hero 01 GLB and a PlayCanvas ContainerAsset loader. The current GLB contains 60 separately named animations on one 20-joint humanoid rig: 14 locomotion clips, 18 contextual traversal clips, 8 everyday-interaction clips, 10 squad-interaction clips and 10 fictional equipment/technology presentation clips. It includes 11 PBR materials with embedded base-colour, normal, metallic-roughness and occlusion maps, UVs on every mesh primitive, four facial-expression morph targets and two blink morph targets.
 
-The GLB is stored as a base64 text payload in the repository and decoded to a Blob URL at runtime. This avoids losing the binary file through the repository text-file connector, but adds a small decode and memory overhead at startup.
+The T-shirt, overshirt panels, sleeves and trousers are weighted to multiple armature bones. A Blender deformation check measured vertex movement on both sleeves and both trouser legs after shoulder/hip rotations. The GLB was re-imported in Blender with all 60 non-empty actions, one 20-joint skin and all six facial morph targets.
+
+The third-person controller remains authoritative for player position, collision, stamina, touch input and camera. It maps core locomotion automatically and exposes named clip and facial-expression controls for the remaining animation groups. The procedural character remains as a fallback if the GLB fails to load.
+
+The 2.81 MB GLB is stored as two base64 text files in the repository and decoded to a Blob URL at runtime. This preserves the generated binary asset through the repository text-file API, but adds a small startup decode and memory overhead.
 
 ## Honest status
 This feature branch has passed Blender export and Blender re-import checks for all 18 named animation clips, and the three changed JavaScript modules pass Node syntax checks. The repository verification now checks the GLB header, all 18 clip names, 60 channels per clip and the 20-joint skin. **A production build, browser PlayCanvas runtime test, Khronos validator run, skin-deformation review and physical Android test are still required.** The target Itel A90 must be profiled for startup time, memory, frame rate and touch comfort before merging this branch into `main`.
