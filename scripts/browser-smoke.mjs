@@ -44,6 +44,10 @@ try {
     traversal:game.getTraversalState?.()||null,
     traversalEnabled:game.traversal===true,
     companionRoster:game.getCompanionState?.()||null,
+    pedestrianState:game.getPedestrianState?.()||null,
+    physicsState:game.getPhysicsState?.()||null,
+    vfxState:game.getVfxState?.()||null,
+    heroRigSnapshot:game.getHeroRigSnapshot?.()||null,
     mobileJoystick:game.mobileJoystick,
     cameraOrbit:game.cameraOrbit
    }:null
@@ -101,7 +105,7 @@ try {
  if(!(await page.locator('#hud-toast').textContent()))throw new Error('Interact control did not produce feedback');
  await page.locator('[data-slot="1"]').click();
  if(!(await page.locator('#hud-toast').textContent()).includes('empty')||await page.locator('[data-slot="1"]').getAttribute('aria-pressed')!=='true')throw new Error('Quick-access slot did not respond or show selection state');
- if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimations?.length!==60||!['Hero01_Idle','Hero01_Walk','Hero01_Jog','Hero01_Sprint','Hero01_Jump','Hero01_Interact','Hero01_VaultLow','Hero01_LedgeHang','Hero01_SquadSignalFollow','Hero01_UseScanner'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==60||state.game?.heroFaceMorphs?.length!==6||!['Smile','Frown','JawOpen','BrowRaise','Blink_L','Blink_R'].every(name=>state.game.heroFaceMorphs.includes(name))||state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==4||state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||state.game?.companionRoster?.activeCount!==0||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Rigged Hero 01, traversal or companion system was not mounted: '+JSON.stringify(state.game));
+ if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimations?.length!==60||!['Hero01_Idle','Hero01_Walk','Hero01_Jog','Hero01_Sprint','Hero01_Jump','Hero01_Interact','Hero01_VaultLow','Hero01_LedgeHang','Hero01_SquadSignalFollow','Hero01_UseScanner'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==60||state.game?.heroFaceMorphs?.length!==6||!['Smile','Frown','JawOpen','BrowRaise','Blink_L','Blink_R'].every(name=>state.game.heroFaceMorphs.includes(name))||state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==8||state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||state.game?.physicsState?.mode!=='kinematic-capsule'||state.game?.vfxState?.poolSize<12||state.game?.heroRigSnapshot?.skinnedMeshCount<9||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Rigged Hero 01, traversal or companion system was not mounted: '+JSON.stringify(state.game));
  const heroActionTriggered=await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_GreetWave')===true);
  if(!heroActionTriggered)throw new Error('PlayCanvas could not trigger the Hero01_GreetWave clip');
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip==='Hero01_GreetWave',null,{timeout:3000});
@@ -117,6 +121,36 @@ try {
  const traversalAdvance=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(32));
  if(!traversalAdvance||traversalAdvance.player.traversing||traversalAdvance.traversal.traversalsStarted!==1)throw new Error('Traversal did not complete its bounded movement sequence: '+JSON.stringify(traversalAdvance));
 
+ // Read the instantiated Hero skin/clothing rig and test representative pose changes.
+ const initialRig=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
+ if(!initialRig||initialRig.skinnedMeshCount<9||initialRig.boneCount<15||initialRig.weightedVertexCount<1000)throw new Error('Hero runtime rig/clothing snapshot incomplete: '+JSON.stringify(initialRig));
+ const poseReports=[];
+ for(const clip of ['Hero01_Walk','Hero01_Sprint','Hero01_Jump','Hero01_VaultLow','Hero01_Mantle','Hero01_LedgePullUp','Hero01_LadderClimb','Hero01_WallHop']){
+  if(!(await page.evaluate(name=>window.__NAIJA_PLAY_HERO_ANIMATION__?.(name)===true,clip)))throw new Error('Could not trigger pose QA clip '+clip);
+  await page.waitForTimeout(280);
+  const before=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
+  await page.waitForTimeout(160);
+  const after=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
+  const prior=new Map((before?.bones||[]).map(b=>[b.name,b]));
+  const changed=(after?.bones||[]).filter(b=>{const a=prior.get(b.name);if(!a)return false;const x=[...a.position,...a.rotation],y=[...b.position,...b.rotation];return y.some((n,i)=>Math.abs(n-x[i])>.001);}).length;
+  poseReports.push({clip,changedBones:changed});
+  if(after?.skinnedMeshCount<9||changed<1)throw new Error('Rig did not deform through '+clip+': '+JSON.stringify({after,changed}));
+ }
+ await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_Idle'));
+ // Complete all eight contextual parkour actions through the live player controller.
+ const parkourReports=[];
+ for(const type of ['step','low-vault','high-vault','mantle','ledge','ladder','wall-run','drop']){
+  const result=await page.evaluate(value=>window.__NAIJA_GAME__?.debugTraverseTypeForSmoke?.(value),type);
+  if(!result?.started||!result?.completed||result?.traversal?.lastTraversal?.type!==type)throw new Error('Parkour move failed for '+type+': '+JSON.stringify(result));
+  parkourReports.push({type,clip:result.traversal.lastTraversal.clip});
+ }
+ // Verify the player leaves the ground, falls under gravity and lands with effects.
+ const jumpPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.debugJumpPhysicsForSmoke?.());
+ if(!jumpPhysics?.airborne||jumpPhysics.airborne.position[1]<.25||jumpPhysics.airborne.verticalVelocity<=0||!jumpPhysics.landed.grounded||jumpPhysics.landed.position[1]!==0||jumpPhysics.vfx.emitted<3)throw new Error('Player jump/landing physics or VFX failed: '+JSON.stringify(jumpPhysics));
+ // Verify ten full NPCs are rendered, move on their routes and share actor physics.
+ const crowd=await page.evaluate(()=>window.__NAIJA_GAME__?.getPedestrianState?.());
+ const actorPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.getPhysicsState?.());
+ if(crowd?.activeCount!==10||crowd?.visibleCount!==10||crowd?.renderMeshInstances<60||crowd?.moved<1||actorPhysics?.steps<1)throw new Error('Ambient NPC population/physics missing or idle: '+JSON.stringify({crowd,actorPhysics,poseReports,parkourReports}));
  // Verify remote-entry companions, the two-person cap and approved squad commands.
  const techSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Summon')===true);
  const driverSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Summon')===true);
@@ -142,6 +176,7 @@ try {
    return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,magentaPixels:magenta,nonBluePixels:nonBlue};
  },screenshot.toString('base64'));
  if(visual.width<800||visual.height<360||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels<20)throw new Error('Canvas screenshot visual assertion failed; scene may be blank: '+JSON.stringify(visual));
+ if(!(await page.locator('#parkour-button').isVisible()))throw new Error('Parkour button is missing from the mobile HUD');
  if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.objective').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
  const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
  if(hudBoxes['#move-joystick'].x>140||hudBoxes['.actions'].x<694||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
