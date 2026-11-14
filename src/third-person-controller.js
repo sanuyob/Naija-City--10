@@ -295,7 +295,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       traversalMotion.elapsed+=step;
       const remaining=Math.max(.12,traversalMotion.duration-traversalMotion.elapsed*.12);
       const horizontal=[(traversalMotion.end[0]-p.x)/remaining,0,(traversalMotion.end[2]-p.z)/remaining];
-      const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded:false};
+      const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded:false,traversing:true};
       if(physics?.step){
         physics.step(body,horizontal,step);
         velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);
