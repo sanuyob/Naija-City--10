@@ -307,6 +307,15 @@ try {
  await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
+ // The main-character choice must survive a full page reload, not just this session.
+ await page.reload({waitUntil:'networkidle'});
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
+ const persistedCharacter=await page.evaluate(async()=>({
+  roster:await window.__NAIJA_GAME__?.getCharacterRoster?.(),
+  animation:window.__NAIJA_GAME__?.getHeroAnimationState?.()
+ }));
+ if(persistedCharacter.roster?.activeId!=='ara-female'||persistedCharacter.roster?.mainId!=='ara-female'||persistedCharacter.animation?.characterId!=='ara-female')throw new Error('Ara main-character selection was not restored after reload: '+JSON.stringify(persistedCharacter));
+ console.log('Character persistence QA: Ara remained the active main player after a full browser reload.');
  console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
  console.log('Stage 08G passed: Ikeja commercial corridor, vendor props, POS kiosk, wheelbarrow, handcart, litter hotspots, open drainage, parked public transport and static pedestrian silhouettes.');
  console.log('Stage 08H passed: procedural PBR surfaces, varied clean/used/weathered props, material assignment coverage, translucent glazing, detailed props and an Ikeja camera-view screenshot assertion.');
