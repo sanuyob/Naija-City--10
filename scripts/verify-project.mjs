@@ -24,25 +24,32 @@ const physics=await readFile(new URL('../src/vehicle-physics.js',import.meta.url
 const loader=await readFile(new URL('../src/asset-loader.js',import.meta.url),'utf8');
 const manifest=JSON.parse(await readFile(new URL('../public/assets/manifest.json',import.meta.url),'utf8'));
 const smoke=await readFile(new URL('./browser-smoke.mjs',import.meta.url),'utf8');
-const heroPayload=(await readFile(new URL('../public/assets/hero/NaijaCityHero01_18clips.glb.b64',import.meta.url),'utf8')).replace(/\\s+/g,'');
+const heroPayload=((await readFile(new URL('../public/assets/hero/NaijaCityHero01_60clips.part1.b64',import.meta.url),'utf8'))+(await readFile(new URL('../public/assets/hero/NaijaCityHero01_60clips.part2.b64',import.meta.url),'utf8'))).replace(/\\s+/g,'');
 const heroGlb=Buffer.from(heroPayload,'base64');
 const heroJsonLength=heroGlb.readUInt32LE(12);
 const heroGltf=JSON.parse(heroGlb.subarray(20,20+heroJsonLength).toString('utf8').trim());
-const expectedHeroClips=["Hero01_Crouch","Hero01_CrouchWalk","Hero01_GreetWave","Hero01_Idle","Hero01_Interact","Hero01_Jump","Hero01_Landing","Hero01_PhoneUse","Hero01_Pickup","Hero01_Run","Hero01_SitDown","Hero01_SitIdle","Hero01_Sprint","Hero01_StandUp","Hero01_TiredIdle","Hero01_TurnLeft","Hero01_TurnRight","Hero01_Walk"];
+const expectedHeroClips=["Hero01_BalanceBeamIdle","Hero01_BalanceBeamWalk","Hero01_ClimbUp","Hero01_Crouch","Hero01_CrouchWalk","Hero01_DoorOpen","Hero01_DropDown","Hero01_EquipScanner","Hero01_GreetWave","Hero01_HoldTablet","Hero01_Idle","Hero01_InspectTablet","Hero01_Interact","Hero01_Jog","Hero01_Jump","Hero01_LadderClimb","Hero01_LadderDismount","Hero01_LadderMount","Hero01_Landing","Hero01_LedgeHang","Hero01_LedgePullUp","Hero01_LedgeShimmyLeft","Hero01_LedgeShimmyRight","Hero01_Mantle","Hero01_MissionSuccess","Hero01_ParkourLand","Hero01_PhoneUse","Hero01_Pickup","Hero01_RadioListen","Hero01_ReachToolPouch","Hero01_RollForward","Hero01_Run","Hero01_SitDown","Hero01_SitIdle","Hero01_Sprint","Hero01_SquadAgreeNod","Hero01_SquadAssistUp","Hero01_SquadBriefingListen","Hero01_SquadDisagreeShake","Hero01_SquadHandAcknowledgement","Hero01_SquadPointAhead","Hero01_SquadRadioCall","Hero01_SquadRegroup","Hero01_SquadSignalFollow","Hero01_SquadSignalHold","Hero01_StandUp","Hero01_StepUp","Hero01_StowScanner","Hero01_StowTool","Hero01_TiredIdle","Hero01_TurnLeft","Hero01_TurnRight","Hero01_UseScanner","Hero01_UseTool","Hero01_VaultHigh","Hero01_VaultLow","Hero01_Walk","Hero01_WalkStart","Hero01_WalkStop","Hero01_WallHop"];
 assert.equal(heroGlb.readUInt32LE(0),0x46546c67,'Hero 01 must be a GLB container');
 assert.equal(heroGlb.readUInt32LE(4),2,'Hero 01 must use GLB 2.0');
 assert.equal(heroGlb.readUInt32LE(8),heroGlb.length,'Hero 01 GLB declared length must match the file');
-assert.deepEqual(heroGltf.animations.map(animation=>animation.name).sort(),expectedHeroClips.slice().sort(),'Hero 01 must retain all 18 named animations');
-assert.ok(heroGltf.animations.every(animation=>animation.channels.length===60&&animation.samplers.length===60),'Every Hero 01 clip must contain the expected 60 joint channels and samplers');
+assert.equal(heroGltf.animations.length,60,'Hero 01 must contain exactly 60 named animations');
+assert.deepEqual(heroGltf.animations.map(animation=>animation.name).sort(),expectedHeroClips.slice().sort(),'Hero 01 must retain all 60 named animations');
+assert.ok(heroGltf.animations.every(animation=>animation.channels.length===60&&animation.samplers.length===60),'Every Hero 01 clip must animate all 20 rig joints with 60 channels and samplers');
 assert.equal(heroGltf.skins.length,1,'Hero 01 must include one skinned humanoid');
 assert.equal(heroGltf.skins[0].joints.length,20,'Hero 01 must preserve the 20-joint rig');
 const heroValidation=await validator.validateBytes(new Uint8Array(heroGlb),{
- uri:'NaijaCityHero01_18clips.glb',format:'glb',writeTimestamp:false,maxIssues:100
+ uri:'NaijaCityHero01_60clips.glb',format:'glb',writeTimestamp:false,maxIssues:100
 });
 assert.equal(heroValidation.issues.numErrors,0,'Khronos glTF Validator rejected Hero 01: '+JSON.stringify(heroValidation.issues.messages));
 const heroPrimitives=heroGltf.meshes.flatMap(mesh=>mesh.primitives||[]);
 assert.ok(heroPrimitives.some(primitive=>primitive.attributes?.JOINTS_0!==undefined&&primitive.attributes?.WEIGHTS_0!==undefined),'Hero 01 must contain vertex joint indices and skin weights');
-assert.ok(heroPrimitives.some(primitive=>primitive.attributes?.TEXCOORD_0!==undefined),'Hero 01 must contain UV coordinates for PBR texture mapping');
+assert.ok(heroPrimitives.every(primitive=>primitive.attributes?.TEXCOORD_0!==undefined),'Every Hero 01 mesh primitive must contain UV coordinates');
+const heroSkinnedPrimitives=heroPrimitives.filter(primitive=>primitive.attributes?.JOINTS_0!==undefined&&primitive.attributes?.WEIGHTS_0!==undefined);
+assert.ok(heroSkinnedPrimitives.length>=9,'Hero 01 must include the body plus weighted clothing meshes');
+assert.ok(heroGltf.materials.length===11&&heroGltf.materials.every(material=>material.pbrMetallicRoughness?.baseColorTexture&&material.pbrMetallicRoughness?.metallicRoughnessTexture&&material.normalTexture&&material.occlusionTexture),'All Hero 01 materials must include embedded PBR texture channels');
+assert.ok(heroGltf.images.length>=20&&heroGltf.textures.length>=30,'Hero 01 must embed its PBR texture image set');
+const exportedMorphNames=heroGltf.meshes.flatMap(mesh=>mesh.extras?.targetNames||[]).sort();
+assert.deepEqual(exportedMorphNames,['Blink_L','Blink_R','BrowRaise','Frown','JawOpen','Smile'].sort(),'Hero 01 must contain four facial expression and two blink morph targets');
 assert.ok(heroGltf.animations.every(animation=>animation.channels.every(channel=>channel.target?.node!==undefined)),'Hero 01 animation channels must target named hierarchy nodes');
 const glb=await readFile(new URL('../public/assets/diagnostic-cube.glb',import.meta.url));
 const texture=await readFile(new URL('../public/assets/diagnostic-checker.png',import.meta.url));
