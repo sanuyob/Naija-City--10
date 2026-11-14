@@ -9,9 +9,9 @@ const PROFILES={
  "wall-run":{clips:["Hero01_Run","Hero01_WallHop"],duration:1.08,apex:.20,mode:"wall-run"},
  drop:{clips:["Hero01_DropDown","Hero01_Landing"],duration:.92,apex:.08,mode:"drop"}
 };
-export function createTraversalSystem({playerController,obstacles=[],onEffect}={}) {
+export function createTraversalSystem({playerController,physics=null,obstacles=[],onEffect}={}) {
  if(!playerController)throw new Error("Traversal requires player controller");
- const list=obstacles.filter(o=>o?.entity&&PROFILES[o.type]);let activeId=null,timer=0,started=0,completed=0,last=null,blocked=null;
+ const list=obstacles.filter(o=>o?.entity&&PROFILES[o.type]);let activeId=null,timer=0,started=0,completed=0,last=null,blocked=null,activeColliderIndex=-1;
  function resolveMovement(current,proposed){for(const o of list){if(o.id===activeId)continue;const p=o.entity.getPosition(),s=o.entity.getLocalScale();if((proposed[1]||0)>o.height+.15)continue;if(Math.abs(proposed[0]-p.x)<Math.abs(s.x)*.5+.32&&Math.abs(proposed[2]-p.z)<Math.abs(s.z)*.5+.32)return current;}return proposed;}
  function tryContextualTraversal(state=playerController.getState()){
   if(!state?.grounded||state.traversing||timer>0){blocked="Player must be grounded and free";return false;}
@@ -21,9 +21,11 @@ export function createTraversalSystem({playerController,obstacles=[],onEffect}={
   const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72,destination=[x+fx*clearance,Math.max(0,y),z+fz*clearance];
   const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
   const requiredApex=Math.min(4.0,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
+  const colliderIndex=list.indexOf(best.o);
   const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:requiredApex,mode:profile.mode,clips:profile.clips,obstacleId:best.o.id,obstacleHeight:best.o.height});
-  if(!ok){blocked="Get closer to the obstacle and face it";return false;}activeId=best.o.id;timer=profile.duration+.22;started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
+  if(!ok){blocked="Get closer to the obstacle and face it";return false;}
+  activeId=best.o.id;activeColliderIndex=colliderIndex;physics?.setColliderEnabled?.(colliderIndex,false);timer=Math.max(2.4,profile.duration*2.2);started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
  }
- function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));if(timer===0){activeId=null;completed++;}}
+ function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));const finished=!playerController.getState().traversing;if(finished||timer===0){if(activeColliderIndex>=0)physics?.setColliderEnabled?.(activeColliderIndex,true);activeColliderIndex=-1;activeId=null;completed++;}}
  return {tryContextualTraversal,resolveMovement,update,getState:()=>({stage:"09-traversal",obstacleCount:list.length,availableTypes:[...new Set(list.map(o=>o.type))],traversalsStarted:started,traversalsCompleted:completed,activeObstacleId:activeId,lastTraversal:last,lastBlockedReason:blocked,obstacles:list.map(o=>({id:o.id,type:o.type,height:o.height}))})};
 }
