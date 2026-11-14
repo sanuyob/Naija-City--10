@@ -128,7 +128,7 @@ assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip na
 assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
 assert.match(controller,/running \? 3\.2 : 1\.35/,'Ground movement speeds must be proportionate to the Ara locomotion cycles');
 assert.match(controller,/heroCharacterPose/,'Ara parkour fallback must apply distinct procedural action poses');
-assert.match(controller,/physics\\.step\\(body,horizontal,step\\)/,'Parkour must run through the active physics solver');
+assert.match(controller,/physics\.step\(body,horizontal,step\)/,'Parkour must run through the active physics solver');
 assert.match(playerPhysics,/btCapsuleShape/,'The player must use a Bullet capsule collision body');
 assert.match(playerPhysics,/btDiscreteDynamicsWorld/,'The player must use a Bullet dynamics world');
 assert.match(playerPhysics,/ammo-bullet-capsule/,'Bullet player physics mode must be exposed');
