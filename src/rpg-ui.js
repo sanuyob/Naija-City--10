@@ -5,7 +5,7 @@ const views = {
   inventory: ['FIELD KIT', 'Inventory', '<div class="tiles"><article><b>01</b><strong>Supplies</strong><small>No items collected</small></article><article><b>02</b><strong>Key items</strong><small>No key items yet</small></article><article><b>03</b><strong>Resources</strong><small>0 collected</small></article><article><b>04</b><strong>Quick slots</strong><small>Tap a slot to select it</small></article></div>'],
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
   map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
-  character: ['PLAYER PROFILE', 'Player', '<div class="profile"><b>AF</b><div><strong>ARA 3D FEMALE</strong><p>Main playable character</p><small>THE_FEMALE_EXECUTIVE · ARA 3D GEN</small></div></div><div class="mission character-import-card"><small>ONLY PLAYABLE CHARACTER</small><b>ARA 3D FEMALE · MAIN PLAYER</b><p>Ara is your main character. Hero 01 has been moved into the city as an NPC. There is no character-switch option.</p><form id="player-character-form"><label for="player-character-file">IMPORT OR UPDATE ARA FEMALE</label><input id="player-character-file" type="file" accept=".fbx,application/octet-stream" required><button id="player-character-import" type="submit">IMPORT / UPDATE ARA FEMALE</button></form><p id="player-character-status" role="status">Your female character is saved in this browser on this device. Import again only to replace her model.</p></div><div class="stat">Player role <b>MAIN</b></div><div class="stat">Character slot <b>01</b></div>'],
+  character: ['PLAYER PROFILE', 'Player', '<div class="profile"><b>AF</b><div><strong>ARA 3D FEMALE</strong><p>Main playable character</p><small>THE_FEMALE_EXECUTIVE · ARA 3D GEN</small></div></div><div class="mission character-import-card"><small>ONLY PLAYABLE CHARACTER</small><b>ARA 3D FEMALE · MAIN PLAYER</b><p>Ara is the only playable character. Hero 01 is a city NPC. Select The_Female_Executive.fbx below to install Ara in this browser.</p><form id="player-character-form"><label for="player-character-file">IMPORT OR UPDATE ARA FEMALE</label><input id="player-character-file" type="file" accept=".fbx,application/octet-stream" required><button id="player-character-import" type="submit">IMPORT / UPDATE ARA FEMALE</button></form><p id="player-character-status" role="status">Ara is not installed in this browser yet. Choose The_Female_Executive.fbx to make her visible and enable gameplay controls.</p></div><div class="stat">Player role <b>MAIN</b></div><div class="stat">Character slot <b>01</b></div>'],
   settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><p class="muted">Landscape-first controls. Gameplay settings are expanded in later stages.</p>'],
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
@@ -59,11 +59,13 @@ export function mountRPGInterface() {
   `;
 
   let paused = false;
+  let characterRequired = false;
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
   const toast = root.querySelector('#hud-toast');
   const open = name => {
+    if (characterRequired && name !== 'character') name = 'character';
     if (name === 'pause') {
       paused = true;
       window.__NAIJA_RPG_PAUSED__ = true;
@@ -79,7 +81,25 @@ export function mountRPGInterface() {
     panel.hidden = false;
     pause.hidden = true;
   };
+  const requirePlayerCharacter = message => {
+    characterRequired = true;
+    root.classList.add('character-required');
+    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#parkour-button,#interact-button').forEach(button => { button.disabled = true; });
+    root.querySelector('#move-joystick')?.setAttribute('aria-disabled', 'true');
+    open('character');
+    const status = root.querySelector('#player-character-status');
+    if (status) status.textContent = message || 'Import The_Female_Executive.fbx to enable gameplay.';
+    return true;
+  };
+  const setPlayerCharacterReady = () => {
+    characterRequired = false;
+    root.classList.remove('character-required');
+    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#parkour-button,#interact-button').forEach(button => { button.disabled = false; });
+    root.querySelector('#move-joystick')?.removeAttribute('aria-disabled');
+    return true;
+  };
   const close = () => {
+    if (characterRequired) { open('character'); showToast('Install Ara 3D Female before starting gameplay.'); return; }
     paused = false;
     window.__NAIJA_RPG_PAUSED__ = false;
     panel.hidden = true;
@@ -178,6 +198,7 @@ export function mountRPGInterface() {
   }
   return window.__NAIJA_RPG_UI__ = {
     stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, showToast,
-    open, close
+    open, close, requirePlayerCharacter, setPlayerCharacterReady,
+    isPlayerCharacterRequired: () => characterRequired
   };
 }
