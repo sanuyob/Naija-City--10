@@ -213,15 +213,20 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const stage08H=createStage08HIkejaPropRealism({app,graphicsDevice:device});
 
   // A small, bounded tutorial traversal lane beside the Yaba spawn route.
-  const ladderFrame=box('traversal-ladder-frame',[4.45,1.55,-31.0],[0.86,3.1,0.28],m.metal);
-  for(let rung=0;rung<7;rung++)box('traversal-ladder-rung-'+rung,[4.45,.35+rung*.4,-30.79],[.76,.055,.10],m.yellow,ladderFrame);
+  const ladderFrame=new pc.Entity('traversal-ladder-assembly');
+  app.root.addChild(ladderFrame);
+  box('traversal-ladder-left-rail',[4.08,1.55,-31.0],[.08,3.1,.08],m.metal,ladderFrame);
+  box('traversal-ladder-right-rail',[4.82,1.55,-31.0],[.08,3.1,.08],m.metal,ladderFrame);
+  for(let rung=0;rung<7;rung++)box('traversal-ladder-rung-'+rung,[4.45,.30+rung*.4,-31.0],[.78,.055,.07],m.yellow,ladderFrame);
+  const ladderCollider=box('traversal-ladder-collider',[4.45,1.55,-31.0],[.86,3.1,.28],m.metal);
+  ladderCollider.render.enabled=false;
   const traversalObstacles=[
     {id:'yaba-step-01',type:'step',height:.44,entity:box('traversal-step-01',[.65,.22,-1.8],[1,.44,.55],m.concrete)},
     {id:'yaba-low-vault-01',type:'low-vault',height:.72,entity:box('traversal-low-vault-01',[7.2,.36,-8.2],[1.25,.72,.55],m.concrete)},
     {id:'yaba-high-vault-01',type:'high-vault',height:1.02,entity:box('traversal-high-vault-01',[-7.2,.51,-10.5],[1.25,1.02,.55],m.shops[1])},
     {id:'yaba-mantle-01',type:'mantle',height:1.26,entity:box('traversal-mantle-01',[7.5,.63,-15],[1.3,1.26,.6],m.shops[2])},
     {id:'yaba-ledge-01',type:'ledge',height:2.15,entity:box('traversal-ledge-01',[-.35,1.075,-23],[3.2,2.15,.6],m.concrete)},
-    {id:'yaba-ladder-01',type:'ladder',height:3.1,entity:ladderFrame},
+    {id:'yaba-ladder-01',type:'ladder',height:3.1,entity:ladderCollider},
     {id:'yaba-wall-run-01',type:'wall-run',height:2.35,entity:box('traversal-wall-run-01',[-4.3,1.175,-43],[.55,2.35,5.2],m.shops[2])},
     {id:'yaba-drop-01',type:'drop',height:.72,entity:box('traversal-drop-01',[1.45,.36,-54],[1.8,.72,.62],m.red)}
   ];
@@ -356,5 +361,5 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   window.__NAIJA_GAME__=gameApi;
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
   window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_SET_HERO_FACE__;delete window.__NAIJA_TRAVERSE__;delete window.__NAIJA_COMPANION_COMMAND__;companionSystem.destroy();pedestrianSystem.destroy();vfxSystem.destroy();delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
-  app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
+  app.start();statusLabel.textContent='Ready — Stage 09 parkour, city life and physics';
 }
