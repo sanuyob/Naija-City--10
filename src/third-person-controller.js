@@ -116,6 +116,10 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     return transitionHeroClip(name, 0.12) || activeHeroClip === name;
   }
 
+  function playFaceExpression(name, weight = 1) {
+    return heroCharacter?.setFaceExpression?.(name, weight) ?? false;
+  }
+
 
   function readJoystick(event) {
     if (!joystick) return;
@@ -315,7 +319,13 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player, update, destroy,
     interact: () => onInteract?.(getState()),
     playAnimation,
-    getAnimationState: () => ({ activeClip: activeHeroClip, requestedClip: actionClip, availableClipCount: availableHeroClips.size, playable: !!heroVisual?.anim?.playable }),
+    playFaceExpression,
+    getAnimationState: () => ({
+      activeClip: activeHeroClip, requestedClip: actionClip,
+      availableClipCount: availableHeroClips.size,
+      faceMorphCount: heroCharacter?.morphNames?.length ?? 0,
+      playable: !!heroVisual?.anim?.playable
+    }),
     getState
   };
 }
