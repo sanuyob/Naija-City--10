@@ -1,126 +1,27 @@
-/**
- * Bounded, contextual traversal for Hero 01.
- * PlayerController remains authoritative for movement and collision; this module
- * only requests approved in-game animation/motion sequences near tagged obstacles.
- */
-export function createTraversalSystem({ playerController, obstacles = [] } = {}) {
-  if (!playerController) throw new Error('Traversal system requires the player controller');
-
-  const obstacleList = obstacles.map((obstacle, index) => ({
-    id: obstacle.id || 'traversal-obstacle-' + index,
-    entity: obstacle.entity,
-    type: obstacle.type,
-    height: Number(obstacle.height) || 0,
-    clip: obstacle.clip
-  })).filter(obstacle => obstacle.entity && obstacle.clip);
-
-  let activeObstacleId = null;
-  let activeTimer = 0;
-  let traversalsStarted = 0;
-  let lastTraversal = null;
-  let lastBlockedReason = null;
-
-  function resolveMovement(current, proposed) {
-    // Keep the existing Stage 08E building/city resolver upstream of this function.
-    for (const obstacle of obstacleList) {
-      if (obstacle.id === activeObstacleId) continue;
-      const center = obstacle.entity.getPosition();
-      const scale = obstacle.entity.getLocalScale();
-      const halfX = Math.abs(scale.x) * 0.5 + 0.32;
-      const halfZ = Math.abs(scale.z) * 0.5 + 0.32;
-      const playerBottom = proposed[1] || 0;
-      if (playerBottom > obstacle.height + 0.15) continue;
-      const insideX = Math.abs(proposed[0] - center.x) < halfX;
-      const insideZ = Math.abs(proposed[2] - center.z) < halfZ;
-      if (insideX && insideZ) return current;
-    }
-    return proposed;
-  }
-
-  function chooseClip(obstacle) {
-    if (obstacle.type === 'step' && obstacle.height <= 0.55) return 'Hero01_StepUp';
-    if (obstacle.type === 'low-vault' && obstacle.height <= 0.75) return 'Hero01_VaultLow';
-    if (obstacle.type === 'high-vault' && obstacle.height <= 1.05) return 'Hero01_VaultHigh';
-    if (obstacle.type === 'mantle' && obstacle.height <= 1.30) return 'Hero01_Mantle';
-    return null;
-  }
-
-  function tryContextualTraversal(state = playerController.getState()) {
-    if (!state?.grounded || state.traversing) {
-      lastBlockedReason = 'Player must be grounded and not already traversing';
-      return false;
-    }
-    const yaw = (Number(state.facingYaw) || 0) * Math.PI / 180;
-    const forwardX = Math.sin(yaw);
-    const forwardZ = -Math.cos(yaw);
-    const [px, , pz] = state.position;
-    let best = null;
-
-    for (const obstacle of obstacleList) {
-      const clip = chooseClip(obstacle);
-      if (!clip) continue;
-      const center = obstacle.entity.getPosition();
-      const dx = center.x - px;
-      const dz = center.z - pz;
-      const distance = Math.hypot(dx, dz);
-      const along = dx * forwardX + dz * forwardZ;
-      const lateral = Math.abs(dx * forwardZ - dz * forwardX);
-      const width = Math.abs(obstacle.entity.getLocalScale().x);
-      if (along < 0.4 || along > 2.4 || lateral > width * 0.5 + 0.5) continue;
-      if (!best || along < best.along) best = { obstacle, clip, along, lateral, distance };
-    }
-
-    if (!best) {
-      lastBlockedReason = 'No tagged traversal obstacle in front of the player';
-      return false;
-    }
-
-    const obstacleScale = best.obstacle.entity.getLocalScale();
-    const clearance = best.along + Math.abs(obstacleScale.z) * 0.5 + 0.82;
-    const destination = [
-      px + forwardX * clearance,
-      state.position[1],
-      pz + forwardZ * clearance
-    ];
-    const duration = best.obstacle.type === 'mantle' ? 1.45 : 1.15;
-    const apex = Math.max(0.18, Math.min(0.60, best.obstacle.height * 0.42));
-    const accepted = playerController.performTraversal(best.clip, destination, { duration, apex });
-    if (!accepted) {
-      lastBlockedReason = 'Traversal action was rejected by the player controller';
-      return false;
-    }
-
-    activeObstacleId = best.obstacle.id;
-    activeTimer = duration + 0.18;
-    traversalsStarted++;
-    lastBlockedReason = null;
-    lastTraversal = {
-      obstacle: best.obstacle.id,
-      clip: best.clip,
-      height: best.obstacle.height,
-      destination
-    };
-    return true;
-  }
-
-  function update(dt) {
-    if (activeTimer > 0) {
-      activeTimer = Math.max(0, activeTimer - Math.max(0, Math.min(dt, 0.05)));
-      if (activeTimer === 0) activeObstacleId = null;
-    }
-  }
-
-  return {
-    tryContextualTraversal,
-    resolveMovement,
-    update,
-    getState: () => ({
-      stage: '09-traversal',
-      obstacleCount: obstacleList.length,
-      traversalsStarted,
-      activeObstacleId,
-      lastTraversal,
-      lastBlockedReason
-    })
-  };
+/** Contextual parkour: step, vault, mantle, ledge, ladder, wall-run/wall-hop and drop. */
+const PROFILES={
+ step:{clips:["Hero01_StepUp"],duration:.78,apex:.15,mode:"step"},
+ "low-vault":{clips:["Hero01_VaultLow"],duration:.92,apex:.34,mode:"vault"},
+ "high-vault":{clips:["Hero01_VaultHigh"],duration:1.12,apex:.48,mode:"vault"},
+ mantle:{clips:["Hero01_Mantle"],duration:1.34,apex:.54,mode:"mantle"},
+ ledge:{clips:["Hero01_LedgeHang","Hero01_LedgeShimmyLeft","Hero01_LedgePullUp"],duration:1.48,apex:.26,mode:"ledge"},
+ ladder:{clips:["Hero01_LadderMount","Hero01_LadderClimb","Hero01_LadderDismount"],duration:1.62,apex:.18,mode:"ladder"},
+ "wall-run":{clips:["Hero01_Run","Hero01_WallHop"],duration:1.08,apex:.20,mode:"wall-run"},
+ drop:{clips:["Hero01_DropDown","Hero01_Landing"],duration:.92,apex:.08,mode:"drop"}
+};
+export function createTraversalSystem({playerController,obstacles=[],onEffect}={}) {
+ if(!playerController)throw new Error("Traversal requires player controller");
+ const list=obstacles.filter(o=>o?.entity&&PROFILES[o.type]);let activeId=null,timer=0,started=0,completed=0,last=null,blocked=null;
+ function resolveMovement(current,proposed){for(const o of list){if(o.id===activeId)continue;const p=o.entity.getPosition(),s=o.entity.getLocalScale();if((proposed[1]||0)>o.height+.15)continue;if(Math.abs(proposed[0]-p.x)<Math.abs(s.x)*.5+.32&&Math.abs(proposed[2]-p.z)<Math.abs(s.z)*.5+.32)return current;}return proposed;}
+ function tryContextualTraversal(state=playerController.getState()){
+  if(!state?.grounded||state.traversing||timer>0){blocked="Player must be grounded and free";return false;}
+  const yaw=(Number(state.facingYaw)||0)*Math.PI/180,fx=Math.sin(yaw),fz=-Math.cos(yaw),[x,y,z]=state.position;let best=null;
+  for(const o of list){const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.35||along>3||lateral>Math.abs(s.x)*.5+.52)continue;if(!best||along<best.along)best={o,along};}
+  if(!best){blocked="Face a marked step, vault, ledge, ladder or wall";return false;}
+  const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.86,destination=[x+fx*clearance,Math.max(0,y),z+fz*clearance];
+  const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:profile.apex,mode:profile.mode,clips:profile.clips});
+  if(!ok){blocked="Required Hero animation unavailable";return false;}activeId=best.o.id;timer=profile.duration+.22;started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
+ }
+ function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));if(timer===0){activeId=null;completed++;}}
+ return {tryContextualTraversal,resolveMovement,update,getState:()=>({stage:"09-traversal",obstacleCount:list.length,availableTypes:[...new Set(list.map(o=>o.type))],traversalsStarted:started,traversalsCompleted:completed,activeObstacleId:activeId,lastTraversal:last,lastBlockedReason:blocked,obstacles:list.map(o=>({id:o.id,type:o.type,height:o.height}))})};
 }
