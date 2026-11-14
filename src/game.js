@@ -261,7 +261,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       else window.__NAIJA_RPG_UI__?.showToast('Nothing nearby to interact with.');
     }
   });
-  traversalSystem=createTraversalSystem({playerController,obstacles:traversalObstacles,onEffect:(type,position)=>vfxSystem.emit(type,position)});
+  traversalSystem=createTraversalSystem({playerController,physics:playerPhysics,obstacles:traversalObstacles,onEffect:(type,position)=>vfxSystem.emit(type,position)});
   const companionSystem=createCompanionSystem({
     app,playerController,heroCharacter,obstacles:traversalObstacles,physics:actorPhysics,maxActive:2,
     onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message),onEffect:(type,position)=>vfxSystem.emit(type,position)
