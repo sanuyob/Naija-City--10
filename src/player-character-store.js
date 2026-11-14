@@ -4,7 +4,7 @@ const STORE_NAME = 'characters';
 const ARA_KEY = 'ara-female';
 const LEGACY_KEY = 'default-player';
 const ACTIVE_KEY = 'active-player';
-const DEFAULT_CHARACTER_ID = 'hero01';
+const DEFAULT_CHARACTER_ID = 'ara-female';
 
 function openDatabase() {
   if (!globalThis.indexedDB) {
@@ -54,15 +54,15 @@ export async function getActivePlayerCharacter() {
   const db = await openDatabase();
   try {
     const saved = await readKey(db, ACTIVE_KEY);
-    return saved === 'ara-female' ? 'ara-female' : DEFAULT_CHARACTER_ID;
+    return DEFAULT_CHARACTER_ID;
   } finally {
     db.close();
   }
 }
 
 export async function setActivePlayerCharacter(characterId) {
-  if (!['hero01', 'ara-female'].includes(characterId)) {
-    throw new Error('Unknown player character selection.');
+  if (characterId !== 'ara-female') {
+    throw new Error('Ara 3D Female is the only playable character.');
   }
   const db = await openDatabase();
   try {
@@ -92,6 +92,7 @@ export async function savePlayerCharacter(buffer, metadata = {}, characterId = '
         metadata: { ...metadata, characterId: ARA_KEY, displayName: 'Ara 3D Female' },
         savedAt: new Date().toISOString()
       }, ARA_KEY);
+      tx.objectStore(STORE_NAME).put(ARA_KEY, ACTIVE_KEY);
       // Remove the legacy single-player override after migrating the same asset.
       tx.objectStore(STORE_NAME).delete(LEGACY_KEY);
       tx.oncomplete = resolve;
