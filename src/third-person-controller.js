@@ -361,6 +361,17 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player.destroy();
   }
 
+  function setPositionForSmoke(position, yaw = 0) {
+    if (!Array.isArray(position) || position.length !== 3 || !position.every(Number.isFinite)) return false;
+    player.setPosition(position[0], position[1], position[2]);
+    player.setEulerAngles(0, Number(yaw) || 0, 0);
+    velocity.set(0, 0, 0);
+    grounded = true;
+    traversalMotion = null;
+    input.jumpQueued = false;
+    return true;
+  }
+
   const getState = () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, traversing: !!traversalMotion, facingYaw: player.getEulerAngles().y, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch });
   return {
     player, update, destroy,
@@ -368,6 +379,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     playAnimation,
     playFaceExpression,
     performTraversal,
+    setPositionForSmoke,
     getAnimationState: () => ({
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
