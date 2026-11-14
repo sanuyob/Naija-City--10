@@ -157,13 +157,6 @@ export async function loadHeroCharacter(app, {
       app.assets.load(asset);
     });
 
-    const root = asset.resource.instantiateRenderEntity();
-    root.name = 'NaijaCityHero01';
-    root.addComponent('anim', { activate: true });
-    if (!root.anim) throw new Error('PlayCanvas did not create the Hero animation component');
-
-    const clipNames = [];
-    const clipDurations = {};
     const loopable = new Set([
       'Hero01_Idle', 'Hero01_Walk', 'Hero01_Jog', 'Hero01_Run', 'Hero01_Sprint',
       'Hero01_Crouch', 'Hero01_CrouchWalk', 'Hero01_TiredIdle', 'Hero01_SitIdle',
@@ -171,14 +164,48 @@ export async function loadHeroCharacter(app, {
       'Hero01_LadderClimb', 'Hero01_HoldTablet'
     ]);
     const animationAssets = asset.resource.animations || [];
+    const clipNames = [];
+    const clipDurations = {};
     for (const animation of animationAssets) {
       const track = animation?.resource || animation;
       const name = track?.name || animation?.name;
       if (!name || !track) continue;
-      root.anim.assignAnimation(name, track, undefined, 1, loopable.has(name));
-      clipDurations[name] = Number.isFinite(track.duration) ? track.duration : 1.9;
       clipNames.push(name);
+      clipDurations[name] = Number.isFinite(track.duration) ? track.duration : 1.9;
     }
+
+    function createAnimatedInstance(instanceName, tint = [1, 1, 1]) {
+      const instanceRoot = asset.resource.instantiateRenderEntity();
+      instanceRoot.name = instanceName;
+      instanceRoot.addComponent('anim', { activate: true });
+      if (!instanceRoot.anim) throw new Error('PlayCanvas did not create animation component for ' + instanceName);
+      for (const animation of animationAssets) {
+        const track = animation?.resource || animation;
+        const name = track?.name || animation?.name;
+        if (name && track) instanceRoot.anim.assignAnimation(name, track, undefined, 1, loopable.has(name));
+      }
+      // Each companion owns material instances so role tinting cannot recolour Hero 01.
+      for (const render of instanceRoot.findComponents('render')) {
+        for (const meshInstance of render.meshInstances || []) {
+          if (!meshInstance.material) continue;
+          const material = meshInstance.material.clone();
+          const name = material.name.toLowerCase();
+          if (name.includes('shirt') || name.includes('overshirt') || name.includes('trouser') || name.includes('bag')) {
+            material.diffuse = new pc.Color(
+              material.diffuse.r * tint[0],
+              material.diffuse.g * tint[1],
+              material.diffuse.b * tint[2]
+            );
+            material.update();
+            meshInstance.material = material;
+          }
+        }
+      }
+      instanceRoot.anim.baseLayer.transition('Hero01_Idle', 0.1);
+      return instanceRoot;
+    }
+
+    const root = createAnimatedInstance('NaijaCityHero01');
     if (!clipNames.includes('Hero01_Idle')) {
       throw new Error('Hero GLB did not expose its expected Hero01_Idle animation');
     }
@@ -211,7 +238,8 @@ export async function loadHeroCharacter(app, {
     return {
       root, asset, clipNames, clipDurations,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression
+      setFaceExpression,
+      createInstance: createAnimatedInstance
     };
   } catch (error) {
     asset.unload?.();
