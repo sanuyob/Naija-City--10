@@ -94,6 +94,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let actionTimer = 0;
   let landingTimer = 0;
   const availableHeroClips = new Set(heroCharacter?.clipNames || []);
+  const heroClipDurations = heroCharacter?.clipDurations || {};
 
   function transitionHeroClip(name, blendTime = 0.16) {
     if (!heroVisual?.anim || !availableHeroClips.has(name) || activeHeroClip === name) return false;
@@ -107,10 +108,11 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     }
   }
 
-  function playAnimation(name, durationSeconds = 0.9) {
+  function playAnimation(name, durationSeconds = null) {
     if (!heroVisual?.anim || !availableHeroClips.has(name)) return false;
     actionClip = name;
-    actionTimer = Math.max(0.1, Math.min(6, durationSeconds));
+    const clipDuration = Number.isFinite(durationSeconds) ? durationSeconds : (heroClipDurations[name] || 1.9);
+    actionTimer = Math.max(0.1, Math.min(6, clipDuration));
     return transitionHeroClip(name, 0.12) || activeHeroClip === name;
   }
 
@@ -231,7 +233,14 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     p.set(resolvedPosition[0],resolvedPosition[1],resolvedPosition[2]);
     if (p.y <= 0) { p.y = 0; velocity.y = 0; grounded = true; }
     player.setPosition(p);
-    player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
+    if (!heroVisual) player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
+
+    if (moving) {
+      const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
+      const current = player.getEulerAngles().y;
+      const difference = ((desiredYaw - current + 540) % 360) - 180;
+      player.setEulerAngles(0, current + difference * Math.min(1, step * 13), 0);
+    }
 
     if (heroVisual?.anim) {
       if (!wasGrounded && grounded) landingTimer = 0.28;
@@ -257,10 +266,6 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       }
     } else {
       if (moving) {
-        const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
-        const current = player.getEulerAngles().y;
-        const difference = ((desiredYaw - current + 540) % 360) - 180;
-        player.setEulerAngles(0, current + difference * Math.min(1, step * 13), 0);
         gaitTime += step * (running ? 12 : 8);
         const swing = Math.sin(gaitTime) * (running ? 0.72 : 0.48);
         leftLeg.setLocalEulerAngles(swing * 57.2958, 0, 0);
@@ -310,6 +315,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player, update, destroy,
     interact: () => onInteract?.(getState()),
     playAnimation,
+    getAnimationState: () => ({ activeClip: activeHeroClip, requestedClip: actionClip, availableClipCount: availableHeroClips.size, playable: !!heroVisual?.anim?.playable }),
     getState
   };
 }
