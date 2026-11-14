@@ -220,14 +220,14 @@ try {
   const animation=window.__NAIJA_GAME__?.getHeroAnimationState?.();
   return roster?.activeId==='ara-female'&&roster?.mainId==='ara-female'&&animation?.characterId==='ara-female';
  },null,{timeout:15000});
- const afterAraMain=await page.evaluate(()=>({
-  roster:window.__NAIJA_GAME__.getCharacterRoster(),
+ const afterAraMain=await page.evaluate(async()=>({
+  roster:await window.__NAIJA_GAME__.getCharacterRoster(),
   player:window.__NAIJA_GAME__.getPlayerState(),
   physics:window.__NAIJA_GAME__.getPhysicsState().player,
   animation:window.__NAIJA_GAME__.getHeroAnimationState(),
   rig:window.__NAIJA_GAME__.getHeroRigSnapshot()
  }));
- const mainState=await afterAraMain.roster;
+ const mainState=afterAraMain.roster;
  if(mainState.activeId!=='ara-female'||mainState.mainId!=='ara-female'||afterAraMain.animation.displayName!=='Ara 3D Female'||afterAraMain.animation.availableClipCount<3)throw new Error('Ara second character failed to load as main: '+JSON.stringify(afterAraMain));
  if(afterAraMain.physics.mode!==beforeCharacterSwap.physics.mode||afterAraMain.physics.colliderCount!==beforeCharacterSwap.physics.colliderCount||afterAraMain.physics.capsuleHeight!==beforeCharacterSwap.physics.capsuleHeight||afterAraMain.player.position.some((value,index)=>Math.abs(value-beforeCharacterSwap.position[index])>.001))throw new Error('Switching to Ara reset player transform or Bullet physics: '+JSON.stringify({beforeCharacterSwap,afterAraMain}));
  await page.locator('[data-player-action="switch"][data-player-id="hero01"]').click();
