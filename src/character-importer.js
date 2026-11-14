@@ -28,6 +28,35 @@ function isGlb(buffer) {
     bytes[2] === 0x54 && bytes[3] === 0x46;
 }
 
+/**
+ * Ara's walk/run takes carry horizontal root drift. Remove only the linear
+ * X/Z displacement over each clip, retaining the small cyclic pelvis sway and
+ * vertical bob. The game controller owns world translation.
+ */
+function stripRootMotion(animations) {
+  let adjustedTracks = 0;
+  for (const clip of animations) {
+    for (const track of clip.tracks || []) {
+      if (!/position$/i.test(track.name || '') || !/(root|hips|pelvis)/i.test(track.name || '')) continue;
+      const values = track.values;
+      const size = track.getValueSize?.() || 3;
+      if (!values || size !== 3 || values.length < 6 || values.length % 3 !== 0) continue;
+      const last = values.length - 3;
+      const driftX = values[last] - values[0];
+      const driftZ = values[last + 2] - values[2];
+      if (Math.hypot(driftX, driftZ) < 0.025) continue;
+      const frames = values.length / 3 - 1;
+      for (let i = 0; i <= frames; i++) {
+        const t = frames ? i / frames : 0;
+        values[i * 3] -= driftX * t;
+        values[i * 3 + 2] -= driftZ * t;
+      }
+      adjustedTracks++;
+    }
+  }
+  return adjustedTracks;
+}
+
 function inspectRig(root) {
   let bones = 0;
   let skinnedMeshes = 0;
@@ -73,6 +102,7 @@ export async function importPlayerCharacter(file, onProgress = () => {}) {
   const model = new FBXLoader().parse(input, '');
   model.animations = Array.isArray(model.animations) ? model.animations : [];
   const rig = inspectRig(model);
+  const rootMotionTracksAdjusted = stripRootMotion(model.animations);
   if (!rig.skinnedMeshes || rig.bones < 3) {
     throw new Error('This FBX does not contain a usable skinned character rig.');
   }
@@ -115,6 +145,8 @@ export async function importPlayerCharacter(file, onProgress = () => {}) {
     boneCount: rig.bones,
     skinnedMeshCount: rig.skinnedMeshes,
     animationNames,
+    rootMotionTracksAdjusted,
+    locomotionCycles: { walkSeconds: 1.067, runSeconds: 0.733 },
     converter: 'Three.js FBXLoader / GLTFExporter ' + THREE_VERSION,
     textureLimit: 512
   };
