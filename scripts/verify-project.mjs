@@ -128,7 +128,7 @@ assert.match(controller,/resolveHeroClip/,'Character controller must map semanti
 assert.match(controller,/running \? 4\.25 : 1\.8/,'Ground movement speeds must be tuned for the Ara locomotion cycles');
 assert.match(rpg,/player-character-form/,'Player panel must expose the FBX import form');
 assert.match(rpg,/importPlayerCharacter/,'Player panel must invoke the FBX importer');
-assert.match(controller,/pc\.math\.clamp(body\.position\[0\],-46,46)/,'Player physics solver must clamp movement to expanded city width');
+assert.match(controller,/pc\.math\.clamp\(body\.position\[0\],-46,46\)/,'Player physics solver must clamp movement to expanded city width');
 assert.match(controller,/pc\.math\.clamp\(body\.position\[2\],-195,420\)/,'Player physics solver must clamp movement to expanded city length');
 assert.match(game,/knownBounds:\{min:\[-48,-1,-205\],max:\[48,10,402\]\}/,'Runtime diagnostics must report the expanded world bounds');
 assert.match(game,/farClip:520/,'Camera far clip must cover the expanded Yaba and Ikeja footprints');
