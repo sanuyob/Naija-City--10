@@ -123,7 +123,7 @@ try {
  if(!techSummoned||!driverSummoned)throw new Error('Two companion roster slots could not be summoned');
  const roster=await page.evaluate(()=>window.__NAIJA_GAME__?.getCompanionState?.());
  if(roster?.activeCount!==2||roster?.maxActive!==2||roster?.commands?.length!==7)throw new Error('Companion cap/command set failed: '+JSON.stringify(roster));
- if(roster.roster.some(actor=>actor.active&&actor.distance<5))throw new Error('Companions must enter from district locations, not spawn beside the player');
+ if(roster.roster.some(actor=>actor.active&&actor.spawnDistance<5))throw new Error('Companions must enter from district locations, not spawn beside the player');
  const hold=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Hold')===true);
  const radio=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','RadioCall')===true);
  if(!hold||!radio)throw new Error('Companion Hold or RadioCall command did not register');
