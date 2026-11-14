@@ -63,6 +63,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   capsule.calculateLocalInertia(mass, inertia);
   const bodyInfo = own(new Ammo.btRigidBodyConstructionInfo(mass, actorMotion, capsule, inertia));
   const body = own(new Ammo.btRigidBody(bodyInfo));
+  body.setUserIndex(1337);
   body.setFriction(0.24);
   body.setRestitution(0);
   body.setDamping(0.02, 0.04);
@@ -75,6 +76,36 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const scratchOrigin = vector(0, 0, 0);
   let steps = 0;
   let collisions = 0;
+  let activeGravity = gravity;
+
+  function setGravity(value) {
+    activeGravity = Math.max(0, Math.min(40, Number(value) || 0));
+    const g = vector(0, -activeGravity, 0);
+    world.setGravity(g);
+  }
+
+  // A character can stand on a vault box, ledge or ladder platform as well
+  // as on the city floor. Detect an upward-facing Bullet contact instead of
+  // declaring the player grounded only when its feet reach y=0.
+  function hasSupportContact() {
+    const count = dispatcher.getNumManifolds();
+    for (let i = 0; i < count; i++) {
+      const manifold = dispatcher.getManifoldByIndexInternal(i);
+      const body0 = manifold.getBody0();
+      const body1 = manifold.getBody1();
+      const playerIsBody0 = body0.getUserIndex?.() === 1337;
+      const playerIsBody1 = body1.getUserIndex?.() === 1337;
+      if (!playerIsBody0 && !playerIsBody1) continue;
+      for (let j = 0; j < manifold.getNumContacts(); j++) {
+        const contact = manifold.getContactPoint(j);
+        if (contact.getDistance() > 0.09) continue;
+        const normal = contact.get_m_normalWorldOnB();
+        const supportY = normal.y() * (playerIsBody0 ? 1 : -1);
+        if (supportY > 0.55) return true;
+      }
+    }
+    return false;
+  }
 
   function teleport(position, velocity = [0, 0, 0]) {
     scratchTransform.setIdentity();
@@ -107,7 +138,8 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const origin = transform.getOrigin();
     const p = [origin.x(), origin.y() - halfHeight, origin.z()];
     const linear = body.getLinearVelocity();
-    let grounded = p[1] <= groundY + 0.075 && linear.y() <= 0.85;
+    let grounded = hasSupportContact() && linear.y() <= 1.2;
+    if (p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
     if (p[1] < groundY) grounded = true;
     if (grounded && p[1] <= groundY + 0.075) {
       p[1] = groundY;
@@ -146,14 +178,14 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, cleanup,
+    step, teleport, setColliderEnabled, setGravity, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule',
       steps, collisions,
       colliderCount: colliderBodies.length,
       capsuleRadius: radius,
       capsuleHeight: halfHeight * 2,
-      gravity, groundY
+      gravity: activeGravity, groundY
     })
   };
 }
