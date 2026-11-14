@@ -88,12 +88,13 @@ The third-person controller remains authoritative for player position, collision
 
 The 2.81 MB GLB is stored as two base64 text files in the repository and decoded to a Blob URL at runtime. This preserves the generated binary asset through the repository text-file API, but adds a small startup decode and memory overhead.
 
-## Character asset status and verification
-The repository includes Hero 01's GLB for NPC use, but it does **not** include the user's `The_Female_Executive.fbx` or a converted Ara GLB. Ara is configured as the only playable character; on a fresh browser, she cannot appear until that source FBX is imported. The importer stores the converted GLB in that browser's IndexedDB, and the loader now validates its Ara 3D Gen source metadata and requires visible skinned render meshes.
+## Ara 3D Gen main player asset and verification
 
-The previous browser smoke test seeded Hero 01's GLB into the Ara storage slot and labelled it as Ara. That was a false positive and has been removed. Current CI must verify the missing-Ara import gate, locked gameplay controls, Hero 01 NPC, scene, traversal and physics. It does not certify Ara's visual appearance, walking gait or parkour animation until the actual FBX is added and tested.
+The ready-made **The Female Executive** preset from Ara 3D Gen is exported as `public/assets/hero/Ara_Female_Executive_Animated.glb` and bundled with the game. It is a 7.0 MiB GLB with a 70-bone game rig, 25 skinned mesh parts, 785,250 weighted vertices and 12 embedded clips: Idle, Walk, Run, Jump, Jump start, Jump (in air), Jump land, Vault over obstacle, Climb up ledge, Forward roll and both side dodges. The player loader now fetches this bundled GLB directly; no user FBX upload or IndexedDB import is required. Ara remains the only playable character and Hero 01 remains a separate animated city NPC.
 
-A global default requires the actual user-supplied FBX to be added to this repository and converted to a bundled GLB. Physical Android testing for startup, memory, frame rate and touch comfort remains outstanding.
+The character generator is [Ara 3D Gen](https://ara3dgen.com), open source under MIT. Its MakeHuman-derived character assets are CC0; the included animation licence and CMU motion-capture notice are preserved in the upstream export package documentation. The bundled asset was exported from the named preset with GLB, game rig and selected animation clips.
+
+`npm run build` and a dedicated Playwright smoke test were run. The smoke test confirms the bundled GLB loads as the playable character, exposes 70 bones and 12 animations, renders scene draw calls, and leaves Hero 01 as a moving NPC. The legacy full verification script still has an unrelated KTX compressor prerequisite (`ktx`) missing in this Box environment; the targeted smoke test and direct Vite production build pass. A real Android-device performance/touch test is still outstanding.
 
 Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets.
 

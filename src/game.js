@@ -15,7 +15,6 @@ import { createActorPhysics } from './actor-physics.js';
 import { createPlayerPhysics } from './player-physics.js';
 import { createPedestrianSystem } from './pedestrian-system.js';
 import { createVfxSystem } from './vfx-system.js';
-import { hasSavedPlayerCharacter } from './player-character-store.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -194,37 +193,23 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   statusLabel.textContent='Loading GLB models and textures…';
   const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
 
-  // Ara 3D Female is the only playable character. Never fall back to Hero 01.
-  const araFemaleAvailable=await hasSavedPlayerCharacter('ara-female').catch(()=>false);
+  // Ara 3D Female is bundled from the ready-made Ara 3D Gen Female Executive preset.
+  // It is the only playable character; Hero 01 remains an NPC.
   let heroCharacter=null;
   let araLoadError=null;
-  if(araFemaleAvailable){
-    try{
-      heroCharacter=await loadHeroCharacter(app,{
-        urls:['assets/hero/NaijaCityHero01_60clips.glb.b64'],
-        characterId:'ara-female',
-        statusLabel:assetStatusLabel
-      });
-    }catch(error){
-      araLoadError=String(error?.message||error);
-      console.error('Ara female player could not load:',error);
-      if(assetStatusLabel){
-        assetStatusLabel.textContent='Ara female could not be loaded · re-import the original FBX.';
-        assetStatusLabel.dataset.state='warning';
-      }
-    }
-  }else if(assetStatusLabel){
-    assetStatusLabel.textContent='Ara female is not installed on this device · import The_Female_Executive.fbx.';
-    assetStatusLabel.dataset.state='warning';
+  try{
+    heroCharacter=await loadHeroCharacter(app,{
+      bundledUrl:'assets/hero/Ara_Female_Executive_Animated.glb',
+      characterId:'ara-female',
+      statusLabel:assetStatusLabel
+    });
+  }catch(error){
+    araLoadError=String(error?.message||error);
+    console.error('Ara female player could not load:',error);
+    if(assetStatusLabel){assetStatusLabel.textContent='Ara 3D Female failed to load · '+araLoadError;assetStatusLabel.dataset.state='warning';}
   }
-  if(heroCharacter) {
-    window.__NAIJA_RPG_UI__?.setPlayerCharacterReady?.();
-  } else {
-    const gateMessage=araLoadError
-      ? 'Ara could not be loaded: '+araLoadError+' Select The_Female_Executive.fbx below and import it again.'
-      : 'The Ara 3D Female model is not installed in this browser. Select The_Female_Executive.fbx below to install her. Gameplay controls stay locked until the real model loads.';
-    window.__NAIJA_RPG_UI__?.requirePlayerCharacter?.(gateMessage);
-  }
+  if(heroCharacter) window.__NAIJA_RPG_UI__?.setPlayerCharacterReady?.();
+  else window.__NAIJA_RPG_UI__?.requirePlayerCharacter?.('Ara 3D Female could not load: '+araLoadError);
 
   // Hero 01 is loaded independently for the city NPC population only.
   let hero01NpcCharacter=null;
@@ -239,8 +224,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   }
   if(assetStatusLabel){
     assetStatusLabel.textContent=heroCharacter
-      ? 'Ara 3D Female · main player ready · Hero 01 is a city NPC'
-      : 'Ara female import required · Hero 01 remains an NPC';
+      ? 'Ara 3D Gen Female Executive · main player ready · Hero 01 is a city NPC'
+      : 'Ara 3D Female failed to load · Hero 01 remains an NPC';
   }
   const stage08E=createStage08EBuildings({app});
   await stage08E.initialize();

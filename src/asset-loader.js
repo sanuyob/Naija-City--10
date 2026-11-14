@@ -123,7 +123,8 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
 export async function loadHeroCharacter(app, {
   urls = ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
   characterId = 'hero01',
-  statusLabel
+  statusLabel,
+  bundledUrl = null
 } = {}) {
   if (!['hero01', 'ara-female'].includes(characterId)) {
     throw new Error('Unknown character in player roster: ' + characterId);
@@ -139,18 +140,22 @@ export async function loadHeroCharacter(app, {
 
   try {
     if (characterId === 'ara-female') {
-      const saved = await loadSavedPlayerCharacter('ara-female');
-      if (!(saved?.buffer instanceof ArrayBuffer) || saved.buffer.byteLength <= 20) {
-        throw new Error('Ara 3D female is not installed yet. Import The_Female_Executive.fbx from the Player menu first.');
+      setStatus('Loading Ara 3D Gen female character…');
+      if (bundledUrl) {
+        const response = await fetch(resolveAssetUrl(bundledUrl), { cache: 'no-store' });
+        if (!response.ok) throw new Error('Ara character GLB HTTP ' + response.status);
+        const buffer = await response.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        if (bytes.length < 20 || bytes[0] !== 0x67 || bytes[1] !== 0x6c || bytes[2] !== 0x54 || bytes[3] !== 0x46) throw new Error('Bundled Ara character is not a valid GLB.');
+        metadata = { source: 'Ara 3D Gen · ready-made Female Executive preset', sourceFileName: 'Ara_Female_Executive_Animated.glb', glbBytes: bytes.length };
+        source = 'ara-3d-gen-female-preset';
+        blobUrl = URL.createObjectURL(new Blob([buffer], { type: 'model/gltf-binary' }));
+      } else {
+        const saved = await loadSavedPlayerCharacter('ara-female');
+        if (!(saved?.buffer instanceof ArrayBuffer) || saved.buffer.byteLength <= 20) throw new Error('Ara 3D female character asset is missing.');
+        source = 'ara-3d-gen-female'; metadata = saved.metadata || null;
+        blobUrl = URL.createObjectURL(new Blob([saved.buffer], { type: 'model/gltf-binary' }));
       }
-      source = 'ara-3d-gen-female';
-      metadata = saved.metadata || null;
-      if (!/Ara\s*3D\s*Gen/i.test(String(metadata?.source || '')) ||
-          !/^The_Female_Executive\.fbx$/i.test(String(metadata?.sourceFileName || ''))) {
-        throw new Error('The saved file is not the Ara 3D Gen The_Female_Executive.fbx model. Select that FBX and import it again.');
-      }
-      blobUrl = URL.createObjectURL(new Blob([saved.buffer], { type: 'model/gltf-binary' }));
-      setStatus('Loading Ara 3D female character…');
     } else {
       source = 'bundled-hero-01';
       setStatus('Loading Hero 01 character…');
@@ -252,7 +257,7 @@ export async function loadHeroCharacter(app, {
     const renderMeshInstances = root.findComponents('render').flatMap(component => component.meshInstances || []);
     const skinnedMeshCount = renderMeshInstances.filter(mesh => !!mesh.skinInstance).length;
     if (!renderMeshInstances.length) throw new Error('The character GLB loaded but contains no visible render meshes.');
-    if (characterId === 'ara-female' && !skinnedMeshCount) throw new Error('Ara loaded without a skinned mesh. Re-import The_Female_Executive.fbx.');
+    if (characterId === 'ara-female' && !skinnedMeshCount) throw new Error('Ara loaded without a skinned mesh.');
     const morphInstances = [];
     const morphNames = new Set();
     for (const render of root.findComponents('render')) {
