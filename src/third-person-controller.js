@@ -93,6 +93,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let actionClip = '';
   let actionTimer = 0;
   let landingTimer = 0;
+  let traversalMotion = null;
   const availableHeroClips = new Set(heroCharacter?.clipNames || []);
   const heroClipDurations = heroCharacter?.clipDurations || {};
 
@@ -118,6 +119,29 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
 
   function playFaceExpression(name, weight = 1) {
     return heroCharacter?.setFaceExpression?.(name, weight) ?? false;
+  }
+
+  function performTraversal(name, destination, options = {}) {
+    if (!heroVisual?.anim || !availableHeroClips.has(name) || !grounded || traversalMotion) return false;
+    if (!Array.isArray(destination) || destination.length !== 3 || !destination.every(Number.isFinite)) return false;
+    const position = player.getPosition();
+    const duration = Math.max(0.55, Math.min(2.2, Number(options.duration) || 1.15));
+    traversalMotion = {
+      start: [position.x, position.y, position.z],
+      end: [
+        pc.math.clamp(destination[0], -46, 46),
+        Math.max(0, destination[1]),
+        pc.math.clamp(destination[2], -195, 420)
+      ],
+      duration,
+      elapsed: 0,
+      apex: Math.max(0.1, Math.min(0.65, Number(options.apex) || 0.35))
+    };
+    actionClip = name;
+    actionTimer = duration + 0.15;
+    grounded = false;
+    transitionHeroClip(name, 0.08);
+    return true;
   }
 
 
@@ -205,8 +229,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     let axisX = input.x + keyX, axisY = input.y + keyY;
     const magnitude = Math.hypot(axisX, axisY);
     if (magnitude > 1) { axisX /= magnitude; axisY /= magnitude; }
-    moving = Math.hypot(axisX, axisY) > 0.12;
-    running = moving && !input.crouch && (input.sprint || keys.shift) && stamina > 0;
+    if (traversalMotion) { axisX = 0; axisY = 0; }
+    moving = !traversalMotion && Math.hypot(axisX, axisY) > 0.12;
+    running = !traversalMotion && moving && !input.crouch && (input.sprint || keys.shift) && stamina > 0;
     if (running) stamina = Math.max(0, stamina - 26 * step);
     else stamina = Math.min(100, stamina + 19 * step);
     const speed = input.crouch ? 1.55 : running ? 6.0 : 3.15;
@@ -226,11 +251,33 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if (!grounded) velocity.y -= 17.5 * step;
     const p = player.getPosition();
     const currentPosition=[p.x,p.y,p.z];
-    const proposedPosition=[
-      pc.math.clamp(p.x + velocity.x * step, -46, 46),
-      p.y + velocity.y * step,
-      pc.math.clamp(p.z + velocity.z * step, -195, 420)
-    ];
+    let proposedPosition;
+    if (traversalMotion) {
+      traversalMotion.elapsed = Math.min(traversalMotion.duration, traversalMotion.elapsed + step);
+      const t = traversalMotion.elapsed / traversalMotion.duration;
+      const eased = t * t * (3 - 2 * t);
+      const [sx, sy, sz] = traversalMotion.start;
+      const [ex, ey, ez] = traversalMotion.end;
+      const arc = Math.sin(Math.PI * t) * traversalMotion.apex;
+      proposedPosition = [
+        sx + (ex - sx) * eased,
+        sy + (ey - sy) * eased + arc,
+        sz + (ez - sz) * eased
+      ];
+      if (t >= 1) {
+        traversalMotion = null;
+        velocity.y = 0;
+        grounded = true;
+      } else {
+        grounded = false;
+      }
+    } else {
+      proposedPosition = [
+        pc.math.clamp(p.x + velocity.x * step, -46, 46),
+        p.y + velocity.y * step,
+        pc.math.clamp(p.z + velocity.z * step, -195, 420)
+      ];
+    }
     const resolvedPosition=typeof resolveMovement==='function'
       ? resolveMovement(currentPosition,proposedPosition)
       : proposedPosition;
@@ -314,12 +361,13 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player.destroy();
   }
 
-  const getState = () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch });
+  const getState = () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, traversing: !!traversalMotion, facingYaw: player.getEulerAngles().y, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch });
   return {
     player, update, destroy,
     interact: () => onInteract?.(getState()),
     playAnimation,
     playFaceExpression,
+    performTraversal,
     getAnimationState: () => ({
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
