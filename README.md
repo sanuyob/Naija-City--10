@@ -78,8 +78,25 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 ## Verify
 `npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser`
 
-## Honest status
-The character remains a lightweight procedural placeholder. Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets. Automated Chromium tests do not establish performance or ergonomics on every physical Android device. A real-device pass is still required for texture loading, touch comfort, safe-area behavior and performance.
+Linux build environments also need the Khronos KTX-Software 4.4.2 command-line tool (`ktx`) on `PATH` for the Stage 08F UASTC/ETC1S texture compression step. The GitHub Actions verify and deploy workflows install the official release and verify its SHA-256 checksum automatically.
+
+## Hero 01 NPC rig integration
+
+The original Hero 01 asset remains a separate animated city NPC, not the playable character. Its GLB contains 60 separately named animations on one 20-joint humanoid rig, 11 PBR materials with embedded texture channels, UVs on every mesh primitive, four facial-expression morph targets and two blink morph targets. The NPC uses the existing pedestrian route system and does not occupy the player slot.
+
+The third-person controller owns Ara's player position, collision, stamina, touch input and camera. Ara is loaded from the bundled Female Executive GLB described below. Hero 01 remains independently loaded for the city NPC population.
+
+The 2.81 MB Hero 01 GLB is stored as two base64 text files in the repository and decoded to a Blob URL at runtime. This preserves the generated binary asset through the repository text-file API, but adds a small startup decode and memory overhead.
+
+## Ara 3D Gen main player asset and verification
+
+The ready-made **The Female Executive** preset from Ara 3D Gen is exported as `public/assets/hero/Ara_Female_Executive_Animated.glb` and bundled with the game. It is a 7.0 MiB GLB with a 70-bone game rig, 25 skinned mesh parts, 785,250 weighted vertices and 12 embedded clips: Idle, Walk, Run, Jump, Jump start, Jump (in air), Jump land, Vault over obstacle, Climb up ledge, Forward roll and both side dodges. The player loader fetches this bundled GLB directly; no user FBX upload or IndexedDB import is required. Ara is the only playable character and Hero 01 remains a separate animated city NPC.
+
+The character generator is [Ara 3D Gen](https://ara3dgen.com), open source under MIT. Its MakeHuman-derived character assets are CC0; the included animation licence and CMU motion-capture notice are preserved in the accompanying provenance notice.
+
+**Verified in the Box environment:** `npm run verify`, `npm run build` and `npm run test:browser` all pass. The browser tests load Ara as the real player, validate the 70-bone/25-mesh rig, exercise ten animation aliases, move the player with the touch joystick, switch from Walk to Run while sprinting, test jump/landing physics and VFX, complete all eight contextual traversal types, confirm Hero 01 remains a moving NPC, exercise companion commands, and check Yaba/Ikeja rendering and the 48-building/KTX2 asset pipeline. This is automated Chromium coverage, not final visual approval or a real-device benchmark. A real Android-device touch, performance, memory and audio test is still outstanding.
+
+Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets.
 
 
 ## Stage 08E — Individually designed Nigerian building assets
@@ -97,4 +114,24 @@ Stage 08E introduces a generated, validated GLB asset pipeline for the 48 existi
 
 Generate the assets with `npm run assets:08e`. The build and verification commands generate them automatically. Structural checks inspect every GLB header, embedded image, UV accessor, material family, LOD node and collision proxy.
 
-**Known remaining work:** the current generator embeds PNG maps; Basis/KTX2 GPU texture compression and true GPU-memory savings are not yet complete. The collision proxies are authored as separate hidden meshes but are not yet wired into a world collision system. Distant GLB containers are evicted with PlayCanvas asset unloading beyond the stream radius (the first shared-material source is pinned); actual device memory behaviour still needs profiling. Automated Chromium checks are not a substitute for loading, memory and frame-rate measurements on the actual Itel A90.
+**Known remaining work:** Stage 08F now delivers a 2K PBR Computer Village hero building with KTX2/Basis-compressed textures; the other 47 generated building GLBs still use embedded PNG maps. The 48 building footprints and selected solid Yaba/Ikeja street structures now feed rotated static-box colliders into Ara's Bullet world. These are intentionally simplified proxies, not triangle-perfect collisions for every decorative mesh, cable, awning or small prop; dynamic vehicle collision is a later vehicle phase. Distant GLB containers are evicted with PlayCanvas asset unloading beyond the stream radius (the first shared-material source is pinned); actual device memory behaviour still needs profiling. Automated Chromium checks are not a substitute for loading, memory and frame-rate measurements on the actual Android device.
+
+
+### Ara player animation, feedback and audio
+
+The bundled Ara Female Executive rig maps its real source clips to player locomotion and traversal aliases: Idle, Walk, Run, Jump start, Jump in air, Jump land, Vault over obstacle, Climb up ledge, Forward roll, and left/right dodge. Jump take-off now uses its own short start clip before the airborne loop; vault/climb aliases resolve to the actual parkour clips instead of falling back to a jump pose. The browser smoke test checks all ten animation aliases, jump/landing physics, jump/landing VFX events, and a completed low-vault traversal.
+
+Player feedback currently includes pooled lightweight dust/jump/landing/parkour VFX plus original procedural Web Audio one-shots for footsteps, jump, landing and parkour. Audio initializes only after a user gesture to comply with mobile browser autoplay rules. These synthesized effects are a functional first sound pass, not final recorded Foley or the full city ambience mix.
+
+
+### Ara controller, animation and VFX polish
+
+- The player uses one Bullet capsule in the same physics world as 48 rotated building-footprint proxies, the eight traversal obstacles, and selected solid roadside structures from the Yaba street-infrastructure and Ikeja street-life passes. The eight traversal colliders stay first in the list so contextual parkour can safely release/re-enable the matching body.
+- Crouching resizes Ara's capsule from 1.80 m to 1.22 m while keeping the feet at ground level. Standing back up is rejected if the current position overlaps a world proxy, providing a basic headroom check.
+- Ara uses a PlayCanvas 1D locomotion blend tree for Idle/Walk/Run driven by measured horizontal speed. PlayCanvas synchronizes the walk/run cycle lengths inside the tree to reduce foot-cycle drift; state transitions cross-fade into jump, landing, parkour and crouch states.
+- The Ara preset did not include crouching clips, so two small rig-bound skeletal tracks (`Ara_Crouch` and `Ara_CrouchWalk`) are generated at runtime against the existing Mixamo-style skeleton. They lower the hips, bend the legs and adjust the upper body without changing the source GLB.
+- Footstep events follow the blended animation phase and use the actual left/right foot-bone world positions. This is synchronized contact timing and footfall placement for feedback; it is not a full terrain-adaptive two-bone IK solver.
+- Player effects use a fixed 24-entity ellipsoid pool with distinct dust, jump, landing and parkour shapes/motion. The pool is bounded and reused rather than allocating new scene entities during play.
+- The browser smoke test checks building and road collision probes, crouch capsule/hip pose, locomotion blending, actual foot-bone sampling, all eight parkour actions, audio events, VFX pool limits, and the separate Hero 01 NPC.
+
+Professional implementation references: [PlayCanvas animation blend trees](https://developer.playcanvas.com/user-manual/animation/blend-trees/), [PlayCanvas collision shapes](https://developer.playcanvas.com/user-manual/physics/collision-shapes/), [PlayCanvas optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), and [PlayCanvas particle systems](https://developer.playcanvas.com/user-manual/graphics/particles/).

@@ -138,3 +138,47 @@
  .objective { width:min(180px,24vw); } .status { width:138px; } .player-status>span { display:none; } .minimap { width:90px; }
 }
 @media (prefers-reduced-motion:reduce) { #rpg-interface *,#rpg-interface *::before,#rpg-interface *::after { transition:none !important;animation:none !important; } }
+
+#parkour-button{border-color:#e6bb67a8;background:rgba(91,62,20,.88)}
+.world-live-status{display:block;margin-top:6px;color:#9ce7c5!important;font:700 8px/1.35 ui-monospace,monospace;letter-spacing:.03em}
+@media(max-width:600px){#parkour-button{min-width:48px}.actions{gap:6px}.actions button{font-size:15px}}
+
+
+/* Player character importer: large touch targets and clear progress/errors. */
+.character-import-card { padding:12px; border:1px solid rgba(215,184,120,.28); border-radius:12px; background:rgba(255,255,255,.035); }
+.character-import-card>small { color:var(--gold); font-size:8px; letter-spacing:.14em; }
+.character-import-card> b { display:block; margin-top:6px; font-size:13px; letter-spacing:.08em; }
+.character-import-card>p { color:#b7c3ba; font-size:10px; line-height:1.45; }
+#player-character-form { display:grid; gap:8px; margin-top:10px; }
+#player-character-form label { color:var(--gold); font-size:8px; letter-spacing:.1em; }
+#player-character-file { width:100%; min-width:0; padding:9px; border:1px solid var(--hud-stroke); border-radius:8px; background:#081310; color:var(--ink); font-size:10px; }
+#player-character-import { min-height:40px; padding:8px 12px; border:1px solid rgba(215,184,120,.5); border-radius:8px; background:rgba(215,184,120,.16); color:var(--ink); font-size:9px; letter-spacing:.06em; }
+#player-character-import:disabled { opacity:.5; cursor:wait; }
+#player-character-status { overflow-wrap:anywhere; }
+
+
+
+/* Character gate: never let the player operate an invisible avatar. */
+#rpg-interface.character-required .touch,
+#rpg-interface.character-required .quick-slots {
+  opacity: .22;
+  filter: grayscale(.85);
+  pointer-events: none !important;
+}
+#rpg-interface.character-required .actions button { pointer-events: none !important; }
+#rpg-interface.character-required .panel {
+  inset: 7% 8%;
+  z-index: 60;
+  max-height: 86vh;
+  overflow: auto;
+}
+#rpg-interface.character-required .panel header > button,
+#rpg-interface.character-required .panel footer { display: none !important; }
+#rpg-interface.character-required .panel #player-character-form,
+#rpg-interface.character-required .panel #player-character-form * { pointer-events: auto; }
+#rpg-interface.character-required .panel #player-character-import { min-height: 48px; font-weight: 700; }
+@media (max-width: 700px) and (orientation: landscape) {
+  #rpg-interface.character-required .panel { inset: 4% 4%; padding: 12px; }
+  #rpg-interface.character-required .profile { margin: 8px 0; }
+  #rpg-interface.character-required .character-import-card { padding: 9px; }
+}

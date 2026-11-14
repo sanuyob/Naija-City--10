@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 import { createThirdPersonController } from './third-person-controller.js';
-import { loadSceneAssets } from './asset-loader.js';
+import { loadSceneAssets, loadHeroCharacter } from './asset-loader.js';
 import { createStage08ACityExpansion } from './stage-08a-city-expansion.js';
 import { createStage08BBuildingDetail } from './stage-08b-building-detail.js';
 import { createStage08CStreetInfrastructure } from './stage-08c-street-infrastructure.js';
@@ -9,6 +9,13 @@ import { createStage08EBuildings } from './stage-08e-building-assets.js';
 import { createStage08FDeviceProfiler } from './stage-08f-device-profiler.js';
 import { createStage08GIkejaStreetLife } from './stage-08g-ikeja-street-life.js';
 import { createStage08HIkejaPropRealism } from './stage-08h-ikeja-prop-realism.js';
+import { createTraversalSystem } from './traversal-system.js';
+import { createCompanionSystem } from './companion-system.js';
+import { createActorPhysics } from './actor-physics.js';
+import { createPlayerPhysics } from './player-physics.js';
+import { createPedestrianSystem } from './pedestrian-system.js';
+import { createVfxSystem } from './vfx-system.js';
+import { createAudioSystem } from './audio-system.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -68,9 +75,6 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const camera = new pc.Entity('chase-camera');
   camera.addComponent('camera',{clearColor:new pc.Color(0.49,0.72,0.88),fov:62,farClip:520});
   camera.setPosition(0,7,13); camera.lookAt(0,0,0); app.root.addChild(camera);
-  const diagnosticMaterial=material([1,0,1],0.2);
-  diagnosticMaterial.useLighting=false;diagnosticMaterial.emissive=new pc.Color(1,0,1);diagnosticMaterial.update();
-  const diagnosticMarker=box('render-diagnostic-marker',[4.5,1.5,-8],[2.8,2.8,2.8],diagnosticMaterial);
   const sun = new pc.Entity('sun');
   sun.addComponent('light',{type:'directional',color:new pc.Color(1,0.91,0.78),intensity:1.05});
   sun.setEulerAngles(48,28,0); app.root.addChild(sun);
@@ -189,13 +193,103 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
 
   statusLabel.textContent='Loading GLB models and textures…';
   const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
+
+  // Ara 3D Female is bundled from the ready-made Ara 3D Gen Female Executive preset.
+  // It is the only playable character; Hero 01 remains an NPC.
+  let heroCharacter=null;
+  let araLoadError=null;
+  try{
+    heroCharacter=await loadHeroCharacter(app,{
+      bundledUrl:'assets/hero/Ara_Female_Executive_Animated.glb',
+      characterId:'ara-female',
+      statusLabel:assetStatusLabel
+    });
+  }catch(error){
+    araLoadError=String(error?.message||error);
+    console.error('Ara female player could not load:',error);
+    if(assetStatusLabel){assetStatusLabel.textContent='Ara 3D Female failed to load · '+araLoadError;assetStatusLabel.dataset.state='warning';}
+  }
+  if(heroCharacter) window.__NAIJA_RPG_UI__?.setPlayerCharacterReady?.();
+  else window.__NAIJA_RPG_UI__?.requirePlayerCharacter?.('Ara 3D Female could not load: '+araLoadError);
+
+  // Hero 01 is loaded independently for the city NPC population only.
+  let hero01NpcCharacter=null;
+  try{
+    hero01NpcCharacter=await loadHeroCharacter(app,{
+      urls:['assets/hero/NaijaCityHero01_60clips.glb.b64'],
+      characterId:'hero01',
+      statusLabel:assetStatusLabel
+    });
+  }catch(error){
+    console.warn('Hero 01 city NPC model could not load:',error);
+  }
+  if(assetStatusLabel){
+    assetStatusLabel.textContent=heroCharacter
+      ? 'Ara 3D Gen Female Executive · main player ready · Hero 01 is a city NPC'
+      : 'Ara 3D Female failed to load · Hero 01 remains an NPC';
+  }
   const stage08E=createStage08EBuildings({app});
   await stage08E.initialize();
   const stage08G=createStage08GIkejaStreetLife({app,box,material});
   const stage08H=createStage08HIkejaPropRealism({app,graphicsDevice:device});
+
+  // A small, bounded tutorial traversal lane beside the Yaba spawn route.
+  const ladderFrame=new pc.Entity('traversal-ladder-assembly');
+  app.root.addChild(ladderFrame);
+  box('traversal-ladder-left-rail',[4.08,1.55,-31.0],[.08,3.1,.08],m.metal,ladderFrame);
+  box('traversal-ladder-right-rail',[4.82,1.55,-31.0],[.08,3.1,.08],m.metal,ladderFrame);
+  for(let rung=0;rung<7;rung++)box('traversal-ladder-rung-'+rung,[4.45,.30+rung*.4,-31.0],[.78,.055,.07],m.yellow,ladderFrame);
+  const ladderCollider=box('traversal-ladder-collider',[4.45,1.55,-31.0],[.86,3.1,.28],m.metal);
+  ladderCollider.render.enabled=false;
+  const traversalObstacles=[
+    {id:'yaba-step-01',type:'step',height:.44,entity:box('traversal-step-01',[.65,.22,-1.8],[1,.44,.55],m.concrete)},
+    {id:'yaba-low-vault-01',type:'low-vault',height:.72,entity:box('traversal-low-vault-01',[7.2,.36,-8.2],[1.25,.72,.55],m.concrete)},
+    {id:'yaba-high-vault-01',type:'high-vault',height:1.02,entity:box('traversal-high-vault-01',[-7.2,.51,-10.5],[1.25,1.02,.55],m.shops[1])},
+    {id:'yaba-mantle-01',type:'mantle',height:1.26,entity:box('traversal-mantle-01',[4.8,.63,-15],[1.3,1.26,.6],m.shops[2])},
+    {id:'yaba-ledge-01',type:'ledge',height:2.15,entity:box('traversal-ledge-01',[-.35,1.075,-23],[3.2,2.15,.6],m.concrete)},
+    {id:'yaba-ladder-01',type:'ladder',height:3.1,entity:ladderCollider},
+    {id:'yaba-wall-run-01',type:'wall-run',height:2.35,entity:box('traversal-wall-run-01',[-4.3,1.175,-43],[.55,2.35,5.2],m.shops[2])},
+    {id:'yaba-drop-01',type:'drop',height:.72,entity:box('traversal-drop-01',[1.45,.36,-54],[1.8,.72,.62],m.red)}
+  ];
+  traversalObstacles.forEach(item=>item.entity.tags.add('stage09-traversal-obstacle'));
+  const actorPhysics=createActorPhysics({colliders:traversalObstacles,groundY:0,gravity:18});
+  const playerWorldColliders=[
+    ...traversalObstacles,
+    ...stage08E.getCollisionProxies(),
+    ...(stage08C.collisionProxies||[]),
+    ...(stage08G.collisionProxies||[])
+  ];
+  let playerPhysics=actorPhysics;
+  try {
+    // Keep the eight tutorial obstacles at the front: traversal temporarily
+    // disables their matching Bullet bodies by index while the player climbs.
+    playerPhysics=await createPlayerPhysics({colliders:playerWorldColliders,groundY:0,gravity:18});
+  } catch(error) {
+    console.warn('Bullet player physics unavailable; using the kinematic fallback:',error);
+    if(assetStatusLabel)assetStatusLabel.textContent='Bullet unavailable · basic player physics fallback active';
+  }
+  const vfxSystem=createVfxSystem({app,poolSize:24});
+  const audioSystem=createAudioSystem();
+  const emitPlayerFeedback=(type,position)=>{
+    vfxSystem.emit(type,position);
+    const sound=type==='dust'?'footstep':type==='jump'?'jump':type==='landing'?'landing':type==='parkour'?'parkour':null;
+    if(sound)audioSystem.play(sound);
+  };
+  let traversalSystem=null;
   const playerController=createThirdPersonController(app,camera,canvas,{
-    resolveMovement:stage08E.resolveMovement,
+    resolveMovement:(current,proposed)=>{
+      // Bullet owns building and solid street-prop collision when available;
+      // retain the legacy manifest resolver only for the lightweight fallback.
+      const cityResolved=playerPhysics===actorPhysics?stage08E.resolveMovement(current,proposed):proposed;
+      return traversalSystem ? traversalSystem.resolveMovement(current,cityResolved) : cityResolved;
+    },
+    heroCharacter,physics:playerPhysics,onEffect:emitPlayerFeedback,
     onInteract:state=>{
+      if(traversalSystem?.tryContextualTraversal(state)){
+        window.__NAIJA_RPG_UI__?.showToast('Traversal started · '+(traversalSystem.getState().lastTraversal?.clip||'movement'));
+        return;
+      }
+      playerController?.playAnimation?.('Hero01_Interact');
       const [px,,pz]=state.position;
       const targets=[{name:'Street kiosk',x:-7.9,z:-17},{name:'Bus stop',x:7.3,z:-37}];
       const nearest=targets.map(target=>({...target,distance:Math.hypot(px-target.x,pz-target.z)})).sort((a,b)=>a.distance-b.distance)[0];
@@ -203,10 +297,21 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       else window.__NAIJA_RPG_UI__?.showToast('Nothing nearby to interact with.');
     }
   });
+
+  traversalSystem=createTraversalSystem({playerController,physics:playerPhysics,obstacles:traversalObstacles,onEffect:(type,position)=>vfxSystem.emit(type,position)});
+  const companionSystem=createCompanionSystem({
+    app,playerController,heroCharacter:heroCharacter||hero01NpcCharacter,obstacles:traversalObstacles,physics:actorPhysics,maxActive:2,
+    onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message),onEffect:(type,position)=>vfxSystem.emit(type,position)
+  });
+  const pedestrianSystem=createPedestrianSystem({app,physics:actorPhysics,colliders:traversalObstacles,heroCharacter:hero01NpcCharacter});
   stage08E.update(playerController.getState().position);
   const stage08FProfiler = createStage08FDeviceProfiler({ app, canvas, device, stage08E });
   window.__NAIJA_STAGE08F_PROFILE__ = stage08FProfiler;
   window.__NAIJA_INTERACT__=()=>playerController.interact();
+  window.__NAIJA_PLAY_HERO_ANIMATION__=(name,durationSeconds)=>playerController.playAnimation(name,durationSeconds);
+  window.__NAIJA_SET_HERO_FACE__=(name,weight=1)=>playerController.playFaceExpression(name,weight);
+  window.__NAIJA_TRAVERSE__=()=>traversalSystem.tryContextualTraversal(playerController.getState());
+  window.__NAIJA_COMPANION_COMMAND__=(roleId,command)=>companionSystem.command(roleId,command);
   statusLabel.textContent='Third-person character ready — WASD / touch joystick';
 
   // Stage 06: city traffic continues as lightweight kinematic scenery.
@@ -236,9 +341,14 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       }
     }
     playerController.update(step);
-    stage08E.update(playerController.getState().position);
+    traversalSystem.update(step);
+    companionSystem.update(step);
+    const playerState=playerController.getState();
+    pedestrianSystem.update(step,playerState);
+    vfxSystem.update(step);
+    stage08E.update(playerState.position);
     hudClock+=step;
-    if(hudClock>=0.12){hudClock=0;window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());}
+    if(hudClock>=0.12){hudClock=0;window.__NAIJA_RPG_UI__?.setVitals(playerState);window.__NAIJA_RPG_UI__?.setWorldActivity?.({pedestrians:10,companions:companionSystem.getState().activeCount});}
   });
 
   // Documented AppStats telemetry; GPU memory is estimated tracked resource usage.
@@ -260,15 +370,61 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     const rect=canvas.getBoundingClientRect(),cameraPos=camera.getPosition(),forward=camera.forward;
     const renderComponents=app.root.findComponents('render');
     const meshInstances=renderComponents.reduce((sum,component)=>sum+(component.meshInstances?.length||0),0);
-    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-48,-1,-205],max:[48,10,402]},diagnosticMarker:{position:[diagnosticMarker.getPosition().x,diagnosticMarker.getPosition().y,diagnosticMarker.getPosition().z],inFront:diagnosticMarker.getPosition().clone().sub(cameraPos).dot(forward)>0}},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
+    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,knownBounds:{min:[-48,-1,-205],max:[48,10,402]},},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
   });
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
-  if(new URLSearchParams(window.location.search).has('smoke')) gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
+  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
+  if(new URLSearchParams(window.location.search).has('smoke')) {
+    gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
+    gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
+    gameApi.debugSetCrouchedForSmoke=value=>playerController.setCrouched(value);
+    gameApi.debugProbeWorldCollisionForSmoke=()=>({
+      buildingBlocked:playerPhysics.canFitCapsule?.([-9.2,0,-82],1.8)===false,
+      roadwayClear:playerPhysics.canFitCapsule?.([0,0,-82],1.8)===true,
+      corridorProxies:playerWorldColliders.length,
+      physics:playerPhysics.getState()
+    });
+    gameApi.debugProbeBulletCollisionForSmoke=()=>{
+      const start=[-16,0,-82];
+      playerController.setPositionForSmoke(start,90);
+      const actor={position:start.slice(),velocity:[0,0,0],grounded:true};
+      for(let i=0;i<60;i++)playerPhysics.step(actor,[3,0,0],.05);
+      playerController.setPositionForSmoke([0,0,0],0);
+      return {startX:start[0],endX:actor.position[0],buildingBoundaryX:-12.45,
+        stoppedByBuilding:actor.position[0]<-12.5,physics:playerPhysics.getState()};
+    };
+    gameApi.debugAdvanceTraversalForSmoke=(frames=30)=>{
+      const count=Math.max(1,Math.min(60,Math.floor(Number(frames)||30)));
+      for(let i=0;i<count;i++){
+        playerController.update(0.05);
+        traversalSystem.update(0.05);
+      }
+      vfxSystem.update(.05);
+      return {player:playerController.getState(),traversal:traversalSystem.getState()};
+    };
+    gameApi.debugTraverseTypeForSmoke=type=>{
+      const obstacle=traversalObstacles.find(item=>item.type===type);if(!obstacle)return {started:false,type};
+      const center=obstacle.entity.getPosition(),offset=type==="wall-run"?-.7:0;
+      playerController.setPositionForSmoke([center.x+offset,0,center.z+1.55],0);
+      const startPosition=playerController.getState().position.slice();
+      const started=traversalSystem.tryContextualTraversal(playerController.getState());
+      for(let i=0;i<58;i++){playerController.update(.05);traversalSystem.update(.05);vfxSystem.update(.05);}
+      const traversal=traversalSystem.getState(),player=playerController.getState();
+      const distanceTravelled=Math.hypot(player.position[0]-startPosition[0],player.position[2]-startPosition[2]);
+      return {started,type,traversal,player,completed:!player.traversing&&traversal.traversalsCompleted>0,startPosition,distanceTravelled,verticalTravel:player.position[1]-startPosition[1]};
+    };
+    gameApi.debugJumpPhysicsForSmoke=()=>{
+      playerController.setPositionForSmoke([0,0,0],0);playerController.queueJumpForSmoke();
+      for(let i=0;i<7;i++){playerController.update(.05);vfxSystem.update(.05);}const airborne=playerController.getState();
+      for(let i=0;i<40;i++){playerController.update(.05);vfxSystem.update(.05);}
+      return {airborne,landed:playerController.getState(),vfx:vfxSystem.getState()};
+    };
+  }
   window.__NAIJA_GAME__=gameApi;
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
-  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
-  app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
+  
+  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_SET_HERO_FACE__;delete window.__NAIJA_TRAVERSE__;delete window.__NAIJA_COMPANION_COMMAND__;companionSystem.destroy();pedestrianSystem.destroy();playerPhysics.cleanup?.();vfxSystem.destroy();audioSystem.destroy();delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
+  app.start();statusLabel.textContent='Ready — Stage 09 parkour, city life and physics';
 }

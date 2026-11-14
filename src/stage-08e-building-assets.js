@@ -108,6 +108,16 @@ export function createStage08EBuildings({app}) {
     return [x,y,z];
   }
 
+  function getCollisionProxies() {
+    return entries.map(item => ({
+      id: 'building-' + item.id,
+      position: [item.position[0], item.position[1] + item.size[1] / 2, item.position[2]],
+      halfExtents: [item.size[0] / 2, item.size[1] / 2, item.size[2] / 2],
+      rotationY: Number(item.rotationY) || 0,
+      source: 'stage08e-building-manifest'
+    }));
+  }
+
   function update(position) {
     if(!state.ready||!position) return;
     state.lastPlayerPosition=[position[0],position[1],position[2]];
@@ -142,5 +152,5 @@ export function createStage08EBuildings({app}) {
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
   }
 
-  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static circle-vs-AABB building colliders';state.collisionRadius=collisionRadius;return state;},update,resolveMovement,getState:()=>({...state,streaming:'distance-based progressive loading with unload/eviction outside 210m (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterMaterialAsset:masterAssetId})};
+  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static rotated-box Bullet proxies';state.collisionRadius=collisionRadius;return state;},update,resolveMovement,getCollisionProxies,getState:()=>({...state,streaming:'distance-based progressive loading with unload/eviction outside 210m (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterMaterialAsset:masterAssetId})};
 }

@@ -2,13 +2,15 @@ import * as pc from 'playcanvas';
 
 // Ammo is fetched only when the driving scene starts. The initial HTML shell and
 // PlayCanvas renderer stay separate from this several-hundred-kilobyte module.
+const BASE = import.meta.env.BASE_URL || '/';
+const localAmmo = file => new URL(`${BASE}assets/wasm/ammo/${file}`, window.location.origin).href;
 const AMMO_ASSETS = {
-  glueUrl: 'https://developer.playcanvas.com/assets/modules/ammo/ammo.wasm.js',
-  wasmUrl: 'https://developer.playcanvas.com/assets/modules/ammo/ammo.wasm.wasm',
-  fallbackUrl: 'https://developer.playcanvas.com/assets/modules/ammo/ammo.js'
+  glueUrl: localAmmo('ammo.wasm.js'),
+  wasmUrl: localAmmo('ammo.wasm.wasm'),
+  fallbackUrl: localAmmo('ammo.js')
 };
 
-async function loadAmmo() {
+export async function loadAmmo() {
   pc.WasmModule.setConfig('Ammo', AMMO_ASSETS);
   await new Promise((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Ammo physics module timed out while loading. Check your connection and reload.')), 25000);

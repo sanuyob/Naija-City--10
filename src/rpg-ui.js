@@ -4,8 +4,9 @@ const views = {
   inventory: ['FIELD KIT', 'Inventory', '<div class="tiles"><article><b>01</b><strong>Supplies</strong><small>No items collected</small></article><article><b>02</b><strong>Key items</strong><small>No key items yet</small></article><article><b>03</b><strong>Resources</strong><small>0 collected</small></article><article><b>04</b><strong>Quick slots</strong><small>Tap a slot to select it</small></article></div>'],
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
   map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
-  character: ['PLAYER PROFILE', 'Character', '<div class="profile"><b>NC</b><div><strong>ROOKIE</strong><p>Level 01 · City newcomer</p><small>0 / 100 XP TO LEVEL 02</small></div></div><div class="stat">Strength <b>01</b></div><div class="stat">Mobility <b>01</b></div><div class="stat">Awareness <b>01</b></div><div class="stat">Street reputation <b>00</b></div>'],
-  settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><p class="muted">Landscape-first controls. Gameplay settings are expanded in later stages.</p>']
+  character: ['PLAYER PROFILE', 'Player', '<div class="profile"><b>AF</b><div><strong>ARA 3D FEMALE</strong><p>Main playable character</p><small>THE_FEMALE_EXECUTIVE · ARA 3D GEN</small></div></div><div class="mission character-import-card"><small>ONLY PLAYABLE CHARACTER</small><b>ARA 3D FEMALE · MAIN PLAYER</b><p>Ara is the only playable character. Hero 01 is a city NPC. The ready-made Female Executive character is bundled from Ara 3D Gen with a game rig and locomotion/parkour animations.</p><p id="player-character-status" role="status">Ara 3D Gen Female Executive · loading built-in character asset…</p></div><div class="stat">Player role <b>MAIN</b></div><div class="stat">Character slot <b>01</b></div>'],
+  settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><p class="muted">Landscape-first controls. Gameplay settings are expanded in later stages.</p>'],
+  crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
 
 export function mountRPGInterface() {
@@ -18,7 +19,7 @@ export function mountRPGInterface() {
       <button class="menu" data-open="pause" aria-label="Pause game">Ⅱ<small>PAUSE</small></button>
     </header>
     <section class="status" aria-label="Player status">
-      <div class="player-status"><b>LVL 01</b><span>ROOKIE · CITY NEWCOMER</span><small>100 XP TO NEXT LEVEL</small></div>
+      <div class="player-status"><b>LVL 01</b><span>ARA FEMALE · MAIN PLAYER</span><small>100 XP TO NEXT LEVEL</small></div>
       <label>HEALTH <b id="hud-health-value">100</b><i class="meter"><i id="hud-health-fill" style="width:100%"></i></i></label>
       <label>STAMINA <b id="hud-stamina-value">100</b><i class="meter stamina"><i id="hud-stamina-fill" style="width:100%"></i></i></label>
       <small class="player-state" id="hud-player-state">STATUS · READY</small>
@@ -28,7 +29,7 @@ export function mountRPGInterface() {
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
       <small class="compass">N　·　NE　·　E　·　SE</small>
     </section>
-    <section class="objective"><small>● CURRENT OBJECTIVE</small><b>Explore the neighbourhood</b><span>Find your place in the city.</span></section>
+    <section class="objective"><small>● CURRENT OBJECTIVE</small><b>Explore the neighbourhood</b><span>Find your place in the city.</span><small id="hud-world-activity" class="world-live-status">CITY LIFE · 10 PEDESTRIANS · CREW 0/2</small></section>
     <div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
     <div class="touch" aria-label="Mobile game controls">
       <div class="stick" id="move-joystick" role="application" aria-label="Movement joystick"><i id="move-knob"></i><small>MOVE</small></div>
@@ -36,6 +37,7 @@ export function mountRPGInterface() {
         <button id="jump-button" aria-label="Jump">↑<small>JUMP</small></button>
         <button id="sprint-button" aria-label="Hold to sprint">»<small>SPRINT</small></button>
         <button id="crouch-button" aria-label="Toggle crouch" aria-pressed="false">↓<small>CROUCH</small></button>
+        <button id="parkour-button" aria-label="Parkour traversal">◇<small>PARKOUR</small></button>
         <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
       </div>
     </div>
@@ -52,15 +54,17 @@ export function mountRPGInterface() {
     </nav>
     <div class="hud-toast" id="hud-toast" role="status" aria-live="polite"></div>
     <section class="panel" id="rpg-panel" hidden><header><div><small id="panel-kicker"></small><h2 id="panel-title"></h2></div><button data-close aria-label="Close panel">×</button></header><div id="panel-content"></div><footer>NAIJA CITY <span>STAGE 07 · LANDSCAPE HUD</span></footer></section>
-    <section class="pause" id="rpg-pause" hidden><div class="pause-card"><div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small>PAUSED</small></div></div><h2>Take a moment.</h2><p>Your city is waiting.</p><button class="resume" data-resume>RESUME GAME　→</button><div class="pause-links" aria-label="Game menus"><button data-open="inventory">INVENTORY</button><button data-open="quests">MISSIONS</button><button data-open="map">CITY MAP</button><button data-open="character">PLAYER</button></div><button data-open="settings">SETTINGS</button><small>NAIJA CITY · PAUSED</small></div></section>
+    <section class="pause" id="rpg-pause" hidden><div class="pause-card"><div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small>PAUSED</small></div></div><h2>Take a moment.</h2><p>Your city is waiting.</p><button class="resume" data-resume>RESUME GAME　→</button><div class="pause-links" aria-label="Game menus"><button data-open="inventory">INVENTORY</button><button data-open="quests">MISSIONS</button><button data-open="map">CITY MAP</button><button data-open="character">PLAYER</button><button data-open="crew">CREW</button></div><button data-open="settings">SETTINGS</button><small>NAIJA CITY · PAUSED</small></div></section>
   `;
 
   let paused = false;
+  let characterRequired = false;
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
   const toast = root.querySelector('#hud-toast');
   const open = name => {
+    if (characterRequired && name !== 'character') name = 'character';
     if (name === 'pause') {
       paused = true;
       window.__NAIJA_RPG_PAUSED__ = true;
@@ -76,16 +80,47 @@ export function mountRPGInterface() {
     panel.hidden = false;
     pause.hidden = true;
   };
+  const requirePlayerCharacter = message => {
+    characterRequired = true;
+    root.classList.add('character-required');
+    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#parkour-button,#interact-button').forEach(button => { button.disabled = true; });
+    root.querySelector('#move-joystick')?.setAttribute('aria-disabled', 'true');
+    open('character');
+    const status = root.querySelector('#player-character-status');
+    if (status) status.textContent = message || 'Import The_Female_Executive.fbx to enable gameplay.';
+    return true;
+  };
+  const setPlayerCharacterReady = () => {
+    characterRequired = false;
+    root.classList.remove('character-required');
+    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#parkour-button,#interact-button').forEach(button => { button.disabled = false; });
+    root.querySelector('#move-joystick')?.removeAttribute('aria-disabled');
+    return true;
+  };
   const close = () => {
+    if (characterRequired) { open('character'); showToast('Install Ara 3D Female before starting gameplay.'); return; }
     paused = false;
     window.__NAIJA_RPG_PAUSED__ = false;
     panel.hidden = true;
     pause.hidden = true;
   };
-  root.addEventListener('click', event => {
+  root.addEventListener('click', async event => {
+    const companionButton = event.target.closest('[data-companion-command]');
+    if (companionButton) {
+      const command = companionButton.dataset.companionCommand;
+      const roleId = companionButton.dataset.companionId;
+      const accepted = window.__NAIJA_COMPANION_COMMAND__?.(roleId, command);
+      showToast(accepted ? (command + ' · ' + roleId) : 'Companion command not available.');
+      return;
+    }
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
+    if (event.target.closest('#parkour-button')) {
+      const started=window.__NAIJA_TRAVERSE__?.()===true;
+      showToast(started?'Parkour move started.':'Face a marked obstacle, ledge, ladder or wall.');
+      return;
+    }
     if (event.target.closest('#interact-button')) {
       showToast('Checking nearby…');
       window.__NAIJA_INTERACT__?.();
@@ -130,8 +165,13 @@ export function mountRPGInterface() {
     root.querySelector('#hud-stamina-fill').style.width = stamina + '%';
     root.querySelector('#hud-player-state').textContent = 'STATUS · ' + (state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY');
   }
+  function setWorldActivity(state={}) {
+    const el=root.querySelector('#hud-world-activity');
+    if(el)el.textContent='CITY LIFE · '+(state.pedestrians??0)+' PEDESTRIANS · CREW '+(state.companions??0)+'/2';
+  }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, showToast,
-    open, close
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, showToast,
+    open, close, requirePlayerCharacter, setPlayerCharacterReady,
+    isPlayerCharacterRequired: () => characterRequired
   };
 }
