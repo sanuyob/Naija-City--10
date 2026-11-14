@@ -1,112 +1,22 @@
-import * as pc from 'playcanvas';
-
-const ROSTER = [
-  {id:'tech',name:'Tech Specialist',tint:[0.84,0.94,1.0],spawn:[-24,0,-28],side:-1},
-  {id:'driver',name:'Driver',tint:[1.0,0.90,0.72],spawn:[24,0,-46],side:1}
-];
-const COMMANDS = new Set(['Follow','Hold','Regroup','PointAhead','RadioCall','AssistUp','Dismiss']);
-
-/**
- * Deterministic two-slot companion prototype. Actors walk in from fixed district
- * entry points; there is no teleport-to-player shortcut or combat AI.
- */
-export function createCompanionSystem({app,playerController,heroCharacter,obstacles=[],maxActive=2,onStatus}={}) {
-  if(!app||!playerController||typeof heroCharacter?.createInstance!=='function') {
-    throw new Error('Companion system requires app, player controller and Hero 01 instance factory');
-  }
-  const cap=Math.max(0,Math.min(2,maxActive));
-  const actors=new Map();
-  let accumulator=0,commandsIssued=0,updates=0,lastMessage='';
-  const message=value=>{lastMessage=value;onStatus?.(value);};
-
-  function play(actor,clip) {
-    if(!actor.root?.anim||!actor.clipNames.has(clip)) return false;
-    try { actor.root.anim.baseLayer.transition(clip,0.16);actor.activeClip=clip;return true; }
-    catch(error){console.warn('Companion animation transition failed:',clip,error);return false;}
-  }
-  function summon(roleId) {
-    const roster=ROSTER.find(item=>item.id===roleId);
-    if(!roster)return false;
-    if(actors.has(roleId)){message(roster.name+' is already active.');return true;}
-    if(actors.size>=cap){message('Maximum of two active companions reached.');return false;}
-    const playerPosition=playerController.getState().position;
-    const spawnDistance=Math.hypot(roster.spawn[0]-playerPosition[0],roster.spawn[2]-playerPosition[2]);
-    const root=heroCharacter.createInstance('NaijaCityCompanion_'+roster.id,roster.tint);
-    root.setPosition(...roster.spawn);root.setLocalScale(0.98,0.98,0.98);app.root.addChild(root);
-    const actor={...roster,root,spawnDistance,command:'Follow',state:'approaching',activeClip:'Hero01_Idle',commandTimer:0,distance:Infinity,target:roster.spawn.slice(),clipNames:new Set(heroCharacter.clipNames||[])};
-    actors.set(roleId,actor);play(actor,'Hero01_Idle');
-    message(roster.name+' is walking in from the district entry.');return true;
-  }
-  function dismiss(roleId) {
-    const actor=actors.get(roleId);if(!actor)return false;
-    actor.root.destroy();actors.delete(roleId);message(actor.name+' has been dismissed.');return true;
-  }
-  function command(roleId,action) {
-    if(action==='Summon')return summon(roleId);
-    const actor=actors.get(roleId);
-    if(!actor){message('Summon this companion before issuing commands.');return false;}
-    if(!COMMANDS.has(action))return false;
-    commandsIssued++;
-    if(action==='Dismiss')return dismiss(roleId);
-    actor.command=action;actor.commandTimer=0;
-    if(action==='Follow'){actor.state='following';play(actor,'Hero01_Idle');message(actor.name+' is following.');}
-    else if(action==='Hold'){actor.state='holding';play(actor,'Hero01_Idle');message(actor.name+' will hold position.');}
-    else if(action==='Regroup'){actor.state='regrouping';play(actor,'Hero01_SquadRegroup');message(actor.name+' is regrouping.');}
-    else if(action==='PointAhead'){actor.state='command-action';actor.commandTimer=1.45;play(actor,'Hero01_SquadPointAhead');message(actor.name+' acknowledged: point ahead.');}
-    else if(action==='RadioCall'){actor.state='command-action';actor.commandTimer=1.6;play(actor,'Hero01_SquadRadioCall');message(actor.name+' is responding over radio.');}
-    else if(action==='AssistUp'){actor.state='command-action';actor.commandTimer=1.8;play(actor,'Hero01_SquadAssistUp');message(actor.name+' is ready to assist.');}
-    return true;
-  }
-  function targetFor(actor,player) {
-    const [px,,pz]=player.position,yaw=(player.facingYaw||0)*Math.PI/180;
-    const side=actor.side*(actor.command==='Regroup'?1.35:2.2),back=actor.command==='Regroup'?1.9:2.9;
-    return [px-Math.sin(yaw)*back+Math.cos(yaw)*side,0,pz+Math.cos(yaw)*back+Math.sin(yaw)*side];
-  }
-  function avoidObstacles(x,z) {
-    let ax=0,az=0;
-    for(const item of obstacles){
-      const p=item.entity?.getPosition?.();if(!p)continue;
-      const s=item.entity.getLocalScale(),dx=x-p.x,dz=z-p.z;
-      const nx=dx/(Math.abs(s.x)*0.5+0.7),nz=dz/(Math.abs(s.z)*0.5+0.7),length=Math.hypot(nx,nz);
-      if(length<1){const safe=length||0.001;ax+=nx/safe*(1-length)*1.25;az+=nz/safe*(1-length)*1.25;}
-    }
-    return [ax,az];
-  }
-  function update(dt) {
-    accumulator+=Math.max(0,Math.min(dt,0.05));
-    if(accumulator<0.10)return;
-    const step=accumulator;accumulator=0;updates++;
-    const player=playerController.getState();
-    for(const actor of actors.values()){
-      if(actor.commandTimer>0){
-        actor.commandTimer=Math.max(0,actor.commandTimer-step);
-        if(actor.commandTimer===0&&actor.state==='command-action'){actor.state='following';actor.command='Follow';play(actor,'Hero01_Idle');}
-      }
-      if(actor.state==='holding'||actor.state==='command-action')continue;
-      const target=targetFor(actor,player);actor.target=target;
-      const p=actor.root.getPosition(),dx=target[0]-p.x,dz=target[2]-p.z,distance=Math.hypot(dx,dz);
-      actor.distance=distance;
-      if(distance>110){actor.state='unavailable';play(actor,'Hero01_Idle');continue;}
-      if(actor.state==='unavailable')actor.state='approaching';
-      if(distance>0.85){
-        const [avoidX,avoidZ]=avoidObstacles(p.x,p.z);
-        const mx=dx+avoidX*1.8,mz=dz+avoidZ*1.8,length=Math.hypot(mx,mz)||1;
-        const speed=distance>9?4.2:2.8,travel=Math.min(distance,speed*step);
-        actor.root.setPosition(p.x+mx/length*travel,0,p.z+mz/length*travel);
-        actor.root.setEulerAngles(0,Math.atan2(mx,-mz)*180/Math.PI,0);
-        actor.state=distance>3?'approaching':'following';
-        play(actor,distance>9&&actor.clipNames.has('Hero01_Run')?'Hero01_Run':'Hero01_Walk');
-      } else {actor.state='following';play(actor,'Hero01_Idle');}
-    }
-  }
-  function destroy(){for(const actor of actors.values())actor.root.destroy();actors.clear();}
-  return {
-    summon,command,update,destroy,
-    getState:()=>({
-      stage:'companion-prototype',maxActive:cap,activeCount:actors.size,commandsIssued,
-      commands:Array.from(COMMANDS),
-      roster:ROSTER.map(item=>({id:item.id,name:item.name,active:actors.has(item.id),state:actors.get(item.id)?.state||'inactive',command:actors.get(item.id)?.command||null,distance:Number.isFinite(actors.get(item.id)?.distance)?actors.get(item.id).distance:null,spawnDistance:actors.get(item.id)?.spawnDistance??null,activeClip:actors.get(item.id)?.activeClip||null})),
-      lastMessage
-    })
-  };
+import {createActorPhysics} from "./actor-physics.js";
+const ROSTER=[{id:"tech",name:"Tech Specialist",tint:[.84,.94,1],spawn:[-24,0,-28],side:-1},{id:"driver",name:"Driver",tint:[1,.90,.72],spawn:[24,0,-46],side:1}];
+const COMMANDS=["Follow","Hold","Regroup","PointAhead","RadioCall","AssistUp","Dismiss"];
+/** Two squad actors driven through the same collision-aware movement solver as pedestrians. */
+export function createCompanionSystem({app,playerController,heroCharacter,obstacles=[],physics,maxActive=2,onStatus,onEffect}={}) {
+ if(!app||!playerController||typeof heroCharacter?.createInstance!=="function")throw new Error("Companions require app, player and Hero instance factory");
+ const solver=physics||createActorPhysics({colliders:obstacles}),cap=Math.max(0,Math.min(2,maxActive)),actors=new Map();let commandsIssued=0,updates=0,lastMessage="";
+ const message=s=>{lastMessage=s;onStatus?.(s);};
+ function play(a,clip){if(!a.root?.anim||!a.clipNames.has(clip))return false;try{a.root.anim.baseLayer.transition(clip,.16);a.activeClip=clip;return true;}catch(e){return false;}}
+ function summon(id){const d=ROSTER.find(r=>r.id===id);if(!d)return false;if(actors.has(id))return true;if(actors.size>=cap){message("Maximum of two active companions reached.");return false;}
+  const p=playerController.getState().position,spawnDistance=Math.hypot(d.spawn[0]-p[0],d.spawn[2]-p[2]),root=heroCharacter.createInstance("NaijaCityCompanion_"+id,d.tint);root.setPosition(...d.spawn);root.setLocalScale(.98,.98,.98);root.tags.add("squad-companion");app.root.addChild(root);
+  const a={...d,root,spawnDistance,motion:{position:d.spawn.slice(),velocity:[0,0,0],radius:.34,height:1.78,grounded:true},state:"approaching",command:"Follow",timer:0,distance:Infinity,activeClip:"Hero01_Idle",clipNames:new Set(heroCharacter.clipNames||[]),arrival:false};actors.set(id,a);play(a,"Hero01_Idle");message(d.name+" walking in from district entry.");return true;}
+ function dismiss(id){const a=actors.get(id);if(!a)return false;a.root.destroy();actors.delete(id);message(a.name+" dismissed.");return true;}
+ function command(id,action){if(action==="Summon")return summon(id);const a=actors.get(id);if(!a){message("Summon this companion first.");return false;}if(!COMMANDS.includes(action))return false;commandsIssued++;if(action==="Dismiss")return dismiss(id);a.command=action;a.timer=0;
+  if(action==="Follow"){a.state="following";play(a,"Hero01_Idle");}else if(action==="Hold"){a.state="holding";play(a,"Hero01_Idle");}else if(action==="Regroup"){a.state="regrouping";play(a,"Hero01_SquadRegroup");}else if(action==="PointAhead"){a.state="command-action";a.timer=1.45;play(a,"Hero01_SquadPointAhead");}else if(action==="RadioCall"){a.state="command-action";a.timer=1.6;play(a,"Hero01_SquadRadioCall");}else if(action==="AssistUp"){a.state="command-action";a.timer=1.8;play(a,"Hero01_SquadAssistUp");}message(a.name+" · "+action);return true;}
+ function update(dt){const h=Math.min(.05,Math.max(0,dt));if(h<.04)return;updates++;const player=playerController.getState(),group=[...actors.values()];for(const a of group){if(a.timer>0){a.timer=Math.max(0,a.timer-h);if(a.timer===0&&a.state==="command-action"){a.state="following";a.command="Follow";play(a,"Hero01_Idle");}}if(a.state==="holding"||a.state==="command-action")continue;
+  const [px,,pz]=player.position,yaw=(player.facingYaw||0)*Math.PI/180,side=a.side*(a.command==="Regroup"?1.35:2.2),back=a.command==="Regroup"?1.9:2.9,target=[px-Math.sin(yaw)*back+Math.cos(yaw)*side,0,pz+Math.cos(yaw)*back+Math.sin(yaw)*side],p=a.motion.position,dx=target[0]-p[0],dz=target[2]-p[2],d=Math.hypot(dx,dz);a.distance=d;if(d>110){a.state="unavailable";continue;}if(a.state==="unavailable")a.state="approaching";
+  if(d>.85){solver.step(a.motion,[dx/Math.max(d,.001)*(d>9?4:2.55),0,dz/Math.max(d,.001)*(d>9?4:2.55)],h,group.filter(b=>b!==a).map(b=>b.motion));a.root.setPosition(...p);a.root.setEulerAngles(0,Math.atan2(a.motion.velocity[0],-a.motion.velocity[2])*180/Math.PI,0);a.state=d>3?"approaching":"following";play(a,d>9&&a.clipNames.has("Hero01_Run")?"Hero01_Run":"Hero01_Walk");if(d<=3&&!a.arrival){a.arrival=true;onEffect?.("arrival",p);}}else{a.state="following";play(a,"Hero01_Idle");}}
+ }
+ function destroy(){for(const a of actors.values())a.root.destroy();actors.clear();}
+ return {summon,command,update,destroy,getState:()=>({stage:"companion-physics",maxActive:cap,activeCount:actors.size,commandsIssued,updates,commands:COMMANDS.slice(),roster:ROSTER.map(d=>({id:d.id,name:d.name,active:actors.has(d.id),state:actors.get(d.id)?.state||"inactive",command:actors.get(d.id)?.command||null,distance:actors.get(d.id)?.distance??null,spawnDistance:actors.get(d.id)?.spawnDistance??null,activeClip:actors.get(d.id)?.activeClip||null})),lastMessage})};
 }
