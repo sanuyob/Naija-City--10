@@ -29,7 +29,7 @@ export function mountRPGInterface() {
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
       <small class="compass">N　·　NE　·　E　·　SE</small>
     </section>
-    <section class="objective"><small>● CURRENT OBJECTIVE</small><b>Explore the neighbourhood</b><span>Find your place in the city.</span></section>
+    <section class="objective"><small>● CURRENT OBJECTIVE</small><b>Explore the neighbourhood</b><span>Find your place in the city.</span><small id="hud-world-activity" class="world-live-status">CITY LIFE · 10 PEDESTRIANS · CREW 0/2</small></section>
     <div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
     <div class="touch" aria-label="Mobile game controls">
       <div class="stick" id="move-joystick" role="application" aria-label="Movement joystick"><i id="move-knob"></i><small>MOVE</small></div>
@@ -37,6 +37,7 @@ export function mountRPGInterface() {
         <button id="jump-button" aria-label="Jump">↑<small>JUMP</small></button>
         <button id="sprint-button" aria-label="Hold to sprint">»<small>SPRINT</small></button>
         <button id="crouch-button" aria-label="Toggle crouch" aria-pressed="false">↓<small>CROUCH</small></button>
+        <button id="parkour-button" aria-label="Parkour traversal">◇<small>PARKOUR</small></button>
         <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
       </div>
     </div>
@@ -95,6 +96,11 @@ export function mountRPGInterface() {
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
+    if (event.target.closest('#parkour-button')) {
+      const started=window.__NAIJA_TRAVERSE__?.()===true;
+      showToast(started?'Parkour move started.':'Face a marked obstacle, ledge, ladder or wall.');
+      return;
+    }
     if (event.target.closest('#interact-button')) {
       showToast('Checking nearby…');
       window.__NAIJA_INTERACT__?.();
@@ -139,8 +145,12 @@ export function mountRPGInterface() {
     root.querySelector('#hud-stamina-fill').style.width = stamina + '%';
     root.querySelector('#hud-player-state').textContent = 'STATUS · ' + (state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY');
   }
+  function setWorldActivity(state={}) {
+    const el=root.querySelector('#hud-world-activity');
+    if(el)el.textContent='CITY LIFE · '+(state.pedestrians??0)+' PEDESTRIANS · CREW '+(state.companions??0)+'/2';
+  }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, showToast,
     open, close
   };
 }
