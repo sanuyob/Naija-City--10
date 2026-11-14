@@ -26,6 +26,6 @@ export function createTraversalSystem({playerController,physics=null,obstacles=[
   if(!ok){blocked="Get closer to the obstacle and face it";return false;}
   activeId=best.o.id;activeColliderIndex=colliderIndex;physics?.setColliderEnabled?.(colliderIndex,false);timer=Math.max(2.4,profile.duration*2.2);started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
  }
- function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));const finished=!playerController.getState().traversing;if(finished||timer===0){if(activeColliderIndex>=0)physics?.setColliderEnabled?.(activeColliderIndex,true);activeColliderIndex=-1;activeId=null;completed++;}}
+ function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));const finished=!playerController.getState().traversing;if(finished||timer===0){if(activeColliderIndex>=0)physics?.setColliderEnabled?.(activeColliderIndex,true);activeColliderIndex=-1;activeId=null;timer=0;completed++;}}
  return {tryContextualTraversal,resolveMovement,update,getState:()=>({stage:"09-traversal",obstacleCount:list.length,availableTypes:[...new Set(list.map(o=>o.type))],traversalsStarted:started,traversalsCompleted:completed,activeObstacleId:activeId,lastTraversal:last,lastBlockedReason:blocked,obstacles:list.map(o=>({id:o.id,type:o.type,height:o.height}))})};
 }
