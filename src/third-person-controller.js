@@ -6,20 +6,8 @@ import * as pc from 'playcanvas';
  * so no large external rig or animation download is required.
  */
 export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement, heroCharacter, physics, onEffect } = {}) {
-  const mat = (color, metalness = 0) => {
-    const material = new pc.StandardMaterial();
-    material.diffuse = new pc.Color(...color);
-    material.metalness = metalness;
-    material.shininess = metalness ? 48 : 12;
-    material.update();
-    return material;
-  };
-  const skin = mat([0.36, 0.19, 0.105]);
-  const shirt = mat([0.12, 0.25, 0.32]);
-  const trousers = mat([0.075, 0.095, 0.11]);
-  const shoes = mat([0.035, 0.04, 0.045]);
-  const accent = mat([0.72, 0.48, 0.18], 0.15);
-
+  // The player root owns movement, camera follow and collision. The visible
+  // body must be the imported Ara female rig; Hero 01 is now a separate NPC.
   const player = new pc.Entity('player-character');
   player.setPosition(0, 0, 0);
   app.root.addChild(player);
@@ -31,39 +19,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player.addChild(heroVisual);
   }
 
-  function part(parent, name, type, scale, position, material) {
-    const entity = new pc.Entity(name);
-    entity.addComponent('render', { type, material });
-    entity.setLocalScale(...scale);
-    entity.setLocalPosition(...position);
-    parent.addChild(entity);
-    return entity;
-  }
-  let torso = null, leftArm = null, rightArm = null, leftLeg = null, rightLeg = null;
-  if (!heroVisual) {
-    // A compact, readable human silhouette built from low-cost primitive meshes.
-      torso = part(player, 'player-torso', 'box', [0.62, 0.78, 0.34], [0, 1.22, 0], shirt);
-    part(torso, 'chest-panel', 'box', [0.62, 0.18, 1.025], [0, 0.12, 0], accent);
-    part(player, 'player-neck', 'cylinder', [0.17, 0.18, 0.17], [0, 1.69, 0], skin);
-    part(player, 'player-head', 'sphere', [0.25, 0.31, 0.24], [0, 1.94, 0], skin);
-    part(player, 'player-hair', 'sphere', [0.255, 0.13, 0.245], [0, 2.12, -0.015], shoes);
-      leftArm = new pc.Entity('left-arm-pivot');
-    leftArm.setLocalPosition(-0.39, 1.49, 0); player.addChild(leftArm);
-    part(leftArm, 'left-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
-    part(leftArm, 'left-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
-      rightArm = new pc.Entity('right-arm-pivot');
-    rightArm.setLocalPosition(0.39, 1.49, 0); player.addChild(rightArm);
-    part(rightArm, 'right-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
-    part(rightArm, 'right-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
-      leftLeg = new pc.Entity('left-leg-pivot');
-    leftLeg.setLocalPosition(-0.17, 0.88, 0); player.addChild(leftLeg);
-    part(leftLeg, 'left-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
-    part(leftLeg, 'left-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
-      rightLeg = new pc.Entity('right-leg-pivot');
-    rightLeg.setLocalPosition(0.17, 0.88, 0); player.addChild(rightLeg);
-    part(rightLeg, 'right-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
-    part(rightLeg, 'right-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
-  }
+  const torso = null, leftArm = null, rightArm = null, leftLeg = null, rightLeg = null;
 
   const input = { x: 0, y: 0, sprint: false, jumpQueued: false, crouch: false };
   const keys = Object.create(null);
@@ -150,30 +106,6 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       : (heroClipDurations[resolvedName] || heroClipDurations[name] || 1.9);
     actionTimer = Math.max(0.1, Math.min(6, clipDuration));
     return transitionHeroClip(name, 0.12) || activeHeroClip === resolvedName;
-  }
-
-  function setHeroCharacter(nextCharacter) {
-    if (!nextCharacter?.root?.anim || traversalMotion) return false;
-    if (nextCharacter === activeHeroCharacter) return true;
-    if (heroVisual?.parent) heroVisual.parent.removeChild(heroVisual);
-    activeHeroCharacter = nextCharacter;
-    heroVisual = nextCharacter.root;
-    heroVisual.setLocalPosition(0, 0, 0);
-    heroVisual.setLocalScale(1, 1, 1);
-    player.addChild(heroVisual);
-    availableHeroClips = new Set(activeHeroCharacter.clipNames || []);
-    heroClipDurations = activeHeroCharacter.clipDurations || {};
-    heroDefaults = activeHeroCharacter.defaultClips || {
-      idle: 'Hero01_Idle', walk: 'Hero01_Walk', run: 'Hero01_Sprint',
-      jump: 'Hero01_Jump', landing: 'Hero01_Landing', crouch: 'Hero01_Crouch'
-    };
-    animationFallbacks = buildAnimationFallbacks(heroDefaults);
-    activeHeroClip = '';
-    actionClip = '';
-    actionTimer = 0;
-    landingTimer = 0;
-    transitionHeroClip('idle', 0.24);
-    return true;
   }
 
   function playFaceExpression(name, weight = 1) {
@@ -436,7 +368,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
         heroCharacterPose(null,false);
         transitionHeroClip('Hero01_Idle');
       }
-    } else {
+    } else if (leftLeg && rightLeg && leftArm && rightArm && torso) {
       if (moving) {
         gaitTime += step * (running ? 12 : 8);
         const swing = Math.sin(gaitTime) * (running ? 0.72 : 0.48);
@@ -500,7 +432,6 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     playAnimation,
     playFaceExpression,
     performTraversal,
-    setHeroCharacter,
     setPositionForSmoke,
     queueJumpForSmoke,
     getAnimationState: () => ({
