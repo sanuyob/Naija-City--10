@@ -106,10 +106,10 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const p = [origin.x(), origin.y() - halfHeight, origin.z()];
     const linear = body.getLinearVelocity();
     let grounded = p[1] <= groundY + 0.075 && linear.y() <= 0.85;
-    if (p[1] < groundY) {
+    if (p[1] < groundY) grounded = true;
+    if (grounded && p[1] <= groundY + 0.075) {
       p[1] = groundY;
       teleport(p, [linear.x(), 0, linear.z()]);
-      grounded = true;
     }
     actor.position[0] = p[0];
     actor.position[1] = p[1];
