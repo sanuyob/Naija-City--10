@@ -169,12 +169,17 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     const gravity=Math.max(9,Number(physics?.getState?.().gravity)||18);
     const apex=Math.max(.6,Math.min(4.2,Number(options.apex)||1.0));
     const launchVelocity=Math.sqrt(2*gravity*apex);
-    const duration=Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
     const actionPose=options.mode||"vault";
+    const kinematicClimb=["step","mantle","ledge","ladder"].includes(actionPose);
+    const duration=kinematicClimb
+      ? Math.max(.55,Math.min(2.8,Number(options.duration)||1.0))
+      : Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
     const activeClip=missingActionClip?(animationFallbacks.action||animationFallbacks.idle):clips[0];
     traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex,mode:actionPose,
-      clips,activePhase:0,activeClip,missingActionClip,gravity,launchVelocity};
-    velocity.set(dx/duration,launchVelocity,dz/duration);
+      clips,activePhase:0,activeClip,missingActionClip,gravity,launchVelocity,
+      kinematic:kinematicClimb,restoreGravity:gravity};
+    if(kinematicClimb)physics?.setGravity?.(0);
+    velocity.set(dx/duration,kinematicClimb?(end[1]-p.y)/duration:launchVelocity,dz/duration);
     actionClip=activeClip;actionTimer=duration+.45;grounded=false;jumpBuffer=0;
     heroCharacterPose(actionPose,missingActionClip);
     transitionHeroClip(activeClip,.08);
@@ -293,27 +298,46 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     let proposedPosition;
     if(traversalMotion){
       traversalMotion.elapsed+=step;
-      const progress=Math.min(.999,traversalMotion.elapsed/traversalMotion.duration);
-      const phase=Math.min(traversalMotion.clips.length-1,Math.floor(progress*traversalMotion.clips.length));
+      const progress=Math.min(1,traversalMotion.elapsed/traversalMotion.duration);
+      const phase=Math.min(traversalMotion.clips.length-1,Math.floor(Math.min(.999,progress)*traversalMotion.clips.length));
       if(phase!==traversalMotion.activePhase){traversalMotion.activePhase=phase;traversalMotion.activeClip=traversalMotion.clips[phase]||traversalMotion.activeClip;actionClip=traversalMotion.activeClip;transitionHeroClip(traversalMotion.activeClip,.12);}
-      const remaining=Math.max(step,traversalMotion.duration-traversalMotion.elapsed+step);
-      const horizontal=[(traversalMotion.end[0]-p.x)/remaining,0,(traversalMotion.end[2]-p.z)/remaining];
-      const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded:false,traversing:true};
-      if(physics?.step){
-        physics.step(body,horizontal,step);
-        velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);
-        grounded=body.grounded;
-        proposedPosition=body.position;
+      if(traversalMotion.kinematic){
+        // Step-ups, mantles, ledge pulls and ladders need a controlled climb,
+        // not a generic ballistic jump that lands back at street level.
+        const eased=progress*progress*(3-2*progress);
+        const target=traversalMotion.start.map((value,index)=>value+(traversalMotion.end[index]-value)*eased);
+        velocity.set((target[0]-p.x)/step,(target[1]-p.y)/step,(target[2]-p.z)/step);
+        proposedPosition=target;
+        physics?.teleport?.(target,[velocity.x,velocity.y,velocity.z]);
+        grounded=progress>=1;
+        if(progress>=1){
+          proposedPosition=traversalMotion.end.slice();
+          velocity.y=0;
+          physics?.teleport?.(proposedPosition,[velocity.x,0,velocity.z]);
+          physics?.setGravity?.(traversalMotion.restoreGravity);
+          traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
+          onEffect?.("landing",proposedPosition);
+        }
       }else{
-        velocity.y-=traversalMotion.gravity*step;
-        proposedPosition=[p.x+velocity.x*step,p.y+velocity.y*step,p.z+velocity.z*step];
-        if(proposedPosition[1]<=0){proposedPosition[1]=0;velocity.y=0;grounded=true;}else grounded=false;
-      }
-      if(grounded&&traversalMotion.elapsed>.18){
-        traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
-        onEffect?.("landing",proposedPosition);
-      }else if(traversalMotion.elapsed>traversalMotion.duration*1.65){
-        traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
+        const remaining=Math.max(step,traversalMotion.duration-traversalMotion.elapsed+step);
+        const horizontal=[(traversalMotion.end[0]-p.x)/remaining,0,(traversalMotion.end[2]-p.z)/remaining];
+        const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded:false,traversing:true};
+        if(physics?.step){
+          physics.step(body,horizontal,step);
+          velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);
+          grounded=body.grounded;
+          proposedPosition=body.position;
+        }else{
+          velocity.y-=traversalMotion.gravity*step;
+          proposedPosition=[p.x+velocity.x*step,p.y+velocity.y*step,p.z+velocity.z*step];
+          if(proposedPosition[1]<=0){proposedPosition[1]=0;velocity.y=0;grounded=true;}else grounded=false;
+        }
+        if(grounded&&traversalMotion.elapsed>.18){
+          traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
+          onEffect?.("landing",proposedPosition);
+        }else if(traversalMotion.elapsed>traversalMotion.duration*1.65){
+          traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
+        }
       }
     }else{
       if(jumpBuffer>0&&coyote>0){velocity.y=6.45;grounded=false;coyote=0;jumpBuffer=0;onEffect?.("jump",currentPosition);}
