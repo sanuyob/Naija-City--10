@@ -204,10 +204,14 @@ export async function loadHeroCharacter(app, {
       landing: findClip([/land/i]) || findClip([/idle/i]) || null,
       crouch: findClip([/crouch|duck/i]) || null
     };
-    const loopable = new Set([
-      defaultClips.idle, defaultClips.walk, defaultClips.run,
-      defaultClips.crouch
-    ].filter(Boolean));
+    // Locomotion and idle clips must loop when this rig is used for either
+    // the player or a route-driven city NPC.
+    const loopable = new Set(clipNames.filter(name =>
+      /(?:^|_)(?:idle|walk|jog|run|sprint|crouch)(?:_|$)/i.test(name)
+    ));
+    for (const name of [defaultClips.idle, defaultClips.walk, defaultClips.run, defaultClips.crouch]) {
+      if (name) loopable.add(name);
+    }
 
     function createAnimatedInstance(instanceName, tint = [1, 1, 1]) {
       const instanceRoot = asset.resource.instantiateRenderEntity();
