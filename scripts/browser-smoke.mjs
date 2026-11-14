@@ -148,7 +148,9 @@ try {
  for(const type of ['step','low-vault','high-vault','mantle','ledge','ladder','wall-run','drop']){
   const result=await page.evaluate(value=>window.__NAIJA_GAME__?.debugTraverseTypeForSmoke?.(value),type);
   if(!result?.started||!result?.completed||result?.traversal?.lastTraversal?.type!==type||result.distanceTravelled<0.75)throw new Error('Parkour did not carry the player across '+type+': '+JSON.stringify(result));
-  parkourReports.push({type,clip:result.traversal.lastTraversal.clip,distanceTravelled:result.distanceTravelled});
+  const expectedElevation={step:.35,mantle:1.1,ledge:1.9,ladder:2.8}[type]||0;
+  if(result.verticalTravel<expectedElevation)throw new Error(type+' did not reach its intended height: '+JSON.stringify(result));
+  parkourReports.push({type,clip:result.traversal.lastTraversal.clip,distanceTravelled:result.distanceTravelled,verticalTravel:result.verticalTravel});
  }
  // Verify the player leaves the ground, falls under gravity and lands with effects.
  const jumpPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.debugJumpPhysicsForSmoke?.());
