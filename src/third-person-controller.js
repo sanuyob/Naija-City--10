@@ -115,8 +115,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if (availableHeroClips.has(name)) return name;
     const normalized = String(name || '').toLowerCase();
     let key = 'idle';
-    if (/walk|shimmy|step|ladder|balance/.test(normalized)) key = 'walk';
-    else if (/run|sprint|vault|mantle|wall|hop|jump|climb/.test(normalized)) key = 'run';
+    if (/walk|shimmy|step|balance/.test(normalized)) key = 'walk';
+    else if (/run|sprint|vault|mantle|wall|hop|jump|climb|ladder|pullup|pull-up/.test(normalized)) key = 'run';
     else if (/land|drop|hang|idle|interact|crouch|sit|tired/.test(normalized)) key = normalized.includes('land') || normalized.includes('drop') ? 'landing' : normalized.includes('crouch') ? 'crouch' : 'idle';
     return animationFallbacks[key] || animationFallbacks.idle || null;
   }
@@ -150,13 +150,18 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   }
 
   function performTraversal(name,destination,options={}) {
-    if(!heroVisual?.anim||!availableHeroClips.has(name)||!grounded||traversalMotion)return false;
+    // Traversal actions may not have a dedicated clip on imported characters.
+    // resolveHeroClip maps them to the available Walk/Run/Idle take instead of rejecting parkour.
+    if(!grounded||traversalMotion)return false;
     if(!Array.isArray(destination)||destination.length!==3||!destination.every(Number.isFinite))return false;
     const p=player.getPosition(),duration=Math.max(.55,Math.min(2.2,Number(options.duration)||1.15));
     const requestedClips=Array.isArray(options.clips)?options.clips:[name];
     const clips=requestedClips.map(resolveHeroClip).filter(Boolean);
     if(!clips.length)return false;
-    traversalMotion={start:[p.x,p.y,p.z],end:[pc.math.clamp(destination[0],-46,46),Math.max(0,destination[1]),pc.math.clamp(destination[2],-195,420)],duration,elapsed:0,apex:Math.max(.05,Math.min(.65,Number(options.apex)||.3)),mode:options.mode||"vault",clips,activePhase:-1,activeClip:clips[0]};
+    const end=[pc.math.clamp(destination[0],-46,46),Math.max(0,destination[1]),pc.math.clamp(destination[2],-195,420)];
+    const dx=end[0]-p.x,dz=end[2]-p.z;
+    if(Math.hypot(dx,dz)>.05)player.setEulerAngles(0,Math.atan2(dx,-dz)*180/Math.PI,0);
+    traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex:Math.max(.05,Math.min(.65,Number(options.apex)||.3)),mode:options.mode||"vault",clips,activePhase:-1,activeClip:clips[0]};
     actionClip=clips[0];actionTimer=duration+.16;grounded=false;jumpBuffer=0;transitionHeroClip(clips[0],.08);onEffect?.("parkour",[p.x,p.y,p.z]);return true;
   }
 
@@ -249,7 +254,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     running = !traversalMotion && moving && !input.crouch && (input.sprint || keys.shift) && stamina > 0;
     if (running) stamina = Math.max(0, stamina - 26 * step);
     else stamina = Math.min(100, stamina + 19 * step);
-    const speed = input.crouch ? 0.9 : running ? 4.25 : 1.8;
+    // The Ara FBX walk take is a 1.067 s cycle and run is 0.733 s.
+    // Keep travel speed proportionate to a 1.8 m human rather than making every step slide.
+    const speed = input.crouch ? 0.85 : running ? 3.2 : 1.35;
 
     // Camera-relative movement: joystick up moves toward the camera's forward direction.
     forward.set(-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw));
