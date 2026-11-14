@@ -355,9 +355,12 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       const obstacle=traversalObstacles.find(item=>item.type===type);if(!obstacle)return {started:false,type};
       const center=obstacle.entity.getPosition(),offset=type==="wall-run"?-.7:0;
       playerController.setPositionForSmoke([center.x+offset,0,center.z+1.55],0);
+      const startPosition=playerController.getState().position.slice();
       const started=traversalSystem.tryContextualTraversal(playerController.getState());
       for(let i=0;i<58;i++){playerController.update(.05);traversalSystem.update(.05);vfxSystem.update(.05);}
-      const traversal=traversalSystem.getState();return {started,type,traversal,player:playerController.getState(),completed:!playerController.getState().traversing&&traversal.traversalsCompleted>0};
+      const traversal=traversalSystem.getState(),player=playerController.getState();
+      const distanceTravelled=Math.hypot(player.position[0]-startPosition[0],player.position[2]-startPosition[2]);
+      return {started,type,traversal,player,completed:!player.traversing&&traversal.traversalsCompleted>0,startPosition,distanceTravelled};
     };
     gameApi.debugJumpPhysicsForSmoke=()=>{
       playerController.setPositionForSmoke([0,0,0],0);playerController.queueJumpForSmoke();
