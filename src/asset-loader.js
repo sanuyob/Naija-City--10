@@ -121,10 +121,7 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
  * it is decoded once at runtime to a Blob URL before PlayCanvas ContainerHandler loads it.
  */
 export async function loadHeroCharacter(app, {
-  urls = [
-    'assets/hero/NaijaCityHero01_60clips.part1.b64',
-    'assets/hero/NaijaCityHero01_60clips.part2.b64'
-  ],
+  urls = ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
   statusLabel
 } = {}) {
   const setStatus = message => {
