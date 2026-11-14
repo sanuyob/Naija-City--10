@@ -360,7 +360,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       for(let i=0;i<58;i++){playerController.update(.05);traversalSystem.update(.05);vfxSystem.update(.05);}
       const traversal=traversalSystem.getState(),player=playerController.getState();
       const distanceTravelled=Math.hypot(player.position[0]-startPosition[0],player.position[2]-startPosition[2]);
-      return {started,type,traversal,player,completed:!player.traversing&&traversal.traversalsCompleted>0,startPosition,distanceTravelled};
+      return {started,type,traversal,player,completed:!player.traversing&&traversal.traversalsCompleted>0,startPosition,distanceTravelled,verticalTravel:player.position[1]-startPosition[1]};
     };
     gameApi.debugJumpPhysicsForSmoke=()=>{
       playerController.setPositionForSmoke([0,0,0],0);playerController.queueJumpForSmoke();
