@@ -152,7 +152,8 @@ export function mountRPGInterface() {
         const roster = await window.__NAIJA_GAME__?.getCharacterRoster?.();
         setCharacterRoster(roster);
       } finally {
-        button.disabled = !(await window.__NAIJA_GAME__?.getCharacterRoster?.())?.characters?.some(item => item.id === 'ara-female' && item.available);
+        const roster = await window.__NAIJA_GAME__?.getCharacterRoster?.();
+        button.disabled = !roster?.characters?.some(item => item.id === 'ara-female' && item.available);
       }
       return;
     }
