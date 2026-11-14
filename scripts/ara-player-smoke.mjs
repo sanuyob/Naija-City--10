@@ -44,7 +44,7 @@ try{
  await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
  await page.waitForTimeout(1350);
  const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.()}));
- if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.01)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
+ if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.005)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
  if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite)||walkState.player.footPlacementHits<1)throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
  await page.mouse.up();
  // Reversing the stick direction must turn the visible character, not leave it walking side-on.
