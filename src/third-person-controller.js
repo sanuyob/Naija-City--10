@@ -99,25 +99,50 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let footstepClock = 0;
   const availableHeroClips = new Set(heroCharacter?.clipNames || []);
   const heroClipDurations = heroCharacter?.clipDurations || {};
+  const heroDefaults = heroCharacter?.defaultClips || {
+    idle: 'Hero01_Idle', walk: 'Hero01_Walk', run: 'Hero01_Sprint',
+    jump: 'Hero01_Jump', landing: 'Hero01_Landing', crouch: 'Hero01_Crouch'
+  };
+  const animationFallbacks = {
+    idle: heroDefaults.idle,
+    walk: heroDefaults.walk || heroDefaults.run || heroDefaults.idle,
+    run: heroDefaults.run || heroDefaults.walk || heroDefaults.idle,
+    jump: heroDefaults.jump || heroDefaults.run || heroDefaults.walk || heroDefaults.idle,
+    landing: heroDefaults.landing || heroDefaults.idle,
+    crouch: heroDefaults.crouch || heroDefaults.idle
+  };
+  function resolveHeroClip(name) {
+    if (availableHeroClips.has(name)) return name;
+    const normalized = String(name || '').toLowerCase();
+    let key = 'idle';
+    if (/walk|shimmy|step|ladder|balance/.test(normalized)) key = 'walk';
+    else if (/run|sprint|vault|mantle|wall|hop|jump|climb/.test(normalized)) key = 'run';
+    else if (/land|drop|hang|idle|interact|crouch|sit|tired/.test(normalized)) key = normalized.includes('land') || normalized.includes('drop') ? 'landing' : normalized.includes('crouch') ? 'crouch' : 'idle';
+    return animationFallbacks[key] || animationFallbacks.idle || null;
+  }
 
   function transitionHeroClip(name, blendTime = 0.16) {
-    if (!heroVisual?.anim || !availableHeroClips.has(name) || activeHeroClip === name) return false;
+    const resolvedName = resolveHeroClip(name);
+    if (!heroVisual?.anim || !resolvedName || activeHeroClip === resolvedName) return false;
     try {
-      heroVisual.anim.baseLayer.transition(name, blendTime);
-      activeHeroClip = name;
+      heroVisual.anim.baseLayer.transition(resolvedName, blendTime);
+      activeHeroClip = resolvedName;
       return true;
     } catch (error) {
-      console.warn('Hero animation transition failed:', name, error);
+      console.warn('Character animation transition failed:', name, '→', resolvedName, error);
       return false;
     }
   }
 
   function playAnimation(name, durationSeconds = null) {
-    if (!heroVisual?.anim || !availableHeroClips.has(name)) return false;
+    const resolvedName = resolveHeroClip(name);
+    if (!heroVisual?.anim || !resolvedName) return false;
     actionClip = name;
-    const clipDuration = Number.isFinite(durationSeconds) ? durationSeconds : (heroClipDurations[name] || 1.9);
+    const clipDuration = Number.isFinite(durationSeconds)
+      ? durationSeconds
+      : (heroClipDurations[resolvedName] || heroClipDurations[name] || 1.9);
     actionTimer = Math.max(0.1, Math.min(6, clipDuration));
-    return transitionHeroClip(name, 0.12) || activeHeroClip === name;
+    return transitionHeroClip(name, 0.12) || activeHeroClip === resolvedName;
   }
 
   function playFaceExpression(name, weight = 1) {
@@ -128,7 +153,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if(!heroVisual?.anim||!availableHeroClips.has(name)||!grounded||traversalMotion)return false;
     if(!Array.isArray(destination)||destination.length!==3||!destination.every(Number.isFinite))return false;
     const p=player.getPosition(),duration=Math.max(.55,Math.min(2.2,Number(options.duration)||1.15));
-    const clips=(Array.isArray(options.clips)?options.clips:[name]).filter(clip=>availableHeroClips.has(clip));
+    const requestedClips=Array.isArray(options.clips)?options.clips:[name];
+    const clips=requestedClips.map(resolveHeroClip).filter(Boolean);
     if(!clips.length)return false;
     traversalMotion={start:[p.x,p.y,p.z],end:[pc.math.clamp(destination[0],-46,46),Math.max(0,destination[1]),pc.math.clamp(destination[2],-195,420)],duration,elapsed:0,apex:Math.max(.05,Math.min(.65,Number(options.apex)||.3)),mode:options.mode||"vault",clips,activePhase:-1,activeClip:clips[0]};
     actionClip=clips[0];actionTimer=duration+.16;grounded=false;jumpBuffer=0;transitionHeroClip(clips[0],.08);onEffect?.("parkour",[p.x,p.y,p.z]);return true;
@@ -223,7 +249,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     running = !traversalMotion && moving && !input.crouch && (input.sprint || keys.shift) && stamina > 0;
     if (running) stamina = Math.max(0, stamina - 26 * step);
     else stamina = Math.min(100, stamina + 19 * step);
-    const speed = input.crouch ? 1.55 : running ? 6.0 : 3.15;
+    const speed = input.crouch ? 0.9 : running ? 4.25 : 1.8;
 
     // Camera-relative movement: joystick up moves toward the camera's forward direction.
     forward.set(-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw));
@@ -370,6 +396,10 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     getAnimationState: () => ({
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
+      source: heroCharacter?.source || 'procedural-fallback',
+      defaultClips: { ...animationFallbacks },
+      parkourUsesLocomotionFallback: !availableHeroClips.has('Hero01_VaultLow') &&
+        !availableHeroClips.has('Hero01_Mantle') && !availableHeroClips.has('Hero01_LedgePullUp'),
       faceMorphCount: heroCharacter?.morphNames?.length ?? 0,
       playable: !!heroVisual?.anim?.playable
     }),
