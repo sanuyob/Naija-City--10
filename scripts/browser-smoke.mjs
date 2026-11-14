@@ -174,6 +174,79 @@ try {
  const dismissed=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Dismiss')===true);
  if(!dismissed)throw new Error('Companion Dismiss command failed');
  await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
+
+ // Multi-character integration QA. The second slot is seeded with a valid
+ // bundled GLB fixture because the user's actual Ara FBX is stored only on their phone.
+ const characterFixture=await page.evaluate(async()=>{
+  const url=new URL('assets/hero/NaijaCityHero01_60clips.glb.b64',location.href);
+  const response=await fetch(url);
+  if(!response.ok)throw new Error('Could not load bundled GLB test fixture: HTTP '+response.status);
+  const encoded=(await response.text()).replace(/\\s+/g,'');
+  const binary=atob(encoded),bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  if(bytes.length<20||bytes[0]!==0x67||bytes[1]!==0x6c||bytes[2]!==0x54||bytes[3]!==0x46)throw new Error('Character test fixture is not a GLB');
+  const db=await new Promise((resolve,reject)=>{
+   const request=indexedDB.open('naija-city-player-assets',1);
+   request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('characters'))request.result.createObjectStore('characters');};
+   request.onsuccess=()=>resolve(request.result);
+   request.onerror=()=>reject(request.error||new Error('Could not open character roster database'));
+  });
+  await new Promise((resolve,reject)=>{
+   const tx=db.transaction('characters','readwrite');
+   tx.objectStore('characters').put({
+    buffer:bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),
+    metadata:{source:'browser-smoke-fixture',displayName:'Ara test fixture'}
+   },'ara-female');
+   tx.oncomplete=resolve;
+   tx.onerror=()=>reject(tx.error||new Error('Could not seed Ara second slot'));
+   tx.onabort=()=>reject(tx.error||new Error('Ara fixture transaction aborted'));
+  });
+  db.close();
+  return {bytes:bytes.length};
+ });
+ if(characterFixture.bytes<1000)throw new Error('Character roster fixture was not persisted');
+ await page.locator('[data-open="pause"]').click();
+ await page.locator('[data-open="character"]:visible').last().click();
+ await page.locator('#character-roster').waitFor({state:'visible'});
+ const rosterPanelText=await page.locator('#character-roster').textContent();
+ if(!rosterPanelText?.includes('HERO 01')||!rosterPanelText.includes('ARA 3D FEMALE'))throw new Error('Player menu did not show both character slots: '+rosterPanelText);
+ const beforeCharacterSwap=await page.evaluate(()=>({
+  position:window.__NAIJA_GAME__.getPlayerState().position,
+  physics:window.__NAIJA_GAME__.getPhysicsState().player
+ }));
+ await page.locator('[data-player-action="main"][data-player-id="ara-female"]').click();
+ await page.waitForFunction(async()=>{
+  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
+  const animation=window.__NAIJA_GAME__?.getHeroAnimationState?.();
+  return roster?.activeId==='ara-female'&&roster?.mainId==='ara-female'&&animation?.characterId==='ara-female';
+ },null,{timeout:15000});
+ const afterAraMain=await page.evaluate(()=>({
+  roster:window.__NAIJA_GAME__.getCharacterRoster(),
+  player:window.__NAIJA_GAME__.getPlayerState(),
+  physics:window.__NAIJA_GAME__.getPhysicsState().player,
+  animation:window.__NAIJA_GAME__.getHeroAnimationState(),
+  rig:window.__NAIJA_GAME__.getHeroRigSnapshot()
+ }));
+ const mainState=await afterAraMain.roster;
+ if(mainState.activeId!=='ara-female'||mainState.mainId!=='ara-female'||afterAraMain.animation.displayName!=='Ara 3D Female'||afterAraMain.animation.availableClipCount<3)throw new Error('Ara second character failed to load as main: '+JSON.stringify(afterAraMain));
+ if(afterAraMain.physics.mode!==beforeCharacterSwap.physics.mode||afterAraMain.physics.colliderCount!==beforeCharacterSwap.physics.colliderCount||afterAraMain.physics.capsuleHeight!==beforeCharacterSwap.physics.capsuleHeight||afterAraMain.player.position.some((value,index)=>Math.abs(value-beforeCharacterSwap.position[index])>.001))throw new Error('Switching to Ara reset player transform or Bullet physics: '+JSON.stringify({beforeCharacterSwap,afterAraMain}));
+ await page.locator('[data-player-action="switch"][data-player-id="hero01"]').click();
+ await page.waitForFunction(async()=>{
+  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
+  return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
+ },null,{timeout:10000});
+ await page.locator('[data-close]').click();
+ await page.locator('#character-switch-button').waitFor({state:'visible'});
+ if(await page.locator('#character-switch-button').isDisabled())throw new Error('Quick-switch button stayed disabled after both characters were installed');
+ await page.locator('#character-switch-button').tap();
+ await page.waitForFunction(async()=> (await window.__NAIJA_GAME__?.getCharacterRoster?.())?.activeId==='ara-female',null,{timeout:10000});
+ await page.locator('#character-switch-button').tap();
+ await page.waitForFunction(async()=>{
+  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
+  return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
+ },null,{timeout:10000});
+ console.log('Two-character QA: both roster entries loaded; Set as Main persisted Ara; Switch To and HUD quick-switch preserved player transform and Bullet capsule.');
+
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  const visual=await page.evaluate(async encoded=>{
