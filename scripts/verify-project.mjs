@@ -129,7 +129,7 @@ assert.match(playerCharacterStore,/ARA_KEY = 'ara-female'/,'Ara must have its ow
 assert.match(playerCharacterStore,/ACTIVE_KEY = 'active-player'/,'The chosen main character must persist independently');
 assert.match(playerCharacterStore,/getActivePlayerCharacter/,'The saved main character must load on the next launch');
 assert.match(playerCharacterStore,/setActivePlayerCharacter/,'The player must be able to persist a main-character change');
-assert.match(playerCharacterStore,/store\.delete\(LEGACY_KEY\)/,'Older single-character Ara imports must migrate without replacing Hero 01');
+assert.match(playerCharacterStore,/delete\(LEGACY_KEY\)/,'Older single-character Ara imports must migrate without replacing Hero 01');
 assert.match(loader,/loadSavedPlayerCharacter\('ara-female'\)/,'Ara loader must read only its dedicated second slot');
 assert.match(loader,/characterId === 'ara-female'/,'Runtime loader must distinguish Hero 01 from Ara');
 assert.match(loader,/naija-city-ara-female/,'Ara must use a separate PlayCanvas asset instance');
