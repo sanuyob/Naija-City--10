@@ -206,11 +206,17 @@ export async function loadHeroCharacter(app, {
 
     const findClip = patterns => clipNames.find(name => patterns.some(pattern => pattern.test(name)));
     const defaultClips = {
-      idle: findClip([/idle/i, /stand/i]) || clipNames[0],
-      walk: findClip([/walk/i]) || findClip([/jog/i]) || findClip([/run|sprint/i]) || clipNames[0],
-      run: findClip([/run|sprint/i]) || findClip([/jog/i]) || findClip([/walk/i]) || clipNames[0],
-      jump: findClip([/jump/i]) || findClip([/leap/i]) || null,
-      landing: findClip([/land/i]) || findClip([/idle/i]) || null,
+      idle: findClip([/^idle$/i, /idle/i, /stand/i]) || clipNames[0],
+      walk: findClip([/^walk$/i, /walk/i]) || findClip([/jog/i]) || findClip([/run|sprint/i]) || clipNames[0],
+      run: findClip([/^run$/i, /run|sprint/i]) || findClip([/jog/i]) || findClip([/walk/i]) || clipNames[0],
+      jumpStart: findClip([/jump.*start|take.?off/i]) || findClip([/^jump$/i]) || null,
+      jump: findClip([/jump.*in.?air|in.?air/i]) || findClip([/^jump$/i]) || findClip([/jump|leap/i]) || null,
+      landing: findClip([/jump.*land|land(ing)?/i]) || findClip([/idle/i]) || null,
+      vault: findClip([/vault/i]) || null,
+      climb: findClip([/climb|ledge|mantle|ladder/i]) || null,
+      roll: findClip([/roll/i]) || null,
+      dodgeLeft: findClip([/dodge.*left|left.*dodge/i]) || null,
+      dodgeRight: findClip([/dodge.*right|right.*dodge/i]) || null,
       crouch: findClip([/crouch|duck/i]) || null
     };
     // Locomotion and idle clips must loop when this rig is used for either

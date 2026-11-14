@@ -115,3 +115,10 @@ Stage 08E introduces a generated, validated GLB asset pipeline for the 48 existi
 Generate the assets with `npm run assets:08e`. The build and verification commands generate them automatically. Structural checks inspect every GLB header, embedded image, UV accessor, material family, LOD node and collision proxy.
 
 **Known remaining work:** the current generator embeds PNG maps; Basis/KTX2 GPU texture compression and true GPU-memory savings are not yet complete. The collision proxies are authored as separate hidden meshes but are not yet wired into a world collision system. Distant GLB containers are evicted with PlayCanvas asset unloading beyond the stream radius (the first shared-material source is pinned); actual device memory behaviour still needs profiling. Automated Chromium checks are not a substitute for loading, memory and frame-rate measurements on the actual Itel A90.
+
+
+### Ara player animation, feedback and audio
+
+The bundled Ara Female Executive rig maps its real source clips to player locomotion and traversal aliases: Idle, Walk, Run, Jump start, Jump in air, Jump land, Vault over obstacle, Climb up ledge, Forward roll, and left/right dodge. Jump take-off now uses its own short start clip before the airborne loop; vault/climb aliases resolve to the actual parkour clips instead of falling back to a jump pose. The browser smoke test checks all ten animation aliases, jump/landing physics, jump/landing VFX events, and a completed low-vault traversal.
+
+Player feedback currently includes pooled lightweight dust/jump/landing/parkour VFX plus original procedural Web Audio one-shots for footsteps, jump, landing and parkour. Audio initializes only after a user gesture to comply with mobile browser autoplay rules. These synthesized effects are a functional first sound pass, not final recorded Foley or the full city ambience mix.

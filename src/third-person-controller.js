@@ -65,23 +65,35 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     walk: defaults.walk || defaults.run || defaults.idle,
     run: defaults.run || defaults.walk || defaults.idle,
     jump: defaults.jump || defaults.idle,
-    action: defaults.jump || defaults.idle,
+    jumpStart: defaults.jumpStart || defaults.jump || defaults.idle,
+    action: defaults.vault || defaults.climb || defaults.jump || defaults.idle,
+    vault: defaults.vault || defaults.climb || defaults.jump || defaults.idle,
+    climb: defaults.climb || defaults.vault || defaults.jump || defaults.idle,
+    roll: defaults.roll || defaults.vault || defaults.jump || defaults.idle,
+    dodgeLeft: defaults.dodgeLeft || defaults.roll || defaults.run || defaults.idle,
+    dodgeRight: defaults.dodgeRight || defaults.roll || defaults.run || defaults.idle,
     landing: defaults.landing || defaults.idle,
     crouch: defaults.crouch || defaults.idle
   });
   let animationFallbacks = buildAnimationFallbacks(heroDefaults);
+  let jumpStartTimer = 0;
   function resolveHeroClip(name) {
     if (availableHeroClips.has(name)) return name;
     const normalized = String(name || '').toLowerCase();
     let key = 'idle';
-    if (/walk|shimmy|step|balance/.test(normalized)) key = 'walk';
-    else if (/run|sprint|jog/.test(normalized)) key = 'run';
+    if (/dodge.*left|left.*dodge/.test(normalized)) key = 'dodgeLeft';
+    else if (/dodge.*right|right.*dodge/.test(normalized)) key = 'dodgeRight';
+    else if (/roll/.test(normalized)) key = 'roll';
+    else if (/jump.*start|take.?off/.test(normalized)) key = 'jumpStart';
     else if (/jump|leap/.test(normalized)) key = 'jump';
-    else if (/vault|mantle|wall|hop|climb|ladder|pullup|pull-up|hang/.test(normalized)) key = 'action';
+    else if (/walk|shimmy|step|balance/.test(normalized)) key = 'walk';
+    else if (/run|sprint|jog/.test(normalized)) key = 'run';
+    else if (/vault|wall.?run|wall.?hop/.test(normalized)) key = 'vault';
+    else if (/mantle|climb|ladder|ledge|pullup|pull-up|hang/.test(normalized)) key = 'climb';
     else if (/land|drop/.test(normalized)) key = 'landing';
     else if (/crouch/.test(normalized)) key = 'crouch';
-    else key = 'idle';
-    return animationFallbacks[key] || animationFallbacks.idle || null;
+    else if (/interact/.test(normalized)) key = 'idle';
+    return animationFallbacks[key] || animationFallbacks.action || animationFallbacks.idle || null;
   }
 
   function transitionHeroClip(name, blendTime = 0.16) {
@@ -117,7 +129,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if(!Array.isArray(destination)||destination.length!==3||!destination.every(Number.isFinite))return false;
     const p=player.getPosition();
     const requestedClips=Array.isArray(options.clips)?options.clips:[name];
-    const missingActionClip=requestedClips.some(clip=>!availableHeroClips.has(clip));
+    const missingActionClip=requestedClips.some(clip=>{const resolved=resolveHeroClip(clip);return !resolved||!availableHeroClips.has(resolved);});
     const clips=requestedClips.map(resolveHeroClip).filter(Boolean);
     if(!clips.length)return false;
     const end=[pc.math.clamp(destination[0],-46,46),Math.max(0,destination[1]),pc.math.clamp(destination[2],-195,420)];
@@ -298,7 +310,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
         }
       }
     }else{
-      if(jumpBuffer>0&&coyote>0){velocity.y=6.45;grounded=false;coyote=0;jumpBuffer=0;onEffect?.("jump",currentPosition);}
+      if(jumpBuffer>0&&coyote>0){velocity.y=6.45;grounded=false;coyote=0;jumpBuffer=0;jumpStartTimer=.22;transitionHeroClip('Hero01_JumpStart',.07);onEffect?.("jump",currentPosition);}
       const desired=[movement.x*speed,0,movement.z*speed];
       if(physics?.step){
         const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded};
@@ -344,14 +356,15 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       else if (landingTimer > 0) {
         landingTimer = Math.max(0, landingTimer - step);
         transitionHeroClip('Hero01_Landing', 0.08);
-        heroCharacterPose('landing',!availableHeroClips.has('Hero01_Landing'));
+        heroCharacterPose('landing',!availableHeroClips.has(resolveHeroClip('Hero01_Landing')));
       } else if (actionTimer > 0) {
         actionTimer = Math.max(0, actionTimer - step);
         transitionHeroClip(actionClip, 0.12);
         if (actionTimer === 0) actionClip = '';
       } else if (!grounded) {
-        transitionHeroClip('Hero01_Jump');
-        heroCharacterPose('jump',!availableHeroClips.has('Hero01_Jump'));
+        jumpStartTimer=Math.max(0,jumpStartTimer-step);
+        transitionHeroClip(jumpStartTimer>0?'Hero01_JumpStart':'Hero01_Jump');
+        heroCharacterPose('jump',!availableHeroClips.has(resolveHeroClip('Hero01_Jump')));
       } else if (input.crouch) {
         heroCharacterPose(null,false);
         transitionHeroClip(moving ? 'Hero01_CrouchWalk' : 'Hero01_Crouch');
@@ -389,7 +402,11 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       }
     }
 
-    if(running){footstepClock+=step;if(footstepClock>=.32){footstepClock=0;onEffect?.("dust",[p.x,p.y+.02,p.z]);}}else footstepClock=0;
+    if(moving&&grounded&&!traversalMotion){
+      footstepClock+=step;
+      const stepInterval=running?.31:.46;
+      if(footstepClock>=stepInterval){footstepClock-=stepInterval;onEffect?.("dust",[p.x,p.y+.02,p.z]);}
+    }else if(!moving||!grounded)footstepClock=0;
     const yaw = cameraYaw;
     const horizontal = Math.cos(cameraPitch) * cameraDistance;
     cameraTarget.set(p.x, p.y + 1.28, p.z);
@@ -420,7 +437,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player.setPosition(position[0], position[1], position[2]);
     physics?.teleport?.(position,[0,0,0]);
     player.setEulerAngles(0, Number(yaw) || 0, 0);
-    velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;coyote=.14;footstepClock=0;input.jumpQueued=false;
+    velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;input.jumpQueued=false;
     return true;
   }
 
