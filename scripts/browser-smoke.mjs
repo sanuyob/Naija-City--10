@@ -17,6 +17,7 @@ try {
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RPG_UI__?.isPlayerCharacterRequired?.()===true,null,{timeout:15000});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
+ await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
  const state=await page.evaluate(()=>{
   const game=window.__NAIJA_GAME__;
   const scalarFields=source=>Object.fromEntries(Object.entries(source||{}).filter(([,value])=>value===null||['string','number','boolean'].includes(typeof value)));
@@ -153,7 +154,6 @@ try {
  await page.locator('[data-open="pause"]').click();
  if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Pause input dismissed the required Ara import screen.');
 
- await page.locator('[data-close]').click();
 
  // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -183,7 +183,7 @@ try {
  // Verify ten full NPCs are rendered, move on their routes and share actor physics.
  const crowd=await page.evaluate(()=>window.__NAIJA_GAME__?.getPedestrianState?.());
  const actorPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.getPhysicsState?.());
- if(crowd?.activeCount!==10||crowd?.visibleCount!==10||crowd?.renderMeshInstances<60||crowd?.moved<1||actorPhysics?.agents?.steps<1)throw new Error('Ambient NPC population/physics missing or idle: '+JSON.stringify({crowd,actorPhysics,poseReports,parkourReports}));
+ if(crowd?.activeCount!==10||crowd?.visibleCount!==10||crowd?.renderMeshInstances<60||crowd?.moved<1||actorPhysics?.agents?.steps<1)throw new Error('Ambient NPC population/physics missing or idle: '+JSON.stringify({crowd,actorPhysics,initialPlayerRig,parkourReports}));
  console.log('Player Bullet physics:',JSON.stringify(actorPhysics?.player));
  console.log('Parkour traversal QA:',JSON.stringify(parkourReports));
  // Verify remote-entry companions, the two-person cap and approved squad commands.
@@ -201,7 +201,7 @@ try {
  await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
 
  console.log('Ara QA: no Ara asset is installed in this build; the test requires an import and prevents Hero 01 from being mislabelled as Ara.');
- console.log('Ara-only QA: female player rig active; Hero 01 remains a moving, animated non-player pedestrian; all swap UI removed.');
+ console.log('Ara QA: no Ara asset is installed in this build; the import gate is tested, and Hero 01 is never used as the player fixture.');
 
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
