@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 import { createThirdPersonController } from './third-person-controller.js';
-import { loadSceneAssets } from './asset-loader.js';
+import { loadSceneAssets, loadHeroCharacter } from './asset-loader.js';
 import { createStage08ACityExpansion } from './stage-08a-city-expansion.js';
 import { createStage08BBuildingDetail } from './stage-08b-building-detail.js';
 import { createStage08CStreetInfrastructure } from './stage-08c-street-infrastructure.js';
@@ -189,13 +189,28 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
 
   statusLabel.textContent='Loading GLB models and textures…';
   const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
+  let heroCharacter = null;
+  try {
+    heroCharacter = await loadHeroCharacter(app, {
+      url: 'assets/hero/NaijaCityHero01_18clips.glb.b64',
+      statusLabel: assetStatusLabel
+    });
+  } catch (error) {
+    console.warn('Hero 01 GLB unavailable; keeping procedural player fallback:', error);
+    if (assetStatusLabel) {
+      assetStatusLabel.textContent = 'Hero 01 unavailable · procedural character fallback active';
+      assetStatusLabel.dataset.state = 'warning';
+    }
+  }
   const stage08E=createStage08EBuildings({app});
   await stage08E.initialize();
   const stage08G=createStage08GIkejaStreetLife({app,box,material});
   const stage08H=createStage08HIkejaPropRealism({app,graphicsDevice:device});
   const playerController=createThirdPersonController(app,camera,canvas,{
     resolveMovement:stage08E.resolveMovement,
+    heroCharacter,
     onInteract:state=>{
+      playerController?.playAnimation?.('Hero01_Interact');
       const [px,,pz]=state.position;
       const targets=[{name:'Street kiosk',x:-7.9,z:-17},{name:'Bus stop',x:7.3,z:-37}];
       const nearest=targets.map(target=>({...target,distance:Math.hypot(px-target.x,pz-target.z)})).sort((a,b)=>a.distance-b.distance)[0];
@@ -207,6 +222,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const stage08FProfiler = createStage08FDeviceProfiler({ app, canvas, device, stage08E });
   window.__NAIJA_STAGE08F_PROFILE__ = stage08FProfiler;
   window.__NAIJA_INTERACT__=()=>playerController.interact();
+  window.__NAIJA_PLAY_HERO_ANIMATION__=name=>playerController.playAnimation(name);
   statusLabel.textContent='Third-person character ready — WASD / touch joystick';
 
   // Stage 06: city traffic continues as lightweight kinematic scenery.
@@ -265,10 +281,10 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:'procedural-human',movement:true,sprint:true,jump:true,proceduralAnimations:true,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
+  const gameApi={ready:true,stage:8,hudStage:7,stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'procedural-human',heroAnimations:heroCharacter?.clipNames??[],movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState()};
   if(new URLSearchParams(window.location.search).has('smoke')) gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
   window.__NAIJA_GAME__=gameApi;
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
-  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
+  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
   app.start();statusLabel.textContent='Ready — Stage 06 third-person character system';
 }
