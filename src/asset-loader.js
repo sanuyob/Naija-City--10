@@ -160,12 +160,18 @@ export async function loadHeroCharacter(app, {
     if (!root.anim) throw new Error('PlayCanvas did not create the Hero animation component');
 
     const clipNames = [];
+    const clipDurations = {};
+    const loopable = new Set([
+      'Hero01_Idle', 'Hero01_Walk', 'Hero01_Run', 'Hero01_Sprint',
+      'Hero01_Crouch', 'Hero01_CrouchWalk', 'Hero01_TiredIdle', 'Hero01_SitIdle'
+    ]);
     const animationAssets = asset.resource.animations || [];
     for (const animation of animationAssets) {
       const track = animation?.resource || animation;
       const name = track?.name || animation?.name;
       if (!name || !track) continue;
-      root.anim.assignAnimation(name, track);
+      root.anim.assignAnimation(name, track, undefined, 1, loopable.has(name));
+      clipDurations[name] = Number.isFinite(track.duration) ? track.duration : 1.9;
       clipNames.push(name);
     }
     if (!clipNames.includes('Hero01_Idle')) {
@@ -173,7 +179,7 @@ export async function loadHeroCharacter(app, {
     }
     root.anim.baseLayer.transition('Hero01_Idle', 0.1);
     setStatus('Hero 01 ready · ' + clipNames.length + ' named animations loaded');
-    return { root, asset, clipNames };
+    return { root, asset, clipNames, clipDurations };
   } catch (error) {
     asset.unload?.();
     app.assets.remove(asset);
