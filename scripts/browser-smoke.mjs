@@ -237,6 +237,16 @@ try {
   const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
   return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
  },null,{timeout:10000});
+ await page.locator('[data-player-action="main"][data-player-id="ara-female"]').click();
+ await page.waitForFunction(async()=>{
+  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
+  return roster?.activeId==='ara-female'&&roster?.mainId==='ara-female';
+ },null,{timeout:10000});
+ await page.locator('[data-player-action="switch"][data-player-id="hero01"]').click();
+ await page.waitForFunction(async()=>{
+  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
+  return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
+ },null,{timeout:10000});
  await page.locator('[data-close]').click();
  await page.locator('#character-switch-button').waitFor({state:'visible'});
  if(await page.locator('#character-switch-button').isDisabled())throw new Error('Quick-switch button stayed disabled after both characters were installed');
