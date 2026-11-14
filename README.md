@@ -78,23 +78,23 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 ## Verify
 `npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser`
 
+Linux build environments also need the Khronos KTX-Software 4.4.2 command-line tool (`ktx`) on `PATH` for the Stage 08F UASTC/ETC1S texture compression step. The GitHub Actions verify and deploy workflows install the official release and verify its SHA-256 checksum automatically.
+
 ## Hero 01 NPC rig integration
 
-The feature branch includes the original Hero 01 GLB and a PlayCanvas ContainerAsset loader. The current GLB contains 60 separately named animations on one 20-joint humanoid rig: 14 locomotion clips, 18 contextual traversal clips, 8 everyday-interaction clips, 10 squad-interaction clips and 10 fictional equipment/technology presentation clips. It includes 11 PBR materials with embedded base-colour, normal, metallic-roughness and occlusion maps, UVs on every mesh primitive, four facial-expression morph targets and two blink morph targets.
+The original Hero 01 asset remains a separate animated city NPC, not the playable character. Its GLB contains 60 separately named animations on one 20-joint humanoid rig, 11 PBR materials with embedded texture channels, UVs on every mesh primitive, four facial-expression morph targets and two blink morph targets. The NPC uses the existing pedestrian route system and does not occupy the player slot.
 
-The T-shirt, overshirt panels, sleeves and trousers are weighted to multiple armature bones. A Blender deformation check measured vertex movement on both sleeves and both trouser legs after shoulder/hip rotations. The GLB was re-imported in Blender with all 60 non-empty actions, one 20-joint skin and all six facial morph targets.
+The third-person controller owns Ara's player position, collision, stamina, touch input and camera. Ara is loaded from the bundled Female Executive GLB described below. Hero 01 remains independently loaded for the city NPC population.
 
-The third-person controller remains authoritative for player position, collision, stamina, touch input and camera. Hero 01 is instantiated only as a city NPC. If the user-supplied Ara GLB is absent or invalid, the game pins the Player import panel open and disables movement/actions; it never substitutes Hero 01 as the player.
-
-The 2.81 MB GLB is stored as two base64 text files in the repository and decoded to a Blob URL at runtime. This preserves the generated binary asset through the repository text-file API, but adds a small startup decode and memory overhead.
+The 2.81 MB Hero 01 GLB is stored as two base64 text files in the repository and decoded to a Blob URL at runtime. This preserves the generated binary asset through the repository text-file API, but adds a small startup decode and memory overhead.
 
 ## Ara 3D Gen main player asset and verification
 
-The ready-made **The Female Executive** preset from Ara 3D Gen is exported as `public/assets/hero/Ara_Female_Executive_Animated.glb` and bundled with the game. It is a 7.0 MiB GLB with a 70-bone game rig, 25 skinned mesh parts, 785,250 weighted vertices and 12 embedded clips: Idle, Walk, Run, Jump, Jump start, Jump (in air), Jump land, Vault over obstacle, Climb up ledge, Forward roll and both side dodges. The player loader now fetches this bundled GLB directly; no user FBX upload or IndexedDB import is required. Ara remains the only playable character and Hero 01 remains a separate animated city NPC.
+The ready-made **The Female Executive** preset from Ara 3D Gen is exported as `public/assets/hero/Ara_Female_Executive_Animated.glb` and bundled with the game. It is a 7.0 MiB GLB with a 70-bone game rig, 25 skinned mesh parts, 785,250 weighted vertices and 12 embedded clips: Idle, Walk, Run, Jump, Jump start, Jump (in air), Jump land, Vault over obstacle, Climb up ledge, Forward roll and both side dodges. The player loader fetches this bundled GLB directly; no user FBX upload or IndexedDB import is required. Ara is the only playable character and Hero 01 remains a separate animated city NPC.
 
-The character generator is [Ara 3D Gen](https://ara3dgen.com), open source under MIT. Its MakeHuman-derived character assets are CC0; the included animation licence and CMU motion-capture notice are preserved in the upstream export package documentation. The bundled asset was exported from the named preset with GLB, game rig and selected animation clips.
+The character generator is [Ara 3D Gen](https://ara3dgen.com), open source under MIT. Its MakeHuman-derived character assets are CC0; the included animation licence and CMU motion-capture notice are preserved in the accompanying provenance notice.
 
-`npm run build` and a dedicated Playwright smoke test were run. The smoke test confirms the bundled GLB loads as the playable character, exposes 70 bones and 12 animations, renders scene draw calls, and leaves Hero 01 as a moving NPC. The legacy full verification script still has an unrelated KTX compressor prerequisite (`ktx`) missing in this Box environment; the targeted smoke test and direct Vite production build pass. A real Android-device performance/touch test is still outstanding.
+**Verified in the Box environment:** `npm run verify`, `npm run build` and `npm run test:browser` all pass. The browser tests load Ara as the real player, validate the 70-bone/25-mesh rig, exercise ten animation aliases, move the player with the touch joystick, switch from Walk to Run while sprinting, test jump/landing physics and VFX, complete all eight contextual traversal types, confirm Hero 01 remains a moving NPC, exercise companion commands, and check Yaba/Ikeja rendering and the 48-building/KTX2 asset pipeline. This is automated Chromium coverage, not final visual approval or a real-device benchmark. A real Android-device touch, performance, memory and audio test is still outstanding.
 
 Stage 08D upgrades all building surfaces and facades to a semi-photoreal procedural PBR treatment, but the buildings are not scanned or individually authored high-detail GLB assets.
 
@@ -114,7 +114,7 @@ Stage 08E introduces a generated, validated GLB asset pipeline for the 48 existi
 
 Generate the assets with `npm run assets:08e`. The build and verification commands generate them automatically. Structural checks inspect every GLB header, embedded image, UV accessor, material family, LOD node and collision proxy.
 
-**Known remaining work:** the current generator embeds PNG maps; Basis/KTX2 GPU texture compression and true GPU-memory savings are not yet complete. The collision proxies are authored as separate hidden meshes but are not yet wired into a world collision system. Distant GLB containers are evicted with PlayCanvas asset unloading beyond the stream radius (the first shared-material source is pinned); actual device memory behaviour still needs profiling. Automated Chromium checks are not a substitute for loading, memory and frame-rate measurements on the actual Itel A90.
+**Known remaining work:** Stage 08F now delivers a 2K PBR Computer Village hero building with KTX2/Basis-compressed textures; the other 47 generated building GLBs still use embedded PNG maps. The collision proxies are authored as separate hidden meshes but are not yet wired into a complete world collision system. Distant GLB containers are evicted with PlayCanvas asset unloading beyond the stream radius (the first shared-material source is pinned); actual device memory behaviour still needs profiling. Automated Chromium checks are not a substitute for loading, memory and frame-rate measurements on the actual Android device.
 
 
 ### Ara player animation, feedback and audio

@@ -9,6 +9,7 @@ export function createAudioSystem() {
   let unlocked = false;
   let destroyed = false;
   let lastFootstepAt = -Infinity;
+  const played = { footstep: 0, jump: 0, landing: 0, parkour: 0 };
   const now = () => context?.currentTime || 0;
 
   function ensureContext() {
@@ -70,7 +71,7 @@ export function createAudioSystem() {
   }
 
   function play(type = 'footstep') {
-    if (destroyed) return false;
+    if (destroyed || !Object.hasOwn(played, type) || !ensureContext()) return false;
     if (type === 'footstep') {
       const time = now();
       if (time - lastFootstepAt < 0.16) return false;
@@ -87,7 +88,8 @@ export function createAudioSystem() {
       noise({ duration: 0.2, frequency: 1500, endFrequency: 260, gain: 0.075, q: 0.45 });
       tone({ frequency: 135, endFrequency: 78, duration: 0.16, type: 'triangle', gain: 0.08, delay: 0.035 });
     }
-    return unlocked || !!context;
+    played[type]++;
+    return true;
   }
 
   function destroy() {
@@ -100,5 +102,5 @@ export function createAudioSystem() {
     noiseBuffer = null;
   }
 
-  return { play, unlock, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour'], mode: 'procedural-web-audio' }) };
+  return { play, unlock, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour'], played: { ...played }, mode: 'procedural-web-audio' }) };
 }

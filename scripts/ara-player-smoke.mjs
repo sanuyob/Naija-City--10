@@ -19,6 +19,22 @@ try{
  if(!state.playerCharacterReady||state.characterSource!=='ara-3d-gen-female-preset'||state.characterGeometry!=='rigged-glb')throw Error('Ara GLB not active: '+JSON.stringify(state));
  if((state.rig?.boneCount??0)<50||(state.rig?.skinnedMeshCount??0)<1)throw Error('Ara rig invalid: '+JSON.stringify(state.rig));
  if(!state.audio?.available||!state.audio.effects.includes('footstep')||state.audio.mode!=='procedural-web-audio')throw Error('Player audio system unavailable: '+JSON.stringify(state.audio));
+ const joystickBox=await page.locator('#move-joystick').boundingBox();
+ if(!joystickBox)throw Error('Mobile movement joystick is not visible');
+ const joystickCenter={x:joystickBox.x+joystickBox.width/2,y:joystickBox.y+joystickBox.height/2};
+ await page.mouse.move(joystickCenter.x,joystickCenter.y);
+ await page.mouse.down();
+ await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
+ await page.waitForTimeout(950);
+ const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.()}));
+ if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.15)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
+ await page.keyboard.down('Shift');
+ await page.waitForTimeout(550);
+ const runState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.()}));
+ await page.keyboard.up('Shift');
+ await page.mouse.up();
+ if(!runState.player?.running||runState.animation?.activeClip!=='Run')throw Error('Sprint input did not select Ara running animation: '+JSON.stringify(runState));
+ if(!walkState.audio?.available)throw Error('Audio did not initialise after the first gameplay gesture: '+JSON.stringify(walkState.audio));
  for(const clip of ['Idle','Walk','Run','Jump','Jump start','Jump (in air)','Jump land','Vault over obstacle','Climb up ledge','Forward roll','Side dodge left','Side dodge right'])if(!state.animations.includes(clip))throw Error('Missing animation '+clip+': '+state.animations.join(', '));
  const animationChecks=await page.evaluate(()=>{
   const g=window.__NAIJA_GAME__,play=window.__NAIJA_PLAY_HERO_ANIMATION__;
@@ -32,14 +48,16 @@ try{
  if(!jumpPhysics||jumpPhysics.airborne.position[1]<=0||!jumpPhysics.landed.grounded||jumpPhysics.landed.position[1]!==0)throw Error('Jump/landing physics check failed: '+JSON.stringify(jumpPhysics));
  if((jumpPhysics.vfx?.byType?.jump||0)<1||(jumpPhysics.vfx?.byType?.landing||0)<1)throw Error('Jump/landing VFX events did not fire: '+JSON.stringify(jumpPhysics.vfx));
  const parkour=await page.evaluate(()=>window.__NAIJA_GAME__?.debugTraverseTypeForSmoke?.('low-vault'));
- if(!parkour?.started||!parkour.completed||parkour.traversal.lastTraversal?.type!=='low-vault')throw Error('Low vault traversal check failed: '+JSON.stringify(parkour));
+ if(!parkour?.started||!parkour.completed||parkour.traversal.lastTraversal?.type!=='low-vault'||parkour.distanceTravelled<0.75)throw Error('Low vault traversal check failed: '+JSON.stringify(parkour));
  if(state.gate||state.picker)throw Error('Player import gate or old FBX picker remains visible');
  if(state.mainCharacterId!=='ara-female'||state.hero01Role!=='city-npc')throw Error('Character roles changed: '+JSON.stringify(state));
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroNpcState?.()?.moved===true,null,{timeout:20000});
  const npc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
  if(npc?.isPlayer!==false||npc?.rigged!==true)throw Error('Hero 01 NPC role broken: '+JSON.stringify(npc));
+ const audio=await page.evaluate(()=>window.__NAIJA_GAME__?.getAudioState?.());
+ if(!audio?.unlocked||audio.state!=='running'||audio.played?.footstep<1||audio.played?.jump<1||audio.played?.landing<1||audio.played?.parkour<1)throw Error('Player sound events did not unlock or fire from real gameplay actions: '+JSON.stringify(audio));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  await page.screenshot({path:'/workspace/naija-city/out/ara-player-smoke.png',fullPage:false});
  const relevantErrors=errors.filter(e=>!e.includes('ammo.wasm.js')&&!e.includes('Failed to load resource: net::ERR_EMPTY_RESPONSE')); if(relevantErrors.length)throw Error('Browser errors: '+relevantErrors.join(' | '));
- console.log(JSON.stringify({pass:true,state,animationChecks,jumpPhysics,parkour,npc,screenshotBytes:screenshot.length,browserErrors:errors},null,2));
+ console.log(JSON.stringify({pass:true,state,walkState,runState,animationChecks,jumpPhysics,parkour,npc,audio,screenshotBytes:screenshot.length,browserErrors:errors},null,2));
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}

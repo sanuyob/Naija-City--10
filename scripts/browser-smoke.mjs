@@ -1,3 +1,4 @@
+import './ara-player-smoke.mjs';
 import { spawn } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
@@ -15,7 +16,6 @@ try {
  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
  await page.goto(origin+'?smoke=1',{waitUntil:'networkidle'});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
- await page.waitForFunction(()=>window.__NAIJA_RPG_UI__?.isPlayerCharacterRequired?.()===true,null,{timeout:15000});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
  const state=await page.evaluate(()=>{
@@ -99,28 +99,25 @@ try {
  const stick=await page.locator('#move-joystick').boundingBox();
  if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible())||!(await page.locator('#crouch-button').isVisible())||!(await page.locator('#interact-button').isVisible()))throw new Error('Landscape movement/action controls are missing');
  if(await page.locator('#orientation-notice').isVisible())throw new Error('Landscape orientation notice should be hidden in landscape');
- if(state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-female-not-installed'||
-    state.game?.characterGeometry!=='no-visible-player-rig'||!state.characterGate||
-    !state.characterPanelVisible||!state.araFilePickerPresent) {
-  throw new Error('Missing Ara model was not surfaced by the blocking Player import gate: '+JSON.stringify({
+ if(state.game?.playerCharacterReady!==true||state.game?.characterSource!=='ara-3d-gen-female-preset'||
+    state.game?.characterGeometry!=='rigged-glb'||state.game?.mainCharacterId!=='ara-female'||
+    state.game?.hero01Role!=='city-npc'||state.characterGate||state.araFilePickerPresent) {
+  throw new Error('Bundled Ara player or Hero 01 NPC role is not active: '+JSON.stringify({
    playerCharacterReady:state.game?.playerCharacterReady,characterSource:state.game?.characterSource,
    characterGeometry:state.game?.characterGeometry,characterGate:state.characterGate,
-   characterPanelVisible:state.characterPanelVisible,araFilePickerPresent:state.araFilePickerPresent
+   araFilePickerPresent:state.araFilePickerPresent,mainCharacterId:state.game?.mainCharacterId,
+   hero01Role:state.game?.hero01Role
   }));
  }
- for(const selector of ['#jump-button','#sprint-button','#crouch-button','#parkour-button','#interact-button']) {
-  if(!(await page.locator(selector).isDisabled()))throw new Error('Gameplay action remained enabled without a visible player: '+selector);
- }
- if(!(await page.locator('#move-joystick').getAttribute('aria-disabled'))||
-    !(await page.locator('#player-character-file').isVisible())) {
-  throw new Error('Movement joystick was not locked or Ara FBX import control is not visible.');
+ if((state.game?.heroRigSnapshot?.boneCount??0)!==70||(state.game?.heroRigSnapshot?.skinnedMeshCount??0)!==25) {
+  throw new Error('Ara rig structure is not valid: '+JSON.stringify(state.game?.heroRigSnapshot));
  }
  if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||
-    state.game?.proceduralAnimations!==true||state.game?.characterGeometry!=='no-visible-player-rig'||
-    state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-female-not-installed'||
+    state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||
+    state.game?.playerCharacterReady!==true||state.game?.characterSource!=='ara-3d-gen-female-preset'||
     state.game?.heroAnimationState?.characterId!=='ara-female'||
     state.game?.heroAnimationState?.displayName!=='Ara 3D Female'||
-    state.game?.heroAnimationState?.playable!==false||state.game?.heroAnimations?.length!==0||
+    state.game?.heroAnimationState?.playable!==true||state.game?.heroAnimations?.length!==12||
     state.game?.mainCharacterId!=='ara-female'||state.game?.hero01Role!=='city-npc'||
     state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==8||
     state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||
@@ -129,24 +126,14 @@ try {
     state.game?.physicsState?.player?.mode!=='ammo-bullet-capsule'||
     state.game?.physicsState?.agents?.mode!=='kinematic-capsule'||state.game?.vfxState?.poolSize<12||
     !state.game?.mobileJoystick||!state.game?.cameraOrbit) {
-  throw new Error('Ara missing-character gate, Hero 01 NPC, traversal, physics or companion system was not mounted: '+JSON.stringify(state.game));
+  throw new Error('Ara player, Hero 01 NPC, traversal, physics or companion system was not mounted: '+JSON.stringify(state.game));
  }
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroNpcState?.()?.moved===true&&
   window.__NAIJA_GAME__?.getHeroNpcState?.()?.rigged===true,null,{timeout:10000});
  const heroNpc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
  if(!heroNpc||heroNpc.name!=='Hero 01'||heroNpc.isPlayer!==false||heroNpc.active!==true||!heroNpc.moved||!heroNpc.rigged||!heroNpc.activeClip?.includes('Walk'))throw new Error('Hero 01 is not running as a visible animated city NPC: '+JSON.stringify(heroNpc));
  if(await page.locator('#character-switch-button').count()!==0||await page.locator('[data-player-action]').count()!==0)throw new Error('Character-switch controls must be completely removed from the HUD and Player menu');
- const playerPanel=await page.locator('#panel-content').textContent();
- if(!playerPanel?.includes('ARA 3D FEMALE · MAIN PLAYER')||
-    !playerPanel.includes('ONLY PLAYABLE CHARACTER')||
-    !playerPanel.includes('Hero 01 is a city NPC')||
-    !playerPanel.includes('The_Female_Executive.fbx')||
-    playerPanel.includes('SWITCH TO')||playerPanel.includes('SET AS MAIN')) {
-  throw new Error('Player import gate does not match the Ara-only player setup: '+playerPanel);
- }
- if(await page.locator('[data-close]').isVisible())throw new Error('Player import gate can be dismissed before the playable character is installed.');
- if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Ara import gate is not pinned open.');
-
+ if(await page.locator('#player-character-file').count()!==0)throw new Error('Bundled Ara setup must not require an FBX upload control.');
 
  // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -156,10 +143,10 @@ try {
  const traversalAdvance=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(32));
  if(!traversalAdvance||traversalAdvance.player.traversing||traversalAdvance.traversal.traversalsStarted!==1)throw new Error('Traversal did not complete its bounded movement sequence: '+JSON.stringify(traversalAdvance));
 
- // No Ara FBX is included in this CI build. Never inspect Hero 01 as if it were Ara.
+ // Validate the actual bundled Ara player rig; Hero 01 remains a separate NPC.
  const initialPlayerRig=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
- if(initialPlayerRig?.skinnedMeshCount!==0||initialPlayerRig?.boneCount!==0) {
-  throw new Error('Unexpected player rig attached before Ara FBX installation: '+JSON.stringify(initialPlayerRig));
+ if(initialPlayerRig?.skinnedMeshCount!==25||initialPlayerRig?.boneCount!==70) {
+  throw new Error('Bundled Ara player rig is not attached to the player controller: '+JSON.stringify(initialPlayerRig));
  }
  // Complete all eight contextual parkour actions through the live player controller.
  const parkourReports=[];
@@ -193,7 +180,7 @@ try {
  if(!dismissed)throw new Error('Companion Dismiss command failed');
  await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
 
- console.log('Ara QA: no Ara asset is installed in this build; the import gate is tested, and Hero 01 is never used as the player fixture.');
+ console.log('Ara QA passed: bundled Female Executive rig is the playable character, and Hero 01 remains an independently moving NPC.');
 
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
@@ -212,8 +199,7 @@ try {
  const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
  if(hudBoxes['#move-joystick'].x>140||hudBoxes['.actions'].x<694||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
  if(await page.locator('.nav').isVisible())throw new Error('Legacy bottom navigation should be removed from active gameplay HUD');
- if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Ara import gate is not pinned open while the model is missing.');
- if(await page.locator('[data-close]').isVisible())throw new Error('Character import gate unexpectedly has a dismiss control.');
+ if(await page.locator('#rpg-panel').isVisible())throw new Error('Character profile panel should not cover gameplay on startup.');
  await page.evaluate(()=>document.querySelector('#assets-toggle').click());
  await page.locator('#assets-panel[open]').waitFor({state:'visible'});
  const inventory=await page.locator('#assets-panel').textContent();
@@ -249,7 +235,7 @@ try {
  console.log('Ikeja screenshot metrics: '+JSON.stringify(ikejaVisual));
  console.log('Stage 08C passed: static Nigerian street infrastructure, utilities, drainage, street furniture and bus shelters with mobile-oriented static batching.');
  console.log('Stage 08D passed: semi-photoreal PBR materials and modular facade upgrades across all 48 Yaba district buildings.');
- console.log('Stage 06 physics/traversal and environment checks passed. Ara player presence is NOT certified in CI: the smoke test verifies the blocking import gate and rejects the fake Hero 01-as-Ara fixture.');
+ console.log('Stage 06 physics/traversal and environment checks passed with the bundled Ara player rig active.');
  console.log('Render diagnostics: '+JSON.stringify(state.diag));
  console.log('Canvas screenshot metrics: '+JSON.stringify(visual));
  await context.close();
