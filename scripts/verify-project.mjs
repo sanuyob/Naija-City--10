@@ -125,7 +125,8 @@ assert.match(playerCharacterStore,/indexedDB/,'Imported character must persist i
 assert.match(loader,/loadSavedPlayerCharacter/,'Locally imported character must be preferred over the bundled fallback');
 assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip names');
 assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
-assert.match(controller,/running \? 4\.25 : 1\.8/,'Ground movement speeds must be tuned for the Ara locomotion cycles');
+assert.match(controller,/running \? 3\.2 : 1\.35/,'Ground movement speeds must be proportionate to the Ara locomotion cycles');
+assert.match(controller,/Traversal actions may not have a dedicated clip on imported characters/,'Imported characters must be allowed to traverse with available locomotion fallback clips');
 assert.match(rpg,/player-character-form/,'Player panel must expose the FBX import form');
 assert.match(rpg,/importPlayerCharacter/,'Player panel must invoke the FBX importer');
 assert.match(controller,/pc\.math\.clamp\(body\.position\[0\],-46,46\)/,'Player physics solver must clamp movement to expanded city width');
@@ -148,7 +149,7 @@ assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerH
 assert.match(game,/render-diagnostic-marker/,'A visible diagnostic render object must be present');
 assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
 assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
-for(const feature of ['player-character','player-head','left-leg-pivot','right-arm-pivot','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','physics.step(body,desired,step)','running ? 4.25 : 1.8','smoothedCamera.lerp(smoothedCamera, desiredCamera']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
+for(const feature of ['player-character','player-head','left-leg-pivot','right-arm-pivot','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','physics.step(body,desired,step)','running ? 3.2 : 1.35','smoothedCamera.lerp(smoothedCamera, desiredCamera']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
 assert.match(controller,/pointerdown/,'Touch movement and orbit must use pointer events');
 assert.match(controller,/stamina = Math.max/,'Sprint must consume stamina');
 assert.match(controller,/input.crouch/,'Crouch must affect player movement');
