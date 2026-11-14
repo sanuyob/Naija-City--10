@@ -128,7 +128,7 @@ assert.match(playerCharacterStore,/indexedDB/,'Imported character must persist i
 assert.match(loader,/loadSavedPlayerCharacter/,'Locally imported character must be preferred over the bundled fallback');
 assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip names');
 assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
-assert.match(controller,/running \? 3\.2 : 1\.35/,'Ground movement speeds must be proportionate to the Ara locomotion cycles');
+assert.match(controller,/input\.crouch \? 0\.95 : running \? 3\.75 : 1\.6/,'Ground movement speeds must match the tuned Ara locomotion cycle');
 assert.match(controller,/heroCharacterPose/,'Ara parkour fallback must apply distinct procedural action poses');
 assert.match(controller,/physics\.step\(body,horizontal,step\)/,'Parkour must run through the active physics solver');
 assert.match(controller,/traversalMotion\.clips\.length/,'Multi-stage parkour must play each clip phase in sequence');
