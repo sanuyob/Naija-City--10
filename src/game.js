@@ -314,6 +314,14 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   if(new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
+    gameApi.debugAdvanceTraversalForSmoke=(frames=30)=>{
+      const count=Math.max(1,Math.min(60,Math.floor(Number(frames)||30)));
+      for(let i=0;i<count;i++){
+        playerController.update(0.05);
+        traversalSystem.update(0.05);
+      }
+      return {player:playerController.getState(),traversal:traversalSystem.getState()};
+    };
   }
   window.__NAIJA_GAME__=gameApi;
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
