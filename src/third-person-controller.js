@@ -167,12 +167,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if(distance<.2)return false;
     if(distance>.05)player.setEulerAngles(0,Math.atan2(dx,-dz)*180/Math.PI,0);
     const gravity=Math.max(9,Number(physics?.getState?.().gravity)||18);
-    const requestedApex=Math.max(.6,Math.min(4.2,Number(options.apex)||1.0));
-    const requestedDuration=Math.max(0,Number(options.duration)||0);
-    const ballisticDuration=Math.sqrt(8*requestedApex/gravity);
-    const duration=Math.max(.55,Math.min(3.2,Math.max(requestedDuration,ballisticDuration)));
-    const apex=gravity*duration*duration/8;
-    const launchVelocity=gravity*duration/2;
+    const apex=Math.max(.6,Math.min(4.2,Number(options.apex)||1.0));
+    const launchVelocity=Math.sqrt(2*gravity*apex);
+    const duration=Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
     const actionPose=options.mode||"vault";
     const activeClip=missingActionClip?(animationFallbacks.action||animationFallbacks.idle):clips[0];
     traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex,mode:actionPose,
