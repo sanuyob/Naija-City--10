@@ -40,6 +40,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   addStaticBox([0, groundY - 0.20, 105], [60, 0.20, 320], 1.0);
 
   const colliderBodies = [];
+  const colliderEnabled = [];
   for (const item of colliders) {
     const entity = item?.entity;
     const p = entity?.getPosition?.();
@@ -49,6 +50,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       [p.x, p.y, p.z],
       [Math.abs(s.x) / 2, Math.abs(s.y) / 2, Math.abs(s.z) / 2]
     ));
+    colliderEnabled.push(true);
   }
 
   const capsule = own(new Ammo.btCapsuleShape(radius, Math.max(0.1, halfHeight * 2 - radius * 2)));
@@ -123,6 +125,16 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     return actor.position;
   }
 
+  function setColliderEnabled(index, enabled) {
+    const i = Math.floor(Number(index));
+    const collider = colliderBodies[i];
+    if (!collider || colliderEnabled[i] === Boolean(enabled)) return false;
+    if (enabled) world.addRigidBody(collider);
+    else world.removeRigidBody(collider);
+    colliderEnabled[i] = Boolean(enabled);
+    return true;
+  }
+
   function cleanup() {
     try { world.removeRigidBody(body); } catch {}
     for (const collider of colliderBodies) {
@@ -134,7 +146,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, cleanup,
+    step, teleport, setColliderEnabled, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule',
       steps, collisions,
