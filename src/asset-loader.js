@@ -422,6 +422,27 @@ export async function loadHeroCharacter(app, {
       };
       return { left: read(leftFootBone), right: read(rightFootBone) };
     };
+    // Small world-space ankle corrections from ground probes. Keep the
+    // correction deliberately bounded; this is a lightweight foot-placement
+    // pass, not a full two-bone IK solver.
+    const applyFootPlacement = (targets, alpha = .28) => {
+      const place = (bone, hit) => {
+        if (!bone || !hit?.point || hit.point.length < 3) return;
+        const p = bone.getPosition();
+        const correction = pc.math.clamp(hit.point[1] - p.y, -.14, .14);
+        const blend = pc.math.clamp(alpha, 0, 1);
+        bone.setPosition(p.x, p.y + correction * blend, p.z);
+        // Align the sole a little toward the contacted plane without allowing
+        // extreme ankle twists on steep edges or noisy collision normals.
+        const normal = hit.normal || [0,1,0];
+        const pitch = pc.math.clamp(Math.atan2(normal[2],normal[1])*180/Math.PI,-12,12);
+        const roll = pc.math.clamp(-Math.atan2(normal[0],normal[1])*180/Math.PI,-12,12);
+        const rotation = bone.getLocalEulerAngles();
+        bone.setLocalEulerAngles(rotation.x + pitch*blend, rotation.y, rotation.z + roll*blend);
+      };
+      place(leftFootBone, targets?.left);
+      place(rightFootBone, targets?.right);
+    };
     const skinBones = renderMeshInstances.flatMap(mesh => mesh.skinInstance?.bones || []);
     const findSkinBone = name => skinBones.find(bone => bone?.name === name) || null;
     const getFacingDirection = () => {
@@ -463,7 +484,7 @@ export async function loadHeroCharacter(app, {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression, getRigSnapshot, getFootPositions, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
+      setFaceExpression, getRigSnapshot, getFootPositions, applyFootPlacement, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };

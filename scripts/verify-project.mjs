@@ -156,7 +156,10 @@ assert.doesNotMatch(rpg,/character-switch-button|data-player-action|SWITCH TO|SE
 assert.doesNotMatch(game,/switchPlayerCharacter|getCharacterRoster|__NAIJA_SWITCH_PLAYER__|diagnosticMarker|render-diagnostic-marker/,'The game must not expose character switching or the blocking diagnostic cube');
 assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip names');
 assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
-assert.match(controller,/input\.crouch \? 0\.95 : running \? 3\.75 : 1\.6/,'Ground movement speeds must match the tuned Ara locomotion cycle');
+assert.match(controller,/targetMoveSpeed = moving/,'Ground speed must scale with analog joystick pressure');
+assert.match(controller,/smoothedMoveSpeed/,'Ground movement must accelerate and decelerate smoothly');
+assert.match(controller,/cameraDistance = 3.85/,'The chase camera must sit closer to the character');
+assert.match(controller,/onSprintPointerDown/,'Sprint must toggle from a real mobile pointer-down event');
 assert.match(controller,/heroCharacterPose/,'Ara parkour fallback must apply distinct procedural action poses');
 assert.match(controller,/physics\.step\(body,horizontal,step\)/,'Parkour must run through the active physics solver');
 assert.match(controller,/traversalMotion\.clips\.length/,'Multi-stage parkour must play each clip phase in sequence');
@@ -167,6 +170,13 @@ assert.match(playerPhysics,/setGravity/,'Bullet gravity must be controllable dur
 assert.match(traversal,/climbToTop/,'Step-up, mantle, ledge and ladder must target the top of their obstacle');
 assert.match(controller,/kinematicClimb/,'Raised traversal must use a controlled climbing path rather than a generic jump');
 assert.match(playerPhysics,/btDiscreteDynamicsWorld/,'The player must use a Bullet dynamics world');
+assert.match(playerPhysics,/function raycast/,'The player physics world must expose filtered surface and camera raycasts');
+assert.match(loader,/applyFootPlacement/,'Ara must support bounded runtime foot placement from terrain probes');
+assert.match(game,/surfacePatches/,'Yaba must include real asphalt, concrete, grass and wet surface probe zones');
+assert.match(audio,/playedSurfaces/,'Footstep audio must expose per-surface feedback counters');
+assert.match(vfx,/bySurface/,'Footstep VFX must expose per-surface feedback counters');
+assert.match(traversal,/Math\.min\(1\.55/,'Vault and wall-hop trajectories must remain human-scale rather than superhero-height');
+
 assert.match(playerPhysics,/ammo-bullet-capsule/,'Bullet player physics mode must be exposed');
 assert.match(playerPhysics,/setColliderEnabled/,'Parkour must be able to release and restore the active obstacle collider');
 assert.match(traversal,/physics\?\.setColliderEnabled/,'Traversal must temporarily disable its own obstacle collider');
@@ -196,7 +206,7 @@ assert.match(traversal,/timer=0;completed\+\+/,'Traversal lock must be cleared e
 assert.ok(smoke.includes("jumpActionClip!=='Climb up ledge'") && smoke.includes("parkour.traversal.traversalsCompleted<1"),
  'Browser smoke must verify that the live Jump button triggers and completes contextual parkour');
 assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
-for(const feature of ['player-character','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','physics.step(body,desired,step)','running ? 3.75 : 1.6','smoothedCamera.lerp(smoothedCamera, desiredCamera','Ara female rig']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
+for(const feature of ['player-character','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','physics.step(body,desired,step)','targetMoveSpeed','smoothedCamera.lerp(smoothedCamera, desiredCamera','Ara female rig']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
 assert.doesNotMatch(controller,/player-head|left-leg-pivot|right-arm-pivot/,'The old generic male player placeholder must not render');
 assert.match(controller,/pointerdown/,'Touch movement and orbit must use pointer events');
 assert.match(controller,/stamina = Math.max/,'Sprint must consume stamina');
@@ -233,7 +243,7 @@ for(const feature of ['cross-street','north-crosswalk','bus-stop-sign','junction
 for(const feature of ['WasmModule.setConfig','btDiscreteDynamicsWorld','btRaycastVehicle','addWheel','set_m_suspensionStiffness','set_m_wheelsDampingCompression','applyEngineForce','setSteeringValue','setBrake','stepSimulation','CF_KINEMATIC_OBJECT']) assert.ok(physics.includes(feature),`Missing physics feature: ${feature}`);
 assert.ok(physics.includes('assets/wasm/ammo/'),'Ammo must load from locally bundled WASM/JS files');
 assert.match(game,/createAudioSystem/,'The live game must mount its player audio system');
-assert.ok(game.includes('audioSystem.play(sound)'),'Player movement and action feedback must call the audio system');
+assert.ok(game.includes('audioSystem.play(sound,meta.surface||\'asphalt\')'),'Player movement and action feedback must call the audio system');
 assert.match(audio,/procedural-web-audio/,'The audio layer must expose its procedural Web Audio mode');
 assert.match(audio,/played: \{ \.\.\.played \}/,'The audio layer must expose effect-event counters for QA');
 assert.match(physics,/1 \/ 60/,'Physics must use fixed 60 Hz substeps');

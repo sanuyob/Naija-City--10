@@ -12,7 +12,7 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
     arrival: [0.38, 0.85, 0.66]
   };
   const pool = [];
-  const stats = { emitted: 0, expired: 0, active: 0, byType: {} };
+  const stats = { emitted: 0, expired: 0, active: 0, byType: {}, bySurface: {} };
   const maxParticles = Math.max(12, Math.min(24, Math.floor(poolSize) || 24));
 
   function makeMaterial(color) {
@@ -41,7 +41,7 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
     });
   }
 
-  function emit(type = 'dust', position = [0, 0, 0], intensity = 1) {
+  function emit(type = 'dust', position = [0, 0, 0], intensity = 1, surface = 'asphalt') {
     const effect = colors[type] ? type : 'dust';
     const [x, y, z] = position;
     const desired = Math.max(2, Math.min(7, Math.round((effect === 'landing' ? 6 : effect === 'parkour' ? 5 : 3) * Math.max(0.5, intensity))));
@@ -68,8 +68,10 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
       particle.rotation[1] = angle * 57.2958;
       particle.rotation[2] = angle * 28.6479;
       particle.phase = angle;
-      particle.material.diffuse = new pc.Color(...colors[effect]);
-      particle.material.emissive = new pc.Color(colors[effect][0] * 0.28, colors[effect][1] * 0.28, colors[effect][2] * 0.28);
+      const surfaceColors = { asphalt:[.34,.36,.37], concrete:[.58,.55,.46], grass:[.34,.52,.27], metal:[.52,.56,.58], wet:[.46,.62,.68] };
+      const tint = effect === 'dust' ? (surfaceColors[surface] || surfaceColors.asphalt) : colors[effect];
+      particle.material.diffuse = new pc.Color(...tint);
+      particle.material.emissive = new pc.Color(tint[0] * 0.28, tint[1] * 0.28, tint[2] * 0.28);
       particle.material.opacity = 0.58;
       particle.material.update();
       particle.entity.setPosition(...particle.position);
@@ -81,6 +83,7 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
 
     stats.emitted += made;
     stats.byType[effect] = (stats.byType[effect] || 0) + made;
+    if (effect === 'dust') stats.bySurface[surface] = (stats.bySurface[surface] || 0) + made;
     stats.active = pool.reduce((count, particle) => count + Number(particle.active), 0);
     return made;
   }
@@ -127,6 +130,6 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
 
   return {
     emit, update, destroy,
-    getState: () => ({ ...stats, poolSize: pool.length, peakActiveCapacity: pool.length, mode: 'fixed-pooled-ellipsoid-event-vfx' })
+    getState: () => ({ ...stats, poolSize: pool.length, peakActiveCapacity: pool.length, mode: 'fixed-pooled-ellipsoid-event-vfx', surfaceProfiles: ['asphalt','concrete','grass','metal','wet'] })
   };
 }

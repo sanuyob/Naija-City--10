@@ -36,10 +36,13 @@ export function createThirdPersonController(app, camera, canvas, {
   let orbitLastX = 0, orbitLastY = 0;
   let cameraYaw = 0, cameraPitch = 0.23;
   let facingYaw = 0;
-  const cameraDistance = 6.2;
+  let smoothedMoveSpeed = 0;
+  const cameraProbe = new pc.Vec3();
+  const cameraDistance = 3.85;
   const cameraTarget = new pc.Vec3();
   const desiredCamera = new pc.Vec3();
   const smoothedCamera = camera.getPosition().clone();
+  let cameraInitialized = false;
   const velocity = new pc.Vec3();
   let grounded = true;
   let stamina = 100;
@@ -61,6 +64,7 @@ export function createThirdPersonController(app, camera, canvas, {
   let lastFootstepCycle = null;
   let lastFootstepProgress = null;
   let footstepContacts = 0;
+  let footPlacementHits = 0;
   let availableHeroClips = new Set(activeHeroCharacter?.clipNames || []);
   let heroClipDurations = activeHeroCharacter?.clipDurations || {};
   let heroDefaults = activeHeroCharacter?.defaultClips || {
@@ -233,14 +237,26 @@ export function createThirdPersonController(app, camera, canvas, {
     input.jumpQueued = true;
   };
   jumpButton?.addEventListener('pointerdown', queueJump);
+  let sprintPointerHandled = false;
   const toggleSprint = event => {
-    event.preventDefault();
+    event?.preventDefault?.();
     sprintToggled = !sprintToggled;
     input.sprint = sprintToggled;
     sprintButton?.setAttribute('aria-pressed', String(sprintToggled));
     sprintButton?.classList.toggle('is-pressed', sprintToggled);
   };
-  sprintButton?.addEventListener('click', toggleSprint);
+  const onSprintPointerDown = event => {
+    if (event.button !== undefined && event.button !== 0) return;
+    sprintPointerHandled = true;
+    toggleSprint(event);
+    event.stopPropagation?.();
+  };
+  const onSprintClick = event => {
+    if (sprintPointerHandled) { sprintPointerHandled = false; event.preventDefault(); return; }
+    toggleSprint(event);
+  };
+  sprintButton?.addEventListener('pointerdown', onSprintPointerDown);
+  sprintButton?.addEventListener('click', onSprintClick);
   const toggleCrouch = event => {
     event?.preventDefault?.();
     if (!setCrouched(!input.crouch)) onInteract?.({ ...getState(), crouchBlocked: true });
@@ -298,12 +314,17 @@ export function createThirdPersonController(app, camera, canvas, {
     if (magnitude > 1) { axisX /= magnitude; axisY /= magnitude; }
     if (traversalMotion) { axisX = 0; axisY = 0; }
     moving = !traversalMotion && Math.hypot(axisX, axisY) > 0.12;
-    running = !traversalMotion && moving && !input.crouch && (input.sprint || keys.shift) && stamina > 0;
-    if (running) stamina = Math.max(0, stamina - 26 * step);
+    running = !traversalMotion && moving && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
+    if (running) stamina = Math.max(0, stamina - 15 * step);
     else stamina = Math.min(100, stamina + 19 * step);
     // The Ara FBX walk take is a 1.067 s cycle and run is 0.733 s.
     // Keep travel speed proportionate to a 1.8 m human rather than making every step slide.
-    const speed = input.crouch ? 0.95 : running ? 3.75 : 1.6;
+    const stickStrength = pc.math.clamp((Math.hypot(axisX, axisY) - 0.075) / 0.925, 0, 1);
+    const maxSpeed = input.crouch ? 1.05 : running ? 4.45 : 2.65;
+    const targetMoveSpeed = moving ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
+    const response = moving ? 6.2 : 8.5;
+    smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
+    const speed = smoothedMoveSpeed;
 
     // Camera-relative movement: joystick up moves toward the camera's forward direction.
     forward.set(-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw));
@@ -396,7 +417,6 @@ export function createThirdPersonController(app, camera, canvas, {
 
     if (moving) {
       const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
-      const current = player.getEulerAngles().y;
       const difference = ((desiredYaw - facingYaw + 540) % 360) - 180;
       // Keep the desired heading independently of PlayCanvas' Euler readback
       // around 180 degrees; that readback folds some reverse headings.
@@ -460,6 +480,22 @@ export function createThirdPersonController(app, camera, canvas, {
       }
     }
 
+    if (heroVisual?.anim && grounded && !traversalMotion && !input.crouch) {
+      const feet = activeHeroCharacter?.getFootPositions?.();
+      if (feet?.left && feet?.right) {
+        const probe = foot => physics?.raycast?.(
+          [foot[0], foot[1] + .26, foot[2]],
+          [foot[0], foot[1] - .48, foot[2]]
+        );
+        const leftHit = probe(feet.left), rightHit = probe(feet.right);
+        if (leftHit || rightHit) footPlacementHits++;
+        activeHeroCharacter?.applyFootPlacement?.({
+          left: leftHit?.point,
+          right: rightHit?.point
+        }, Math.min(1, step * 9));
+      }
+    }
+
     if(moving&&grounded&&!traversalMotion){
       const layer = heroVisual?.anim?.baseLayer;
       const loopState = layer?.activeState === 'Locomotion' || layer?.activeState === heroDefaults.crouchWalk;
@@ -471,7 +507,9 @@ export function createThirdPersonController(app, camera, canvas, {
         else if (cycle !== lastFootstepCycle) {
           const feet = activeHeroCharacter?.getFootPositions?.();
           const foot = cycle % 2 === 0 ? feet?.left : feet?.right;
-          onEffect?.('dust', foot ? [foot[0], Math.max(p.y + .015, foot[1]), foot[2]] : [p.x, p.y + .02, p.z]);
+          const footPosition = foot || [p.x, p.y + .02, p.z];
+          const surfaceHit = physics?.raycast?.([footPosition[0], footPosition[1] + .22, footPosition[2]], [footPosition[0], footPosition[1] - .42, footPosition[2]]);
+          onEffect?.('dust', footPosition, { surface: surfaceHit?.surface || 'asphalt' });
           footstepContacts++;
           lastFootstepCycle = cycle;
         }
@@ -481,7 +519,8 @@ export function createThirdPersonController(app, camera, canvas, {
         const stepInterval = running ? .31 : .46;
         if (footstepClock >= stepInterval) {
           footstepClock -= stepInterval;
-          onEffect?.('dust', [p.x, p.y + .02, p.z]);
+          const surfaceHit = physics?.raycast?.([p.x, p.y + .28, p.z], [p.x, p.y - .35, p.z]);
+          onEffect?.('dust', [p.x, p.y + .02, p.z], { surface: surfaceHit?.surface || 'asphalt' });
           footstepContacts++;
         }
       }
@@ -499,7 +538,27 @@ export function createThirdPersonController(app, camera, canvas, {
       p.y + cameraHeight + Math.sin(cameraPitch) * cameraDistance + 0.35,
       p.z + Math.cos(yaw) * horizontal
     );
-    smoothedCamera.lerp(smoothedCamera, desiredCamera, Math.min(1, step * 8));
+    const cameraHit = physics?.raycast?.(
+      [cameraTarget.x, cameraTarget.y, cameraTarget.z],
+      [desiredCamera.x, desiredCamera.y, desiredCamera.z]
+    );
+    if (cameraHit) {
+      const hitPoint = cameraHit.point;
+      const dx = desiredCamera.x - cameraTarget.x, dy = desiredCamera.y - cameraTarget.y, dz = desiredCamera.z - cameraTarget.z;
+      const length = Math.hypot(dx, dy, dz) || 1;
+      const safeDistance = Math.max(.72, Math.hypot(hitPoint[0]-cameraTarget.x,hitPoint[1]-cameraTarget.y,hitPoint[2]-cameraTarget.z)-.24);
+      const ratio = Math.min(1, safeDistance / length);
+      cameraProbe.set(cameraTarget.x + dx * ratio, cameraTarget.y + dy * ratio, cameraTarget.z + dz * ratio);
+      desiredCamera.copy(cameraProbe);
+    }
+    // Start at the authored chase position instead of showing the old wide
+    // startup camera for several seconds. Later movement remains damped.
+    if (!cameraInitialized) {
+      smoothedCamera.copy(desiredCamera);
+      cameraInitialized = true;
+    } else {
+      smoothedCamera.lerp(smoothedCamera, desiredCamera, Math.min(1, step * (cameraHit ? 18 : 14)));
+    }
     camera.setPosition(smoothedCamera);
     camera.lookAt(cameraTarget);
   }
@@ -514,7 +573,8 @@ export function createThirdPersonController(app, camera, canvas, {
     canvas.removeEventListener('pointercancel', onPointerUp);
     crouchButton?.removeEventListener('click', toggleCrouch);
     jumpButton?.removeEventListener('pointerdown', queueJump);
-    sprintButton?.removeEventListener('click', toggleSprint);
+    sprintButton?.removeEventListener('pointerdown', onSprintPointerDown);
+    sprintButton?.removeEventListener('click', onSprintClick);
     player.destroy();
   }
 
@@ -524,11 +584,11 @@ export function createThirdPersonController(app, camera, canvas, {
     physics?.teleport?.(position,[0,0,0]);
     facingYaw = ((Number(yaw) || 0) + 540) % 360 - 180;
     player.setEulerAngles(0, facingYaw, 0);
-    velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;lastFootstepCycle=null;lastFootstepProgress=null;input.jumpQueued=false;
+    velocity.set(0,0,0);smoothedMoveSpeed=0;grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;lastFootstepCycle=null;lastFootstepProgress=null;input.jumpQueued=false;
     return true;
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),facingYaw,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,footstepContacts});
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z)});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,

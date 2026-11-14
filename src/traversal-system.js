@@ -29,7 +29,9 @@ export function createTraversalSystem({playerController,physics=null,obstacles=[
     ? [obstaclePosition.x,targetY,obstaclePosition.z]
     : [x+fx*clearance,targetY,z+fz*clearance];
   const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
-  const requiredApex=Math.min(4.0,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
+  // Ballistic vaults stay human-scale. Taller obstacles must be climbed via
+  // authored mantle/ledge/ladder routes instead of receiving a huge jump.
+  const requiredApex=Math.min(1.55,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
   const colliderIndex=list.indexOf(best.o);
   const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:requiredApex,mode:profile.mode,clips:profile.clips,obstacleId:best.o.id,obstacleHeight:best.o.height});
   if(!ok){blocked="Traversal is blocked here — reposition in front of the obstacle";return false;}

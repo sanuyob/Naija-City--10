@@ -252,13 +252,54 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     {id:'yaba-mantle-01',type:'mantle',height:1.26,entity:box('traversal-mantle-01',[4.8,.63,-15],[1.3,1.26,.6],m.shops[2])},
     {id:'yaba-ledge-01',type:'ledge',height:2.15,entity:box('traversal-ledge-01',[-.35,1.075,-23],[3.2,2.15,.6],m.concrete)},
     {id:'yaba-ladder-01',type:'ladder',height:3.1,entity:ladderCollider},
-    {id:'yaba-wall-run-01',type:'wall-run',height:2.35,entity:box('traversal-wall-run-01',[-4.3,1.175,-43],[.55,2.35,5.2],m.shops[2])},
+    {id:'yaba-wall-run-01',type:'wall-run',height:1.3,entity:box('traversal-wall-run-01',[-4.3,.65,-43],[.55,1.3,5.2],m.shops[2])},
     {id:'yaba-drop-01',type:'drop',height:.72,entity:box('traversal-drop-01',[1.45,.36,-54],[1.8,.72,.62],m.red)}
   ];
+  // Building-side traversal details: starter foundations, an AC service
+  // platform, low railings, parapet caps and ladder hardware. These are
+  // authored as readable route cues, not invisible Superman-height targets.
+  const propMetal=m.metal, propConcrete=m.concrete, propLight=m.white;
+  // Foundation cap and anti-slip strips on the starter step.
+  box('prop-foundation-cap',[.65,.47,-1.8],[1.08,.06,.62],m.yellow);
+  for(let i=0;i<4;i++)box('prop-foundation-grip-'+i,[.28+i*.24,.515,-1.8],[.08,.018,.42],m.dark);
+  // Small glossy puddles mark wet-road footstep zones on the asphalt.
+  box('prop-wet-road-patch-01',[1.25,.014,-34],[1.8,.008,3.2],m.dark);
+  box('prop-wet-road-patch-02',[-2.2,.014,-65],[2.3,.008,2.2],m.dark);
+  // A realistic wall-mounted AC condenser with a support shelf and side rails.
+  box('prop-ac-service-shelf',[-7.2,1.08,-10.5],[1.55,.12,.82],propMetal);
+  box('prop-ac-condenser',[-7.2,1.66,-10.5],[1.16,1.02,.62],propLight);
+  box('prop-ac-front-panel',[-7.2,1.66,-10.825],[.88,.76,.035],propMetal);
+  for(let i=0;i<6;i++)box('prop-ac-grille-'+i,[-7.56+i*.145,1.66,-10.85],[.025,.68,.025],m.yellow);
+  box('prop-ac-left-bracket',[-7.82,.82,-10.5],[.08,.48,.12],m.red);
+  box('prop-ac-right-bracket',[-6.58,.82,-10.5],[.08,.48,.12],m.red);
+  // Guard rail around the mantle starter; top rail is intentionally low enough to vault.
+  for(let i=0;i<4;i++)box('prop-mantle-rail-post-'+i,[4.15+i*.43,1.54,-15.28],[.055,.92,.06],propMetal);
+  box('prop-mantle-rail-top',[4.795,1.98,-15.28],[1.42,.07,.07],propMetal);
+  box('prop-mantle-rail-mid',[4.795,1.62,-15.28],[1.42,.045,.045],m.yellow);
+  // Parapet cap and a short pipe connector beside the ledge.
+  box('prop-roof-parapet-cap',[-.35,2.19,-23],[3.32,.08,.68],propLight);
+  box('prop-roof-step-pipe',[-2.55,.72,-23],[.09,.09,1.25],propMetal);
+  // Ladder safety hoops / standoff brackets.
+  for(let i=0;i<3;i++)box('prop-ladder-standoff-'+i,[4.45,.55+i*.95,-30.62],[.54,.07,.42],m.red);
+  // Wall-run grip bars and a short roof-edge rail make the route legible.
+  for(let i=0;i<3;i++)box('prop-wallrun-grip-'+i,[-4.3,.62+i*.62,-40.35],[.82,.055,.08],propMetal);
+  box('prop-drop-parapet-cap',[1.45,.78,-54],[1.92,.08,.72],propLight);
   traversalObstacles.forEach(item=>item.entity.tags.add('stage09-traversal-obstacle'));
+  // Thin surface-query zones follow the visible road, footpaths and pocket
+  // grass. Their top is almost exactly at street level, so they classify
+  // footsteps without creating noticeable bumps in the capsule collision.
+  const surfacePatches=[
+    {id:'yaba-concrete-sidewalk-west',surface:'concrete',position:[-6.1,-.006,-18],halfExtents:[.55,.006,75]},
+    {id:'yaba-concrete-sidewalk-east',surface:'concrete',position:[6.1,-.006,-18],halfExtents:[.55,.006,75]},
+    {id:'yaba-grass-verge-west',surface:'grass',position:[-9.1,-.006,-18],halfExtents:[1.2,.006,70]},
+    {id:'yaba-grass-verge-east',surface:'grass',position:[9.1,-.006,-18],halfExtents:[1.2,.006,70]},
+    {id:'yaba-wet-asphalt-puddle-01',surface:'wet',position:[1.25,-.004,-34],halfExtents:[.9,.004,1.6]},
+    {id:'yaba-wet-asphalt-puddle-02',surface:'wet',position:[-2.2,-.004,-65],halfExtents:[1.15,.004,1.1]}
+  ];
   const actorPhysics=createActorPhysics({colliders:traversalObstacles,groundY:0,gravity:18});
   const playerWorldColliders=[
     ...traversalObstacles,
+    ...surfacePatches,
     ...stage08E.getCollisionProxies(),
     ...(stage08C.collisionProxies||[]),
     ...(stage08G.collisionProxies||[])
@@ -274,10 +315,10 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   }
   const vfxSystem=createVfxSystem({app,poolSize:24});
   const audioSystem=createAudioSystem();
-  const emitPlayerFeedback=(type,position)=>{
-    vfxSystem.emit(type,position);
+  const emitPlayerFeedback=(type,position,meta={})=>{
+    vfxSystem.emit(type,position,1,meta.surface||'asphalt');
     const sound=type==='dust'?'footstep':type==='jump'?'jump':type==='landing'?'landing':type==='parkour'?'parkour':null;
-    if(sound)audioSystem.play(sound);
+    if(sound)audioSystem.play(sound,meta.surface||'asphalt');
   };
   let traversalSystem=null;
   const playerController=createThirdPersonController(app,camera,canvas,{
@@ -381,7 +422,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
+  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),
+    surfacePatches:surfacePatches.map(patch=>({id:patch.id,surface:patch.surface,position:patch.position.slice(),halfExtents:patch.halfExtents.slice()})),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);

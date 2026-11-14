@@ -10,6 +10,7 @@ export function createAudioSystem() {
   let destroyed = false;
   let lastFootstepAt = -Infinity;
   const played = { footstep: 0, jump: 0, landing: 0, parkour: 0 };
+  const playedSurfaces = { asphalt:0, concrete:0, grass:0, metal:0, wet:0 };
   const now = () => context?.currentTime || 0;
 
   function ensureContext() {
@@ -70,14 +71,23 @@ export function createAudioSystem() {
     source.stop(start + duration + 0.015);
   }
 
-  function play(type = 'footstep') {
+  function play(type = 'footstep', surface = 'asphalt') {
     if (destroyed || !Object.hasOwn(played, type) || !ensureContext()) return false;
     if (type === 'footstep') {
       const time = now();
       if (time - lastFootstepAt < 0.16) return false;
       lastFootstepAt = time;
-      tone({ frequency: 92, endFrequency: 58, duration: 0.075, type: 'triangle', gain: 0.12 });
-      noise({ duration: 0.055, frequency: 520, endFrequency: 240, gain: 0.075 });
+      const profiles = {
+        asphalt: { tone: 92, end: 58, noise: 520, gain: .075 },
+        concrete: { tone: 112, end: 66, noise: 720, gain: .085 },
+        grass: { tone: 76, end: 48, noise: 340, gain: .045 },
+        metal: { tone: 155, end: 88, noise: 1250, gain: .09 },
+        wet: { tone: 68, end: 42, noise: 980, gain: .10 }
+      };
+      const profile = profiles[surface] || profiles.asphalt;
+      tone({ frequency: profile.tone, endFrequency: profile.end, duration: 0.075, type: 'triangle', gain: 0.12 });
+      noise({ duration: 0.055, frequency: profile.noise, endFrequency: profile.noise*.46, gain: profile.gain });
+      playedSurfaces[surface in playedSurfaces ? surface : 'asphalt']++;
     } else if (type === 'jump') {
       tone({ frequency: 170, endFrequency: 430, duration: 0.19, type: 'sine', gain: 0.09 });
       noise({ duration: 0.1, frequency: 1100, endFrequency: 500, gain: 0.035 });
@@ -102,5 +112,5 @@ export function createAudioSystem() {
     noiseBuffer = null;
   }
 
-  return { play, unlock, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour'], played: { ...played }, mode: 'procedural-web-audio' }) };
+  return { play, unlock, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour'], played: { ...played }, playedSurfaces: { ...playedSurfaces }, mode: 'procedural-web-audio', surfaceProfiles: ['asphalt','concrete','grass','metal','wet'] }) };
 }

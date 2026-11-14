@@ -18,12 +18,22 @@ try{
  const state=await page.evaluate(()=>{const g=window.__NAIJA_GAME__;return {ready:g.ready,playerCharacterReady:g.playerCharacterReady,characterSource:g.characterSource,characterGeometry:g.characterGeometry,characterLoadError:g.characterLoadError,animations:g.heroAnimations,defaults:g.heroDefaultClips,rig:g.getHeroRigSnapshot?.(),mainCharacterId:g.mainCharacterId,mainCharacterName:g.mainCharacterName,hero01Role:g.hero01Role,heroNpc:g.getHeroNpcState?.(),traversal:g.getTraversalState?.(),physics:g.getPhysicsState?.(),vfx:g.getVfxState?.(),audio:g.getAudioState?.(),drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount,canvas:{w:document.querySelector('#application')?.width,h:document.querySelector('#application')?.height},gate:document.querySelector('#rpg-interface')?.classList.contains('character-required'),picker:!!document.querySelector('#player-character-file'),panel:document.querySelector('#panel-content')?.innerText,status:document.querySelector('#status')?.textContent,assetStatus:document.querySelector('#asset-status')?.textContent,
   startupPreload:g.startupPreload,characterForwardCorrection:g.characterForwardCorrection,
   objective:!!document.querySelector('.objective'),parkourButton:!!document.querySelector('#parkour-button'),
-  loadingHidden:document.querySelector('#city-loading')?.hidden}});
+  loadingHidden:document.querySelector('#city-loading')?.hidden,
+  cameraActualDistance:g.getPlayerState?.().cameraActualDistance,
+  surfacePatches:g.surfacePatches,
+  surfaceProbes:{
+   asphalt:g.getGroundProbe?.([0,1,0],[0,-1,0])?.surface,
+   concrete:g.getGroundProbe?.([-6.1,1,0],[-6.1,-1,0])?.surface,
+   grass:g.getGroundProbe?.([-9.1,1,0],[-9.1,-1,0])?.surface,
+   wet:g.getGroundProbe?.([1.25,1,-34],[1.25,-1,-34])?.surface
+  }}});
  if(String(state.assetStatus||'').includes('Environment startup failed')||String(state.status||'').includes('Could not start'))throw Error('Game startup failed: '+JSON.stringify({status:state.status,assetStatus:state.assetStatus}));
  if(!state.playerCharacterReady||state.characterSource!=='ara-3d-gen-female-preset'||state.characterGeometry!=='rigged-glb')throw Error('Ara GLB not active: '+JSON.stringify(state));
  if(state.characterForwardCorrection!==180)throw Error('Ara forward-facing correction failed: '+JSON.stringify(state.characterForwardCorrection));
  if(state.startupPreload?.total!==48||state.startupPreload?.loaded!==48||state.startupPreload?.failed!==0||!state.startupPreload?.ready||!state.loadingHidden)throw Error('Yaba building preload was incomplete before play: '+JSON.stringify({preload:state.startupPreload,loadingHidden:state.loadingHidden}));
  if(state.objective||state.parkourButton)throw Error('Obstructive objective HUD or duplicate parkour button remains in active controls');
+ if(!(state.cameraActualDistance>0&&state.cameraActualDistance<4.6))throw Error('Third-person camera did not initialize at the closer chase distance: '+state.cameraActualDistance);
+ if(JSON.stringify(state.surfaceProbes)!==JSON.stringify({asphalt:'asphalt',concrete:'concrete',grass:'grass',wet:'wet'}))throw Error('Surface raycasts failed: '+JSON.stringify(state.surfaceProbes));
  if((state.rig?.boneCount??0)<50||(state.rig?.skinnedMeshCount??0)<1)throw Error('Ara rig invalid: '+JSON.stringify(state.rig));
  if(!state.audio?.available||!state.audio.effects.includes('footstep')||state.audio.mode!=='procedural-web-audio')throw Error('Player audio system unavailable: '+JSON.stringify(state.audio));
  const joystickBox=await page.locator('#move-joystick').boundingBox();
@@ -35,7 +45,7 @@ try{
  await page.waitForTimeout(1350);
  const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.()}));
  if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.01)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
- if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite))throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
+ if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite)||walkState.player.footPlacementHits<1)throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
  await page.mouse.up();
  // Reversing the stick direction must turn the visible character, not leave it walking side-on.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -52,7 +62,9 @@ try{
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
  await page.mouse.down();
  await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
- await sprintButton.tap();
+ const sprintBox=await sprintButton.boundingBox();
+ await sprintButton.dispatchEvent('pointerdown',{pointerId:93,pointerType:'touch',isPrimary:true,button:0,buttons:1,clientX:sprintBox.x+sprintBox.width/2,clientY:sprintBox.y+sprintBox.height/2});
+ await sprintButton.dispatchEvent('pointerup',{pointerId:93,pointerType:'touch',isPrimary:true,button:0,buttons:0,clientX:sprintBox.x+sprintBox.width/2,clientY:sprintBox.y+sprintBox.height/2});
  await page.waitForTimeout(850);
  const runState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),pressed:document.querySelector('#sprint-button')?.getAttribute('aria-pressed')}));
  await page.mouse.up();

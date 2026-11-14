@@ -45,12 +45,13 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const info = own(new Ammo.btRigidBodyConstructionInfo(0, motion, shape, inertia));
     const body = own(new Ammo.btRigidBody(info));
     body.setFriction(friction);
-    world.addRigidBody(body);
+    world.addRigidBody(body, 1, 3);
     return body;
   }
 
   // One continuous collision floor covers the Yaba/Ikeja prototype bounds.
   addStaticBox([0, groundY - 0.20, 105], [60, 0.20, 320], 1.0);
+  const surfaceDescriptors = [{ id: 'world-ground-asphalt', surface: 'asphalt' }];
 
   const colliderBodies = [];
   const colliderEnabled = [];
@@ -71,8 +72,14 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       rotationY = rotation?.y || 0;
     }
     const descriptor = { position: position.slice(), halfExtents: halfExtents.slice(), rotationY, id: item?.id || item?.name || item?.entity?.name || 'world-proxy' };
+    descriptor.surface = item?.surface || (/grass|park|planter/i.test(descriptor.id) ? 'grass' :
+      /metal|rail|ladder|pipe|ac-/i.test(descriptor.id) ? 'metal' :
+      /road|asphalt/i.test(descriptor.id) ? 'asphalt' : 'concrete');
     colliderDescriptors.push(descriptor);
-    colliderBodies.push(addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY));
+    const staticBody = addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY);
+    staticBody.setUserIndex?.(1000 + surfaceDescriptors.length);
+    surfaceDescriptors.push(descriptor);
+    colliderBodies.push(staticBody);
     colliderEnabled.push(true);
   }
 
@@ -92,7 +99,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   body.setDamping(0.02, 0.04);
   body.setAngularFactor(vector(0, 0, 0));
   body.setActivationState(4);
-  world.addRigidBody(body);
+  world.addRigidBody(body, 2, 1);
 
   const scratchVelocity = vector(0, 0, 0);
   const scratchTransform = own(new Ammo.btTransform());
@@ -199,7 +206,9 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const origin = transform.getOrigin();
     const p = [origin.x(), origin.y() - halfHeight, origin.z()];
     const linear = body.getLinearVelocity();
-    let grounded = hasSupportContact() && linear.y() <= 1.2;
+    const supportHit = raycast([p[0], p[1] + .12, p[2]], [p[0], p[1] - .20, p[2]]);
+    const raySupport = Boolean(supportHit && supportHit.normal[1] > .55 && p[1] >= supportHit.point[1] - .035 && p[1] - supportHit.point[1] < .18);
+    let grounded = (hasSupportContact() || raySupport) && linear.y() <= 1.2;
     if (p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
     if (p[1] < groundY) grounded = true;
     if (grounded && p[1] <= groundY + 0.075) {
@@ -218,11 +227,37 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     return actor.position;
   }
 
+
+  function raycast(from, to) {
+    const start = vector(Number(from[0]) || 0, Number(from[1]) || 0, Number(from[2]) || 0);
+    const end = vector(Number(to[0]) || 0, Number(to[1]) || 0, Number(to[2]) || 0);
+    const callback = own(new Ammo.ClosestRayResultCallback(start, end));
+    callback.set_m_collisionFilterGroup?.(1);
+    callback.set_m_collisionFilterMask?.(1);
+    world.rayTest(start, end, callback);
+    let result = null;
+    if (callback.hasHit()) {
+      const point = callback.get_m_hitPointWorld();
+      const normal = callback.get_m_hitNormalWorld();
+      const object = callback.get_m_collisionObject?.();
+      const index = object?.getUserIndex?.() ?? 1000;
+      const descriptor = surfaceDescriptors[index - 1000] || surfaceDescriptors[0];
+      result = {
+        point: [point.x(), point.y(), point.z()],
+        normal: [normal.x(), normal.y(), normal.z()],
+        surface: descriptor?.surface || 'asphalt',
+        id: descriptor?.id || 'world-ground-asphalt'
+      };
+    }
+    release(callback); release(start); release(end);
+    return result;
+  }
+
   function setColliderEnabled(index, enabled) {
     const i = Math.floor(Number(index));
     const collider = colliderBodies[i];
     if (!collider || colliderEnabled[i] === Boolean(enabled)) return false;
-    if (enabled) world.addRigidBody(collider);
+    if (enabled) { world.addRigidBody(collider, 1, 3); world.updateSingleAabb(collider); }
     else world.removeRigidBody(collider);
     colliderEnabled[i] = Boolean(enabled);
     return true;
@@ -239,7 +274,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, setGravity, setCrouched, canFitCapsule, cleanup,
+    step, teleport, setColliderEnabled, setGravity, setCrouched, canFitCapsule, raycast, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule',
       steps, collisions,
