@@ -197,6 +197,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   // Ara 3D Female is the only playable character. Never fall back to Hero 01.
   const araFemaleAvailable=await hasSavedPlayerCharacter('ara-female').catch(()=>false);
   let heroCharacter=null;
+  let araLoadError=null;
   if(araFemaleAvailable){
     try{
       heroCharacter=await loadHeroCharacter(app,{
@@ -205,15 +206,24 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
         statusLabel:assetStatusLabel
       });
     }catch(error){
+      araLoadError=String(error?.message||error);
       console.error('Ara female player could not load:',error);
       if(assetStatusLabel){
-        assetStatusLabel.textContent='Ara female needs to be re-imported from the Player menu.';
+        assetStatusLabel.textContent='Ara female could not be loaded · re-import the original FBX.';
         assetStatusLabel.dataset.state='warning';
       }
     }
   }else if(assetStatusLabel){
-    assetStatusLabel.textContent='Ara female is not installed on this device · open Player to import her.';
+    assetStatusLabel.textContent='Ara female is not installed on this device · import The_Female_Executive.fbx.';
     assetStatusLabel.dataset.state='warning';
+  }
+  if(heroCharacter) {
+    window.__NAIJA_RPG_UI__?.setPlayerCharacterReady?.();
+  } else {
+    const gateMessage=araLoadError
+      ? 'Ara could not be loaded: '+araLoadError+' Select The_Female_Executive.fbx below and import it again.'
+      : 'The Ara 3D Female model is not installed in this browser. Select The_Female_Executive.fbx below to install her. Gameplay controls stay locked until the real model loads.';
+    window.__NAIJA_RPG_UI__?.requirePlayerCharacter?.(gateMessage);
   }
 
   // Hero 01 is loaded independently for the city NPC population only.
@@ -363,7 +373,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterSource:heroCharacter?.source??'ara-female-not-installed',characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
+  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-not-installed',characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterSource:heroCharacter?.source??'ara-female-not-installed',characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
