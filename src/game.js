@@ -192,10 +192,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   let heroCharacter = null;
   try {
     heroCharacter = await loadHeroCharacter(app, {
-      urls: [
-        'assets/hero/NaijaCityHero01_60clips.part1.b64',
-        'assets/hero/NaijaCityHero01_60clips.part2.b64'
-      ],
+      urls: ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
       statusLabel: assetStatusLabel
     });
   } catch (error) {
