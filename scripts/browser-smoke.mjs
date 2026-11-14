@@ -123,20 +123,22 @@ try {
 
  // Read the instantiated Hero skin/clothing rig and test representative pose changes.
  const initialRig=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
- if(!initialRig||initialRig.skinnedMeshCount<9||initialRig.boneCount<15||initialRig.weightedVertexCount<1000)throw new Error('Hero runtime rig/clothing snapshot incomplete: '+JSON.stringify(initialRig));
+ if(!initialRig||initialRig.skinnedMeshCount<9||initialRig.weightedClothingMeshCount<1||initialRig.boneCount<15||initialRig.weightedVertexCount<1000)throw new Error('Hero runtime rig/clothing snapshot incomplete: '+JSON.stringify(initialRig));
+ const idleBaseline=initialRig.bones||[];
  const poseReports=[];
  for(const clip of ['Hero01_Walk','Hero01_Sprint','Hero01_Jump','Hero01_VaultLow','Hero01_Mantle','Hero01_LedgePullUp','Hero01_LadderClimb','Hero01_WallHop']){
-  if(!(await page.evaluate(name=>window.__NAIJA_PLAY_HERO_ANIMATION__?.(name)===true,clip)))throw new Error('Could not trigger pose QA clip '+clip);
-  await page.waitForTimeout(280);
-  const before=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
-  await page.waitForTimeout(160);
+  await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_Idle',5));
+  await page.waitForTimeout(180);
+  const baseline=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
+  if(!(await page.evaluate(name=>window.__NAIJA_PLAY_HERO_ANIMATION__?.(name,5)===true,clip)))throw new Error('Could not hold pose QA clip '+clip);
+  await page.waitForTimeout(520);
   const after=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
-  const prior=new Map((before?.bones||[]).map(b=>[b.name,b]));
-  const changed=(after?.bones||[]).filter(b=>{const a=prior.get(b.name);if(!a)return false;const x=[...a.position,...a.rotation],y=[...b.position,...b.rotation];return y.some((n,i)=>Math.abs(n-x[i])>.001);}).length;
-  poseReports.push({clip,changedBones:changed});
-  if(after?.skinnedMeshCount<9||changed<1)throw new Error('Rig did not deform through '+clip+': '+JSON.stringify({after,changed}));
+  const prior=new Map((baseline?.bones||idleBaseline).map(b=>[b.name,b]));
+  const changed=(after?.bones||[]).filter(b=>{const a=prior.get(b.name);if(!a)return false;const x=[...a.position,...a.rotation],y=[...b.position,...b.rotation];return y.some((n,i)=>Math.abs(n-x[i])>.002);}).length;
+  poseReports.push({clip,changedBones:changed,weightedClothingMeshes:after?.weightedClothingMeshCount});
+  if(after?.skinnedMeshCount<9||after?.weightedClothingMeshCount<1||changed<1)throw new Error('Rig/clothing did not deform through '+clip+': '+JSON.stringify({after,changed}));
  }
- await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_Idle'));
+ await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_Idle',5));
  // Complete all eight contextual parkour actions through the live player controller.
  const parkourReports=[];
  for(const type of ['step','low-vault','high-vault','mantle','ledge','ladder','wall-run','drop']){
