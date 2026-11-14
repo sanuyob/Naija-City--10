@@ -20,6 +20,11 @@ const generator=await readFile(new URL('./generate-stage-08e-assets.mjs',import.
 const stage08eManifest=JSON.parse(await readFile(new URL('../public/assets/stage-08e-manifest.json',import.meta.url),'utf8'));
 const buildingFiles=(await readdir(new URL('../public/assets/buildings/',import.meta.url))).filter(name=>name.endsWith('.glb'));
 const controller=await readFile(new URL('../src/third-person-controller.js',import.meta.url),'utf8');
+const actorPhysics=await readFile(new URL('../src/actor-physics.js',import.meta.url),'utf8');
+const pedestrians=await readFile(new URL('../src/pedestrian-system.js',import.meta.url),'utf8');
+const vfx=await readFile(new URL('../src/vfx-system.js',import.meta.url),'utf8');
+const traversal=await readFile(new URL('../src/traversal-system.js',import.meta.url),'utf8');
+const companions=await readFile(new URL('../src/companion-system.js',import.meta.url),'utf8');
 const physics=await readFile(new URL('../src/vehicle-physics.js',import.meta.url),'utf8');
 const loader=await readFile(new URL('../src/asset-loader.js',import.meta.url),'utf8');
 const manifest=JSON.parse(await readFile(new URL('../public/assets/manifest.json',import.meta.url),'utf8'));
@@ -230,6 +235,25 @@ for(const filename of buildingFiles){
  assert.ok(json.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes.TANGENT!==undefined)),filename+' mesh primitives must include tangent attributes');
  assert.equal(json.materials.length,filename==='yaba-core-01.glb'?7:6,filename+' must use the expected material-family count (seven for the Stage 08F hero, six for Stage 08E buildings)');
 }
+
+assert.match(game,/createActorPhysics/,'Stage 09 mounts shared kinematic physics');
+assert.match(game,/createPedestrianSystem/,'Stage 09 mounts live pedestrians');
+assert.match(game,/createVfxSystem/,'Stage 09 mounts pooled VFX');
+assert.match(game,/pedestrianSystem\.update/,'Pedestrians update during gameplay');
+assert.match(game,/vfxSystem\.update/,'VFX update during gameplay');
+assert.match(game,/debugTraverseTypeForSmoke/,'Browser smoke exercises parkour types');
+assert.match(game,/getHeroRigSnapshot/,'Runtime clothing/rig diagnostics are exposed');
+assert.match(actorPhysics,/kinematic-capsule/,'Shared actor solver identifies its physics mode');
+assert.match(actorPhysics,/agentSeparations/,'Shared actor solver separates NPC agents');
+assert.match(pedestrians,/noticing-player/,'Ambient pedestrians respond to player proximity');
+assert.match(pedestrians,/routeChanges/,'Ambient pedestrians use waypoint routes');
+assert.match(vfx,/poolSize/,'VFX system uses a bounded reusable pool');
+assert.match(traversal,/Hero01_LedgePullUp/,'Parkour includes ledge traversal');
+assert.match(traversal,/Hero01_LadderClimb/,'Parkour includes ladder traversal');
+assert.match(traversal,/Hero01_WallHop/,'Parkour includes wall-hop traversal');
+assert.match(companions,/solver\.step/,'Companions use shared collision-aware physics');
+assert.match(controller,/jumpBuffer/,'Player has buffered and coyote-time jumping');
+assert.match(controller,/onEffect\?\.\("landing"/,'Player landings emit VFX');
 console.log('Stage 08E checks passed: 48 unique Nigerian commercial, mixed-use and residential GLBs, embedded PBR maps, UVs, three LODs and separate collision proxies.');
 console.log('Stage 08A checks passed: expanded terrain, connected road grid, 16 neighbourhood buildings and pocket parks.');
 console.log('Stage 08B checks passed: Nigerian shopfronts, awnings, roller shutters, balconies, security grilles, AC units and rooftop water tanks.');
