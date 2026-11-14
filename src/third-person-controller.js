@@ -2,8 +2,8 @@ import * as pc from 'playcanvas';
 
 /**
  * Lightweight third-person controller for the Stage 06 mobile prototype.
- * Character geometry is assembled from primitive meshes; gait is procedural
- * so no large external rig or animation download is required.
+ * Ara 3D Female supplies the visible player rig and skeletal animations.
+ * Hero 01 is created separately as a moving city NPC by pedestrian-system.js.
  */
 export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement, heroCharacter, physics, onEffect } = {}) {
   // The player root owns movement, camera follow and collision. The visible
@@ -438,7 +438,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
       source: activeHeroCharacter?.source || 'ara-female-not-installed',
-      characterId: activeHeroCharacter?.characterId || 'hero01',
+      characterId: activeHeroCharacter?.characterId || 'ara-female',
       displayName: activeHeroCharacter?.displayName || 'Ara 3D Female',
       defaultClips: { ...animationFallbacks },
       parkourUsesLocomotionFallback: !availableHeroClips.has('Hero01_VaultLow') &&
