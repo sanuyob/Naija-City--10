@@ -437,9 +437,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     getAnimationState: () => ({
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
-      source: activeHeroCharacter?.source || 'procedural-fallback',
+      source: activeHeroCharacter?.source || 'ara-female-not-installed',
       characterId: activeHeroCharacter?.characterId || 'hero01',
-      displayName: activeHeroCharacter?.displayName || 'Hero 01',
+      displayName: activeHeroCharacter?.displayName || 'Ara 3D Female',
       defaultClips: { ...animationFallbacks },
       parkourUsesLocomotionFallback: !availableHeroClips.has('Hero01_VaultLow') &&
         !availableHeroClips.has('Hero01_Mantle') && !availableHeroClips.has('Hero01_LedgePullUp'),
