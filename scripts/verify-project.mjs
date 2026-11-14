@@ -134,6 +134,10 @@ assert.match(controller,/physics\.step\(body,horizontal,step\)/,'Parkour must ru
 assert.match(controller,/traversalMotion\.clips\.length/,'Multi-stage parkour must play each clip phase in sequence');
 assert.match(controller,/traversalMotion\.duration-traversalMotion\.elapsed/,'Parkour movement must use remaining time, not a fixed slow interpolation');
 assert.match(playerPhysics,/btCapsuleShape/,'The player must use a Bullet capsule collision body');
+assert.match(playerPhysics,/hasSupportContact/,'Bullet grounding must detect support contacts on raised parkour platforms');
+assert.match(playerPhysics,/setGravity/,'Bullet gravity must be controllable during scripted ladder and mantle traversal');
+assert.match(traversal,/climbToTop/,'Step-up, mantle, ledge and ladder must target the top of their obstacle');
+assert.match(controller,/kinematicClimb/,'Raised traversal must use a controlled climbing path rather than a generic jump');
 assert.match(playerPhysics,/btDiscreteDynamicsWorld/,'The player must use a Bullet dynamics world');
 assert.match(playerPhysics,/ammo-bullet-capsule/,'Bullet player physics mode must be exposed');
 assert.match(playerPhysics,/setColliderEnabled/,'Parkour must be able to release and restore the active obstacle collider');
