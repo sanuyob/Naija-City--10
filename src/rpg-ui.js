@@ -1,10 +1,12 @@
 import './rpg-ui.css';
+import { importPlayerCharacter } from './character-importer.js';
+import { clearSavedPlayerCharacter } from './player-character-store.js';
 
 const views = {
   inventory: ['FIELD KIT', 'Inventory', '<div class="tiles"><article><b>01</b><strong>Supplies</strong><small>No items collected</small></article><article><b>02</b><strong>Key items</strong><small>No key items yet</small></article><article><b>03</b><strong>Resources</strong><small>0 collected</small></article><article><b>04</b><strong>Quick slots</strong><small>Tap a slot to select it</small></article></div>'],
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
   map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
-  character: ['PLAYER PROFILE', 'Character', '<div class="profile"><b>NC</b><div><strong>ROOKIE</strong><p>Level 01 · City newcomer</p><small>0 / 100 XP TO LEVEL 02</small></div></div><div class="stat">Strength <b>01</b></div><div class="stat">Mobility <b>01</b></div><div class="stat">Awareness <b>01</b></div><div class="stat">Street reputation <b>00</b></div>'],
+  character: ['PLAYER PROFILE', 'Character', '<div class="profile"><b>NC</b><div><strong>ROOKIE</strong><p>Level 01 · City newcomer</p><small>0 / 100 XP TO LEVEL 02</small></div></div><div class="mission character-import-card"><small>DEFAULT PLAYER MODEL</small><b>IMPORT ARA CHARACTER</b><p>Choose your animated Ara FBX. The game converts it to GLB, saves it on this device and uses it as your player after reload.</p><form id="player-character-form"><label for="player-character-file">CHARACTER FBX FILE</label><input id="player-character-file" type="file" accept=".fbx,application/octet-stream" required><button id="player-character-import" type="submit">CONVERT + SAVE CHARACTER</button></form><p id="player-character-status" role="status">Your imported player is saved only in this browser on this device.</p><button id="player-character-reset" type="button">RESET TO BUNDLED CHARACTER</button></div><div class="stat">Strength <b>01</b></div><div class="stat">Mobility <b>01</b></div><div class="stat">Awareness <b>01</b></div><div class="stat">Street reputation <b>00</b></div>'],
   settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><p class="muted">Landscape-first controls. Gameplay settings are expanded in later stages.</p>'],
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
@@ -84,7 +86,50 @@ export function mountRPGInterface() {
     panel.hidden = true;
     pause.hidden = true;
   };
-  root.addEventListener('click', event => {
+  root.addEventListener('submit', async event => {
+    const form = event.target.closest('#player-character-form');
+    if (!form) return;
+    event.preventDefault();
+    const file = form.querySelector('#player-character-file')?.files?.[0];
+    const button = form.querySelector('#player-character-import');
+    const status = form.querySelector('#player-character-status');
+    if (!file) { showToast('Choose the Ara FBX file first.'); return; }
+    button.disabled = true;
+    try {
+      status.textContent = 'Preparing character import…';
+      const metadata = await importPlayerCharacter(file, message => { status.textContent = message; });
+      status.textContent = 'Saved · ' + metadata.boneCount + ' bones · ' + metadata.animationNames.join(', ') +
+        ' · ' + (metadata.glbBytes / 1048576).toFixed(1) + ' MB. Reload to activate it.';
+      button.textContent = 'RELOAD WITH NEW PLAYER';
+      button.disabled = false;
+      button.dataset.reloadPlayer = 'true';
+      showToast('Ara character saved on this device.');
+    } catch (error) {
+      status.textContent = 'Import failed: ' + (error?.message || error);
+      button.disabled = false;
+      showToast('Character import failed. See the Player panel.');
+    }
+  });
+
+  root.addEventListener('click', async event => {
+    const importButton = event.target.closest('#player-character-import');
+    if (importButton?.dataset.reloadPlayer === 'true') {
+      window.location.reload();
+      return;
+    }
+    if (event.target.closest('#player-character-reset')) {
+      const button = event.target.closest('#player-character-reset');
+      button.disabled = true;
+      try {
+        await clearSavedPlayerCharacter();
+        showToast('Default character reset. Reloading…');
+        window.location.reload();
+      } catch (error) {
+        button.disabled = false;
+        showToast('Could not reset character: ' + (error?.message || error));
+      }
+      return;
+    }
     const companionButton = event.target.closest('[data-companion-command]');
     if (companionButton) {
       const command = companionButton.dataset.companionCommand;
