@@ -136,7 +136,6 @@ try {
  const heroNpc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
  if(!heroNpc||heroNpc.name!=='Hero 01'||heroNpc.isPlayer!==false||heroNpc.active!==true||!heroNpc.moved||!heroNpc.rigged||!heroNpc.activeClip?.includes('Walk'))throw new Error('Hero 01 is not running as a visible animated city NPC: '+JSON.stringify(heroNpc));
  if(await page.locator('#character-switch-button').count()!==0||await page.locator('[data-player-action]').count()!==0)throw new Error('Character-switch controls must be completely removed from the HUD and Player menu');
- await page.locator('[data-open="pause"]').click();
  const playerPanel=await page.locator('#panel-content').textContent();
  if(!playerPanel?.includes('ARA 3D FEMALE · MAIN PLAYER')||
     !playerPanel.includes('ONLY PLAYABLE CHARACTER')||
@@ -146,8 +145,7 @@ try {
   throw new Error('Player import gate does not match the Ara-only player setup: '+playerPanel);
  }
  if(await page.locator('[data-close]').isVisible())throw new Error('Player import gate can be dismissed before the playable character is installed.');
- await page.locator('[data-open="pause"]').click();
- if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Pause input dismissed the required Ara import screen.');
+ if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Ara import gate is not pinned open.');
 
 
  // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
@@ -214,8 +212,7 @@ try {
  const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
  if(hudBoxes['#move-joystick'].x>140||hudBoxes['.actions'].x<694||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
  if(await page.locator('.nav').isVisible())throw new Error('Legacy bottom navigation should be removed from active gameplay HUD');
- await page.locator('[data-open="pause"]').click();
- if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Pause must keep the user on the Ara import panel while the model is missing.');
+ if(!(await page.locator('#rpg-panel').isVisible()))throw new Error('Ara import gate is not pinned open while the model is missing.');
  if(await page.locator('[data-close]').isVisible())throw new Error('Character import gate unexpectedly has a dismiss control.');
  await page.evaluate(()=>document.querySelector('#assets-toggle').click());
  await page.locator('#assets-panel[open]').waitFor({state:'visible'});
