@@ -277,7 +277,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     else stamina = Math.min(100, stamina + 19 * step);
     // The Ara FBX walk take is a 1.067 s cycle and run is 0.733 s.
     // Keep travel speed proportionate to a 1.8 m human rather than making every step slide.
-    const speed = input.crouch ? 0.85 : running ? 3.2 : 1.35;
+    const speed = input.crouch ? 0.95 : running ? 3.75 : 1.6;
 
     // Camera-relative movement: joystick up moves toward the camera's forward direction.
     forward.set(-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw));
@@ -296,7 +296,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       const progress=Math.min(.999,traversalMotion.elapsed/traversalMotion.duration);
       const phase=Math.min(traversalMotion.clips.length-1,Math.floor(progress*traversalMotion.clips.length));
       if(phase!==traversalMotion.activePhase){traversalMotion.activePhase=phase;traversalMotion.activeClip=traversalMotion.clips[phase]||traversalMotion.activeClip;actionClip=traversalMotion.activeClip;transitionHeroClip(traversalMotion.activeClip,.12);}
-      const remaining=Math.max(.06,traversalMotion.duration-traversalMotion.elapsed);
+      const remaining=Math.max(step,traversalMotion.duration-traversalMotion.elapsed+step);
       const horizontal=[(traversalMotion.end[0]-p.x)/remaining,0,(traversalMotion.end[2]-p.z)/remaining];
       const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded:false,traversing:true};
       if(physics?.step){
