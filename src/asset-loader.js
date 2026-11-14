@@ -221,6 +221,20 @@ export async function loadHeroCharacter(app, {
         }
       }
     }
+    const getRigSnapshot = () => {
+      const boneMap=new Map();let skinnedMeshCount=0,weightedVertexCount=0,weightedClothingMeshCount=0;
+      const clothing=/shirt|overshirt|sleeve|trouser|pants|cloth|jacket|garment|fabric/i;
+      for(const render of root.findComponents('render'))for(const mi of render.meshInstances||[]){
+        const skin=mi.skinInstance;if(!skin)continue;skinnedMeshCount++;
+        if(clothing.test((mi.material?.name||'')+' '+(mi.node?.name||'')))weightedClothingMeshCount++;
+        weightedVertexCount+=mi.mesh?.vertexBuffer?.numVertices||0;
+        for(const bone of skin.bones||[])if(bone?.name)boneMap.set(bone.name,bone);
+      }
+      if(!boneMap.size){const visit=node=>{if(node!==root&&/hip|pelvis|spine|neck|head|arm|hand|leg|thigh|calf|foot|shoulder|bone|joint/i.test(node.name||''))boneMap.set(node.name,node);for(const child of node.children||[])visit(child);};visit(root);}
+      const bones=[...boneMap.values()].map(node=>{const p=node.getLocalPosition?.(),r=node.getLocalEulerAngles?.();return{name:node.name,position:p?[p.x,p.y,p.z]:[0,0,0],rotation:r?[r.x,r.y,r.z]:[0,0,0]};});
+      return{skinnedMeshCount,weightedVertexCount,weightedClothingMeshCount,boneCount:bones.length,bones};
+    };
+
     const setFaceExpression = (name, weight = 1) => {
       const normalized = Math.max(0, Math.min(1, Number(weight) || 0));
       let applied = false;
@@ -239,6 +253,7 @@ export async function loadHeroCharacter(app, {
       root, asset, clipNames, clipDurations,
       morphNames: Array.from(morphNames).sort(),
       setFaceExpression,
+      getRigSnapshot,
       createInstance: createAnimatedInstance
     };
   } catch (error) {
