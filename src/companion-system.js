@@ -29,9 +29,11 @@ export function createCompanionSystem({app,playerController,heroCharacter,obstac
     if(!roster)return false;
     if(actors.has(roleId)){message(roster.name+' is already active.');return true;}
     if(actors.size>=cap){message('Maximum of two active companions reached.');return false;}
+    const playerPosition=playerController.getState().position;
+    const spawnDistance=Math.hypot(roster.spawn[0]-playerPosition[0],roster.spawn[2]-playerPosition[2]);
     const root=heroCharacter.createInstance('NaijaCityCompanion_'+roster.id,roster.tint);
     root.setPosition(...roster.spawn);root.setLocalScale(0.98,0.98,0.98);app.root.addChild(root);
-    const actor={...roster,root,command:'Follow',state:'approaching',activeClip:'Hero01_Idle',commandTimer:0,distance:Infinity,target:roster.spawn.slice(),clipNames:new Set(heroCharacter.clipNames||[])};
+    const actor={...roster,root,spawnDistance,command:'Follow',state:'approaching',activeClip:'Hero01_Idle',commandTimer:0,distance:Infinity,target:roster.spawn.slice(),clipNames:new Set(heroCharacter.clipNames||[])};
     actors.set(roleId,actor);play(actor,'Hero01_Idle');
     message(roster.name+' is walking in from the district entry.');return true;
   }
@@ -103,7 +105,7 @@ export function createCompanionSystem({app,playerController,heroCharacter,obstac
     getState:()=>({
       stage:'companion-prototype',maxActive:cap,activeCount:actors.size,commandsIssued,
       commands:Array.from(COMMANDS),
-      roster:ROSTER.map(item=>({id:item.id,name:item.name,active:actors.has(item.id),state:actors.get(item.id)?.state||'inactive',command:actors.get(item.id)?.command||null,distance:Number.isFinite(actors.get(item.id)?.distance)?actors.get(item.id).distance:null,activeClip:actors.get(item.id)?.activeClip||null})),
+      roster:ROSTER.map(item=>({id:item.id,name:item.name,active:actors.has(item.id),state:actors.get(item.id)?.state||'inactive',command:actors.get(item.id)?.command||null,distance:Number.isFinite(actors.get(item.id)?.distance)?actors.get(item.id).distance:null,spawnDistance:actors.get(item.id)?.spawnDistance??null,activeClip:actors.get(item.id)?.activeClip||null})),
       lastMessage
     })
   };
