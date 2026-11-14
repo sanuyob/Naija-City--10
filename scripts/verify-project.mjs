@@ -193,7 +193,8 @@ assert.doesNotMatch(game,/render-diagnostic-marker|diagnosticMarker/,'The large 
 assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
 assert.match(game,/createTraversalSystem\(\{playerController,physics:playerPhysics/,'The traversal system must control the real Bullet obstacle colliders');
 assert.match(traversal,/timer=0;completed\+\+/,'Traversal lock must be cleared exactly once when an action ends');
-assert.ok(smoke.includes('parkour.distanceTravelled<0.75'),'Browser smoke must verify that the player crosses the low-vault obstacle');
+assert.ok(smoke.includes("jumpActionClip!=='Climb up ledge'") && smoke.includes("parkour.traversal.traversalsCompleted<1"),
+ 'Browser smoke must verify that the live Jump button triggers and completes contextual parkour');
 assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
 for(const feature of ['player-character','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','physics.step(body,desired,step)','running ? 3.75 : 1.6','smoothedCamera.lerp(smoothedCamera, desiredCamera','Ara female rig']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
 assert.doesNotMatch(controller,/player-head|left-leg-pivot|right-arm-pivot/,'The old generic male player placeholder must not render');

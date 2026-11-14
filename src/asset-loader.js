@@ -23,10 +23,8 @@ function createAraCrouchTracks(root) {
     return null;
   };
   const roles = {
-    hips: pick('Hips','Pelvis'), spine: pick('Spine2','Chest','Spine'),
-    leftArm: pick('LeftArm'), rightArm: pick('RightArm'),
-    leftThigh: pick('LeftUpLeg','LeftThigh'), rightThigh: pick('RightUpLeg','RightThigh'),
-    leftKnee: pick('LeftLeg','LeftCalf'), rightKnee: pick('RightLeg','RightCalf')
+    hips: pick('Hips','Pelvis'),
+    spine: pick('Spine2','Chest','Spine')
   };
   const pathFor = node => {
     const path = []; let current = node;
@@ -58,21 +56,12 @@ function createAraCrouchTracks(root) {
       curves.push(new pc.AnimCurve([{ entityPath: path, component: 'graph', propertyPath: [property] }], 0, outputIndex, pc.INTERPOLATION_LINEAR));
     };
     const phases = times.map(t => t * Math.PI * 2);
-    const thighL = walking ? phases.map(p => -43 + 13 * Math.sin(p)) : times.map(() => -48);
-    const thighR = walking ? phases.map(p => -43 + 13 * Math.sin(p + Math.PI)) : times.map(() => -48);
-    const kneeL = walking ? phases.map(p => 58 + 18 * Math.max(0, -Math.sin(p))) : times.map(() => 68);
-    const kneeR = walking ? phases.map(p => 58 + 18 * Math.max(0, -Math.sin(p + Math.PI))) : times.map(() => 68);
-    const spine = times.map(() => walking ? [13, 0, 0] : [15, 0, 0]);
-    const armL = walking ? phases.map(p => [-8 * Math.sin(p), 0, -6]) : times.map(() => [-12, 0, -8]);
-    const armR = walking ? phases.map(p => [8 * Math.sin(p), 0, 6]) : times.map(() => [-12, 0, 8]);
-    addCurve(roles.hips, 'localPosition', 3, times.map(t => walking ? -.10 - .018 * Math.sin(t * Math.PI * 2) : -.11));
+    // The source rig's bind pose already carries strong leg orientation.
+    // Large extra thigh, knee and torso rotations collapsed its silhouette.
+    const spine = times.map(() => walking ? [2.5, 0, 0] : [3.5, 0, 0]);
+    addCurve(roles.hips, 'localPosition', 3,
+      times.map(t => walking ? -.055 - .008 * Math.sin(t * Math.PI * 2) : -.07));
     addCurve(roles.spine, 'localRotation', 4, spine);
-    addCurve(roles.leftThigh, 'localRotation', 4, thighL.map(x => [x, 0, 0]));
-    addCurve(roles.rightThigh, 'localRotation', 4, thighR.map(x => [x, 0, 0]));
-    addCurve(roles.leftKnee, 'localRotation', 4, kneeL.map(x => [x, 0, 0]));
-    addCurve(roles.rightKnee, 'localRotation', 4, kneeR.map(x => [x, 0, 0]));
-    addCurve(roles.leftArm, 'localRotation', 4, armL);
-    addCurve(roles.rightArm, 'localRotation', 4, armR);
     if (!curves.length) throw new Error('Ara crouch animation could not bind to the character skeleton.');
     return new pc.AnimTrack(name, duration, [input], outputs, curves);
   };
@@ -433,6 +422,29 @@ export async function loadHeroCharacter(app, {
       };
       return { left: read(leftFootBone), right: read(rightFootBone) };
     };
+    const skinBones = renderMeshInstances.flatMap(mesh => mesh.skinInstance?.bones || []);
+    const findSkinBone = name => skinBones.find(bone => bone?.name === name) || null;
+    const getFacingDirection = () => {
+      const head = findSkinBone('Head');
+      const leftEye = findSkinBone('LeftEye');
+      const rightEye = findSkinBone('RightEye');
+      if (!head || !leftEye || !rightEye) return null;
+      const h = head.getPosition(), l = leftEye.getPosition(), r = rightEye.getPosition();
+      const x = (l.x + r.x) * .5 - h.x;
+      const y = (l.y + r.y) * .5 - h.y;
+      const z = (l.z + r.z) * .5 - h.z;
+      const length = Math.hypot(x, y, z) || 1;
+      return [x / length, y / length, z / length];
+    };
+    // The bundled Ara preset's face points along local +Z. The game controller
+    // moves forward along -Z, so rotate the visual root once to align them.
+    const initialFacing = getFacingDirection();
+    let forwardAxisCorrectionDegrees = 0;
+    if (initialFacing) {
+      const heading = Math.atan2(initialFacing[0], initialFacing[2]);
+      forwardAxisCorrectionDegrees = (Math.PI - heading) * 180 / Math.PI;
+      root.setLocalEulerAngles(0, forwardAxisCorrectionDegrees, 0);
+    }
 
     const setFaceExpression = (name, weight = 1) => {
       const normalized = Math.max(0, Math.min(1, Number(weight) || 0));
@@ -451,7 +463,7 @@ export async function loadHeroCharacter(app, {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression, getRigSnapshot, getFootPositions, createInstance: createAnimatedInstance,
+      setFaceExpression, getRigSnapshot, getFootPositions, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };

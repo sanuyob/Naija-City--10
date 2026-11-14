@@ -182,3 +182,18 @@
   #rpg-interface.character-required .profile { margin: 8px 0; }
   #rpg-interface.character-required .character-import-card { padding: 9px; }
 }
+
+/* Keep the play field clear: objectives belong in menus, not over the camera. */
+#rpg-interface .objective { display:none !important; }
+#sprint-button[aria-pressed="true"] { background:rgba(92,146,104,.96); border-color:#d0edbf; box-shadow:0 0 0 2px rgba(178,220,163,.2),0 4px 18px rgba(0,0,0,.3); }
+
+.city-loading{position:fixed;inset:0;z-index:10000;display:grid;align-content:center;justify-items:center;gap:10px;padding:24px;background:radial-gradient(ellipse at 50% 42%,#223b31 0%,#0b1713 58%,#050b09 100%);color:#f0f2e9;text-align:center;transition:opacity .6s ease,visibility .6s ease;pointer-events:auto}
+.city-loading[hidden]{display:none}
+.city-loading.complete{opacity:0;visibility:hidden;pointer-events:none}
+.loading-mark{display:grid;place-items:center;width:62px;height:62px;border:1px solid #d7b878;border-radius:16px;color:#d7b878;font:700 38px Georgia,serif}
+.city-loading>small{margin-top:12px;color:#d7b878;font-size:9px;letter-spacing:.22em}
+.city-loading h1{margin:0;font:500 clamp(30px,6vw,52px) Georgia,serif;letter-spacing:.12em}
+.city-loading p{margin:3px 0 9px;color:#d5ded5;font-size:13px}
+.loading-track{width:min(340px,72vw);height:5px;overflow:hidden;border-radius:9px;background:#ffffff24}
+.loading-track i{display:block;width:0;height:100%;background:#d7b878;transition:width .18s ease}
+.city-loading>span{color:#aebdb2;font:9px ui-monospace,monospace;letter-spacing:.13em}

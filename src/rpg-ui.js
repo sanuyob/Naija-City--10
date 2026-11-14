@@ -13,6 +13,14 @@ export function mountRPGInterface() {
   const root = document.getElementById('rpg-interface');
   if (!root) throw new Error('Missing RPG interface root');
   root.innerHTML = `
+    <section class="city-loading" id="city-loading" role="status" aria-live="polite">
+      <div class="loading-mark">N</div>
+      <small>OPEN WORLD · LAGOS, NIGERIA</small>
+      <h1>NAIJA CITY</h1>
+      <p id="city-loading-label">Preparing your city…</p>
+      <div class="loading-track"><i id="city-loading-fill"></i></div>
+      <span id="city-loading-count">Loading environment assets</span>
+    </section>
     <header class="topbar">
       <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small data-genre="third-person open-world action RPG">THIRD-PERSON OPEN-WORLD ACTION RPG</small></div></div>
       <div class="district"><small>CURRENT DISTRICT</small><b>YABA · LAGOS</b></div>
@@ -29,15 +37,13 @@ export function mountRPGInterface() {
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
       <small class="compass">N　·　NE　·　E　·　SE</small>
     </section>
-    <section class="objective"><small>● CURRENT OBJECTIVE</small><b>Explore the neighbourhood</b><span>Find your place in the city.</span><small id="hud-world-activity" class="world-live-status">CITY LIFE · 10 PEDESTRIANS · CREW 0/2</small></section>
     <div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
     <div class="touch" aria-label="Mobile game controls">
       <div class="stick" id="move-joystick" role="application" aria-label="Movement joystick"><i id="move-knob"></i><small>MOVE</small></div>
       <div class="actions">
-        <button id="jump-button" aria-label="Jump">↑<small>JUMP</small></button>
-        <button id="sprint-button" aria-label="Hold to sprint">»<small>SPRINT</small></button>
+        <button id="jump-button" aria-label="Jump or climb">↑<small>JUMP</small></button>
+        <button id="sprint-button" aria-label="Toggle sprint" aria-pressed="false">»<small>SPRINT</small></button>
         <button id="crouch-button" aria-label="Toggle crouch" aria-pressed="false">↓<small>CROUCH</small></button>
-        <button id="parkour-button" aria-label="Parkour traversal">◇<small>PARKOUR</small></button>
         <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
       </div>
     </div>
@@ -63,6 +69,23 @@ export function mountRPGInterface() {
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
   const toast = root.querySelector('#hud-toast');
+  const loadingScreen = root.querySelector('#city-loading');
+  const updateLoading = progress => {
+    const percent=Math.max(0,Math.min(100,Number(progress?.percent)||0));
+    root.querySelector('#city-loading-fill').style.width=percent+'%';
+    root.querySelector('#city-loading-label').textContent=progress?.label||'Preparing streets, buildings and characters…';
+    const total=Number(progress?.total)||0,completed=Number(progress?.completed)||0;
+    root.querySelector('#city-loading-count').textContent=total
+      ? completed+' / '+total+' BUILDINGS READY'
+      : 'Loading environment assets';
+  };
+  const finishLoading = () => {
+    if(!loadingScreen)return;
+    loadingScreen.classList.add('complete');
+    root.querySelector('#city-loading-label').textContent='Your city is ready';
+    root.querySelector('#city-loading-count').textContent='ENTERING YABA';
+    loadingScreen.hidden=true;
+  };
   const open = name => {
     if (characterRequired && name !== 'character') name = 'character';
     if (name === 'pause') {
@@ -83,7 +106,7 @@ export function mountRPGInterface() {
   const requirePlayerCharacter = message => {
     characterRequired = true;
     root.classList.add('character-required');
-    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#parkour-button,#interact-button').forEach(button => { button.disabled = true; });
+    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#interact-button').forEach(button => { button.disabled = true; });
     root.querySelector('#move-joystick')?.setAttribute('aria-disabled', 'true');
     open('character');
     const status = root.querySelector('#player-character-status');
@@ -93,7 +116,7 @@ export function mountRPGInterface() {
   const setPlayerCharacterReady = () => {
     characterRequired = false;
     root.classList.remove('character-required');
-    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#parkour-button,#interact-button').forEach(button => { button.disabled = false; });
+    root.querySelectorAll('#jump-button,#sprint-button,#crouch-button,#interact-button').forEach(button => { button.disabled = false; });
     root.querySelector('#move-joystick')?.removeAttribute('aria-disabled');
     return true;
   };
@@ -116,11 +139,6 @@ export function mountRPGInterface() {
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
-    if (event.target.closest('#parkour-button')) {
-      const started=window.__NAIJA_TRAVERSE__?.()===true;
-      showToast(started?'Parkour move started.':'Face a marked obstacle, ledge, ladder or wall.');
-      return;
-    }
     if (event.target.closest('#interact-button')) {
       showToast('Checking nearby…');
       window.__NAIJA_INTERACT__?.();
@@ -165,13 +183,10 @@ export function mountRPGInterface() {
     root.querySelector('#hud-stamina-fill').style.width = stamina + '%';
     root.querySelector('#hud-player-state').textContent = 'STATUS · ' + (state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY');
   }
-  function setWorldActivity(state={}) {
-    const el=root.querySelector('#hud-world-activity');
-    if(el)el.textContent='CITY LIFE · '+(state.pedestrians??0)+' PEDESTRIANS · CREW '+(state.companions??0)+'/2';
-  }
+  function setWorldActivity() { /* Compatibility hook; no centre-screen population banner. */ }
   return window.__NAIJA_RPG_UI__ = {
     stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, showToast,
-    open, close, requirePlayerCharacter, setPlayerCharacterReady,
+    open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     isPlayerCharacterRequired: () => characterRequired
   };
 }

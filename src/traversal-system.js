@@ -16,18 +16,23 @@ export function createTraversalSystem({playerController,physics=null,obstacles=[
  function tryContextualTraversal(state=playerController.getState()){
   if(!state?.grounded||state.traversing||timer>0){blocked="Player must be grounded and free";return false;}
   const yaw=(Number(state.facingYaw)||0)*Math.PI/180,fx=Math.sin(yaw),fz=-Math.cos(yaw),[x,y,z]=state.position;let best=null;
-  for(const o of list){const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.2||along>3.8||lateral>Math.abs(s.x)*.5+.82)continue;if(!best||along<best.along)best={o,along};}
-  if(!best){blocked="Face a marked step, vault, ledge, ladder or wall";return false;}
+  for(const o of list){const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.12||along>5.2||lateral>Math.abs(s.x)*.5+1.15)continue;if(!best||along<best.along)best={o,along};}
+  if(!best){blocked="No traversal surface in front — move closer and face the obstacle";return false;}
   const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72;
   const climbToTop=new Set(["step","mantle","ledge","ladder"]).has(best.o.type);
   const targetY=climbToTop?Math.max(y,Number(best.o.height)||0):Math.max(0,y);
-  const travelDistance=climbToTop?best.along:clearance;
-  const destination=[x+fx*travelDistance,targetY,z+fz*travelDistance];
+  // Climb actions finish centred on the platform footprint so the capsule
+  // lands on its top surface when the temporary traversal collider returns.
+  // Vaults and wall moves continue past the obstacle before touching down.
+  const obstaclePosition=best.o.entity.getPosition();
+  const destination=climbToTop
+    ? [obstaclePosition.x,targetY,obstaclePosition.z]
+    : [x+fx*clearance,targetY,z+fz*clearance];
   const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
   const requiredApex=Math.min(4.0,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
   const colliderIndex=list.indexOf(best.o);
   const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:requiredApex,mode:profile.mode,clips:profile.clips,obstacleId:best.o.id,obstacleHeight:best.o.height});
-  if(!ok){blocked="Get closer to the obstacle and face it";return false;}
+  if(!ok){blocked="Traversal is blocked here — reposition in front of the obstacle";return false;}
   activeId=best.o.id;activeColliderIndex=colliderIndex;physics?.setColliderEnabled?.(colliderIndex,false);timer=Math.max(2.4,profile.duration*2.2);started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
  }
  function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));const finished=!playerController.getState().traversing;if(finished||timer===0){if(activeColliderIndex>=0)physics?.setColliderEnabled?.(activeColliderIndex,true);activeColliderIndex=-1;activeId=null;timer=0;completed++;}}

@@ -5,7 +5,9 @@ import * as pc from 'playcanvas';
  * Ara 3D Female supplies the visible player rig and skeletal animations.
  * Hero 01 is created separately as a moving city NPC by pedestrian-system.js.
  */
-export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement, heroCharacter, physics, onEffect } = {}) {
+export function createThirdPersonController(app, camera, canvas, {
+  onInteract, onTraversal, tryTraversal, resolveMovement, heroCharacter, physics, onEffect
+} = {}) {
   // The player root owns movement, camera follow and collision. The visible
   // body must be the imported Ara female rig; Hero 01 is now a separate NPC.
   const player = new pc.Entity('player-character');
@@ -22,6 +24,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   const torso = null, leftArm = null, rightArm = null, leftLeg = null, rightLeg = null;
 
   const input = { x: 0, y: 0, sprint: false, jumpQueued: false, crouch: false };
+  let sprintToggled = false;
   const keys = Object.create(null);
   const joystick = document.getElementById('move-joystick');
   const knob = document.getElementById('move-knob');
@@ -32,6 +35,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let orbitPointer = null;
   let orbitLastX = 0, orbitLastY = 0;
   let cameraYaw = 0, cameraPitch = 0.23;
+  let facingYaw = 0;
   const cameraDistance = 6.2;
   const cameraTarget = new pc.Vec3();
   const desiredCamera = new pc.Vec3();
@@ -90,7 +94,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     else if (/roll/.test(normalized)) key = 'roll';
     else if (/jump.*start|take.?off/.test(normalized)) key = 'jumpStart';
     else if (/jump|leap/.test(normalized)) key = 'jump';
-    else if (/walk|shimmy|step|balance/.test(normalized)) key = 'walk';
+    else if (/walk|shimmy|balance/.test(normalized)) key = 'walk';
+    else if (/step/.test(normalized)) key = 'climb';
     else if (/run|sprint|jog/.test(normalized)) key = 'run';
     else if (/vault|wall.?run|wall.?hop/.test(normalized)) key = 'vault';
     else if (/mantle|climb|ladder|ledge|pullup|pull-up|hang/.test(normalized)) key = 'climb';
@@ -159,7 +164,10 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     const end=[pc.math.clamp(destination[0],-46,46),Math.max(0,destination[1]),pc.math.clamp(destination[2],-195,420)];
     const dx=end[0]-p.x,dz=end[2]-p.z,distance=Math.hypot(dx,dz);
     if(distance<.2)return false;
-    if(distance>.05)player.setEulerAngles(0,Math.atan2(dx,-dz)*180/Math.PI,0);
+    if(distance>.05) {
+      facingYaw = Math.atan2(dx,-dz)*180/Math.PI;
+      player.setEulerAngles(0,facingYaw,0);
+    }
     const gravity=Math.max(9,Number(physics?.getState?.().gravity)||18);
     const apex=Math.max(.6,Math.min(4.2,Number(options.apex)||1.0));
     const launchVelocity=Math.sqrt(2*gravity*apex);
@@ -210,15 +218,29 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   });
   joystick?.addEventListener('pointerup', event => { if (event.pointerId === joystickPointer) resetJoystick(); });
   joystick?.addEventListener('pointercancel', resetJoystick);
-  jumpButton?.addEventListener('pointerdown', event => {
-    event.preventDefault(); input.jumpQueued = true;
-  });
-  const sprintOn = event => { event.preventDefault(); input.sprint = true; };
-  const sprintOff = () => { input.sprint = false; };
-  sprintButton?.addEventListener('pointerdown', sprintOn);
-  sprintButton?.addEventListener('pointerup', sprintOff);
-  sprintButton?.addEventListener('pointercancel', sprintOff);
-  sprintButton?.addEventListener('lostpointercapture', sprintOff);
+  const queueJump = event => {
+    event.preventDefault();
+    const started = typeof tryTraversal === 'function' && tryTraversal(getState()) === true;
+    if (started) {
+      input.jumpQueued = false;
+      sprintToggled = false;
+      input.sprint = false;
+      sprintButton?.setAttribute('aria-pressed', 'false');
+      sprintButton?.classList.remove('is-pressed');
+      onTraversal?.(getState());
+      return;
+    }
+    input.jumpQueued = true;
+  };
+  jumpButton?.addEventListener('pointerdown', queueJump);
+  const toggleSprint = event => {
+    event.preventDefault();
+    sprintToggled = !sprintToggled;
+    input.sprint = sprintToggled;
+    sprintButton?.setAttribute('aria-pressed', String(sprintToggled));
+    sprintButton?.classList.toggle('is-pressed', sprintToggled);
+  };
+  sprintButton?.addEventListener('click', toggleSprint);
   const toggleCrouch = event => {
     event?.preventDefault?.();
     if (!setCrouched(!input.crouch)) onInteract?.({ ...getState(), crouchBlocked: true });
@@ -235,7 +257,10 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   const onKeyUp = event => { keys[event.key.toLowerCase()] = false; };
   const onBlur = () => {
     Object.keys(keys).forEach(key => keys[key] = false);
-    input.sprint = false; resetJoystick();
+    input.sprint = false; sprintToggled = false;
+    sprintButton?.setAttribute('aria-pressed', 'false');
+    sprintButton?.classList.remove('is-pressed');
+    resetJoystick();
   };
   window.addEventListener('keydown', onKeyDown);
   window.addEventListener('keyup', onKeyUp);
@@ -372,8 +397,13 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if (moving) {
       const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
       const current = player.getEulerAngles().y;
-      const difference = ((desiredYaw - current + 540) % 360) - 180;
-      player.setEulerAngles(0, current + difference * Math.min(1, step * 13), 0);
+      const difference = ((desiredYaw - facingYaw + 540) % 360) - 180;
+      // Keep the desired heading independently of PlayCanvas' Euler readback
+      // around 180 degrees; that readback folds some reverse headings.
+      if (Math.abs(difference) > 120) facingYaw = desiredYaw;
+      else facingYaw += difference * Math.min(1, step * 18);
+      facingYaw = ((facingYaw + 540) % 360) - 180;
+      player.setEulerAngles(0, facingYaw, 0);
     }
 
     if (heroVisual?.anim) {
@@ -483,6 +513,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     canvas.removeEventListener('pointerup', onPointerUp);
     canvas.removeEventListener('pointercancel', onPointerUp);
     crouchButton?.removeEventListener('click', toggleCrouch);
+    jumpButton?.removeEventListener('pointerdown', queueJump);
+    sprintButton?.removeEventListener('click', toggleSprint);
     player.destroy();
   }
 
@@ -490,12 +522,13 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if (!Array.isArray(position) || position.length !== 3 || !position.every(Number.isFinite)) return false;
     player.setPosition(position[0], position[1], position[2]);
     physics?.teleport?.(position,[0,0,0]);
-    player.setEulerAngles(0, Number(yaw) || 0, 0);
+    facingYaw = ((Number(yaw) || 0) + 540) % 360 - 180;
+    player.setEulerAngles(0, facingYaw, 0);
     velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;lastFootstepCycle=null;lastFootstepProgress=null;input.jumpQueued=false;
     return true;
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),facingYaw:player.getEulerAngles().y,crouched:input.crouch,stamina,health:100,cameraYaw,cameraPitch,footstepContacts});
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),facingYaw,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,footstepContacts});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,
@@ -521,6 +554,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
       source: activeHeroCharacter?.source || 'ara-female-not-installed',
+      visualForward: activeHeroCharacter?.getFacingDirection?.() || null,
       characterId: activeHeroCharacter?.characterId || 'ara-female',
       displayName: activeHeroCharacter?.displayName || 'Ara 3D Female',
       defaultClips: { ...animationFallbacks },

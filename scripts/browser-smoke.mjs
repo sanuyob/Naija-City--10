@@ -197,8 +197,11 @@ try {
    return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,magentaPixels:magenta,nonBluePixels:nonBlue};
  },screenshot.toString('base64'));
  if(visual.width<800||visual.height<360||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels>20)throw new Error('Canvas screenshot visual assertion failed or the old magenta blocker returned: '+JSON.stringify(visual));
- if(!(await page.locator('#parkour-button').isVisible()))throw new Error('Parkour button is missing from the mobile HUD');
- if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.objective').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
+ if(await page.locator('#parkour-button').count()!==0)throw new Error('Duplicate standalone parkour button must be removed; Jump owns contextual traversal.');
+ if(await page.locator('.objective').count()!==0)throw new Error('Centre-screen objective/population overlay must be absent during gameplay.');
+ if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
+ const startup=await page.evaluate(()=>({preload:window.__NAIJA_GAME__?.startupPreload,loadingHidden:document.querySelector('#city-loading')?.hidden}));
+ if(startup.preload?.total!==48||startup.preload?.loaded!==48||startup.preload?.failed!==0||!startup.preload?.ready||!startup.loadingHidden)throw new Error('Yaba building assets were not fully loaded before gameplay: '+JSON.stringify(startup));
  const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
  if(hudBoxes['#move-joystick'].x>140||hudBoxes['.actions'].x<694||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
  if(await page.locator('.nav').isVisible())throw new Error('Legacy bottom navigation should be removed from active gameplay HUD');
