@@ -5,7 +5,7 @@ import * as pc from 'playcanvas';
  * Character geometry is assembled from primitive meshes; gait is procedural
  * so no large external rig or animation download is required.
  */
-export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement } = {}) {
+export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement, heroCharacter } = {}) {
   const mat = (color, metalness = 0) => {
     const material = new pc.StandardMaterial();
     material.diffuse = new pc.Color(...color);
@@ -23,6 +23,12 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   const player = new pc.Entity('player-character');
   player.setPosition(0, 0, 0);
   app.root.addChild(player);
+  const heroVisual = heroCharacter?.root ?? null;
+  if (heroVisual) {
+    heroVisual.setLocalPosition(0, 0, 0);
+    heroVisual.setLocalScale(1, 1, 1);
+    player.addChild(heroVisual);
+  }
 
   function part(parent, name, type, scale, position, material) {
     const entity = new pc.Entity(name);
@@ -32,28 +38,31 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     parent.addChild(entity);
     return entity;
   }
-  // A compact, readable human silhouette built from low-cost primitive meshes.
-  const torso = part(player, 'player-torso', 'box', [0.62, 0.78, 0.34], [0, 1.22, 0], shirt);
-  part(torso, 'chest-panel', 'box', [0.62, 0.18, 1.025], [0, 0.12, 0], accent);
-  part(player, 'player-neck', 'cylinder', [0.17, 0.18, 0.17], [0, 1.69, 0], skin);
-  part(player, 'player-head', 'sphere', [0.25, 0.31, 0.24], [0, 1.94, 0], skin);
-  part(player, 'player-hair', 'sphere', [0.255, 0.13, 0.245], [0, 2.12, -0.015], shoes);
-  const leftArm = new pc.Entity('left-arm-pivot');
-  leftArm.setLocalPosition(-0.39, 1.49, 0); player.addChild(leftArm);
-  part(leftArm, 'left-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
-  part(leftArm, 'left-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
-  const rightArm = new pc.Entity('right-arm-pivot');
-  rightArm.setLocalPosition(0.39, 1.49, 0); player.addChild(rightArm);
-  part(rightArm, 'right-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
-  part(rightArm, 'right-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
-  const leftLeg = new pc.Entity('left-leg-pivot');
-  leftLeg.setLocalPosition(-0.17, 0.88, 0); player.addChild(leftLeg);
-  part(leftLeg, 'left-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
-  part(leftLeg, 'left-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
-  const rightLeg = new pc.Entity('right-leg-pivot');
-  rightLeg.setLocalPosition(0.17, 0.88, 0); player.addChild(rightLeg);
-  part(rightLeg, 'right-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
-  part(rightLeg, 'right-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
+  let torso = null, leftArm = null, rightArm = null, leftLeg = null, rightLeg = null;
+  if (!heroVisual) {
+    // A compact, readable human silhouette built from low-cost primitive meshes.
+      torso = part(player, 'player-torso', 'box', [0.62, 0.78, 0.34], [0, 1.22, 0], shirt);
+    part(torso, 'chest-panel', 'box', [0.62, 0.18, 1.025], [0, 0.12, 0], accent);
+    part(player, 'player-neck', 'cylinder', [0.17, 0.18, 0.17], [0, 1.69, 0], skin);
+    part(player, 'player-head', 'sphere', [0.25, 0.31, 0.24], [0, 1.94, 0], skin);
+    part(player, 'player-hair', 'sphere', [0.255, 0.13, 0.245], [0, 2.12, -0.015], shoes);
+      leftArm = new pc.Entity('left-arm-pivot');
+    leftArm.setLocalPosition(-0.39, 1.49, 0); player.addChild(leftArm);
+    part(leftArm, 'left-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
+    part(leftArm, 'left-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
+      rightArm = new pc.Entity('right-arm-pivot');
+    rightArm.setLocalPosition(0.39, 1.49, 0); player.addChild(rightArm);
+    part(rightArm, 'right-upper-arm', 'cylinder', [0.14, 0.48, 0.14], [0, -0.24, 0], shirt);
+    part(rightArm, 'right-hand', 'sphere', [0.13, 0.14, 0.13], [0, -0.51, 0], skin);
+      leftLeg = new pc.Entity('left-leg-pivot');
+    leftLeg.setLocalPosition(-0.17, 0.88, 0); player.addChild(leftLeg);
+    part(leftLeg, 'left-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
+    part(leftLeg, 'left-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
+      rightLeg = new pc.Entity('right-leg-pivot');
+    rightLeg.setLocalPosition(0.17, 0.88, 0); player.addChild(rightLeg);
+    part(rightLeg, 'right-trouser-leg', 'cylinder', [0.17, 0.62, 0.17], [0, -0.31, 0], trousers);
+    part(rightLeg, 'right-shoe', 'box', [0.22, 0.13, 0.34], [0, -0.66, -0.075], shoes);
+  }
 
   const input = { x: 0, y: 0, sprint: false, jumpQueued: false, crouch: false };
   const keys = Object.create(null);
@@ -78,7 +87,33 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let running = false;
   const forward = new pc.Vec3();
   const right = new pc.Vec3();
+
   const movement = new pc.Vec3();
+  let activeHeroClip = '';
+  let actionClip = '';
+  let actionTimer = 0;
+  let landingTimer = 0;
+  const availableHeroClips = new Set(heroCharacter?.clipNames || []);
+
+  function transitionHeroClip(name, blendTime = 0.16) {
+    if (!heroVisual?.anim || !availableHeroClips.has(name) || activeHeroClip === name) return false;
+    try {
+      heroVisual.anim.baseLayer.transition(name, blendTime);
+      activeHeroClip = name;
+      return true;
+    } catch (error) {
+      console.warn('Hero animation transition failed:', name, error);
+      return false;
+    }
+  }
+
+  function playAnimation(name, durationSeconds = 0.9) {
+    if (!heroVisual?.anim || !availableHeroClips.has(name)) return false;
+    actionClip = name;
+    actionTimer = Math.max(0.1, Math.min(6, durationSeconds));
+    return transitionHeroClip(name, 0.12) || activeHeroClip === name;
+  }
+
 
   function readJoystick(event) {
     if (!joystick) return;
@@ -158,6 +193,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
 
   function update(dt) {
     const step = Math.min(dt, 0.05);
+    const wasGrounded = grounded;
     const keyX = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0);
     const keyY = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
     let axisX = input.x + keyX, axisY = input.y + keyY;
@@ -197,27 +233,51 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player.setPosition(p);
     player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
 
-    if (moving) {
-      const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
-      const current = player.getEulerAngles().y;
-      const difference = ((desiredYaw - current + 540) % 360) - 180;
-      player.setEulerAngles(0, current + difference * Math.min(1, step * 13), 0);
-      gaitTime += step * (running ? 12 : 8);
-      const swing = Math.sin(gaitTime) * (running ? 0.72 : 0.48);
-      leftLeg.setLocalEulerAngles(swing * 57.2958, 0, 0);
-      rightLeg.setLocalEulerAngles(-swing * 57.2958, 0, 0);
-      leftArm.setLocalEulerAngles(-swing * 38, 0, 0);
-      rightArm.setLocalEulerAngles(swing * 38, 0, 0);
-      torso.setLocalPosition(0, 1.22 + Math.abs(swing) * 0.035, 0);
+    if (heroVisual?.anim) {
+      if (!wasGrounded && grounded) landingTimer = 0.28;
+      if (landingTimer > 0) {
+        landingTimer = Math.max(0, landingTimer - step);
+        transitionHeroClip('Hero01_Landing', 0.08);
+      } else if (actionTimer > 0) {
+        actionTimer = Math.max(0, actionTimer - step);
+        transitionHeroClip(actionClip, 0.12);
+        if (actionTimer === 0) actionClip = '';
+      } else if (!grounded) {
+        transitionHeroClip('Hero01_Jump');
+      } else if (input.crouch) {
+        transitionHeroClip(moving ? 'Hero01_CrouchWalk' : 'Hero01_Crouch');
+      } else if (running) {
+        transitionHeroClip('Hero01_Sprint');
+      } else if (moving) {
+        transitionHeroClip('Hero01_Walk');
+      } else if (stamina < 30) {
+        transitionHeroClip('Hero01_TiredIdle');
+      } else {
+        transitionHeroClip('Hero01_Idle');
+      }
     } else {
-      gaitTime = 0;
-      leftLeg.setLocalEulerAngles(0, 0, 0); rightLeg.setLocalEulerAngles(0, 0, 0);
-      leftArm.setLocalEulerAngles(0, 0, 0); rightArm.setLocalEulerAngles(0, 0, 0);
-      torso.setLocalPosition(0, 1.22, 0);
-    }
-    if (!grounded) {
-      leftLeg.setLocalEulerAngles(-18, 0, 0); rightLeg.setLocalEulerAngles(18, 0, 0);
-      leftArm.setLocalEulerAngles(-28, 0, 0); rightArm.setLocalEulerAngles(-28, 0, 0);
+      if (moving) {
+        const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
+        const current = player.getEulerAngles().y;
+        const difference = ((desiredYaw - current + 540) % 360) - 180;
+        player.setEulerAngles(0, current + difference * Math.min(1, step * 13), 0);
+        gaitTime += step * (running ? 12 : 8);
+        const swing = Math.sin(gaitTime) * (running ? 0.72 : 0.48);
+        leftLeg.setLocalEulerAngles(swing * 57.2958, 0, 0);
+        rightLeg.setLocalEulerAngles(-swing * 57.2958, 0, 0);
+        leftArm.setLocalEulerAngles(-swing * 38, 0, 0);
+        rightArm.setLocalEulerAngles(swing * 38, 0, 0);
+        torso.setLocalPosition(0, 1.22 + Math.abs(swing) * 0.035, 0);
+      } else {
+        gaitTime = 0;
+        leftLeg.setLocalEulerAngles(0, 0, 0); rightLeg.setLocalEulerAngles(0, 0, 0);
+        leftArm.setLocalEulerAngles(0, 0, 0); rightArm.setLocalEulerAngles(0, 0, 0);
+        torso.setLocalPosition(0, 1.22, 0);
+      }
+      if (!grounded) {
+        leftLeg.setLocalEulerAngles(-18, 0, 0); rightLeg.setLocalEulerAngles(18, 0, 0);
+        leftArm.setLocalEulerAngles(-28, 0, 0); rightArm.setLocalEulerAngles(-28, 0, 0);
+      }
     }
 
     const yaw = cameraYaw;
@@ -249,6 +309,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   return {
     player, update, destroy,
     interact: () => onInteract?.(getState()),
+    playAnimation,
     getState
   };
 }
