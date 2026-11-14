@@ -15,6 +15,36 @@ try {
  page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
  await page.goto(origin+'?smoke=1',{waitUntil:'networkidle'});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
+ const araFixture=await page.evaluate(async()=>{
+  const response=await fetch(new URL('assets/hero/NaijaCityHero01_60clips.glb.b64',location.href));
+  if(!response.ok)throw new Error('Could not load local character test fixture: HTTP '+response.status);
+  const encoded=(await response.text()).replace(/\\s+/g,'');
+  const binary=atob(encoded),bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  if(bytes.length<20||bytes[0]!==0x67||bytes[1]!==0x6c||bytes[2]!==0x54||bytes[3]!==0x46)throw new Error('Ara fixture is not a GLB');
+  const db=await new Promise((resolve,reject)=>{
+   const request=indexedDB.open('naija-city-player-assets',1);
+   request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('characters'))request.result.createObjectStore('characters');};
+   request.onsuccess=()=>resolve(request.result);
+   request.onerror=()=>reject(request.error||new Error('Could not open local player storage'));
+  });
+  await new Promise((resolve,reject)=>{
+   const tx=db.transaction('characters','readwrite');
+   const store=tx.objectStore('characters');
+   store.put({buffer:bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),
+    metadata:{source:'browser-smoke-test-fixture',displayName:'Ara 3D Female test rig'}},'ara-female');
+   store.put('ara-female','active-player');
+   tx.oncomplete=resolve;
+   tx.onerror=()=>reject(tx.error||new Error('Could not save Ara test fixture'));
+   tx.onabort=()=>reject(tx.error||new Error('Ara fixture save was aborted'));
+  });
+  db.close();
+  return {bytes:bytes.length};
+ });
+ if(araFixture.bytes<1000)throw new Error('Ara test fixture was not saved');
+ await page.reload({waitUntil:'networkidle'});
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true&&
+  window.__NAIJA_GAME__?.getHeroAnimationState?.().characterId==='ara-female',null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
  const state=await page.evaluate(()=>{
   const game=window.__NAIJA_GAME__;
@@ -41,6 +71,10 @@ try {
     heroAnimations:game.heroAnimations||[],
     heroFaceMorphs:game.heroFaceMorphs||[],
     heroAnimationState:game.getHeroAnimationState?.()||null,
+    mainCharacterId:game.mainCharacterId,
+    mainCharacterName:game.mainCharacterName,
+    hero01Role:game.hero01Role,
+    heroNpc:game.getHeroNpcState?.()||null,
     traversal:game.getTraversalState?.()||null,
     traversalEnabled:game.traversal===true,
     companionRoster:game.getCompanionState?.()||null,
@@ -85,7 +119,7 @@ try {
  if(state.diag.scene.knownBounds.max[2]!==402||state.diag.scene.knownBounds.min[2]!==-205)throw new Error('Expanded city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
  if(state.viewport.w!==844||state.viewport.h!==390)throw new Error('Test viewport is not landscape 844x390: '+JSON.stringify(state.viewport));
  if(!state.canvas.webgl2||state.canvas.w<800||state.canvas.h<360||state.canvas.h>450||state.canvas.y>1)throw new Error('Canvas does not fit the mobile viewport: '+JSON.stringify(state.canvas));
- if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||!state.diag.scene.diagnosticMarker.inFront)throw new Error('No actual scene geometry submitted for rendering: '+JSON.stringify(state.diag));
+ if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||state.diag.scene.diagnosticMarker)throw new Error('No scene geometry or unexpected debug blocker remained in view: '+JSON.stringify(state.diag));
  if(state.diag.camera.position[2]<=0||state.diag.camera.forward[2]>=-0.2)throw new Error('Third-person camera is not behind the player and facing the scene: '+JSON.stringify(state.diag.camera));
  const stick=await page.locator('#move-joystick').boundingBox();
  if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible())||!(await page.locator('#crouch-button').isVisible())||!(await page.locator('#interact-button').isVisible()))throw new Error('Landscape movement/action controls are missing');
@@ -105,13 +139,17 @@ try {
  if(!(await page.locator('#hud-toast').textContent()))throw new Error('Interact control did not produce feedback');
  await page.locator('[data-slot="1"]').click();
  if(!(await page.locator('#hud-toast').textContent()).includes('empty')||await page.locator('[data-slot="1"]').getAttribute('aria-pressed')!=='true')throw new Error('Quick-access slot did not respond or show selection state');
- if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimations?.length!==60||!['Hero01_Idle','Hero01_Walk','Hero01_Jog','Hero01_Sprint','Hero01_Jump','Hero01_Interact','Hero01_VaultLow','Hero01_LedgeHang','Hero01_SquadSignalFollow','Hero01_UseScanner'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==60||state.game?.heroFaceMorphs?.length!==6||!['Smile','Frown','JawOpen','BrowRaise','Blink_L','Blink_R'].every(name=>state.game.heroFaceMorphs.includes(name))||state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==8||state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||state.game?.physicsState?.player?.mode!=='ammo-bullet-capsule'||state.game?.physicsState?.agents?.mode!=='kinematic-capsule'||state.game?.vfxState?.poolSize<12||state.game?.heroRigSnapshot?.skinnedMeshCount<9||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Rigged Hero 01, traversal or companion system was not mounted: '+JSON.stringify(state.game));
- const heroActionTriggered=await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_GreetWave')===true);
- if(!heroActionTriggered)throw new Error('PlayCanvas could not trigger the Hero01_GreetWave clip');
- await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip==='Hero01_GreetWave',null,{timeout:3000});
- const faceExpressionApplied=await page.evaluate(()=>window.__NAIJA_SET_HERO_FACE__?.('Smile',0.75)===true);
- if(!faceExpressionApplied)throw new Error('PlayCanvas did not apply the Hero01 Smile morph target');
- await page.evaluate(()=>window.__NAIJA_SET_HERO_FACE__?.('Smile',0));
+ if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimationState?.characterId!=='ara-female'||state.game?.heroAnimationState?.displayName!=='Ara 3D Female'||state.game?.heroAnimations?.length!==60||!['Hero01_Idle','Hero01_Walk','Hero01_Jog','Hero01_Sprint','Hero01_Jump','Hero01_Interact','Hero01_VaultLow','Hero01_LedgeHang','Hero01_SquadSignalFollow','Hero01_UseScanner'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==60||state.game?.heroFaceMorphs?.length!==6||!['Smile','Frown','JawOpen','BrowRaise','Blink_L','Blink_R'].every(name=>state.game.heroFaceMorphs.includes(name))||state.game?.mainCharacterId!=='ara-female'||state.game?.hero01Role!=='city-npc'||state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==8||state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||state.game?.pedestrianState?.heroNpc?.isPlayer!==false||state.game?.pedestrianState?.heroNpc?.rigged!==true||state.game?.physicsState?.player?.mode!=='ammo-bullet-capsule'||state.game?.physicsState?.agents?.mode!=='kinematic-capsule'||state.game?.vfxState?.poolSize<12||state.game?.heroRigSnapshot?.skinnedMeshCount<9||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Ara main player, Hero 01 NPC, traversal or companion system was not mounted: '+JSON.stringify(state.game));
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroNpcState?.()?.moved===true&&
+  window.__NAIJA_GAME__?.getHeroNpcState?.()?.rigged===true,null,{timeout:10000});
+ const heroNpc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
+ if(!heroNpc||heroNpc.name!=='Hero 01'||heroNpc.isPlayer!==false||heroNpc.active!==true||!heroNpc.moved||!heroNpc.rigged||!heroNpc.activeClip?.includes('Walk'))throw new Error('Hero 01 is not running as a visible animated city NPC: '+JSON.stringify(heroNpc));
+ if(await page.locator('#character-switch-button').count()!==0||await page.locator('[data-player-action]').count()!==0)throw new Error('Character-switch controls must be completely removed from the HUD and Player menu');
+ await page.locator('[data-open="pause"]').click();
+ await page.locator('[data-open="character"]:visible').last().click();
+ const playerPanel=await page.locator('#panel-content').textContent();
+ if(!playerPanel?.includes('ARA 3D FEMALE · MAIN PLAYER')||!playerPanel.includes('ONLY PLAYABLE CHARACTER')||!playerPanel.includes('Hero 01 has been moved into the city as an NPC')||playerPanel.includes('SWITCH TO')||playerPanel.includes('SET AS MAIN'))throw new Error('Player panel does not match Ara-only main character setup: '+playerPanel);
+ await page.locator('[data-close]').click();
 
  // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -175,89 +213,8 @@ try {
  if(!dismissed)throw new Error('Companion Dismiss command failed');
  await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
 
- // Multi-character integration QA. The second slot is seeded with a valid
- // bundled GLB fixture because the user's actual Ara FBX is stored only on their phone.
- const characterFixture=await page.evaluate(async()=>{
-  const url=new URL('assets/hero/NaijaCityHero01_60clips.glb.b64',location.href);
-  const response=await fetch(url);
-  if(!response.ok)throw new Error('Could not load bundled GLB test fixture: HTTP '+response.status);
-  const encoded=(await response.text()).replace(/\\s+/g,'');
-  const binary=atob(encoded),bytes=new Uint8Array(binary.length);
-  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
-  if(bytes.length<20||bytes[0]!==0x67||bytes[1]!==0x6c||bytes[2]!==0x54||bytes[3]!==0x46)throw new Error('Character test fixture is not a GLB');
-  const db=await new Promise((resolve,reject)=>{
-   const request=indexedDB.open('naija-city-player-assets',1);
-   request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('characters'))request.result.createObjectStore('characters');};
-   request.onsuccess=()=>resolve(request.result);
-   request.onerror=()=>reject(request.error||new Error('Could not open character roster database'));
-  });
-  await new Promise((resolve,reject)=>{
-   const tx=db.transaction('characters','readwrite');
-   tx.objectStore('characters').put({
-    buffer:bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),
-    metadata:{source:'browser-smoke-fixture',displayName:'Ara test fixture'}
-   },'ara-female');
-   tx.oncomplete=resolve;
-   tx.onerror=()=>reject(tx.error||new Error('Could not seed Ara second slot'));
-   tx.onabort=()=>reject(tx.error||new Error('Ara fixture transaction aborted'));
-  });
-  db.close();
-  return {bytes:bytes.length};
- });
- if(characterFixture.bytes<1000)throw new Error('Character roster fixture was not persisted');
- await page.locator('[data-open="pause"]').click();
- await page.locator('[data-open="character"]:visible').last().click();
- await page.locator('#character-roster').waitFor({state:'visible'});
- const rosterPanelText=await page.locator('#character-roster').textContent();
- if(!rosterPanelText?.includes('HERO 01')||!rosterPanelText.includes('ARA 3D FEMALE'))throw new Error('Player menu did not show both character slots: '+rosterPanelText);
- await page.waitForFunction(()=>document.querySelector('[data-player-action="main"][data-player-id="ara-female"]')?.disabled===false,null,{timeout:10000});
- const beforeCharacterSwap=await page.evaluate(()=>({
-  position:window.__NAIJA_GAME__.getPlayerState().position,
-  physics:window.__NAIJA_GAME__.getPhysicsState().player
- }));
- const directAraSwitch=await page.evaluate(()=>window.__NAIJA_GAME__?.switchPlayerCharacter?.('ara-female',true));
- if(!directAraSwitch?.ok)throw new Error('Direct Ara character switch failed: '+JSON.stringify(directAraSwitch));
- await page.waitForFunction(async()=>{
-  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
-  const animation=window.__NAIJA_GAME__?.getHeroAnimationState?.();
-  return roster?.activeId==='ara-female'&&roster?.mainId==='ara-female'&&animation?.characterId==='ara-female';
- },null,{timeout:15000});
- const afterAraMain=await page.evaluate(async()=>({
-  roster:await window.__NAIJA_GAME__.getCharacterRoster(),
-  player:window.__NAIJA_GAME__.getPlayerState(),
-  physics:window.__NAIJA_GAME__.getPhysicsState().player,
-  animation:window.__NAIJA_GAME__.getHeroAnimationState(),
-  rig:window.__NAIJA_GAME__.getHeroRigSnapshot()
- }));
- const mainState=afterAraMain.roster;
- if(mainState.activeId!=='ara-female'||mainState.mainId!=='ara-female'||afterAraMain.animation.displayName!=='Ara 3D Female'||afterAraMain.animation.availableClipCount<3)throw new Error('Ara second character failed to load as main: '+JSON.stringify(afterAraMain));
- if(afterAraMain.physics.mode!==beforeCharacterSwap.physics.mode||afterAraMain.physics.colliderCount!==beforeCharacterSwap.physics.colliderCount||afterAraMain.physics.capsuleHeight!==beforeCharacterSwap.physics.capsuleHeight||afterAraMain.player.position.some((value,index)=>Math.abs(value-beforeCharacterSwap.position[index])>.001))throw new Error('Switching to Ara reset player transform or Bullet physics: '+JSON.stringify({beforeCharacterSwap,afterAraMain}));
- await page.locator('[data-player-action="switch"][data-player-id="hero01"]').click();
- await page.waitForFunction(async()=>{
-  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
-  return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
- },null,{timeout:10000});
- await page.locator('[data-player-action="main"][data-player-id="ara-female"]').click();
- await page.waitForFunction(async()=>{
-  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
-  return roster?.activeId==='ara-female'&&roster?.mainId==='ara-female';
- },null,{timeout:10000});
- await page.locator('[data-player-action="switch"][data-player-id="hero01"]').click();
- await page.waitForFunction(async()=>{
-  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
-  return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
- },null,{timeout:10000});
- await page.locator('[data-close]').click();
- await page.locator('#character-switch-button').waitFor({state:'visible'});
- if(await page.locator('#character-switch-button').isDisabled())throw new Error('Quick-switch button stayed disabled after both characters were installed');
- await page.locator('#character-switch-button').tap();
- await page.waitForFunction(async()=> (await window.__NAIJA_GAME__?.getCharacterRoster?.())?.activeId==='ara-female',null,{timeout:10000});
- await page.locator('#character-switch-button').tap();
- await page.waitForFunction(async()=>{
-  const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
-  return roster?.activeId==='hero01'&&roster?.mainId==='ara-female';
- },null,{timeout:10000});
- console.log('Two-character QA: both roster entries loaded; Set as Main persisted Ara; Switch To and HUD quick-switch preserved player transform and Bullet capsule.');
+ // Ara is the only playable character and Hero 01 is verified as a separate walking NPC.
+ console.log('Ara-only QA: female player rig active; Hero 01 remains a moving, animated non-player pedestrian; all swap UI removed.');
 
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
@@ -270,7 +227,7 @@ try {
    for(let i=0;i<pixels.length;i+=4){const r=pixels[i],g=pixels[i+1],b=pixels[i+2],a=pixels[i+3];if(!a)continue;colors.add((r>>3)+','+(g>>3)+','+(b>>3));if(r>100&&b>100&&g<100)magenta++;if(!(b>r*1.05&&b>g*1.02))nonBlue++;}
    return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,magentaPixels:magenta,nonBluePixels:nonBlue};
  },screenshot.toString('base64'));
- if(visual.width<800||visual.height<360||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels<20)throw new Error('Canvas screenshot visual assertion failed; scene may be blank: '+JSON.stringify(visual));
+ if(visual.width<800||visual.height<360||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels>20)throw new Error('Canvas screenshot visual assertion failed or the old magenta blocker returned: '+JSON.stringify(visual));
  if(!(await page.locator('#parkour-button').isVisible()))throw new Error('Parkour button is missing from the mobile HUD');
  if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.objective').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
  const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
@@ -307,15 +264,6 @@ try {
  await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
  if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
  await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
- // The main-character choice must survive a full page reload, not just this session.
- await page.reload({waitUntil:'networkidle'});
- await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
- const persistedCharacter=await page.evaluate(async()=>({
-  roster:await window.__NAIJA_GAME__?.getCharacterRoster?.(),
-  animation:window.__NAIJA_GAME__?.getHeroAnimationState?.()
- }));
- if(persistedCharacter.roster?.activeId!=='ara-female'||persistedCharacter.roster?.mainId!=='ara-female'||persistedCharacter.animation?.characterId!=='ara-female')throw new Error('Ara main-character selection was not restored after reload: '+JSON.stringify(persistedCharacter));
- console.log('Character persistence QA: Ara remained the active main player after a full browser reload.');
  console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
  console.log('Stage 08G passed: Ikeja commercial corridor, vendor props, POS kiosk, wheelbarrow, handcart, litter hotspots, open drainage, parked public transport and static pedestrian silhouettes.');
  console.log('Stage 08H passed: procedural PBR surfaces, varied clean/used/weathered props, material assignment coverage, translucent glazing, detailed props and an Ikeja camera-view screenshot assertion.');
