@@ -21,6 +21,7 @@ const stage08eManifest=JSON.parse(await readFile(new URL('../public/assets/stage
 const buildingFiles=(await readdir(new URL('../public/assets/buildings/',import.meta.url))).filter(name=>name.endsWith('.glb'));
 const controller=await readFile(new URL('../src/third-person-controller.js',import.meta.url),'utf8');
 const actorPhysics=await readFile(new URL('../src/actor-physics.js',import.meta.url),'utf8');
+const playerPhysics=await readFile(new URL('../src/player-physics.js',import.meta.url),'utf8');
 const pedestrians=await readFile(new URL('../src/pedestrian-system.js',import.meta.url),'utf8');
 const vfx=await readFile(new URL('../src/vfx-system.js',import.meta.url),'utf8');
 const traversal=await readFile(new URL('../src/traversal-system.js',import.meta.url),'utf8');
@@ -126,7 +127,12 @@ assert.match(loader,/loadSavedPlayerCharacter/,'Locally imported character must 
 assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip names');
 assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
 assert.match(controller,/running \? 3\.2 : 1\.35/,'Ground movement speeds must be proportionate to the Ara locomotion cycles');
-assert.match(controller,/Traversal actions may not have a dedicated clip on imported characters/,'Imported characters must be allowed to traverse with available locomotion fallback clips');
+assert.match(controller,/heroCharacterPose/,'Ara parkour fallback must apply distinct procedural action poses');
+assert.match(controller,/physics\\.step\\(body,horizontal,step\\)/,'Parkour must run through the active physics solver');
+assert.match(playerPhysics,/btCapsuleShape/,'The player must use a Bullet capsule collision body');
+assert.match(playerPhysics,/btDiscreteDynamicsWorld/,'The player must use a Bullet dynamics world');
+assert.match(playerPhysics,/ammo-bullet-capsule/,'Bullet player physics mode must be exposed');
+assert.match(game,/createPlayerPhysics/,'The live game must attempt to mount Bullet player physics');
 assert.match(rpg,/player-character-form/,'Player panel must expose the FBX import form');
 assert.match(rpg,/importPlayerCharacter/,'Player panel must invoke the FBX importer');
 assert.match(controller,/pc\.math\.clamp\(body\.position\[0\],-46,46\)/,'Player physics solver must clamp movement to expanded city width');
