@@ -129,7 +129,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     crouchButton?.setAttribute('aria-pressed', String(next));
     lastFootstepCycle = null;
     lastFootstepProgress = null;
-    transitionHeroClip(next ? (moving ? heroDefaults.crouchWalk : heroDefaults.crouch) : (moving ? 'Hero01_Walk' : 'Hero01_Idle'), .2);
+    transitionHeroClip(next ? (moving ? heroDefaults.crouchWalk : heroDefaults.crouch) : (moving ? 'Hero01_Walk' : 'Hero01_Idle'), .08);
     return true;
   }
 
@@ -395,7 +395,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
         heroCharacterPose('jump',!availableHeroClips.has(resolveHeroClip('Hero01_Jump')));
       } else if (input.crouch) {
         heroCharacterPose(null,false);
-        transitionHeroClip(moving ? (heroDefaults.crouchWalk || 'Ara_CrouchWalk') : heroDefaults.crouch, .2);
+        transitionHeroClip(moving ? (heroDefaults.crouchWalk || 'Ara_CrouchWalk') : heroDefaults.crouch, .08);
       } else if (running) {
         heroCharacterPose(null,false);
         transitionHeroClip('Hero01_Sprint');
@@ -512,6 +512,11 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       transitionProgress: heroVisual?.anim?.baseLayer?.transitionProgress ?? null,
       activeStateCurrentTime: heroVisual?.anim?.baseLayer?.activeStateCurrentTime ?? null,
       activeStateDuration: heroVisual?.anim?.baseLayer?.activeStateDuration ?? null,
+      componentPlaying: heroVisual?.anim?.playing ?? null,
+      componentEnabled: heroVisual?.anim?.enabled ?? null,
+      entityEnabled: heroVisual?.enabled ?? null,
+      layerPlaying: heroVisual?.anim?.baseLayer?.playing ?? null,
+      layerPlayable: heroVisual?.anim?.baseLayer?.playable ?? null,
       availableStates: heroVisual?.anim?.baseLayer?.states || [],
       requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
