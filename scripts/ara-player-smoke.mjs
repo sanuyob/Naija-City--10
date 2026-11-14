@@ -1,4 +1,5 @@
 import {spawn} from 'node:child_process';
+import {mkdir} from 'node:fs/promises';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
 const port=4174,origin=`http://127.0.0.1:${port}`;
@@ -57,7 +58,8 @@ try{
  const audio=await page.evaluate(()=>window.__NAIJA_GAME__?.getAudioState?.());
  if(!audio?.unlocked||audio.state!=='running'||audio.played?.footstep<1||audio.played?.jump<1||audio.played?.landing<1||audio.played?.parkour<1)throw Error('Player sound events did not unlock or fire from real gameplay actions: '+JSON.stringify(audio));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
- await page.screenshot({path:'/workspace/naija-city/out/ara-player-smoke.png',fullPage:false});
+ await mkdir('out',{recursive:true});
+ await page.screenshot({path:'out/ara-player-smoke.png',fullPage:false});
  const relevantErrors=errors.filter(e=>!e.includes('ammo.wasm.js')&&!e.includes('Failed to load resource: net::ERR_EMPTY_RESPONSE')); if(relevantErrors.length)throw Error('Browser errors: '+relevantErrors.join(' | '));
  console.log(JSON.stringify({pass:true,state,walkState,runState,animationChecks,jumpPhysics,parkour,npc,audio,screenshotBytes:screenshot.length,browserErrors:errors},null,2));
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}
