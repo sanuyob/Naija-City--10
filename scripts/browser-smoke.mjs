@@ -99,7 +99,7 @@ try {
  const stick=await page.locator('#move-joystick').boundingBox();
  if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible())||!(await page.locator('#crouch-button').isVisible())||!(await page.locator('#interact-button').isVisible()))throw new Error('Landscape movement/action controls are missing');
  if(await page.locator('#orientation-notice').isVisible())throw new Error('Landscape orientation notice should be hidden in landscape');
- if(state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-not-installed'||
+ if(state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-female-not-installed'||
     state.game?.characterGeometry!=='no-visible-player-rig'||!state.characterGate||
     !state.characterPanelVisible||!state.araFilePickerPresent) {
   throw new Error('Missing Ara model was not surfaced by the blocking Player import gate: '+JSON.stringify({
@@ -122,7 +122,7 @@ try {
  }
  if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||
     state.game?.proceduralAnimations!==true||state.game?.characterGeometry!=='no-visible-player-rig'||
-    state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-not-installed'||
+    state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-female-not-installed'||
     state.game?.heroAnimationState?.characterId!=='ara-female'||
     state.game?.heroAnimationState?.displayName!=='Ara 3D Female'||
     state.game?.heroAnimationState?.playable!==false||state.game?.heroAnimations?.length!==0||
