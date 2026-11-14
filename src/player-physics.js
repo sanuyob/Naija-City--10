@@ -92,7 +92,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const h = Math.max(0, Math.min(0.05, Number(dt) || 0));
     if (!h) return actor.position;
     const currentVelocity = body.getLinearVelocity();
-    const blend = 1 - Math.exp(-(actor.grounded === false ? 7.5 : 17) * h);
+    const blend = actor.traversing ? 1 : 1 - Math.exp(-(actor.grounded === false ? 7.5 : 17) * h);
     const vx = currentVelocity.x() + ((Number(desired[0]) || 0) - currentVelocity.x()) * blend;
     const vz = currentVelocity.z() + ((Number(desired[2]) || 0) - currentVelocity.z()) * blend;
     const requestedY = Number.isFinite(actor.velocity?.[1]) ? actor.velocity[1] : currentVelocity.y();
