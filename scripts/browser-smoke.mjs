@@ -37,6 +37,9 @@ try {
     sprint:game.sprint,
     jump:game.jump,
     proceduralAnimations:game.proceduralAnimations,
+    characterGeometry:game.characterGeometry,
+    heroAnimations:game.heroAnimations||[],
+    heroAnimationState:game.getHeroAnimationState?.()||null,
     mobileJoystick:game.mobileJoystick,
     cameraOrbit:game.cameraOrbit
    }:null
@@ -94,7 +97,10 @@ try {
  if(!(await page.locator('#hud-toast').textContent()))throw new Error('Interact control did not produce feedback');
  await page.locator('[data-slot="1"]').click();
  if(!(await page.locator('#hud-toast').textContent()).includes('empty')||await page.locator('[data-slot="1"]').getAttribute('aria-pressed')!=='true')throw new Error('Quick-access slot did not respond or show selection state');
- if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||!state.game?.proceduralAnimations||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Stage 06 character capabilities were not mounted: '+JSON.stringify(state.game));
+ if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimations?.length!==18||!['Hero01_Idle','Hero01_Walk','Hero01_Sprint','Hero01_Jump','Hero01_Interact'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==18||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Rigged Hero 01 capabilities/clip library were not mounted: '+JSON.stringify(state.game));
+ const heroActionTriggered=await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_GreetWave')===true);
+ if(!heroActionTriggered)throw new Error('PlayCanvas could not trigger the Hero01_GreetWave clip');
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip==='Hero01_GreetWave',null,{timeout:3000});
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  const visual=await page.evaluate(async encoded=>{
