@@ -41,6 +41,9 @@ try {
     heroAnimations:game.heroAnimations||[],
     heroFaceMorphs:game.heroFaceMorphs||[],
     heroAnimationState:game.getHeroAnimationState?.()||null,
+    traversal:game.getTraversalState?.()||null,
+    traversalEnabled:game.traversal===true,
+    companionRoster:game.getCompanionState?.()||null,
     mobileJoystick:game.mobileJoystick,
     cameraOrbit:game.cameraOrbit
    }:null
@@ -98,13 +101,34 @@ try {
  if(!(await page.locator('#hud-toast').textContent()))throw new Error('Interact control did not produce feedback');
  await page.locator('[data-slot="1"]').click();
  if(!(await page.locator('#hud-toast').textContent()).includes('empty')||await page.locator('[data-slot="1"]').getAttribute('aria-pressed')!=='true')throw new Error('Quick-access slot did not respond or show selection state');
- if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimations?.length!==60||!['Hero01_Idle','Hero01_Walk','Hero01_Jog','Hero01_Sprint','Hero01_Jump','Hero01_Interact','Hero01_VaultLow','Hero01_LedgeHang','Hero01_SquadSignalFollow','Hero01_UseScanner'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==60||state.game?.heroFaceMorphs?.length!==6||!['Smile','Frown','JawOpen','BrowRaise','Blink_L','Blink_R'].every(name=>state.game.heroFaceMorphs.includes(name))||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Rigged Hero 01 60-clip/facial library was not mounted: '+JSON.stringify(state.game));
+ if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||state.game?.heroAnimations?.length!==60||!['Hero01_Idle','Hero01_Walk','Hero01_Jog','Hero01_Sprint','Hero01_Jump','Hero01_Interact','Hero01_VaultLow','Hero01_LedgeHang','Hero01_SquadSignalFollow','Hero01_UseScanner'].every(name=>state.game.heroAnimations.includes(name))||state.game?.heroAnimationState?.availableClipCount!==60||state.game?.heroFaceMorphs?.length!==6||!['Smile','Frown','JawOpen','BrowRaise','Blink_L','Blink_R'].every(name=>state.game.heroFaceMorphs.includes(name))||state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==4||state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||state.game?.companionRoster?.activeCount!==0||!state.game?.mobileJoystick||!state.game?.cameraOrbit)throw new Error('Rigged Hero 01, traversal or companion system was not mounted: '+JSON.stringify(state.game));
  const heroActionTriggered=await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_GreetWave')===true);
  if(!heroActionTriggered)throw new Error('PlayCanvas could not trigger the Hero01_GreetWave clip');
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip==='Hero01_GreetWave',null,{timeout:3000});
  const faceExpressionApplied=await page.evaluate(()=>window.__NAIJA_SET_HERO_FACE__?.('Smile',0.75)===true);
  if(!faceExpressionApplied)throw new Error('PlayCanvas did not apply the Hero01 Smile morph target');
  await page.evaluate(()=>window.__NAIJA_SET_HERO_FACE__?.('Smile',0));
+
+ // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ const traversalStarted=await page.evaluate(()=>window.__NAIJA_TRAVERSE__?.()===true);
+ if(!traversalStarted)throw new Error('Hero 01 could not start contextual step-up traversal');
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted===1,null,{timeout:3000});
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getPlayerState?.().traversing===false,null,{timeout:4000});
+
+ // Verify remote-entry companions, the two-person cap and approved squad commands.
+ const techSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Summon')===true);
+ const driverSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Summon')===true);
+ if(!techSummoned||!driverSummoned)throw new Error('Two companion roster slots could not be summoned');
+ const roster=await page.evaluate(()=>window.__NAIJA_GAME__?.getCompanionState?.());
+ if(roster?.activeCount!==2||roster?.maxActive!==2||roster?.commands?.length!==7)throw new Error('Companion cap/command set failed: '+JSON.stringify(roster));
+ if(roster.roster.some(actor=>actor.active&&actor.distance<5))throw new Error('Companions must enter from district locations, not spawn beside the player');
+ const hold=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Hold')===true);
+ const radio=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','RadioCall')===true);
+ if(!hold||!radio)throw new Error('Companion Hold or RadioCall command did not register');
+ const dismissed=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Dismiss')===true);
+ if(!dismissed)throw new Error('Companion Dismiss command failed');
+ await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  const visual=await page.evaluate(async encoded=>{
