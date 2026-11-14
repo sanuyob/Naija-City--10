@@ -36,6 +36,14 @@ assert.deepEqual(heroGltf.animations.map(animation=>animation.name).sort(),expec
 assert.ok(heroGltf.animations.every(animation=>animation.channels.length===60&&animation.samplers.length===60),'Every Hero 01 clip must contain the expected 60 joint channels and samplers');
 assert.equal(heroGltf.skins.length,1,'Hero 01 must include one skinned humanoid');
 assert.equal(heroGltf.skins[0].joints.length,20,'Hero 01 must preserve the 20-joint rig');
+const heroValidation=await validator.validateBytes(new Uint8Array(heroGlb),{
+ uri:'NaijaCityHero01_18clips.glb',format:'glb',writeTimestamp:false,maxIssues:100
+});
+assert.equal(heroValidation.issues.numErrors,0,'Khronos glTF Validator rejected Hero 01: '+JSON.stringify(heroValidation.issues.messages));
+const heroPrimitives=heroGltf.meshes.flatMap(mesh=>mesh.primitives||[]);
+assert.ok(heroPrimitives.some(primitive=>primitive.attributes?.JOINTS_0!==undefined&&primitive.attributes?.WEIGHTS_0!==undefined),'Hero 01 must contain vertex joint indices and skin weights');
+assert.ok(heroPrimitives.some(primitive=>primitive.attributes?.TEXCOORD_0!==undefined),'Hero 01 must contain UV coordinates for PBR texture mapping');
+assert.ok(heroGltf.animations.every(animation=>animation.channels.every(channel=>channel.target?.node!==undefined)),'Hero 01 animation channels must target named hierarchy nodes');
 const glb=await readFile(new URL('../public/assets/diagnostic-cube.glb',import.meta.url));
 const texture=await readFile(new URL('../public/assets/diagnostic-checker.png',import.meta.url));
 const css=await readFile(new URL('../src/style.css',import.meta.url),'utf8');
