@@ -117,8 +117,8 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
 
 
 /**
- * Load the locally imported Ara character first. If none is saved, keep the
- * bundled Hero 01 model as a fallback. Both use PlayCanvas ContainerAsset.
+ * Load Ara only from a validated conversion of the actual Ara 3D Gen FBX.
+ * Hero 01 is loaded separately for the city NPC population.
  */
 export async function loadHeroCharacter(app, {
   urls = ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
@@ -145,6 +145,10 @@ export async function loadHeroCharacter(app, {
       }
       source = 'ara-3d-gen-female';
       metadata = saved.metadata || null;
+      if (!/Ara\s*3D\s*Gen/i.test(String(metadata?.source || '')) ||
+          !/^The_Female_Executive\.fbx$/i.test(String(metadata?.sourceFileName || ''))) {
+        throw new Error('The saved file is not the Ara 3D Gen The_Female_Executive.fbx model. Select that FBX and import it again.');
+      }
       blobUrl = URL.createObjectURL(new Blob([saved.buffer], { type: 'model/gltf-binary' }));
       setStatus('Loading Ara 3D female character…');
     } else {
@@ -245,6 +249,10 @@ export async function loadHeroCharacter(app, {
     }
 
     const root = createAnimatedInstance(characterId === 'ara-female' ? 'Ara3DFemale' : 'NaijaCityHero01');
+    const renderMeshInstances = root.findComponents('render').flatMap(component => component.meshInstances || []);
+    const skinnedMeshCount = renderMeshInstances.filter(mesh => !!mesh.skinInstance).length;
+    if (!renderMeshInstances.length) throw new Error('The character GLB loaded but contains no visible render meshes.');
+    if (characterId === 'ara-female' && !skinnedMeshCount) throw new Error('Ara loaded without a skinned mesh. Re-import The_Female_Executive.fbx.');
     const morphInstances = [];
     const morphNames = new Set();
     for (const render of root.findComponents('render')) {
@@ -298,6 +306,7 @@ export async function loadHeroCharacter(app, {
       ' · ' + clipNames.length + ' animation clips');
     return {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
+      renderMeshCount: renderMeshInstances.length, skinnedMeshCount,
       morphNames: Array.from(morphNames).sort(),
       setFaceExpression, getRigSnapshot, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
