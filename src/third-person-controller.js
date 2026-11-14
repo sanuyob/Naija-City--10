@@ -5,7 +5,7 @@ import * as pc from 'playcanvas';
  * Character geometry is assembled from primitive meshes; gait is procedural
  * so no large external rig or animation download is required.
  */
-export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement, heroCharacter } = {}) {
+export function createThirdPersonController(app, camera, canvas, { onInteract, resolveMovement, heroCharacter, physics, onEffect } = {}) {
   const mat = (color, metalness = 0) => {
     const material = new pc.StandardMaterial();
     material.diffuse = new pc.Color(...color);
@@ -94,6 +94,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let actionTimer = 0;
   let landingTimer = 0;
   let traversalMotion = null;
+  let jumpBuffer = 0;
+  let coyote = 0;
+  let footstepClock = 0;
   const availableHeroClips = new Set(heroCharacter?.clipNames || []);
   const heroClipDurations = heroCharacter?.clipDurations || {};
 
@@ -121,29 +124,15 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     return heroCharacter?.setFaceExpression?.(name, weight) ?? false;
   }
 
-  function performTraversal(name, destination, options = {}) {
-    if (!heroVisual?.anim || !availableHeroClips.has(name) || !grounded || traversalMotion) return false;
-    if (!Array.isArray(destination) || destination.length !== 3 || !destination.every(Number.isFinite)) return false;
-    const position = player.getPosition();
-    const duration = Math.max(0.55, Math.min(2.2, Number(options.duration) || 1.15));
-    traversalMotion = {
-      start: [position.x, position.y, position.z],
-      end: [
-        pc.math.clamp(destination[0], -46, 46),
-        Math.max(0, destination[1]),
-        pc.math.clamp(destination[2], -195, 420)
-      ],
-      duration,
-      elapsed: 0,
-      apex: Math.max(0.1, Math.min(0.65, Number(options.apex) || 0.35))
-    };
-    actionClip = name;
-    actionTimer = duration + 0.15;
-    grounded = false;
-    transitionHeroClip(name, 0.08);
-    return true;
+  function performTraversal(name,destination,options={}) {
+    if(!heroVisual?.anim||!availableHeroClips.has(name)||!grounded||traversalMotion)return false;
+    if(!Array.isArray(destination)||destination.length!==3||!destination.every(Number.isFinite))return false;
+    const p=player.getPosition(),duration=Math.max(.55,Math.min(2.2,Number(options.duration)||1.15));
+    const clips=(Array.isArray(options.clips)?options.clips:[name]).filter(clip=>availableHeroClips.has(clip));
+    if(!clips.length)return false;
+    traversalMotion={start:[p.x,p.y,p.z],end:[pc.math.clamp(destination[0],-46,46),Math.max(0,destination[1]),pc.math.clamp(destination[2],-195,420)],duration,elapsed:0,apex:Math.max(.05,Math.min(.65,Number(options.apex)||.3)),mode:options.mode||"vault",clips,activePhase:-1,activeClip:clips[0]};
+    actionClip=clips[0];actionTimer=duration+.16;grounded=false;jumpBuffer=0;transitionHeroClip(clips[0],.08);onEffect?.("parkour",[p.x,p.y,p.z]);return true;
   }
-
 
   function readJoystick(event) {
     if (!joystick) return;
@@ -244,45 +233,42 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     movement.add(forward.clone().mulScalar(-axisY));
     if (movement.lengthSq() > 1) movement.normalize();
 
-    velocity.x = movement.x * speed;
-    velocity.z = movement.z * speed;
-    if (input.jumpQueued && grounded) { velocity.y = 6.0; grounded = false; }
-    input.jumpQueued = false;
-    if (!grounded) velocity.y -= 17.5 * step;
-    const p = player.getPosition();
-    const currentPosition=[p.x,p.y,p.z];
+    const p=player.getPosition(),currentPosition=[p.x,p.y,p.z];
+    if(grounded)coyote=.14;else coyote=Math.max(0,coyote-step);
+    if(input.jumpQueued)jumpBuffer=.14;else jumpBuffer=Math.max(0,jumpBuffer-step);
     let proposedPosition;
-    if (traversalMotion) {
-      traversalMotion.elapsed = Math.min(traversalMotion.duration, traversalMotion.elapsed + step);
-      const t = traversalMotion.elapsed / traversalMotion.duration;
-      const eased = t * t * (3 - 2 * t);
-      const [sx, sy, sz] = traversalMotion.start;
-      const [ex, ey, ez] = traversalMotion.end;
-      const arc = Math.sin(Math.PI * t) * traversalMotion.apex;
-      proposedPosition = [
-        sx + (ex - sx) * eased,
-        sy + (ey - sy) * eased + arc,
-        sz + (ez - sz) * eased
-      ];
-      if (t >= 1) {
-        traversalMotion = null;
-        velocity.y = 0;
-        grounded = true;
-      } else {
-        grounded = false;
+    if(traversalMotion){
+      traversalMotion.elapsed=Math.min(traversalMotion.duration,traversalMotion.elapsed+step);
+      const t=traversalMotion.elapsed/traversalMotion.duration,[sx,sy,sz]=traversalMotion.start,[ex,ey,ez]=traversalMotion.end;
+      const phase=Math.min(traversalMotion.clips.length-1,Math.floor(t*traversalMotion.clips.length));
+      if(phase!==traversalMotion.activePhase){traversalMotion.activePhase=phase;traversalMotion.activeClip=traversalMotion.clips[phase];actionClip=traversalMotion.activeClip;transitionHeroClip(actionClip,.1);}
+      const travelT=traversalMotion.mode==="ledge"?pc.math.clamp((t-.18)/.82,0,1):t;
+      const eased=travelT*travelT*(3-2*travelT),arcScale=traversalMotion.mode==="drop"?.04:traversalMotion.mode==="ladder"?.18:traversalMotion.mode==="wall-run"?.22:1;
+      const arc=Math.sin(Math.PI*travelT)*traversalMotion.apex*arcScale;
+      proposedPosition=[sx+(ex-sx)*eased,sy+(ey-sy)*eased+arc,sz+(ez-sz)*eased];
+      if(t>=1){traversalMotion=null;velocity.y=0;grounded=true;actionTimer=0;actionClip="";onEffect?.("landing",proposedPosition);}else grounded=false;
+    }else{
+      if(jumpBuffer>0&&coyote>0){velocity.y=6.45;grounded=false;coyote=0;jumpBuffer=0;onEffect?.("jump",currentPosition);}
+      const desired=[movement.x*speed,0,movement.z*speed];
+      if(physics?.step){
+        const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded};
+        physics.step(body,desired,step);
+        velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);grounded=body.grounded;
+        proposedPosition=[pc.math.clamp(body.position[0],-46,46),body.position[1],pc.math.clamp(body.position[2],-195,420)];
+      }else{
+        const blend=Math.min(1,(grounded?24:8)*step);velocity.x+=(desired[0]-velocity.x)*blend;velocity.z+=(desired[2]-velocity.z)*blend;
+        if(!grounded)velocity.y-=18.5*step;
+        proposedPosition=[pc.math.clamp(p.x+velocity.x*step,-46,46),p.y+velocity.y*step,pc.math.clamp(p.z+velocity.z*step,-195,420)];
       }
-    } else {
-      proposedPosition = [
-        pc.math.clamp(p.x + velocity.x * step, -46, 46),
-        p.y + velocity.y * step,
-        pc.math.clamp(p.z + velocity.z * step, -195, 420)
-      ];
     }
+    input.jumpQueued=false;
     const resolvedPosition=typeof resolveMovement==='function'
       ? resolveMovement(currentPosition,proposedPosition)
       : proposedPosition;
     p.set(resolvedPosition[0],resolvedPosition[1],resolvedPosition[2]);
-    if (p.y <= 0) { p.y = 0; velocity.y = 0; grounded = true; }
+    if(p.y<=0){p.y=0;velocity.y=0;grounded=true;}
+    if(resolvedPosition[0]!==proposedPosition[0])velocity.x=0;
+    if(resolvedPosition[2]!==proposedPosition[2])velocity.z=0;
     player.setPosition(p);
     if (!heroVisual) player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
 
@@ -294,8 +280,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     }
 
     if (heroVisual?.anim) {
-      if (!wasGrounded && grounded) landingTimer = 0.28;
-      if (landingTimer > 0) {
+      if(!wasGrounded&&grounded){landingTimer=.28;onEffect?.("landing",[p.x,p.y,p.z]);}
+      if(traversalMotion){transitionHeroClip(traversalMotion.activeClip,.1);}
+      else if (landingTimer > 0) {
         landingTimer = Math.max(0, landingTimer - step);
         transitionHeroClip('Hero01_Landing', 0.08);
       } else if (actionTimer > 0) {
@@ -336,6 +323,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       }
     }
 
+    if(running){footstepClock+=step;if(footstepClock>=.32){footstepClock=0;onEffect?.("dust",[p.x,p.y+.02,p.z]);}}else footstepClock=0;
     const yaw = cameraYaw;
     const horizontal = Math.cos(cameraPitch) * cameraDistance;
     cameraTarget.set(p.x, p.y + 1.28, p.z);
@@ -365,14 +353,12 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if (!Array.isArray(position) || position.length !== 3 || !position.every(Number.isFinite)) return false;
     player.setPosition(position[0], position[1], position[2]);
     player.setEulerAngles(0, Number(yaw) || 0, 0);
-    velocity.set(0, 0, 0);
-    grounded = true;
-    traversalMotion = null;
-    input.jumpQueued = false;
+    velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;coyote=.14;footstepClock=0;input.jumpQueued=false;
     return true;
   }
 
-  const getState = () => ({ position: [player.getPosition().x, player.getPosition().y, player.getPosition().z], grounded, moving, running, traversing: !!traversalMotion, facingYaw: player.getEulerAngles().y, crouched: input.crouch, stamina, health: 100, cameraYaw, cameraPitch });
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),facingYaw:player.getEulerAngles().y,crouched:input.crouch,stamina,health:100,cameraYaw,cameraPitch});
+  const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,
     interact: () => onInteract?.(getState()),
@@ -380,12 +366,14 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     playFaceExpression,
     performTraversal,
     setPositionForSmoke,
+    queueJumpForSmoke,
     getAnimationState: () => ({
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
       faceMorphCount: heroCharacter?.morphNames?.length ?? 0,
       playable: !!heroVisual?.anim?.playable
     }),
+    getRigSnapshot:()=>heroCharacter?.getRigSnapshot?.()||{skinnedMeshCount:0,weightedVertexCount:0,weightedClothingMeshCount:0,boneCount:0,bones:[]},
     getState
   };
 }
