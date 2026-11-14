@@ -23,7 +23,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   const player = new pc.Entity('player-character');
   player.setPosition(0, 0, 0);
   app.root.addChild(player);
-  const heroVisual = heroCharacter?.root ?? null;
+  let activeHeroCharacter = heroCharacter ?? null;
+  let heroVisual = activeHeroCharacter?.root ?? null;
   if (heroVisual) {
     heroVisual.setLocalPosition(0, 0, 0);
     heroVisual.setLocalScale(1, 1, 1);
@@ -97,21 +98,22 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let jumpBuffer = 0;
   let coyote = 0;
   let footstepClock = 0;
-  const availableHeroClips = new Set(heroCharacter?.clipNames || []);
-  const heroClipDurations = heroCharacter?.clipDurations || {};
-  const heroDefaults = heroCharacter?.defaultClips || {
+  let availableHeroClips = new Set(activeHeroCharacter?.clipNames || []);
+  let heroClipDurations = activeHeroCharacter?.clipDurations || {};
+  let heroDefaults = activeHeroCharacter?.defaultClips || {
     idle: 'Hero01_Idle', walk: 'Hero01_Walk', run: 'Hero01_Sprint',
     jump: 'Hero01_Jump', landing: 'Hero01_Landing', crouch: 'Hero01_Crouch'
   };
-  const animationFallbacks = {
-    idle: heroDefaults.idle,
-    walk: heroDefaults.walk || heroDefaults.run || heroDefaults.idle,
-    run: heroDefaults.run || heroDefaults.walk || heroDefaults.idle,
-    jump: heroDefaults.jump || heroDefaults.idle,
-    action: heroDefaults.jump || heroDefaults.idle,
-    landing: heroDefaults.landing || heroDefaults.idle,
-    crouch: heroDefaults.crouch || heroDefaults.idle
-  };
+  const buildAnimationFallbacks = defaults => ({
+    idle: defaults.idle,
+    walk: defaults.walk || defaults.run || defaults.idle,
+    run: defaults.run || defaults.walk || defaults.idle,
+    jump: defaults.jump || defaults.idle,
+    action: defaults.jump || defaults.idle,
+    landing: defaults.landing || defaults.idle,
+    crouch: defaults.crouch || defaults.idle
+  });
+  let animationFallbacks = buildAnimationFallbacks(heroDefaults);
   function resolveHeroClip(name) {
     if (availableHeroClips.has(name)) return name;
     const normalized = String(name || '').toLowerCase();
@@ -150,8 +152,32 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     return transitionHeroClip(name, 0.12) || activeHeroClip === resolvedName;
   }
 
+  function setHeroCharacter(nextCharacter) {
+    if (!nextCharacter?.root?.anim || traversalMotion) return false;
+    if (nextCharacter === activeHeroCharacter) return true;
+    if (heroVisual?.parent) heroVisual.parent.removeChild(heroVisual);
+    activeHeroCharacter = nextCharacter;
+    heroVisual = nextCharacter.root;
+    heroVisual.setLocalPosition(0, 0, 0);
+    heroVisual.setLocalScale(1, 1, 1);
+    player.addChild(heroVisual);
+    availableHeroClips = new Set(activeHeroCharacter.clipNames || []);
+    heroClipDurations = activeHeroCharacter.clipDurations || {};
+    heroDefaults = activeHeroCharacter.defaultClips || {
+      idle: 'Hero01_Idle', walk: 'Hero01_Walk', run: 'Hero01_Sprint',
+      jump: 'Hero01_Jump', landing: 'Hero01_Landing', crouch: 'Hero01_Crouch'
+    };
+    animationFallbacks = buildAnimationFallbacks(heroDefaults);
+    activeHeroClip = '';
+    actionClip = '';
+    actionTimer = 0;
+    landingTimer = 0;
+    transitionHeroClip('idle', 0.24);
+    return true;
+  }
+
   function playFaceExpression(name, weight = 1) {
-    return heroCharacter?.setFaceExpression?.(name, weight) ?? false;
+    return activeHeroCharacter?.setFaceExpression?.(name, weight) ?? false;
   }
 
   function performTraversal(name,destination,options={}) {
@@ -188,7 +214,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   }
 
   function heroCharacterPose(name, enabled=true) {
-    heroCharacter?.setProceduralPose?.(enabled ? name : null);
+    activeHeroCharacter?.setProceduralPose?.(enabled ? name : null);
   }
 
   function readJoystick(event) {
@@ -474,19 +500,22 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     playAnimation,
     playFaceExpression,
     performTraversal,
+    setHeroCharacter,
     setPositionForSmoke,
     queueJumpForSmoke,
     getAnimationState: () => ({
       activeClip: activeHeroClip, requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
-      source: heroCharacter?.source || 'procedural-fallback',
+      source: activeHeroCharacter?.source || 'procedural-fallback',
+      characterId: activeHeroCharacter?.characterId || 'hero01',
+      displayName: activeHeroCharacter?.displayName || 'Hero 01',
       defaultClips: { ...animationFallbacks },
       parkourUsesLocomotionFallback: !availableHeroClips.has('Hero01_VaultLow') &&
         !availableHeroClips.has('Hero01_Mantle') && !availableHeroClips.has('Hero01_LedgePullUp'),
-      faceMorphCount: heroCharacter?.morphNames?.length ?? 0,
+      faceMorphCount: activeHeroCharacter?.morphNames?.length ?? 0,
       playable: !!heroVisual?.anim?.playable
     }),
-    getRigSnapshot:()=>heroCharacter?.getRigSnapshot?.()||{skinnedMeshCount:0,weightedVertexCount:0,weightedClothingMeshCount:0,boneCount:0,bones:[]},
+    getRigSnapshot:()=>activeHeroCharacter?.getRigSnapshot?.()||{skinnedMeshCount:0,weightedVertexCount:0,weightedClothingMeshCount:0,boneCount:0,bones:[]},
     getState
   };
 }
