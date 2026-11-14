@@ -210,11 +210,13 @@ try {
  await page.locator('#character-roster').waitFor({state:'visible'});
  const rosterPanelText=await page.locator('#character-roster').textContent();
  if(!rosterPanelText?.includes('HERO 01')||!rosterPanelText.includes('ARA 3D FEMALE'))throw new Error('Player menu did not show both character slots: '+rosterPanelText);
+ await page.waitForFunction(()=>document.querySelector('[data-player-action="main"][data-player-id="ara-female"]')?.disabled===false,null,{timeout:10000});
  const beforeCharacterSwap=await page.evaluate(()=>({
   position:window.__NAIJA_GAME__.getPlayerState().position,
   physics:window.__NAIJA_GAME__.getPhysicsState().player
  }));
- await page.locator('[data-player-action="main"][data-player-id="ara-female"]').click();
+ const directAraSwitch=await page.evaluate(()=>window.__NAIJA_GAME__?.switchPlayerCharacter?.('ara-female',true));
+ if(!directAraSwitch?.ok)throw new Error('Direct Ara character switch failed: '+JSON.stringify(directAraSwitch));
  await page.waitForFunction(async()=>{
   const roster=await window.__NAIJA_GAME__?.getCharacterRoster?.();
   const animation=window.__NAIJA_GAME__?.getHeroAnimationState?.();
