@@ -354,9 +354,15 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
       }
     }
     input.jumpQueued=false;
-    const resolvedPosition=typeof resolveMovement==='function'
-      ? resolveMovement(currentPosition,proposedPosition)
-      : proposedPosition;
+    // Scripted step/mantle/ledge/ladder trajectories already have their
+    // dedicated traversal obstacle temporarily released from Bullet. Do not
+    // run the ordinary building-proxy resolver over these authored paths:
+    // it can pin the capsule against the very ledge it is climbing.
+    const resolvedPosition=traversalMotion?.kinematic
+      ? proposedPosition
+      : typeof resolveMovement==='function'
+        ? resolveMovement(currentPosition,proposedPosition)
+        : proposedPosition;
     p.set(resolvedPosition[0],resolvedPosition[1],resolvedPosition[2]);
     if(p.y<=0){p.y=0;velocity.y=0;grounded=true;}
     if(resolvedPosition[0]!==proposedPosition[0])velocity.x=0;
