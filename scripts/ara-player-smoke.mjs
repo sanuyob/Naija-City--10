@@ -27,8 +27,9 @@ try{
  await page.mouse.down();
  await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
  await page.waitForTimeout(950);
- const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.()}));
+ const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.()}));
  if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.15)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
+ if((walkState.player.footstepContacts||0)<1||!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite))throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
  await page.keyboard.down('Shift');
  await page.waitForTimeout(550);
  const runState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.()}));
@@ -36,7 +37,7 @@ try{
  await page.mouse.up();
  if(!runState.player?.running||runState.animation?.activeClip!=='Run')throw Error('Sprint input did not select Ara running animation: '+JSON.stringify(runState));
  if(!walkState.audio?.available)throw Error('Audio did not initialise after the first gameplay gesture: '+JSON.stringify(walkState.audio));
- for(const clip of ['Idle','Walk','Run','Jump','Jump start','Jump (in air)','Jump land','Vault over obstacle','Climb up ledge','Forward roll','Side dodge left','Side dodge right'])if(!state.animations.includes(clip))throw Error('Missing animation '+clip+': '+state.animations.join(', '));
+ for(const clip of ['Idle','Walk','Run','Jump','Jump start','Jump (in air)','Jump land','Vault over obstacle','Climb up ledge','Forward roll','Side dodge left','Side dodge right','Ara_Crouch','Ara_CrouchWalk'])if(!state.animations.includes(clip))throw Error('Missing animation '+clip+': '+state.animations.join(', '));
  const animationChecks=await page.evaluate(()=>{
   const g=window.__NAIJA_GAME__,play=window.__NAIJA_PLAY_HERO_ANIMATION__;
   const cases=[['Hero01_Walk','Walk'],['Hero01_Sprint','Run'],['Hero01_JumpStart','Jump start'],['Hero01_Jump','Jump (in air)'],['Hero01_Landing','Jump land'],['Hero01_VaultLow','Vault over obstacle'],['Hero01_Mantle','Climb up ledge'],['Hero01_Roll','Forward roll'],['Hero01_DodgeLeft','Side dodge left'],['Hero01_DodgeRight','Side dodge right']];
@@ -45,6 +46,21 @@ try{
  const failedAnimations=animationChecks.filter(item=>!item.played||item.activeClip!==item.expected);
  if(failedAnimations.length)throw Error('Animation alias mapping failed: '+JSON.stringify(failedAnimations));
  await page.evaluate(()=>window.__NAIJA_PLAY_HERO_ANIMATION__?.('Hero01_Idle',1));
+ await page.waitForTimeout(1250);
+ const collisionProbe=await page.evaluate(()=>window.__NAIJA_GAME__?.debugProbeWorldCollisionForSmoke?.());
+ if(!collisionProbe?.buildingBlocked||!collisionProbe?.roadwayClear||collisionProbe.corridorProxies<55)throw Error('Full environment collision proxy coverage failed: '+JSON.stringify(collisionProbe));
+ const bulletCollision=await page.evaluate(()=>window.__NAIJA_GAME__?.debugProbeBulletCollisionForSmoke?.());
+ if(!bulletCollision?.stoppedByBuilding||bulletCollision.endX>=bulletCollision.buildingBoundaryX)throw Error('Live Bullet movement did not stop at the building proxy: '+JSON.stringify(bulletCollision));
+ await page.waitForTimeout(400);
+ const crouchStarted=await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetCrouchedForSmoke?.(true));
+ await page.waitForTimeout(850);
+ const crouchState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),physics:window.__NAIJA_GAME__?.getPhysicsState?.().player,animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),rig:window.__NAIJA_GAME__?.getHeroRigSnapshot?.()}));
+ const standingHipsY=state.rig?.bones?.find(bone=>bone.name==='Hips')?.position?.[1];
+ const crouchedHipsY=crouchState.rig?.bones?.find(bone=>bone.name==='Hips')?.position?.[1];
+ if(!crouchStarted||!crouchState.player?.crouched||Math.abs(crouchState.physics?.capsuleHeight-1.22)>.01||crouchState.animation?.activeClip!=='Ara_Crouch'||!(crouchedHipsY<standingHipsY-.05))throw Error('Ara crouch animation/capsule/rig pose failed: '+JSON.stringify({crouchState,standingHipsY,crouchedHipsY}));
+ const standRestored=await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetCrouchedForSmoke?.(false));
+ const standState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),physics:window.__NAIJA_GAME__?.getPhysicsState?.().player}));
+ if(!standRestored||standState.player?.crouched||Math.abs(standState.physics?.capsuleHeight-1.8)>.01)throw Error('Standing capsule did not restore after crouch: '+JSON.stringify(standState));
  const jumpPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.debugJumpPhysicsForSmoke?.());
  if(!jumpPhysics||jumpPhysics.airborne.position[1]<=0||!jumpPhysics.landed.grounded||jumpPhysics.landed.position[1]!==0)throw Error('Jump/landing physics check failed: '+JSON.stringify(jumpPhysics));
  if((jumpPhysics.vfx?.byType?.jump||0)<1||(jumpPhysics.vfx?.byType?.landing||0)<1)throw Error('Jump/landing VFX events did not fire: '+JSON.stringify(jumpPhysics.vfx));
@@ -60,6 +76,8 @@ try{
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  await mkdir('out',{recursive:true});
  await page.screenshot({path:'out/ara-player-smoke.png',fullPage:false});
+ const vfx=await page.evaluate(()=>window.__NAIJA_GAME__?.getVfxState?.());
+ if(vfx?.poolSize!==24||vfx.active>vfx.poolSize||vfx.byType?.dust<1||vfx.byType?.jump<1||vfx.byType?.landing<1||vfx.byType?.parkour<1)throw Error('Bounded player VFX events/pool failed: '+JSON.stringify(vfx));
  const relevantErrors=errors.filter(e=>!e.includes('ammo.wasm.js')&&!e.includes('Failed to load resource: net::ERR_EMPTY_RESPONSE')); if(relevantErrors.length)throw Error('Browser errors: '+relevantErrors.join(' | '));
- console.log(JSON.stringify({pass:true,state,walkState,runState,animationChecks,jumpPhysics,parkour,npc,audio,screenshotBytes:screenshot.length,browserErrors:errors},null,2));
+ console.log(JSON.stringify({pass:true,state,walkState,runState,animationChecks,collisionProbe,bulletCollision,jumpPhysics,parkour,npc,audio,vfx,screenshotBytes:screenshot.length,browserErrors:errors},null,2));
 }finally{if(browser)await browser.close();server.kill('SIGTERM')}

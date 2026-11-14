@@ -8,17 +8,25 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const Ammo = await loadAmmo();
   const owned = [];
   const own = value => { owned.push(value); return value; };
+  const release = value => {
+    const index = owned.indexOf(value);
+    if (index >= 0) owned.splice(index, 1);
+    try { Ammo.destroy(value); } catch {}
+  };
   const vector = (x, y, z) => own(new Ammo.btVector3(x, y, z));
-  const halfHeight = 0.9;
+  let capsuleHeight = 1.8;
+  let halfHeight = capsuleHeight / 2;
   const radius = 0.31;
+  const crouchHeight = 1.22;
   const worldConfig = own(new Ammo.btDefaultCollisionConfiguration());
   const dispatcher = own(new Ammo.btCollisionDispatcher(worldConfig));
   const broadphase = own(new Ammo.btDbvtBroadphase());
   const solver = own(new Ammo.btSequentialImpulseConstraintSolver());
   const world = own(new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, worldConfig));
-  world.setGravity(vector(0, -gravity, 0));
+  const gravityVector = vector(0, -gravity, 0);
+  world.setGravity(gravityVector);
 
-  function addStaticBox(position, halfExtents, friction = 0.82) {
+  function addStaticBox(position, halfExtents, friction = 0.82, rotationY = 0) {
     const shape = own(new Ammo.btBoxShape(vector(
       Math.max(0.04, halfExtents[0]),
       Math.max(0.04, halfExtents[1]),
@@ -27,6 +35,11 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const start = own(new Ammo.btTransform());
     start.setIdentity();
     start.setOrigin(vector(position[0], position[1], position[2]));
+    const yaw = (Number(rotationY) || 0) * Math.PI / 180;
+    if (Math.abs(yaw) > 1e-5 && typeof Ammo.btQuaternion === 'function') {
+      const rotation = own(new Ammo.btQuaternion(0, Math.sin(yaw / 2), 0, Math.cos(yaw / 2)));
+      start.setRotation(rotation);
+    }
     const motion = own(new Ammo.btDefaultMotionState(start));
     const inertia = vector(0, 0, 0);
     const info = own(new Ammo.btRigidBodyConstructionInfo(0, motion, shape, inertia));
@@ -41,19 +54,29 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
 
   const colliderBodies = [];
   const colliderEnabled = [];
+  const colliderDescriptors = [];
   for (const item of colliders) {
-    const entity = item?.entity;
-    const p = entity?.getPosition?.();
-    const s = entity?.getLocalScale?.();
-    if (!p || !s) continue;
-    colliderBodies.push(addStaticBox(
-      [p.x, p.y, p.z],
-      [Math.abs(s.x) / 2, Math.abs(s.y) / 2, Math.abs(s.z) / 2]
-    ));
+    let position, halfExtents, rotationY = Number(item?.rotationY) || 0;
+    if (Array.isArray(item?.position) && Array.isArray(item?.halfExtents)) {
+      position = item.position;
+      halfExtents = item.halfExtents;
+    } else {
+      const entity = item?.entity;
+      const p = entity?.getPosition?.();
+      const size = entity?.getLocalScale?.();
+      const rotation = entity?.getEulerAngles?.();
+      if (!p || !size) continue;
+      position = [p.x, p.y, p.z];
+      halfExtents = [Math.abs(size.x) / 2, Math.abs(size.y) / 2, Math.abs(size.z) / 2];
+      rotationY = rotation?.y || 0;
+    }
+    const descriptor = { position: position.slice(), halfExtents: halfExtents.slice(), rotationY, id: item?.id || item?.name || item?.entity?.name || 'world-proxy' };
+    colliderDescriptors.push(descriptor);
+    colliderBodies.push(addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY));
     colliderEnabled.push(true);
   }
 
-  const capsule = own(new Ammo.btCapsuleShape(radius, Math.max(0.1, halfHeight * 2 - radius * 2)));
+  let capsule = own(new Ammo.btCapsuleShape(radius, Math.max(0.1, capsuleHeight - radius * 2)));
   const actorStart = own(new Ammo.btTransform());
   actorStart.setIdentity();
   actorStart.setOrigin(vector(0, groundY + halfHeight, 0));
@@ -80,8 +103,8 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
 
   function setGravity(value) {
     activeGravity = Math.max(0, Math.min(40, Number(value) || 0));
-    const g = vector(0, -activeGravity, 0);
-    world.setGravity(g);
+    gravityVector.setValue(0, -activeGravity, 0);
+    world.setGravity(gravityVector);
   }
 
   // A character can stand on a vault box, ledge or ladder platform as well
@@ -105,6 +128,44 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       }
     }
     return false;
+  }
+
+  function canFitCapsule(position, height) {
+    const x = Number(position?.[0]) || 0, feetY = Number(position?.[1]) || 0, z = Number(position?.[2]) || 0;
+    for (const collider of colliderDescriptors) {
+      const [cx, cy, cz] = collider.position;
+      const [hx, hy, hz] = collider.halfExtents;
+      const bottom = cy - hy, top = cy + hy;
+      if (feetY + height <= bottom + 0.025 || feetY >= top - 0.025) continue;
+      const yaw = collider.rotationY * Math.PI / 180;
+      const dx = x - cx, dz = z - cz;
+      const localX = dx * Math.cos(yaw) - dz * Math.sin(yaw);
+      const localZ = dx * Math.sin(yaw) + dz * Math.cos(yaw);
+      const nearX = Math.max(-hx, Math.min(hx, localX));
+      const nearZ = Math.max(-hz, Math.min(hz, localZ));
+      const ex = localX - nearX, ez = localZ - nearZ;
+      if (ex * ex + ez * ez < (radius + 0.025) * (radius + 0.025)) return false;
+    }
+    return true;
+  }
+
+  function setCrouched(crouched, feetPosition = null) {
+    const targetHeight = crouched ? crouchHeight : 1.8;
+    if (Math.abs(targetHeight - capsuleHeight) < 0.001) return true;
+    const transform = body.getWorldTransform();
+    const currentOrigin = transform.getOrigin();
+    const feet = feetPosition || [currentOrigin.x(), currentOrigin.y() - halfHeight, currentOrigin.z()];
+    if (targetHeight > capsuleHeight && !canFitCapsule(feet, targetHeight)) return false;
+    const nextShape = own(new Ammo.btCapsuleShape(radius, Math.max(0.1, targetHeight - radius * 2)));
+    const previousShape = capsule;
+    body.setCollisionShape(nextShape);
+    capsule = nextShape;
+    release(previousShape);
+    capsuleHeight = targetHeight;
+    halfHeight = targetHeight / 2;
+    teleport(feet, [body.getLinearVelocity().x(), body.getLinearVelocity().y(), body.getLinearVelocity().z()]);
+    world.updateSingleAabb(body);
+    return true;
   }
 
   function teleport(position, velocity = [0, 0, 0]) {
@@ -178,13 +239,16 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, setGravity, cleanup,
+    step, teleport, setColliderEnabled, setGravity, setCrouched, canFitCapsule, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule',
       steps, collisions,
       colliderCount: colliderBodies.length,
       capsuleRadius: radius,
-      capsuleHeight: halfHeight * 2,
+      capsuleHeight,
+      crouchHeight,
+      crouched: capsuleHeight < 1.8,
+      worldColliderCount: Math.max(0, colliderBodies.length - colliders.slice(0, 8).length),
       gravity: activeGravity, groundY
     })
   };

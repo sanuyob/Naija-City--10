@@ -54,6 +54,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   let jumpBuffer = 0;
   let coyote = 0;
   let footstepClock = 0;
+  let lastFootstepCycle = null;
+  let lastFootstepProgress = null;
+  let footstepContacts = 0;
   let availableHeroClips = new Set(activeHeroCharacter?.clipNames || []);
   let heroClipDurations = activeHeroCharacter?.clipDurations || {};
   let heroDefaults = activeHeroCharacter?.defaultClips || {
@@ -73,7 +76,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     dodgeLeft: defaults.dodgeLeft || defaults.roll || defaults.run || defaults.idle,
     dodgeRight: defaults.dodgeRight || defaults.roll || defaults.run || defaults.idle,
     landing: defaults.landing || defaults.idle,
-    crouch: defaults.crouch || defaults.idle
+    crouch: defaults.crouch || defaults.idle,
+    crouchWalk: defaults.crouchWalk || defaults.crouch || defaults.walk || defaults.idle
   });
   let animationFallbacks = buildAnimationFallbacks(heroDefaults);
   let jumpStartTimer = 0;
@@ -96,17 +100,37 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     return animationFallbacks[key] || animationFallbacks.action || animationFallbacks.idle || null;
   }
 
-  function transitionHeroClip(name, blendTime = 0.16) {
+  function transitionHeroClip(name, blendTime = 0.22) {
     const resolvedName = resolveHeroClip(name);
-    if (!heroVisual?.anim || !resolvedName || activeHeroClip === resolvedName) return false;
+    const layer = heroVisual?.anim?.baseLayer;
+    if (!layer || !resolvedName) return false;
+    const locomotionClips = [animationFallbacks.idle, animationFallbacks.walk, animationFallbacks.run];
+    const targetState = locomotionClips.includes(resolvedName) ? 'Locomotion' : resolvedName;
+    if (activeHeroClip === resolvedName && layer.activeState === targetState) return false;
     try {
-      heroVisual.anim.baseLayer.transition(resolvedName, blendTime);
+      if (layer.activeState !== targetState) layer.transition(targetState, blendTime);
       activeHeroClip = resolvedName;
       return true;
     } catch (error) {
       console.warn('Character animation transition failed:', name, '→', resolvedName, error);
       return false;
     }
+  }
+
+  function setCrouched(value) {
+    const next = Boolean(value);
+    if (next === input.crouch) return true;
+    if (!grounded || traversalMotion) return false;
+    const position = player.getPosition();
+    if (physics?.setCrouched && !physics.setCrouched(next, [position.x, position.y, position.z])) return false;
+    input.crouch = next;
+    actionTimer = 0;
+    actionClip = '';
+    crouchButton?.setAttribute('aria-pressed', String(next));
+    lastFootstepCycle = null;
+    lastFootstepProgress = null;
+    transitionHeroClip(next ? (moving ? heroDefaults.crouchWalk : heroDefaults.crouch) : (moving ? 'Hero01_Walk' : 'Hero01_Idle'), .2);
+    return true;
   }
 
   function playAnimation(name, durationSeconds = null) {
@@ -197,8 +221,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
   sprintButton?.addEventListener('lostpointercapture', sprintOff);
   const toggleCrouch = event => {
     event?.preventDefault?.();
-    input.crouch = !input.crouch;
-    crouchButton?.setAttribute('aria-pressed', String(input.crouch));
+    if (!setCrouched(!input.crouch)) onInteract?.({ ...getState(), crouchBlocked: true });
   };
   crouchButton?.addEventListener('click', toggleCrouch);
 
@@ -239,6 +262,9 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
 
   function update(dt) {
     const step = Math.min(dt, 0.05);
+    // Preserve the authored kinematic path on its completion frame too. The
+    // traversal state is cleared before the final position is applied.
+    const scriptedKinematicFrame = traversalMotion?.kinematic === true;
     const wasGrounded = grounded;
     const keyX = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0);
     const keyY = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
@@ -328,7 +354,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     // dedicated traversal obstacle temporarily released from Bullet. Do not
     // run the ordinary building-proxy resolver over these authored paths:
     // it can pin the capsule against the very ledge it is climbing.
-    const resolvedPosition=traversalMotion?.kinematic
+    const resolvedPosition=(traversalMotion?.kinematic || scriptedKinematicFrame)
       ? proposedPosition
       : typeof resolveMovement==='function'
         ? resolveMovement(currentPosition,proposedPosition)
@@ -351,6 +377,8 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     }
 
     if (heroVisual?.anim) {
+      const animationSpeed = input.crouch ? 0 : Math.min(3.75, Math.hypot(velocity.x, velocity.z));
+      heroVisual.anim.setFloat?.('moveSpeed', animationSpeed);
       if(!wasGrounded&&grounded){landingTimer=.28;onEffect?.("landing",[p.x,p.y,p.z]);}
       if(traversalMotion){heroCharacterPose(traversalMotion.mode,traversalMotion.missingActionClip);transitionHeroClip(traversalMotion.activeClip,.1);}
       else if (landingTimer > 0) {
@@ -367,7 +395,7 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
         heroCharacterPose('jump',!availableHeroClips.has(resolveHeroClip('Hero01_Jump')));
       } else if (input.crouch) {
         heroCharacterPose(null,false);
-        transitionHeroClip(moving ? 'Hero01_CrouchWalk' : 'Hero01_Crouch');
+        transitionHeroClip(moving ? (heroDefaults.crouchWalk || 'Ara_CrouchWalk') : heroDefaults.crouch, .2);
       } else if (running) {
         heroCharacterPose(null,false);
         transitionHeroClip('Hero01_Sprint');
@@ -403,16 +431,42 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     }
 
     if(moving&&grounded&&!traversalMotion){
-      footstepClock+=step;
-      const stepInterval=running?.31:.46;
-      if(footstepClock>=stepInterval){footstepClock-=stepInterval;onEffect?.("dust",[p.x,p.y+.02,p.z]);}
-    }else if(!moving||!grounded)footstepClock=0;
+      const layer = heroVisual?.anim?.baseLayer;
+      const loopState = layer?.activeState === 'Locomotion' || layer?.activeState === heroDefaults.crouchWalk;
+      const progress = loopState ? layer.activeStateProgress : null;
+      if (Number.isFinite(progress)) {
+        const cycle = Math.floor(progress * 2);
+        if (lastFootstepProgress !== null && progress + 0.25 < lastFootstepProgress) lastFootstepCycle = -1;
+        if (lastFootstepCycle === null) lastFootstepCycle = cycle;
+        else if (cycle !== lastFootstepCycle) {
+          const feet = activeHeroCharacter?.getFootPositions?.();
+          const foot = cycle % 2 === 0 ? feet?.left : feet?.right;
+          onEffect?.('dust', foot ? [foot[0], Math.max(p.y + .015, foot[1]), foot[2]] : [p.x, p.y + .02, p.z]);
+          footstepContacts++;
+          lastFootstepCycle = cycle;
+        }
+        lastFootstepProgress = progress;
+      } else {
+        footstepClock += step;
+        const stepInterval = running ? .31 : .46;
+        if (footstepClock >= stepInterval) {
+          footstepClock -= stepInterval;
+          onEffect?.('dust', [p.x, p.y + .02, p.z]);
+          footstepContacts++;
+        }
+      }
+    } else {
+      footstepClock = 0;
+      lastFootstepCycle = null;
+      lastFootstepProgress = null;
+    }
     const yaw = cameraYaw;
     const horizontal = Math.cos(cameraPitch) * cameraDistance;
-    cameraTarget.set(p.x, p.y + 1.28, p.z);
+    const cameraHeight = input.crouch ? 1.02 : 1.28;
+    cameraTarget.set(p.x, p.y + cameraHeight, p.z);
     desiredCamera.set(
       p.x + Math.sin(yaw) * horizontal,
-      p.y + 1.28 + Math.sin(cameraPitch) * cameraDistance + 0.35,
+      p.y + cameraHeight + Math.sin(cameraPitch) * cameraDistance + 0.35,
       p.z + Math.cos(yaw) * horizontal
     );
     smoothedCamera.lerp(smoothedCamera, desiredCamera, Math.min(1, step * 8));
@@ -437,22 +491,29 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     player.setPosition(position[0], position[1], position[2]);
     physics?.teleport?.(position,[0,0,0]);
     player.setEulerAngles(0, Number(yaw) || 0, 0);
-    velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;input.jumpQueued=false;
+    velocity.set(0,0,0);grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;lastFootstepCycle=null;lastFootstepProgress=null;input.jumpQueued=false;
     return true;
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),facingYaw:player.getEulerAngles().y,crouched:input.crouch,stamina,health:100,cameraYaw,cameraPitch});
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),facingYaw:player.getEulerAngles().y,crouched:input.crouch,stamina,health:100,cameraYaw,cameraPitch,footstepContacts});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,
     interact: () => onInteract?.(getState()),
     playAnimation,
     playFaceExpression,
+    setCrouched,
     performTraversal,
     setPositionForSmoke,
     queueJumpForSmoke,
     getAnimationState: () => ({
-      activeClip: activeHeroClip, requestedClip: actionClip,
+      activeClip: activeHeroClip, activeState: heroVisual?.anim?.baseLayer?.activeState || null,
+      transitioning: heroVisual?.anim?.baseLayer?.transitioning || false,
+      transitionProgress: heroVisual?.anim?.baseLayer?.transitionProgress ?? null,
+      activeStateCurrentTime: heroVisual?.anim?.baseLayer?.activeStateCurrentTime ?? null,
+      activeStateDuration: heroVisual?.anim?.baseLayer?.activeStateDuration ?? null,
+      availableStates: heroVisual?.anim?.baseLayer?.states || [],
+      requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
       source: activeHeroCharacter?.source || 'ara-female-not-installed',
       characterId: activeHeroCharacter?.characterId || 'ara-female',

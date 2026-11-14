@@ -30,6 +30,7 @@ try {
    araFilePickerPresent:!!document.querySelector('#player-character-file'),
    game:game?{
     stage:game.stage,
+    worldCollision:game.worldCollision||null,
     stage08A:scalarFields(game.stage08A),
     stage08B:scalarFields(game.stage08B),
     stage08C:scalarFields(game.stage08C),
@@ -117,13 +118,15 @@ try {
     state.game?.playerCharacterReady!==true||state.game?.characterSource!=='ara-3d-gen-female-preset'||
     state.game?.heroAnimationState?.characterId!=='ara-female'||
     state.game?.heroAnimationState?.displayName!=='Ara 3D Female'||
-    state.game?.heroAnimationState?.playable!==true||state.game?.heroAnimations?.length!==12||
+    state.game?.heroAnimationState?.playable!==true||state.game?.heroAnimations?.length!==14||
     state.game?.mainCharacterId!=='ara-female'||state.game?.hero01Role!=='city-npc'||
     state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount!==8||
     state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||
     state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||
     state.game?.pedestrianState?.heroNpc?.isPlayer!==false||state.game?.pedestrianState?.heroNpc?.rigged!==true||
     state.game?.physicsState?.player?.mode!=='ammo-bullet-capsule'||
+    state.game?.physicsState?.player?.colliderCount<60||
+    state.game?.worldCollision?.buildingProxies!==48||
     state.game?.physicsState?.agents?.mode!=='kinematic-capsule'||state.game?.vfxState?.poolSize<12||
     !state.game?.mobileJoystick||!state.game?.cameraOrbit) {
   throw new Error('Ara player, Hero 01 NPC, traversal, physics or companion system was not mounted: '+JSON.stringify(state.game));

@@ -123,8 +123,18 @@ export function createStage08GIkejaStreetLife({ app, box, material }) {
     detail('pedestrian-head',[x,1.72,z],[0.34,0.38,0.32],mats.skin);
     for(const dx of [-0.14,0.14])detail('pedestrian-leg',[x+dx,0.43,z],[0.15,0.72,0.16],mats.trousers);
   }
+  const solidName = /(?:mixed-use-shop-shell|pos-kiosk|parked-.*-body|vendor-table|umbrella-pole|utility-pole|streetlight-pole)/;
+  const collisionProxies = (app.root.findByTag('stage08g-ikeja-street-life') || [])
+    .filter(entity => solidName.test(entity.name))
+    .map(entity => {
+      const p = entity.getPosition(), size = entity.getLocalScale(), r = entity.getEulerAngles();
+      return { id: entity.name + '-' + entity.getGuid(), position: [p.x,p.y,p.z],
+        halfExtents: [Math.abs(size.x)/2,Math.abs(size.y)/2,Math.abs(size.z)/2],
+        rotationY: r.y, source: 'stage08g-ikeja-street-life' };
+    });
   return {
     stage:'08G',district:'Ikeja',prototypeBounds:{min:[-24,-1,164],max:[24,10,402]},
+    collisionProxies,
     corridor:'Ikeja commercial street-life prototype',roadLengthMetres:150,
     staticPropMeshes:meshes,staticBatching:Boolean(group),batchGroupId:group?.id??null,
     vendorStalls:stalls.length,parkedVehicles:3,staticPedestrianSilhouettes:people.length,

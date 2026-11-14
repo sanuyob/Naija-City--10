@@ -245,7 +245,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     {id:'yaba-step-01',type:'step',height:.44,entity:box('traversal-step-01',[.65,.22,-1.8],[1,.44,.55],m.concrete)},
     {id:'yaba-low-vault-01',type:'low-vault',height:.72,entity:box('traversal-low-vault-01',[7.2,.36,-8.2],[1.25,.72,.55],m.concrete)},
     {id:'yaba-high-vault-01',type:'high-vault',height:1.02,entity:box('traversal-high-vault-01',[-7.2,.51,-10.5],[1.25,1.02,.55],m.shops[1])},
-    {id:'yaba-mantle-01',type:'mantle',height:1.26,entity:box('traversal-mantle-01',[7.5,.63,-15],[1.3,1.26,.6],m.shops[2])},
+    {id:'yaba-mantle-01',type:'mantle',height:1.26,entity:box('traversal-mantle-01',[4.8,.63,-15],[1.3,1.26,.6],m.shops[2])},
     {id:'yaba-ledge-01',type:'ledge',height:2.15,entity:box('traversal-ledge-01',[-.35,1.075,-23],[3.2,2.15,.6],m.concrete)},
     {id:'yaba-ladder-01',type:'ladder',height:3.1,entity:ladderCollider},
     {id:'yaba-wall-run-01',type:'wall-run',height:2.35,entity:box('traversal-wall-run-01',[-4.3,1.175,-43],[.55,2.35,5.2],m.shops[2])},
@@ -253,9 +253,17 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   ];
   traversalObstacles.forEach(item=>item.entity.tags.add('stage09-traversal-obstacle'));
   const actorPhysics=createActorPhysics({colliders:traversalObstacles,groundY:0,gravity:18});
+  const playerWorldColliders=[
+    ...traversalObstacles,
+    ...stage08E.getCollisionProxies(),
+    ...(stage08C.collisionProxies||[]),
+    ...(stage08G.collisionProxies||[])
+  ];
   let playerPhysics=actorPhysics;
   try {
-    playerPhysics=await createPlayerPhysics({colliders:traversalObstacles,groundY:0,gravity:18});
+    // Keep the eight tutorial obstacles at the front: traversal temporarily
+    // disables their matching Bullet bodies by index while the player climbs.
+    playerPhysics=await createPlayerPhysics({colliders:playerWorldColliders,groundY:0,gravity:18});
   } catch(error) {
     console.warn('Bullet player physics unavailable; using the kinematic fallback:',error);
     if(assetStatusLabel)assetStatusLabel.textContent='Bullet unavailable · basic player physics fallback active';
@@ -270,7 +278,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   let traversalSystem=null;
   const playerController=createThirdPersonController(app,camera,canvas,{
     resolveMovement:(current,proposed)=>{
-      const cityResolved=stage08E.resolveMovement(current,proposed);
+      // Bullet owns building and solid street-prop collision when available;
+      // retain the legacy manifest resolver only for the lightweight fallback.
+      const cityResolved=playerPhysics===actorPhysics?stage08E.resolveMovement(current,proposed):proposed;
       return traversalSystem ? traversalSystem.resolveMovement(current,cityResolved) : cityResolved;
     },
     heroCharacter,physics:playerPhysics,onEffect:emitPlayerFeedback,
@@ -365,10 +375,26 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
+  const gameApi={ready:true,stage:9,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:traversalObstacles.length,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
+    gameApi.debugSetCrouchedForSmoke=value=>playerController.setCrouched(value);
+    gameApi.debugProbeWorldCollisionForSmoke=()=>({
+      buildingBlocked:playerPhysics.canFitCapsule?.([-9.2,0,-82],1.8)===false,
+      roadwayClear:playerPhysics.canFitCapsule?.([0,0,-82],1.8)===true,
+      corridorProxies:playerWorldColliders.length,
+      physics:playerPhysics.getState()
+    });
+    gameApi.debugProbeBulletCollisionForSmoke=()=>{
+      const start=[-16,0,-82];
+      playerController.setPositionForSmoke(start,90);
+      const actor={position:start.slice(),velocity:[0,0,0],grounded:true};
+      for(let i=0;i<60;i++)playerPhysics.step(actor,[3,0,0],.05);
+      playerController.setPositionForSmoke([0,0,0],0);
+      return {startX:start[0],endX:actor.position[0],buildingBoundaryX:-12.45,
+        stoppedByBuilding:actor.position[0]<-12.5,physics:playerPhysics.getState()};
+    };
     gameApi.debugAdvanceTraversalForSmoke=(frames=30)=>{
       const count=Math.max(1,Math.min(60,Math.floor(Number(frames)||30)));
       for(let i=0;i<count;i++){

@@ -4,6 +4,81 @@ import { loadSavedPlayerCharacter } from './player-character-store.js';
 const base = import.meta.env.BASE_URL || '/';
 const resolveAssetUrl = value => new URL(String(value).replace(/^\//, ''), new URL(base, window.location.origin)).href;
 
+// Ara's source preset has no crouch take. Build two compact skeletal clips
+// against her existing Mixamo-style rig; the game still owns root translation.
+function createAraCrouchTracks(root) {
+  const bones = new Map();
+  for (const render of root.findComponents('render')) {
+    for (const meshInstance of render.meshInstances || []) {
+      for (const bone of meshInstance.skinInstance?.bones || []) {
+        if (bone?.name) bones.set(bone.name.toLowerCase().replace(/[^a-z0-9]/g, ''), bone);
+      }
+    }
+  }
+  const pick = (...names) => {
+    for (const name of names) {
+      const target = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      for (const [key, bone] of bones) if (key === target || key.endsWith(target)) return bone;
+    }
+    return null;
+  };
+  const roles = {
+    hips: pick('Hips','Pelvis'), spine: pick('Spine2','Chest','Spine'),
+    leftArm: pick('LeftArm'), rightArm: pick('RightArm'),
+    leftThigh: pick('LeftUpLeg','LeftThigh'), rightThigh: pick('RightUpLeg','RightThigh'),
+    leftKnee: pick('LeftLeg','LeftCalf'), rightKnee: pick('RightLeg','RightCalf')
+  };
+  const pathFor = node => {
+    const path = []; let current = node;
+    while (current && current !== root) { path.unshift(current.name); current = current.parent; }
+    return current === root && path.length ? path : null;
+  };
+  const times = [0, .25, .5, .75, 1];
+  const duration = .96;
+  const makeTrack = (name, walking) => {
+    const input = new pc.AnimData(1, new Float32Array(times.map(t => t * duration)));
+    const outputs = [], curves = [];
+    const addCurve = (bone, property, components, frames) => {
+      if (!bone) return;
+      const path = pathFor(bone); if (!path) return;
+      const data = [];
+      if (property === 'localRotation') {
+        const baseRotation = bone.getLocalRotation().clone();
+        for (const angles of frames) {
+          const delta = new pc.Quat().setFromEulerAngles(angles[0], angles[1], angles[2]);
+          const rotation = baseRotation.clone().mul(delta);
+          data.push(rotation.x, rotation.y, rotation.z, rotation.w);
+        }
+      } else {
+        const basePosition = bone.getLocalPosition();
+        for (const offset of frames) data.push(basePosition.x, basePosition.y + offset, basePosition.z);
+      }
+      const outputIndex = outputs.length;
+      outputs.push(new pc.AnimData(components, new Float32Array(data)));
+      curves.push(new pc.AnimCurve([{ entityPath: path, component: 'graph', propertyPath: [property] }], 0, outputIndex, pc.INTERPOLATION_LINEAR));
+    };
+    const phases = times.map(t => t * Math.PI * 2);
+    const thighL = walking ? phases.map(p => -43 + 13 * Math.sin(p)) : times.map(() => -48);
+    const thighR = walking ? phases.map(p => -43 + 13 * Math.sin(p + Math.PI)) : times.map(() => -48);
+    const kneeL = walking ? phases.map(p => 58 + 18 * Math.max(0, -Math.sin(p))) : times.map(() => 68);
+    const kneeR = walking ? phases.map(p => 58 + 18 * Math.max(0, -Math.sin(p + Math.PI))) : times.map(() => 68);
+    const spine = times.map(() => walking ? [13, 0, 0] : [15, 0, 0]);
+    const armL = walking ? phases.map(p => [-8 * Math.sin(p), 0, -6]) : times.map(() => [-12, 0, -8]);
+    const armR = walking ? phases.map(p => [8 * Math.sin(p), 0, 6]) : times.map(() => [-12, 0, 8]);
+    addCurve(roles.hips, 'localPosition', 3, times.map(t => walking ? -.10 - .018 * Math.sin(t * Math.PI * 2) : -.11));
+    addCurve(roles.spine, 'localRotation', 4, spine);
+    addCurve(roles.leftThigh, 'localRotation', 4, thighL.map(x => [x, 0, 0]));
+    addCurve(roles.rightThigh, 'localRotation', 4, thighR.map(x => [x, 0, 0]));
+    addCurve(roles.leftKnee, 'localRotation', 4, kneeL.map(x => [x, 0, 0]));
+    addCurve(roles.rightKnee, 'localRotation', 4, kneeR.map(x => [x, 0, 0]));
+    addCurve(roles.leftArm, 'localRotation', 4, armL);
+    addCurve(roles.rightArm, 'localRotation', 4, armR);
+    if (!curves.length) throw new Error('Ara crouch animation could not bind to the character skeleton.');
+    return new pc.AnimTrack(name, duration, [input], outputs, curves);
+  };
+  return [makeTrack('Ara_Crouch', false), makeTrack('Ara_CrouchWalk', true)];
+}
+
 function loadAsset(app, name, type, url) {
   return new Promise((resolve, reject) => {
     const asset = new pc.Asset(name, type, { url: resolveAssetUrl(url) });
@@ -203,6 +278,11 @@ export async function loadHeroCharacter(app, {
       clipDurations[name] = Number.isFinite(track.duration) ? track.duration : 1.9;
     }
     if (!clipNames.length) throw new Error('The character GLB has no playable animation clips.');
+    if (characterId === 'ara-female') {
+      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk');
+      clipDurations.Ara_Crouch = .96;
+      clipDurations.Ara_CrouchWalk = .96;
+    }
 
     const findClip = patterns => clipNames.find(name => patterns.some(pattern => pattern.test(name)));
     const defaultClips = {
@@ -217,14 +297,15 @@ export async function loadHeroCharacter(app, {
       roll: findClip([/roll/i]) || null,
       dodgeLeft: findClip([/dodge.*left|left.*dodge/i]) || null,
       dodgeRight: findClip([/dodge.*right|right.*dodge/i]) || null,
-      crouch: findClip([/crouch|duck/i]) || null
+      crouch: characterId === 'ara-female' ? 'Ara_Crouch' : (findClip([/crouch|duck/i]) || null),
+      crouchWalk: characterId === 'ara-female' ? 'Ara_CrouchWalk' : (findClip([/crouch.*walk|duck.*walk/i]) || null)
     };
     // Locomotion and idle clips must loop when this rig is used for either
     // the player or a route-driven city NPC.
     const loopable = new Set(clipNames.filter(name =>
       /(?:^|_)(?:idle|walk|jog|run|sprint|crouch)(?:_|$)/i.test(name)
     ));
-    for (const name of [defaultClips.idle, defaultClips.walk, defaultClips.run, defaultClips.crouch]) {
+    for (const name of [defaultClips.idle, defaultClips.walk, defaultClips.run, defaultClips.crouch, defaultClips.crouchWalk]) {
       if (name) loopable.add(name);
     }
 
@@ -233,10 +314,49 @@ export async function loadHeroCharacter(app, {
       instanceRoot.name = instanceName;
       instanceRoot.addComponent('anim', { activate: true });
       if (!instanceRoot.anim) throw new Error('PlayCanvas did not create animation component for ' + instanceName);
-      for (const animation of animationAssets) {
-        const track = animation?.resource || animation;
-        const name = track?.name || animation?.name;
-        if (name && track) instanceRoot.anim.assignAnimation(name, track, undefined, 1, loopable.has(name));
+      if (characterId === 'ara-female') {
+        const customTracks = createAraCrouchTracks(instanceRoot);
+        const tracks = new Map();
+        for (const animation of animationAssets) {
+          const track = animation?.resource || animation;
+          const name = track?.name || animation?.name;
+          if (name && track) tracks.set(name, track);
+        }
+        for (const track of customTracks) tracks.set(track.name, track);
+        const actionNames = [...tracks.keys()].filter(name =>
+          ![defaultClips.idle, defaultClips.walk, defaultClips.run, defaultClips.crouch, defaultClips.crouchWalk].includes(name)
+        );
+        const states = [
+          { name: 'START' },
+          { name: 'Locomotion', loop: true, defaultState: true, blendTree: {
+            type: pc.ANIM_BLEND_1D, parameter: 'moveSpeed', children: [
+              { name: 'Idle', point: 0 }, { name: 'Walk', point: 1.6 }, { name: 'Run', point: 3.75 }
+            ]
+          }},
+          { name: defaultClips.crouch, loop: true },
+          { name: defaultClips.crouchWalk, loop: true },
+          ...actionNames.map(name => ({ name, loop: loopable.has(name) }))
+        ];
+        instanceRoot.anim.loadStateGraph({
+          layers: [{ name: 'Base', states, transitions: [{ from: 'START', to: 'Locomotion' }] }],
+          parameters: { moveSpeed: { name: 'moveSpeed', type: pc.ANIM_PARAMETER_FLOAT, value: 0 } }
+        });
+        const layer = instanceRoot.anim.baseLayer;
+        layer.assignAnimation('Locomotion.Idle', tracks.get(defaultClips.idle));
+        layer.assignAnimation('Locomotion.Walk', tracks.get(defaultClips.walk));
+        layer.assignAnimation('Locomotion.Run', tracks.get(defaultClips.run));
+        layer.assignAnimation(defaultClips.crouch, tracks.get(defaultClips.crouch));
+        layer.assignAnimation(defaultClips.crouchWalk, tracks.get(defaultClips.crouchWalk));
+        for (const name of actionNames) layer.assignAnimation(name, tracks.get(name), 1, loopable.has(name));
+        instanceRoot.anim.setFloat('moveSpeed', 0);
+        layer.transition('Locomotion', .12);
+      } else {
+        for (const animation of animationAssets) {
+          const track = animation?.resource || animation;
+          const name = track?.name || animation?.name;
+          if (name && track) instanceRoot.anim.assignAnimation(name, track, undefined, 1, loopable.has(name));
+        }
+        instanceRoot.anim.baseLayer.transition(defaultClips.idle, 0.12);
       }
       for (const render of instanceRoot.findComponents('render')) {
         for (const meshInstance of render.meshInstances || []) {
@@ -255,7 +375,6 @@ export async function loadHeroCharacter(app, {
           }
         }
       }
-      instanceRoot.anim.baseLayer.transition(defaultClips.idle, 0.12);
       return instanceRoot;
     }
 
@@ -296,10 +415,23 @@ export async function loadHeroCharacter(app, {
         boneCount: boneMap.size,
         bones: [...boneMap.values()].map(node => {
           const p = node.getLocalPosition?.(), rotation = node.getLocalEulerAngles?.();
-          return { name: node.name, position: p ? [p.x, p.y, p.z] : [0, 0, 0],
+          const path = []; let parent = node;
+          while (parent && parent !== root) { path.unshift(parent.name); parent = parent.parent; }
+          return { name: node.name, path, position: p ? [p.x, p.y, p.z] : [0, 0, 0],
             rotation: rotation ? [rotation.x, rotation.y, rotation.z] : [0, 0, 0] };
         })
       };
+    };
+
+    const leftFootBone = root.findByName('LeftFoot') || root.findByName('LeftToeBase');
+    const rightFootBone = root.findByName('RightFoot') || root.findByName('RightToeBase');
+    const getFootPositions = () => {
+      const read = bone => {
+        if (!bone) return null;
+        const p = bone.getPosition();
+        return [p.x, p.y, p.z];
+      };
+      return { left: read(leftFootBone), right: read(rightFootBone) };
     };
 
     const setFaceExpression = (name, weight = 1) => {
@@ -319,7 +451,7 @@ export async function loadHeroCharacter(app, {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression, getRigSnapshot, createInstance: createAnimatedInstance,
+      setFaceExpression, getRigSnapshot, getFootPositions, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };
