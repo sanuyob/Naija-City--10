@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { loadSavedPlayerCharacter } from './player-character-store.js';
 
 const base = import.meta.env.BASE_URL || '/';
 const resolveAssetUrl = value => new URL(String(value).replace(/^\//, ''), new URL(base, window.location.origin)).href;
@@ -116,9 +117,8 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
 
 
 /**
- * Loads Naija City Hero 01 from the repository's base64-wrapped GLB.
- * The wrapper keeps the generated binary asset intact through the repository text-file API;
- * it is decoded once at runtime to a Blob URL before PlayCanvas ContainerHandler loads it.
+ * Load the locally imported Ara character first. If none is saved, keep the
+ * bundled Hero 01 model as a fallback. Both use PlayCanvas ContainerAsset.
  */
 export async function loadHeroCharacter(app, {
   urls = ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
@@ -127,42 +127,58 @@ export async function loadHeroCharacter(app, {
   const setStatus = message => {
     if (statusLabel) statusLabel.textContent = message;
   };
-  setStatus('Loading Hero 01 character and animation library…');
-  const responses = await Promise.all(urls.map(path => fetch(
-    new URL(String(path).replace(/^\//, ''), new URL(base, window.location.origin)),
-    { cache: 'no-store' }
-  )));
-  for (let i = 0; i < responses.length; i++) {
-    if (!responses[i].ok) throw new Error('Hero GLB payload part ' + (i + 1) + ' HTTP ' + responses[i].status);
-  }
-  const encoded = (await Promise.all(responses.map(response => response.text()))).join('').replace(/\s+/g, '');
-  if (!encoded || encoded.length % 4 !== 0 || !/^[A-Za-z0-9+/=]+$/.test(encoded)) {
-    throw new Error('Hero GLB base64 payload is incomplete or invalid');
-  }
 
-  const binary = atob(encoded);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  if (bytes.length < 20 || bytes[0] !== 0x67 || bytes[1] !== 0x6c || bytes[2] !== 0x54 || bytes[3] !== 0x46) {
-    throw new Error('Decoded Hero asset is not a GLB file');
-  }
+  let blobUrl = null;
+  let asset = null;
+  let source = 'bundled-hero-01';
+  let metadata = null;
 
-  const blobUrl = URL.createObjectURL(new Blob([bytes], { type: 'model/gltf-binary' }));
-  const asset = new pc.Asset('naija-city-hero-01', 'container', { url: blobUrl });
   try {
+    const saved = await loadSavedPlayerCharacter().catch(error => {
+      console.warn('Local character storage unavailable:', error);
+      return null;
+    });
+
+    if (saved?.buffer instanceof ArrayBuffer && saved.buffer.byteLength > 20) {
+      source = 'local-import';
+      metadata = saved.metadata || null;
+      blobUrl = URL.createObjectURL(new Blob([saved.buffer], { type: 'model/gltf-binary' }));
+      setStatus('Loading saved Ara player character…');
+    } else {
+      setStatus('Loading bundled Hero 01 character…');
+      const responses = await Promise.all(urls.map(path => fetch(
+        new URL(String(path).replace(/^\//, ''), new URL(base, window.location.origin)),
+        { cache: 'no-store' }
+      )));
+      for (let i = 0; i < responses.length; i++) {
+        if (!responses[i].ok) throw new Error('Hero GLB payload part ' + (i + 1) + ' HTTP ' + responses[i].status);
+      }
+      const encoded = (await Promise.all(responses.map(response => response.text()))).join('').replace(/\s+/g, '');
+      if (!encoded || encoded.length % 4 !== 0 || !/^[A-Za-z0-9+/=]+$/.test(encoded)) {
+        throw new Error('Bundled Hero GLB payload is incomplete or invalid');
+      }
+      const binary = atob(encoded);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+      if (bytes.length < 20 || bytes[0] !== 0x67 || bytes[1] !== 0x6c || bytes[2] !== 0x54 || bytes[3] !== 0x46) {
+        throw new Error('Decoded Hero asset is not a GLB file');
+      }
+      blobUrl = URL.createObjectURL(new Blob([bytes], { type: 'model/gltf-binary' }));
+    }
+
+    asset = new pc.Asset(
+      source === 'local-import' ? 'naija-city-imported-player' : 'naija-city-hero-01',
+      'container',
+      { url: blobUrl }
+    );
+
     app.assets.add(asset);
     await new Promise((resolve, reject) => {
       asset.once('load', resolve);
-      asset.once('error', error => reject(new Error('Hero GLB load failed: ' + (error?.message || error || 'unknown error'))));
+      asset.once('error', error => reject(new Error('Character GLB load failed: ' + (error?.message || error || 'unknown error'))));
       app.assets.load(asset);
     });
 
-    const loopable = new Set([
-      'Hero01_Idle', 'Hero01_Walk', 'Hero01_Jog', 'Hero01_Run', 'Hero01_Sprint',
-      'Hero01_Crouch', 'Hero01_CrouchWalk', 'Hero01_TiredIdle', 'Hero01_SitIdle',
-      'Hero01_BalanceBeamWalk', 'Hero01_BalanceBeamIdle', 'Hero01_LedgeHang',
-      'Hero01_LadderClimb', 'Hero01_HoldTablet'
-    ]);
     const animationAssets = asset.resource.animations || [];
     const clipNames = [];
     const clipDurations = {};
@@ -173,6 +189,21 @@ export async function loadHeroCharacter(app, {
       clipNames.push(name);
       clipDurations[name] = Number.isFinite(track.duration) ? track.duration : 1.9;
     }
+    if (!clipNames.length) throw new Error('The character GLB has no playable animation clips.');
+
+    const findClip = patterns => clipNames.find(name => patterns.some(pattern => pattern.test(name)));
+    const defaultClips = {
+      idle: findClip([/idle/i, /stand/i]) || clipNames[0],
+      walk: findClip([/walk/i]) || findClip([/jog/i]) || findClip([/run|sprint/i]) || clipNames[0],
+      run: findClip([/run|sprint/i]) || findClip([/jog/i]) || findClip([/walk/i]) || clipNames[0],
+      jump: findClip([/jump/i]) || findClip([/leap/i]) || null,
+      landing: findClip([/land/i]) || findClip([/idle/i]) || null,
+      crouch: findClip([/crouch|duck/i]) || null
+    };
+    const loopable = new Set([
+      defaultClips.idle, defaultClips.walk, defaultClips.run,
+      defaultClips.crouch
+    ].filter(Boolean));
 
     function createAnimatedInstance(instanceName, tint = [1, 1, 1]) {
       const instanceRoot = asset.resource.instantiateRenderEntity();
@@ -184,13 +215,13 @@ export async function loadHeroCharacter(app, {
         const name = track?.name || animation?.name;
         if (name && track) instanceRoot.anim.assignAnimation(name, track, undefined, 1, loopable.has(name));
       }
-      // Each companion owns material instances so role tinting cannot recolour Hero 01.
       for (const render of instanceRoot.findComponents('render')) {
         for (const meshInstance of render.meshInstances || []) {
           if (!meshInstance.material) continue;
           const material = meshInstance.material.clone();
           const name = material.name.toLowerCase();
-          if (name.includes('shirt') || name.includes('overshirt') || name.includes('trouser') || name.includes('bag')) {
+          if (tint.some(value => value !== 1) &&
+              (name.includes('shirt') || name.includes('overshirt') || name.includes('trouser') || name.includes('bag'))) {
             material.diffuse = new pc.Color(
               material.diffuse.r * tint[0],
               material.diffuse.g * tint[1],
@@ -201,14 +232,11 @@ export async function loadHeroCharacter(app, {
           }
         }
       }
-      instanceRoot.anim.baseLayer.transition('Hero01_Idle', 0.1);
+      instanceRoot.anim.baseLayer.transition(defaultClips.idle, 0.12);
       return instanceRoot;
     }
 
-    const root = createAnimatedInstance('NaijaCityHero01');
-    if (!clipNames.includes('Hero01_Idle')) {
-      throw new Error('Hero GLB did not expose its expected Hero01_Idle animation');
-    }
+    const root = createAnimatedInstance(source === 'local-import' ? 'AraDefaultPlayer' : 'NaijaCityHero01');
     const morphInstances = [];
     const morphNames = new Set();
     for (const render of root.findComponents('render')) {
@@ -221,46 +249,52 @@ export async function loadHeroCharacter(app, {
         }
       }
     }
+
     const getRigSnapshot = () => {
-      const boneMap=new Map();let skinnedMeshCount=0,weightedVertexCount=0,weightedClothingMeshCount=0;
-      const clothing=/shirt|overshirt|sleeve|trouser|pants|cloth|jacket|garment|fabric/i;
-      for(const render of root.findComponents('render'))for(const mi of render.meshInstances||[]){
-        const skin=mi.skinInstance;if(!skin)continue;skinnedMeshCount++;
-        if(clothing.test((mi.material?.name||'')+' '+(mi.node?.name||'')))weightedClothingMeshCount++;
-        weightedVertexCount+=mi.mesh?.vertexBuffer?.numVertices||0;
-        for(const bone of skin.bones||[])if(bone?.name)boneMap.set(bone.name,bone);
+      const boneMap = new Map();
+      let skinnedMeshCount = 0, weightedVertexCount = 0;
+      for (const render of root.findComponents('render')) for (const meshInstance of render.meshInstances || []) {
+        if (!meshInstance.skinInstance) continue;
+        skinnedMeshCount++;
+        weightedVertexCount += meshInstance.mesh?.vertexBuffer?.numVertices || 0;
+        for (const bone of meshInstance.skinInstance.bones || []) if (bone?.name) boneMap.set(bone.name, bone);
       }
-      if(!boneMap.size){const visit=node=>{if(node!==root&&/hip|pelvis|spine|neck|head|arm|hand|leg|thigh|calf|foot|shoulder|bone|joint/i.test(node.name||''))boneMap.set(node.name,node);for(const child of node.children||[])visit(child);};visit(root);}
-      const bones=[...boneMap.values()].map(node=>{const p=node.getLocalPosition?.(),r=node.getLocalEulerAngles?.();return{name:node.name,position:p?[p.x,p.y,p.z]:[0,0,0],rotation:r?[r.x,r.y,r.z]:[0,0,0]};});
-      return{skinnedMeshCount,weightedVertexCount,weightedClothingMeshCount,boneCount:bones.length,bones};
+      return {
+        skinnedMeshCount, weightedVertexCount,
+        boneCount: boneMap.size,
+        bones: [...boneMap.values()].map(node => {
+          const p = node.getLocalPosition?.(), rotation = node.getLocalEulerAngles?.();
+          return { name: node.name, position: p ? [p.x, p.y, p.z] : [0, 0, 0],
+            rotation: rotation ? [rotation.x, rotation.y, rotation.z] : [0, 0, 0] };
+        })
+      };
     };
 
     const setFaceExpression = (name, weight = 1) => {
       const normalized = Math.max(0, Math.min(1, Number(weight) || 0));
       let applied = false;
       for (const morphInstance of morphInstances) {
-        const hasTarget = (morphInstance.morph?.targets || []).some(target => target.name === name);
-        if (!hasTarget) continue;
+        if (!(morphInstance.morph?.targets || []).some(target => target.name === name)) continue;
         morphInstance.setWeight(name, normalized);
         applied = true;
       }
       return applied;
     };
 
-    root.anim.baseLayer.transition('Hero01_Idle', 0.1);
-    setStatus('Hero 01 ready · ' + clipNames.length + ' clips · ' + morphNames.size + ' facial morphs');
+    setStatus((source === 'local-import' ? 'Ara player ready' : 'Hero 01 ready') +
+      ' · ' + clipNames.length + ' animation clips');
     return {
-      root, asset, clipNames, clipDurations,
+      root, asset, clipNames, clipDurations, defaultClips, source, metadata,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression,
-      getRigSnapshot,
-      createInstance: createAnimatedInstance
+      setFaceExpression, getRigSnapshot, createInstance: createAnimatedInstance
     };
   } catch (error) {
-    asset.unload?.();
-    app.assets.remove(asset);
+    if (asset) {
+      asset.unload?.();
+      app.assets.remove(asset);
+    }
     throw error;
   } finally {
-    URL.revokeObjectURL(blobUrl);
+    if (blobUrl) URL.revokeObjectURL(blobUrl);
   }
 }
