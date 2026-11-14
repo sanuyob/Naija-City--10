@@ -258,7 +258,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const stage08FProfiler = createStage08FDeviceProfiler({ app, canvas, device, stage08E });
   window.__NAIJA_STAGE08F_PROFILE__ = stage08FProfiler;
   window.__NAIJA_INTERACT__=()=>playerController.interact();
-  window.__NAIJA_PLAY_HERO_ANIMATION__=name=>playerController.playAnimation(name);
+  window.__NAIJA_PLAY_HERO_ANIMATION__=(name,durationSeconds)=>playerController.playAnimation(name,durationSeconds);
   window.__NAIJA_SET_HERO_FACE__=(name,weight=1)=>playerController.playFaceExpression(name,weight);
   window.__NAIJA_TRAVERSE__=()=>traversalSystem.tryContextualTraversal(playerController.getState());
   window.__NAIJA_COMPANION_COMMAND__=(roleId,command)=>companionSystem.command(roleId,command);
