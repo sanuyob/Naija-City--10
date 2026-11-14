@@ -24,7 +24,7 @@ const physics=await readFile(new URL('../src/vehicle-physics.js',import.meta.url
 const loader=await readFile(new URL('../src/asset-loader.js',import.meta.url),'utf8');
 const manifest=JSON.parse(await readFile(new URL('../public/assets/manifest.json',import.meta.url),'utf8'));
 const smoke=await readFile(new URL('./browser-smoke.mjs',import.meta.url),'utf8');
-const heroPayload=((await readFile(new URL('../public/assets/hero/NaijaCityHero01_60clips.part1.b64',import.meta.url),'utf8'))+(await readFile(new URL('../public/assets/hero/NaijaCityHero01_60clips.part2.b64',import.meta.url),'utf8'))).replace(/\\s+/g,'');
+const heroPayload=(await readFile(new URL('../public/assets/hero/NaijaCityHero01_60clips.glb.b64',import.meta.url),'utf8')).replace(/\\s+/g,'');
 const heroGlb=Buffer.from(heroPayload,'base64');
 const heroJsonLength=heroGlb.readUInt32LE(12);
 const heroGltf=JSON.parse(heroGlb.subarray(20,20+heroJsonLength).toString('utf8').trim());
@@ -37,6 +37,8 @@ assert.deepEqual(heroGltf.animations.map(animation=>animation.name).sort(),expec
 assert.ok(heroGltf.animations.every(animation=>animation.channels.length===60&&animation.samplers.length===60),'Every Hero 01 clip must animate all 20 rig joints with 60 channels and samplers');
 assert.equal(heroGltf.skins.length,1,'Hero 01 must include one skinned humanoid');
 assert.equal(heroGltf.skins[0].joints.length,20,'Hero 01 must preserve the 20-joint rig');
+const heroChildNodes=new Set(heroGltf.nodes.flatMap(node=>node.children||[]));
+assert.ok(heroGltf.nodes.every((node,index)=>!(node.skin!==undefined&&node.mesh!==undefined&&heroChildNodes.has(index))),'Every skinned Hero 01 mesh must be a scene-root node so parent transforms cannot be ignored');
 const heroValidation=await validator.validateBytes(new Uint8Array(heroGlb),{
  uri:'NaijaCityHero01_60clips.glb',format:'glb',writeTimestamp:false,maxIssues:100
 });
