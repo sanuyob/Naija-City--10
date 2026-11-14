@@ -250,117 +250,10 @@ export async function loadHeroCharacter(app, {
       }
     }
 
-    // Ara currently provides Idle, Walk and Run only. Add lightweight
-    // post-animation joint offsets for jump/vault/climb poses rather than
-    // pretending that the locomotion clips are real parkour animations.
-    const poseDefinitions = {
-      jump: {
-        spine: [-10, 0, 0], leftArm: [-58, 0, -18], rightArm: [-58, 0, 18],
-        leftForeArm: [-28, 0, 0], rightForeArm: [-28, 0, 0],
-        leftUpLeg: [-34, 0, 0], rightUpLeg: [-34, 0, 0],
-        leftLeg: [48, 0, 0], rightLeg: [48, 0, 0]
-      },
-      step: {
-        spine: [-8, 0, 0], leftArm: [-48, 0, -14], rightArm: [-48, 0, 14],
-        leftUpLeg: [-28, 0, 0], rightUpLeg: [12, 0, 0],
-        leftLeg: [32, 0, 0], rightLeg: [8, 0, 0]
-      },
-      vault: {
-        spine: [-18, 0, 0], leftArm: [-88, 0, -12], rightArm: [-88, 0, 12],
-        leftForeArm: [-38, 0, 0], rightForeArm: [-38, 0, 0],
-        leftUpLeg: [-48, 0, 0], rightUpLeg: [-42, 0, 0],
-        leftLeg: [62, 0, 0], rightLeg: [54, 0, 0]
-      },
-      mantle: {
-        spine: [-24, 0, 0], leftArm: [-112, 0, -12], rightArm: [-112, 0, 12],
-        leftForeArm: [-48, 0, 0], rightForeArm: [-48, 0, 0],
-        leftUpLeg: [-38, 0, 0], rightUpLeg: [-38, 0, 0],
-        leftLeg: [54, 0, 0], rightLeg: [54, 0, 0]
-      },
-      ledge: {
-        spine: [-16, 0, 0], leftArm: [-150, 0, -12], rightArm: [-150, 0, 12],
-        leftForeArm: [-32, 0, 0], rightForeArm: [-32, 0, 0],
-        leftUpLeg: [-20, 0, 0], rightUpLeg: [-20, 0, 0],
-        leftLeg: [32, 0, 0], rightLeg: [32, 0, 0]
-      },
-      ladder: {
-        spine: [-8, 0, 0], leftArm: [-112, 0, -20], rightArm: [-72, 0, 20],
-        leftForeArm: [-44, 0, 0], rightForeArm: [-30, 0, 0],
-        leftUpLeg: [-38, 0, 0], rightUpLeg: [18, 0, 0],
-        leftLeg: [55, 0, 0], rightLeg: [18, 0, 0]
-      },
-      'wall-run': {
-        spine: [-10, 0, -18], leftArm: [-72, 0, -25], rightArm: [-48, 0, 25],
-        leftUpLeg: [-42, 0, 0], rightUpLeg: [24, 0, 0],
-        leftLeg: [42, 0, 0], rightLeg: [12, 0, 0]
-      },
-      drop: {
-        spine: [12, 0, 0], leftArm: [-38, 0, -28], rightArm: [-38, 0, 28],
-        leftUpLeg: [-22, 0, 0], rightUpLeg: [-22, 0, 0],
-        leftLeg: [32, 0, 0], rightLeg: [32, 0, 0]
-      },
-      landing: {
-        spine: [18, 0, 0], leftArm: [-32, 0, -20], rightArm: [-32, 0, 20],
-        leftUpLeg: [-48, 0, 0], rightUpLeg: [-48, 0, 0],
-        leftLeg: [64, 0, 0], rightLeg: [64, 0, 0]
-      }
-    };
-    const semanticBones = {};
-    const boneNodes = new Map();
-    for (const render of root.findComponents('render')) {
-      for (const meshInstance of render.meshInstances || []) {
-        for (const bone of meshInstance.skinInstance?.bones || []) {
-          if (bone?.name) boneNodes.set(bone.name, bone);
-        }
-      }
-    }
-    const normalizedBones = Array.from(boneNodes.entries()).map(([name, node]) => ({
-      key: name.toLowerCase().replace(/[^a-z]/g, ''), node
-    }));
-    const bonePatterns = {
-      leftArm: /leftarm$/,
-      rightArm: /rightarm$/,
-      leftForeArm: /leftforearm$/,
-      rightForeArm: /rightforearm$/,
-      leftUpLeg: /leftupleg$|leftthigh$/,
-      rightUpLeg: /rightupleg$|rightthigh$/,
-      leftLeg: /leftleg$|leftcalf$/,
-      rightLeg: /rightleg$|rightcalf$/,
-      spine: /spine1$|spine$|chest$/
-    };
-    for (const [role, pattern] of Object.entries(bonePatterns)) {
-      const found = normalizedBones.find(item => pattern.test(item.key));
-      if (found) semanticBones[role] = found.node;
-    }
-    let targetPose = null;
-    let currentPose = null;
-    let poseWeight = 0;
-    const setProceduralPose = name => {
-      targetPose = poseDefinitions[name] ? name : null;
-      if (targetPose) currentPose = targetPose;
-    };
-    const updateProceduralPose = dt => {
-      const targetWeight = targetPose ? 1 : 0;
-      poseWeight += (targetWeight - poseWeight) * Math.min(1, Math.max(0, dt) * 14);
-      if (poseWeight < 0.006) {
-        poseWeight = 0;
-        currentPose = null;
-        return;
-      }
-      const pose = poseDefinitions[currentPose];
-      if (!pose) return;
-      for (const [role, rotation] of Object.entries(pose)) {
-        const bone = semanticBones[role];
-        if (!bone) continue;
-        const angles = bone.getLocalEulerAngles();
-        bone.setLocalEulerAngles(
-          angles.x + rotation[0] * poseWeight,
-          angles.y + rotation[1] * poseWeight,
-          angles.z + rotation[2] * poseWeight
-        );
-      }
-    };
-    app.on('postUpdate', updateProceduralPose);
+    // Ara parkour actions are now exported as real skeletal animation clips during FBX import.
+    // Do not add Euler offsets after animation playback: that accumulates joint rotation and corrupts the pose.
+    const setProceduralPose = () => false;
+
 
     const getRigSnapshot = () => {
       const boneMap = new Map();
@@ -400,7 +293,7 @@ export async function loadHeroCharacter(app, {
       morphNames: Array.from(morphNames).sort(),
       setFaceExpression, getRigSnapshot, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
-      proceduralPoseNames: Object.keys(poseDefinitions), semanticBoneCount: Object.keys(semanticBones).length
+      proceduralPoseNames: [], semanticBoneCount: 0
     };
   } catch (error) {
     if (asset) {
