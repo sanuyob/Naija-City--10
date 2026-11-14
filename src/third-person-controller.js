@@ -167,9 +167,12 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     if(distance<.2)return false;
     if(distance>.05)player.setEulerAngles(0,Math.atan2(dx,-dz)*180/Math.PI,0);
     const gravity=Math.max(9,Number(physics?.getState?.().gravity)||18);
-    const apex=Math.max(.6,Math.min(4.2,Number(options.apex)||1.0));
-    const launchVelocity=Math.sqrt(2*gravity*apex);
-    const duration=Math.max(.55,Math.min(2.2,2*launchVelocity/gravity));
+    const requestedApex=Math.max(.6,Math.min(4.2,Number(options.apex)||1.0));
+    const requestedDuration=Math.max(0,Number(options.duration)||0);
+    const ballisticDuration=Math.sqrt(8*requestedApex/gravity);
+    const duration=Math.max(.55,Math.min(3.2,Math.max(requestedDuration,ballisticDuration)));
+    const apex=gravity*duration*duration/8;
+    const launchVelocity=gravity*duration/2;
     const actionPose=options.mode||"vault";
     const activeClip=missingActionClip?(animationFallbacks.action||animationFallbacks.idle):clips[0];
     traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex,mode:actionPose,
@@ -293,7 +296,10 @@ export function createThirdPersonController(app, camera, canvas, { onInteract, r
     let proposedPosition;
     if(traversalMotion){
       traversalMotion.elapsed+=step;
-      const remaining=Math.max(.12,traversalMotion.duration-traversalMotion.elapsed*.12);
+      const progress=Math.min(.999,traversalMotion.elapsed/traversalMotion.duration);
+      const phase=Math.min(traversalMotion.clips.length-1,Math.floor(progress*traversalMotion.clips.length));
+      if(phase!==traversalMotion.activePhase){traversalMotion.activePhase=phase;traversalMotion.activeClip=traversalMotion.clips[phase]||traversalMotion.activeClip;actionClip=traversalMotion.activeClip;transitionHeroClip(traversalMotion.activeClip,.12);}
+      const remaining=Math.max(.06,traversalMotion.duration-traversalMotion.elapsed);
       const horizontal=[(traversalMotion.end[0]-p.x)/remaining,0,(traversalMotion.end[2]-p.z)/remaining];
       const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded:false,traversing:true};
       if(physics?.step){
