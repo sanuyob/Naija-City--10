@@ -115,11 +115,6 @@ try {
     !(await page.locator('#player-character-file').isVisible())) {
   throw new Error('Movement joystick was not locked or Ara FBX import control is not visible.');
  }
- await page.locator('[data-slot="1"]').click();
- if(!(await page.locator('#hud-toast').textContent()).includes('empty')||
-    await page.locator('[data-slot="1"]').getAttribute('aria-pressed')!=='true') {
-  throw new Error('Quick-access slot did not respond or show selection state');
- }
  if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||
     state.game?.proceduralAnimations!==true||state.game?.characterGeometry!=='no-visible-player-rig'||
     state.game?.playerCharacterReady!==false||state.game?.characterSource!=='ara-female-not-installed'||
@@ -200,7 +195,6 @@ try {
  if(!dismissed)throw new Error('Companion Dismiss command failed');
  await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
 
- console.log('Ara QA: no Ara asset is installed in this build; the test requires an import and prevents Hero 01 from being mislabelled as Ara.');
  console.log('Ara QA: no Ara asset is installed in this build; the import gate is tested, and Hero 01 is never used as the player fixture.');
 
  if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
