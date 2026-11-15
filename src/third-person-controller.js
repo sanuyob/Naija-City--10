@@ -325,17 +325,26 @@ export function createThirdPersonController(app, camera, canvas, {
     const magnitude = Math.hypot(axisX, axisY);
     if (magnitude > 1) { axisX /= magnitude; axisY /= magnitude; }
     if (traversalMotion) { axisX = 0; axisY = 0; }
-    // GTA-style steering: the stick's horizontal axis turns Ara; its vertical
-    // axis drives forward/reverse along the direction she is facing. Turning
-    // no longer creates sideways strafing that makes the rig appear to slide.
-    const steeringTarget = traversalMotion ? 0 : axisX;
-    smoothedTurnInput += (steeringTarget - smoothedTurnInput) * (1 - Math.exp(-13 * step));
-    if (Math.abs(smoothedTurnInput) > 0.018) {
-      facingYaw -= smoothedTurnInput * 205 * step;
+    // Camera-relative mobile movement: the thumb direction always maps to
+    // the direction visible on screen. X strafes; Y moves forward/backward.
+    // Character heading follows forward travel, never autonomous steering.
+    const cameraForwardX = -Math.sin(cameraYaw);
+    const cameraForwardZ = -Math.cos(cameraYaw);
+    const cameraRightX = Math.cos(cameraYaw);
+    const cameraRightZ = -Math.sin(cameraYaw);
+    let moveX = cameraRightX * axisX + cameraForwardX * -axisY;
+    let moveZ = cameraRightZ * axisX + cameraForwardZ * -axisY;
+    const moveLength = Math.hypot(moveX, moveZ);
+    if (moveLength > 1) { moveX /= moveLength; moveZ /= moveLength; }
+    if (!traversalMotion && axisY < -0.14 && moveLength > 0.12) {
+      const targetFacing = Math.atan2(-moveX, -moveZ) * 180 / Math.PI;
+      let yawDelta = ((targetFacing - facingYaw + 540) % 360) - 180;
+      facingYaw += yawDelta * (1 - Math.exp(-12 * step));
       facingYaw = ((facingYaw + 540) % 360) - 180;
       player.setEulerAngles(0, facingYaw, 0);
     }
-    const driveMagnitude = Math.abs(axisY);
+    smoothedTurnInput = 0;
+    const driveMagnitude = Math.hypot(axisX, axisY);
     moving = !traversalMotion && driveMagnitude > 0.12;
     running = !traversalMotion && moving && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
     if (running) stamina = Math.max(0, stamina - 15 * step);
@@ -343,23 +352,19 @@ export function createThirdPersonController(app, camera, canvas, {
     const stickStrength = pc.math.clamp((driveMagnitude - 0.075) / 0.925, 0, 1);
     const maxSpeed = input.crouch ? 1.05 : running ? 4.45 : 2.65;
     const targetMoveSpeed = moving ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
-    const response = moving ? 7.4 : 9.2;
+    const response = moving ? 11.5 : 24;
     smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
     const speed = smoothedMoveSpeed;
 
-    // The character's own heading is the forward basis. Horizontal stick
-    // movement steers on the spot or while moving; the camera gently recentres
-    // behind that heading, unless the player has recently dragged the camera.
+    // Camera orbit is respected while moving. No auto-turning or camera snap
+    // occurs from an idle thumb, so the player cannot appear to take over.
     manualCameraHold = Math.max(0, manualCameraHold - step);
-    if (manualCameraHold <= 0 && Math.abs(smoothedTurnInput) > 0.035) {
+    if (manualCameraHold <= 0 && moving && axisY < -0.14) {
       const targetCameraYaw = facingYaw * Math.PI / 180;
       const delta = ((targetCameraYaw - cameraYaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
-      cameraYaw += delta * (1 - Math.exp(-5.2 * step));
+      cameraYaw += delta * (1 - Math.exp(-3.8 * step));
     }
-    const yawRadians = facingYaw * Math.PI / 180;
-    forward.set(-Math.sin(yawRadians), 0, -Math.cos(yawRadians));
-    right.set(Math.cos(yawRadians), 0, -Math.sin(yawRadians));
-    movement.copy(forward).mulScalar(-axisY);
+    movement.set(moveX, 0, moveZ);
 
     const p=player.getPosition(),currentPosition=[p.x,p.y,p.z];
     if(grounded)coyote=.14;else coyote=Math.max(0,coyote-step);
@@ -442,8 +447,8 @@ export function createThirdPersonController(app, camera, canvas, {
     player.setPosition(p);
     if (!heroVisual) player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
 
-    // Facing is updated by the horizontal steering axis above, including turns
-    // while stationary; reverse input deliberately does not rotate the model.
+    // Facing changes only in response to forward movement input. Reverse and
+    // lateral movement never create autonomous rotation.
 
     if (heroVisual?.anim) {
       const animationSpeed = input.crouch ? 0 : Math.min(3.75, Math.hypot(velocity.x, velocity.z));

@@ -56,30 +56,45 @@ try{
  const reverseState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
  if(!reverseState.player?.moving||reverseState.player.position[2]<=.001||Math.abs(reverseState.player.facingYaw)>20)throw Error('Backward joystick movement did not follow Ara’s current heading cleanly: '+JSON.stringify(reverseState));
- // Horizontal drag is steering: Ara turns on the spot rather than strafing.
+ // Horizontal drag must translate Ara sideways relative to the camera, not
+ // rotate her in place like an autonomous NPC.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
  await page.mouse.down();
  await page.mouse.move(joystickCenter.x+joystickBox.width*.30,joystickCenter.y,{steps:8});
  await page.waitForTimeout(450);
- const turnState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
+ const strafeState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- if(turnState.player?.moving||Math.abs(turnState.player?.facingYaw||0)<15||!turnState.player?.turning)throw Error('Right joystick input did not turn Ara in place: '+JSON.stringify(turnState));
- const rightFacingYaw=turnState.player.facingYaw;
- const rightCameraYaw=turnState.player.cameraYaw;
- // Mirror the same test in the opposite direction: left must turn the other way,
- // with the chase camera following the new heading instead of staying behind.
+ if(!strafeState.player?.moving||Math.abs(strafeState.player.position[0])<.01||Math.abs(strafeState.player.facingYaw)>20) {
+   throw Error('Horizontal joystick input must strafe without autonomous rotation: '+JSON.stringify(strafeState));
+ }
+ // Drag the world camera, then push forward: movement must follow the new
+ // camera view rather than the old character heading.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ const canvasBox=await page.locator('#application').boundingBox();
+ await page.mouse.move(canvasBox.x+canvasBox.width*.72,canvasBox.y+canvasBox.height*.48);
+ await page.mouse.down();
+ await page.mouse.move(canvasBox.x+canvasBox.width*.84,canvasBox.y+canvasBox.height*.48,{steps:6});
+ await page.mouse.up();
+ const beforeCameraMove=await page.evaluate(()=>window.__NAIJA_GAME__?.getPlayerState?.());
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
  await page.mouse.down();
- await page.mouse.move(joystickCenter.x-joystickBox.width*.30,joystickCenter.y,{steps:8});
- await page.waitForTimeout(450);
- const leftTurnState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
+ await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
+ await page.waitForTimeout(500);
+ const cameraRelativeState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- const cameraError=Math.abs((((leftTurnState.player.cameraYaw-leftTurnState.player.facingYaw*Math.PI/180+Math.PI*3)%(Math.PI*2))-Math.PI));
- if(leftTurnState.player?.moving||leftTurnState.player.facingYaw<15||!leftTurnState.player.turning||
-    !(rightFacingYaw < -15)||Math.abs(rightCameraYaw)<0.01||cameraError>0.55||!leftTurnState.player.cameraFollowActive) {
-   throw Error('Left/right steering or auto-follow camera failed: '+JSON.stringify({right:turnState,left:leftTurnState,cameraError}));
+ const expectedForward=[-Math.sin(beforeCameraMove.cameraYaw),-Math.cos(beforeCameraMove.cameraYaw)];
+ const cameraDisplacement=[cameraRelativeState.player.position[0]-beforeCameraMove.position[0],cameraRelativeState.player.position[2]-beforeCameraMove.position[2]];
+ const cameraAlignment=cameraDisplacement[0]*expectedForward[0]+cameraDisplacement[1]*expectedForward[1];
+ if(!cameraRelativeState.player?.moving||cameraAlignment<.06) {
+   throw Error('Forward joystick movement did not follow the rotated camera: '+JSON.stringify({beforeCameraMove,cameraRelativeState,cameraAlignment}));
+ }
+ // Releasing the stick should rapidly settle the player's horizontal velocity.
+ await page.mouse.up();
+ await page.waitForTimeout(450);
+ const releasedState=await page.evaluate(()=>window.__NAIJA_GAME__?.getPlayerState?.());
+ if(releasedState?.moving||releasedState?.horizontalSpeed>.55) {
+   throw Error('Player kept moving too long after releasing the joystick: '+JSON.stringify(releasedState));
  }
  const sprintButton=page.locator('#sprint-button');
  if(!(await sprintButton.isVisible()))throw Error('Mobile sprint control is not visible');

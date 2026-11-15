@@ -247,7 +247,9 @@ assert.match(smoke,/locator\('#application'\)\.screenshot/,'Browser smoke test m
 assert.match(smoke,/browserErrors/,'Ara browser smoke must collect and reject runtime errors');
 assert.match(smoke,/walkState/,'Ara browser smoke must exercise real mobile joystick locomotion');
 assert.match(smoke,/reverseState/,'Ara browser smoke must verify clean reverse movement');
-assert.match(smoke,/turnState/,'Ara browser smoke must verify left/right steering without strafing');
+assert.match(smoke,/strafeState/,'Ara browser smoke must verify camera-relative lateral movement without autonomous turning');
+assert.match(smoke,/cameraRelativeState/,'Ara browser smoke must verify forward movement follows the orbit camera');
+assert.match(smoke,/releasedState/,'Ara browser smoke must verify the player settles after joystick release');
 assert.match(smoke,/runState/,'Ara browser smoke must exercise sprint state and the run animation');
 assert.ok(smoke.includes('audio.played'),'Ara browser smoke must verify that gameplay audio events are scheduled');
 for(const feature of ['cross-street','north-crosswalk','bus-stop-sign','junction-bollard','traffic-main-','traffic-cross-','signal-red','updateSignal','trafficAI:true','stage:10','thirdPersonCharacter:true']) assert.ok(game.includes(feature),`Missing Stage 04 game feature: ${feature}`);
