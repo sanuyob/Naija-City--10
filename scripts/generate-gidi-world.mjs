@@ -2,10 +2,10 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { NodeIO, Document } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
-import { MeshoptDecoder, MeshoptEncoder, MeshoptSimplifier } from 'meshoptimizer';
+import { MeshoptEncoder, MeshoptSimplifier } from 'meshoptimizer';
 import { copyToDocument, createDefaultPropertyResolver, cloneDocument, meshopt, prune, simplify, weld } from '@gltf-transform/functions';
 
-await Promise.all([MeshoptSimplifier.ready, MeshoptEncoder.ready, MeshoptDecoder.ready]);
+await Promise.all([MeshoptEncoder.ready, MeshoptSimplifier.ready]);
 const SOURCE = process.env.GIDI_SOURCE;
 if (!SOURCE) throw new Error('Set GIDI_SOURCE to the Revision 106 source GLB before regenerating GIDI assets.');
 const OUT = 'public/assets/gidi';
@@ -569,6 +569,7 @@ const manifest = {
   collisionLoadRadius: 220,
   collisionUnloadRadius: 460,
   lodProfile: { ratio: 0.20, error: 0.10, lockBorder: true, mediumDetailCull: 'text-label-wayfinding-and-small-interior-clutter' },
+  geometryCompression: 'EXT_meshopt_compression, high level; streamed per cell',
   infrastructure: 'assets/gidi/cells/infrastructure.gltf',
   infrastructureSizeBytes: infraSize,
   cells: manifestCells,

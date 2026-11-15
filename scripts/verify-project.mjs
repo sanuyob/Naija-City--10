@@ -199,7 +199,6 @@ assert.match(controller,/pc\.math\.clamp\(body\.position\[2\],-3900,480\)/,'Play
 assert.match(game,/knownBounds:\{min:\[-120,-9,-3900\],max:\[4200,269,480\]\}/,'Runtime diagnostics must report both connected world regions');
 assert.match(game,/farClip:1100/,'Camera far clip must cover visible GIDI roads and landscape');
 assert.match(game,/createGidiWorldStreamer/,'GIDI cells must be loaded through the runtime world streamer');
-assert.match(game,/meshoptInitialize/,'Meshopt-compressed GIDI GLTF assets must initialize their decoder before loading');
 assert.match(game,/gidi-gateway-road-/,'A physical road gateway must link the existing city to GIDI');
 assert.match(game,/gidiStreamer\.update\(worldActorState\.position,step\)/,'GIDI cells must stream from Ara or the occupied vehicle position');
 assert.match(gidiStreamer,/addStaticColliders/,'GIDI streaming must add cell collision proxies');
@@ -219,7 +218,8 @@ assert.ok(gidiManifest.stats.triangleReduction>0.15,'GIDI medium LOD must reduce
 assert.ok(gidiManifest.stats.mediumDetailNodesRemoved>0,'GIDI medium LOD must remove distant micro-detail meshes');
 assert.match(gidiGenerator,/MEDIUM_DETAIL_PATTERN/,'GIDI medium LOD must remove non-silhouette text and micro-detail');
 assert.ok(gidiManifest.stats.collisionProxyCount>3000,'GIDI must include simplified road, terrain and building collision proxies');
-assert.match(gidiGenerator,/EXT_meshopt_compression|meshopt/,'GIDI cells must be Meshopt compressed for mobile download and decoding');
+assert.match(game,/meshoptInitialize/,'Meshopt-compressed GIDI assets must initialize their decoder before loading');
+assert.match(gidiGenerator,/meshopt\(/,'GIDI cell geometry must use Meshopt compression');
 for(const feature of ['stage08-ground-west','stage08-ground-east','stage08-main-road-extension','stage08-parallel-road','stage08-cross-street','stage08-commercial-building','stage08-residential-building','stage08-pocket-park']) assert.ok(expansion.includes(feature),`Missing Stage 08A city feature: ${feature}`);
 assert.match(expansion,/parallelRoads: 2/);
 assert.match(expansion,/crossStreets: 3/);

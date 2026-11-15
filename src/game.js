@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { MeshoptDecoder } from 'meshoptimizer';
+import { MeshoptDecoder } from 'meshoptimizer/decoder';
 import { createGidiWorldStreamer } from './gidi-world-streamer.js';
 import { createThirdPersonController } from './third-person-controller.js';
 import { loadSceneAssets, loadHeroCharacter } from './asset-loader.js';
