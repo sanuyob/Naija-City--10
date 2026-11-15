@@ -2,9 +2,9 @@
   "stats": {
     "cellCount": 42,
     "cellSize": 500,
-    "fullAssetBytes": 30563893,
-    "mediumAssetBytes": 28240799,
-    "infrastructureBytes": 10635493,
+    "fullAssetBytes": 6995540,
+    "mediumAssetBytes": 6599601,
+    "infrastructureBytes": 1499653,
     "fullGeometry": {
       "meshCount": 2144,
       "primitiveCount": 2619,
@@ -14,11 +14,11 @@
     "mediumGeometry": {
       "meshCount": 2137,
       "primitiveCount": 2612,
-      "vertices": 856657,
-      "triangles": 444999
+      "vertices": 854924,
+      "triangles": 443569
     },
-    "vertexReduction": 0.07699062506397392,
-    "triangleReduction": 0.18381305058352915,
+    "vertexReduction": 0.07885785459313688,
+    "triangleReduction": 0.18643585948347174,
     "mediumDetailNodesRemoved": 7,
     "sharedTextureCount": 42,
     "sharedTextureBytes": 6767099,
@@ -47,8 +47,8 @@
         "lod1": {
           "meshCount": 1,
           "primitiveCount": 4,
-          "vertices": 114,
-          "triangles": 178
+          "vertices": 100,
+          "triangles": 148
         },
         "removedDetailNodeCount": 0
       }
@@ -67,8 +67,8 @@
         "lod1": {
           "meshCount": 1,
           "primitiveCount": 4,
-          "vertices": 128,
-          "triangles": 204
+          "vertices": 102,
+          "triangles": 152
         },
         "removedDetailNodeCount": 0
       }
@@ -167,8 +167,8 @@
         "lod1": {
           "meshCount": 58,
           "primitiveCount": 58,
-          "vertices": 5460,
-          "triangles": 3716
+          "vertices": 5372,
+          "triangles": 3724
         },
         "removedDetailNodeCount": 0
       }
@@ -188,7 +188,7 @@
           "meshCount": 205,
           "primitiveCount": 207,
           "vertices": 50338,
-          "triangles": 26132
+          "triangles": 26114
         },
         "removedDetailNodeCount": 7
       }
@@ -207,7 +207,7 @@
         "lod1": {
           "meshCount": 124,
           "primitiveCount": 124,
-          "vertices": 3224,
+          "vertices": 3223,
           "triangles": 1676
         },
         "removedDetailNodeCount": 0
@@ -227,8 +227,8 @@
         "lod1": {
           "meshCount": 5,
           "primitiveCount": 12,
-          "vertices": 403,
-          "triangles": 476
+          "vertices": 333,
+          "triangles": 360
         },
         "removedDetailNodeCount": 0
       }
@@ -287,7 +287,7 @@
         "lod1": {
           "meshCount": 57,
           "primitiveCount": 74,
-          "vertices": 64296,
+          "vertices": 63296,
           "triangles": 32880
         },
         "removedDetailNodeCount": 0
@@ -307,8 +307,8 @@
         "lod1": {
           "meshCount": 237,
           "primitiveCount": 251,
-          "vertices": 82063,
-          "triangles": 44998
+          "vertices": 82249,
+          "triangles": 44992
         },
         "removedDetailNodeCount": 0
       }
@@ -327,8 +327,8 @@
         "lod1": {
           "meshCount": 423,
           "primitiveCount": 433,
-          "vertices": 90862,
-          "triangles": 45878
+          "vertices": 90876,
+          "triangles": 45892
         },
         "removedDetailNodeCount": 0
       }
@@ -387,7 +387,7 @@
         "lod1": {
           "meshCount": 145,
           "primitiveCount": 162,
-          "vertices": 54164,
+          "vertices": 54156,
           "triangles": 26910
         },
         "removedDetailNodeCount": 0
@@ -447,8 +447,8 @@
         "lod1": {
           "meshCount": 60,
           "primitiveCount": 60,
-          "vertices": 44072,
-          "triangles": 22366
+          "vertices": 44070,
+          "triangles": 22364
         },
         "removedDetailNodeCount": 0
       }
@@ -467,8 +467,8 @@
         "lod1": {
           "meshCount": 176,
           "primitiveCount": 176,
-          "vertices": 68993,
-          "triangles": 37922
+          "vertices": 68949,
+          "triangles": 37924
         },
         "removedDetailNodeCount": 0
       }
@@ -607,8 +607,8 @@
         "lod1": {
           "meshCount": 6,
           "primitiveCount": 18,
-          "vertices": 514,
-          "triangles": 752
+          "vertices": 412,
+          "triangles": 554
         },
         "removedDetailNodeCount": 0
       }
@@ -627,8 +627,8 @@
         "lod1": {
           "meshCount": 68,
           "primitiveCount": 84,
-          "vertices": 2713,
-          "triangles": 1950
+          "vertices": 2603,
+          "triangles": 1752
         },
         "removedDetailNodeCount": 0
       }
@@ -647,8 +647,8 @@
         "lod1": {
           "meshCount": 26,
           "primitiveCount": 51,
-          "vertices": 2653,
-          "triangles": 1764
+          "vertices": 2545,
+          "triangles": 1570
         },
         "removedDetailNodeCount": 0
       }
@@ -707,8 +707,8 @@
         "lod1": {
           "meshCount": 12,
           "primitiveCount": 24,
-          "vertices": 538,
-          "triangles": 764
+          "vertices": 436,
+          "triangles": 566
         },
         "removedDetailNodeCount": 0
       }
@@ -727,8 +727,8 @@
         "lod1": {
           "meshCount": 165,
           "primitiveCount": 184,
-          "vertices": 14654,
-          "triangles": 10840
+          "vertices": 14506,
+          "triangles": 10596
         },
         "removedDetailNodeCount": 0
       }
@@ -747,8 +747,8 @@
         "lod1": {
           "meshCount": 15,
           "primitiveCount": 46,
-          "vertices": 3053,
-          "triangles": 1816
+          "vertices": 2943,
+          "triangles": 1618
         },
         "removedDetailNodeCount": 0
       }
