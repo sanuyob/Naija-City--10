@@ -92,7 +92,7 @@ try {
  if(!stage08FProfile||stage08FProfile.stage!=='08F'||!Array.isArray(stage08FProfile.limitations)||!stage08FProfile.rendering)throw new Error('Stage 08F device profiling API is not exposed: '+JSON.stringify(stage08FProfile));
  if(stage08EState?.stage!=='08E'||stage08EState.expectedBuildings!==48||stage08EState.legacyBodiesHidden<48||stage08EState.loadedBuildings<1||stage08EState.staticBatching!==true)throw new Error('Stage 08E GLB streaming did not replace blockout buildings: '+JSON.stringify(stage08EState));
  if(stage08EState.heroBuildingId!=='yaba-core-01'||!stage08EState.heroTextureEncoding.includes('KHR_texture_basisu')||stage08EState.heroPbrMaterials.length!==7||stage08EState.heroLoadError)throw new Error('Computer Village hero GLB/KTX2 runtime load failed: '+JSON.stringify(stage08EState));
- if(state.diag.scene.knownBounds.max[2]!==402||state.diag.scene.knownBounds.min[2]!==-205)throw new Error('Expanded city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
+ if(state.diag.scene.knownBounds.max[2]!==480||state.diag.scene.knownBounds.min[2]!==-3900)throw new Error('Expanded city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
  if(state.viewport.w!==844||state.viewport.h!==390)throw new Error('Test viewport is not landscape 844x390: '+JSON.stringify(state.viewport));
  if(!state.canvas.webgl2||state.canvas.w<800||state.canvas.h<360||state.canvas.h>450||state.canvas.y>1)throw new Error('Canvas does not fit the mobile viewport: '+JSON.stringify(state.canvas));
  if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||state.diag.scene.diagnosticMarker)throw new Error('No scene geometry or unexpected debug blocker remained in view: '+JSON.stringify(state.diag));

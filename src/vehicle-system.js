@@ -463,6 +463,9 @@ export async function createVehicleSystem({
 
   return {
     car, enter, exit, toggle, update, destroy,
+    addStaticColliders: (items, ownerId) => vehiclePhysics?.addStaticColliders?.(items, ownerId) || 0,
+    removeStaticColliders: ownerId => vehiclePhysics?.removeStaticColliders?.(ownerId) || 0,
+    debugSetPositionForSmoke: (position, yaw) => vehiclePhysics?.setPositionForSmoke?.(position, yaw) || false,
     getState,
     debugEnter: () => enter(true),
     debugExit: exit,

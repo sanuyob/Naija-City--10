@@ -27,6 +27,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   world.setGravity(gravityVector);
 
   function addStaticBox(position, halfExtents, friction = 0.82, rotationY = 0) {
+    const allocationStart = owned.length;
     const shape = own(new Ammo.btBoxShape(vector(
       Math.max(0.04, halfExtents[0]),
       Math.max(0.04, halfExtents[1]),
@@ -46,7 +47,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const body = own(new Ammo.btRigidBody(info));
     body.setFriction(friction);
     world.addRigidBody(body, 1, 3);
-    return body;
+    return { body, resources: owned.slice(allocationStart) };
   }
 
   // One continuous collision floor covers the Yaba/Ikeja prototype bounds.
@@ -56,6 +57,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const colliderBodies = [];
   const colliderEnabled = [];
   const colliderDescriptors = [];
+  const colliderOwners = new Map();
   for (const item of colliders) {
     let position, halfExtents, rotationY = Number(item?.rotationY) || 0;
     if (Array.isArray(item?.position) && Array.isArray(item?.halfExtents)) {
@@ -75,11 +77,11 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     descriptor.surface = item?.surface || (/grass|park|planter/i.test(descriptor.id) ? 'grass' :
       /metal|rail|ladder|pipe|ac-/i.test(descriptor.id) ? 'metal' :
       /road|asphalt/i.test(descriptor.id) ? 'asphalt' : 'concrete');
+    const staticRecord = addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY);
+    staticRecord.body.setUserIndex?.(1000 + surfaceDescriptors.length);
     colliderDescriptors.push(descriptor);
-    const staticBody = addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY);
-    staticBody.setUserIndex?.(1000 + surfaceDescriptors.length);
     surfaceDescriptors.push(descriptor);
-    colliderBodies.push(staticBody);
+    colliderBodies.push(staticRecord);
     colliderEnabled.push(true);
   }
 
@@ -141,6 +143,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   function canFitCapsule(position, height) {
     const x = Number(position?.[0]) || 0, feetY = Number(position?.[1]) || 0, z = Number(position?.[2]) || 0;
     for (const collider of colliderDescriptors) {
+      if (!collider) continue;
       const [cx, cy, cz] = collider.position;
       const [hx, hy, hz] = collider.halfExtents;
       const bottom = cy - hy, top = cy + hy;
@@ -254,12 +257,63 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     return result;
   }
 
+  function addStaticColliders(items = [], ownerId = 'dynamic-world') {
+    if (!ownerId || !Array.isArray(items)) return 0;
+    if (colliderOwners.has(ownerId)) return colliderOwners.get(ownerId).length;
+    const indices = [];
+    for (const item of items) {
+      const position = item?.position;
+      const halfExtents = item?.halfExtents;
+      if (!Array.isArray(position) || !Array.isArray(halfExtents) || position.length < 3 || halfExtents.length < 3) continue;
+      if (![...position, ...halfExtents].every(Number.isFinite)) continue;
+      const rotationY = Number(item.rotationY) || 0;
+      const descriptor = {
+        id: item.id || `${ownerId}:proxy:${indices.length}`,
+        kind: item.kind || 'world',
+        position: position.slice(0, 3),
+        halfExtents: halfExtents.slice(0, 3).map(value => Math.max(0.04, Math.abs(value))),
+        rotationY,
+        surface: item.surface || 'concrete'
+      };
+      const record = addStaticBox(descriptor.position, descriptor.halfExtents, descriptor.surface === 'asphalt' ? 1.0 : 0.82, rotationY);
+      record.ownerId = ownerId;
+      record.body.setUserIndex?.(1000 + surfaceDescriptors.length);
+      const index = colliderBodies.length;
+      colliderBodies.push(record);
+      colliderEnabled.push(true);
+      colliderDescriptors.push(descriptor);
+      surfaceDescriptors.push(descriptor);
+      indices.push(index);
+    }
+    colliderOwners.set(ownerId, indices);
+    return indices.length;
+  }
+
+  function removeStaticColliders(ownerId) {
+    const indices = colliderOwners.get(ownerId);
+    if (!indices) return 0;
+    let removed = 0;
+    for (const index of indices) {
+      const record = colliderBodies[index];
+      if (!record) continue;
+      if (colliderEnabled[index]) { try { world.removeRigidBody(record.body); } catch {} }
+      for (let i = record.resources.length - 1; i >= 0; i--) release(record.resources[i]);
+      colliderBodies[index] = null;
+      colliderEnabled[index] = false;
+      colliderDescriptors[index] = null;
+      surfaceDescriptors[index + 1] = null;
+      removed++;
+    }
+    colliderOwners.delete(ownerId);
+    return removed;
+  }
+
   function setColliderEnabled(index, enabled) {
     const i = Math.floor(Number(index));
     const collider = colliderBodies[i];
     if (!collider || colliderEnabled[i] === Boolean(enabled)) return false;
-    if (enabled) { world.addRigidBody(collider, 1, 3); world.updateSingleAabb(collider); }
-    else world.removeRigidBody(collider);
+    if (enabled) { world.addRigidBody(collider.body, 1, 3); world.updateSingleAabb(collider.body); }
+    else world.removeRigidBody(collider.body);
     colliderEnabled[i] = Boolean(enabled);
     return true;
   }
@@ -280,7 +334,8 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   function cleanup() {
     if (playerBodyEnabled) { try { world.removeRigidBody(body); } catch {} }
     for (const collider of colliderBodies) {
-      try { world.removeRigidBody(collider); } catch {}
+      if (!collider) continue;
+      try { if (colliderEnabled[colliderBodies.indexOf(collider)]) world.removeRigidBody(collider.body); } catch {}
     }
     for (let i = owned.length - 1; i >= 0; i--) {
       try { Ammo.destroy(owned[i]); } catch {}
@@ -288,16 +343,16 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, cleanup,
+    step, teleport, setColliderEnabled, addStaticColliders, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule', playerBodyEnabled,
       steps, collisions,
-      colliderCount: colliderBodies.length,
+      colliderCount: colliderBodies.filter(Boolean).length,
       capsuleRadius: radius,
       capsuleHeight,
       crouchHeight,
       crouched: capsuleHeight < 1.8,
-      worldColliderCount: Math.max(0, colliderBodies.length - colliders.slice(0, 8).length),
+      worldColliderCount: Math.max(0, colliderBodies.filter(Boolean).length - colliders.slice(0, 8).length),
       gravity: activeGravity, groundY
     })
   };

@@ -93,7 +93,9 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - src/vehicle-system.js / src/vehicle-physics.js: Ara vehicle loading, enter/exit handoff, vehicle controls, Bullet chassis/raycast wheels, telemetry, engine audio and vehicle VFX.
 - scripts/vehicles/generate-compact-hatchback.py: repeatable Blender source for the separate ATL Sandbox compact hatchback prototype.
 - `src/third-person-controller.js`: locomotion, sprint/stamina, jump, crouch, touch/keyboard input and camera.
-- `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback and Stage 08A expansion integration.
+- `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback, Stage 08A expansion and the GIDI gateway/streamer integration.
+- `src/gidi-world-streamer.js`: 500m GIDI cell streaming, shared external texture loading, LOD switching, far-building visibility cutoff and dual Bullet collision lifecycle.
+- `scripts/generate-gidi-world.mjs`: source GLB processing into shared textures, spatial cell GLTFs, medium-detail LOD files and simplified collision proxies.
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
 - `src/stage-08b-building-detail.js`: Nigerian-inspired commercial and residential facade detail, balconies, security grilles, AC units and rooftop tanks.
 - `src/stage-08c-street-infrastructure.js`: static kerbs, drainage, utility poles/wires, streetlights, signs, park furniture, bus shelters and roadside stalls.
@@ -102,7 +104,7 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
 ## Verify
-`npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser`
+`npm install` → `npm run verify` → `npm run build` → `npm run analyze:bundle` → `npm run test:browser` (includes the GIDI runtime/gateway smoke test)
 
 Linux build environments also need the Khronos KTX-Software 4.4.2 command-line tool (`ktx`) on `PATH` for the Stage 08F UASTC/ETC1S texture compression step. The GitHub Actions verify and deploy workflows install the official release and verify its SHA-256 checksum automatically.
 
@@ -163,4 +165,24 @@ Player feedback currently includes pooled lightweight dust/jump/landing/parkour 
 - The curated Yaba route now has foundation caps/grip strips, a wall-mounted AC condenser and service shelf, low guard rails, parapet caps, ladder brackets and wall-run grip bars. Ballistic vaults are capped at 1.55 m; taller transitions use authored mantle, ledge or ladder actions instead of oversized jumps.
 - Player effects use a fixed 24-entity pool. The browser smoke test checks sprint on/off, camera startup distance, four ground surface probes, foot-placement hits, all eight traversal types, audio/VFX and the separate Hero 01 NPC.
 
-Professional implementation references: [PlayCanvas vehicle physics](https://developer.playcanvas.com/tutorials/vehicle-physics/), [PlayCanvas ray casting](https://developer.playcanvas.com/user-manual/physics/ray-casting/), [PlayCanvas animation blend trees](https://developer.playcanvas.com/user-manual/animation/blend-trees/), [PlayCanvas collision shapes](https://developer.playcanvas.com/user-manual/physics/collision-shapes/), [PlayCanvas optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), and [Ara 3D Gen vehicle animation/export guide](https://ara3dgen.com/docs/animations/).
+Professional implementation references: [glTF Transform simplification options](https://gltf-transform.dev/modules/functions/interfaces/SimplifyOptions), [glTF Transform simplify](https://gltf-transform.dev/modules/functions/functions/simplify), [Meshoptimizer simplifier](https://github.com/zeux/meshoptimizer/blob/master/js/README.md#simplifier), [PlayCanvas vehicle physics](https://developer.playcanvas.com/tutorials/vehicle-physics/), [PlayCanvas ray casting](https://developer.playcanvas.com/user-manual/physics/ray-casting/), [PlayCanvas animation blend trees](https://developer.playcanvas.com/user-manual/animation/blend-trees/), [PlayCanvas collision shapes](https://developer.playcanvas.com/user-manual/physics/collision-shapes/), [PlayCanvas optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), and [Ara 3D Gen vehicle animation/export guide](https://ara3dgen.com/docs/animations/).
+
+
+## GIDI region — streamed Yaba and connected districts
+
+The Revision 106 GIDI world is integrated as a separate region attached to the original city by a physical road gateway. The original Naija City map geometry and its spawn remain in place. The connector branches from the existing Yaba road and joins the authored GIDI Yaba southern/east transition at approximately world position `(100, 0, -450)`.
+
+The source GLB is processed offline into **42 spatial building/detail cells on a 500m grid**. The global road, water, terrain and landscape foundation is a separate approximately 1.6 MB GLTF; building and district detail streams as cell assets. All 42 source textures (about 6.8 MB total) are stored once under `public/assets/gidi/shared/textures/` and referenced by relative URI from each cell. Cell geometry is Meshopt-compressed. Across the generated cell meshes, the medium LOD removes about 18.6% of triangles and 7.9% of vertices. The Yaba core cell (0,-4) drops from 57,396 to 26,114 triangles after simplifying and removing seven distant text/micro-detail nodes.
+
+Runtime distance policy:
+- Full-detail buildings within 160m.
+- Simplified medium-detail buildings from 160m to 360m.
+- Building geometry is hidden beyond 360m; the road, terrain and landscape foundation remains visible farther away.
+- Cell visuals unload beyond 900m.
+- Simplified collision cells prefetch within 220m and remain through a 460m unload buffer.
+
+The generator emits 3,872 low-cost collision proxies across the region: road/bridge surface tiles, terrain support tiles and grouped building footprint proxies. The streamer activates only nearby cell proxies in both Ara's Bullet capsule world and the sedan's separate Bullet vehicle world, then removes them when the cell moves beyond its collision buffer. The current Yaba spawn test activates about 360 region proxies per physics world, rather than the entire region's collision set.
+
+Regenerate the GIDI assets from the original source file with `GIDI_SOURCE=/path/to/GIDI_R106_BUILDING_WORLD.glb npm run assets:gidi`. The generated `public/assets/gidi/` output is committed so normal builds do not need the source file or a Blender installation. `npm run test:gidi` launches Chromium and checks infrastructure loading, full/medium LOD, the distant-building cutoff, collision activation/removal, cell unload/reload, the gateway asphalt raycast, Ara walking contact and sedan driving into the GIDI gateway.
+
+**Validation note:** GIDI's own Revision 106 metadata marks geography approval and some bridge/shoreline visual checks as pending. The connector and Yaba road junction are runtime-tested, but the other authored internal bridges and every shoreline still need visual review and a physical Android playthrough. Browser tests are not a substitute for real-device FPS, memory, battery, touch and audio measurements.

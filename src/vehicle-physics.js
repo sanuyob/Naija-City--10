@@ -113,6 +113,18 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
   // Compact static collision proxies let the car hit real buildings and street
   // infrastructure without asking Bullet to collide with every visual mesh.
   const environmentBodies = [];
+  const environmentOwners = new Map();
+  const addEnvironmentBox = (position, halfExtents, rotationY = 0, ownerId = 'initial') => {
+    const allocationStart = owned.length;
+    const shape = own(new Ammo.btBoxShape(vector(
+      Math.max(.04, halfExtents[0]), Math.max(.04, halfExtents[1]), Math.max(.04, halfExtents[2])
+    )));
+    const record = addBody({ shape, mass: 0, position: { x: position[0], y: position[1], z: position[2] }, yaw: rotationY, friction: .88 });
+    record.resources = owned.slice(allocationStart);
+    record.ownerId = ownerId;
+    environmentBodies.push(record);
+    return record;
+  };
   for (const item of (options.colliders || [])) {
     let position, halfExtents, rotationY = Number(item?.rotationY) || 0;
     if (Array.isArray(item?.position) && Array.isArray(item?.halfExtents)) {
@@ -125,10 +137,44 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
       rotationY = item?.entity?.getEulerAngles?.().y || rotationY;
     }
     if (!position || !halfExtents || halfExtents[1] < 0.18) continue;
-    const shape = own(new Ammo.btBoxShape(vector(
-      Math.max(.04,halfExtents[0]),Math.max(.04,halfExtents[1]),Math.max(.04,halfExtents[2])
-    )));
-    environmentBodies.push(addBody({shape,mass:0,position:{x:position[0],y:position[1],z:position[2]},yaw:rotationY,friction:.88}));
+    addEnvironmentBox(position, halfExtents, rotationY, 'initial');
+  }
+
+  function addStaticColliders(items = [], ownerId = 'dynamic-world') {
+    if (!ownerId || !Array.isArray(items)) return 0;
+    if (environmentOwners.has(ownerId)) return environmentOwners.get(ownerId).length;
+    const records = [];
+    for (const item of items) {
+      const position = item?.position;
+      const halfExtents = item?.halfExtents;
+      if (!Array.isArray(position) || !Array.isArray(halfExtents) || position.length < 3 || halfExtents.length < 3) continue;
+      if (![...position, ...halfExtents].every(Number.isFinite)) continue;
+      if (Math.abs(halfExtents[1]) < 0.18) continue;
+      const record = addEnvironmentBox(position, halfExtents, Number(item.rotationY) || 0, ownerId);
+      records.push(record);
+    }
+    environmentOwners.set(ownerId, records);
+    return records.length;
+  }
+
+  function removeStaticColliders(ownerId) {
+    const records = environmentOwners.get(ownerId);
+    if (!records) return 0;
+    let removed = 0;
+    for (const record of records) {
+      try { world.removeRigidBody(record.body); } catch {}
+      for (let i = (record.resources || []).length - 1; i >= 0; i--) {
+        const resource = record.resources[i];
+        const ownedIndex = owned.indexOf(resource);
+        if (ownedIndex >= 0) owned.splice(ownedIndex, 1);
+        try { Ammo.destroy(resource); } catch {}
+      }
+      const index = environmentBodies.indexOf(record);
+      if (index >= 0) environmentBodies.splice(index, 1);
+      removed++;
+    }
+    environmentOwners.delete(ownerId);
+    return removed;
   }
 
   const trafficBodies = traffic.map(item => {
@@ -168,6 +214,30 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
       wheelRoots[i].setPosition(wp.x(), wp.y(), wp.z());
       wheelRoots[i].setRotation(new pc.Quat(wq.x(), wq.y(), wq.z(), wq.w()));
     }
+  }
+
+  function setPositionForSmoke(position, yaw = 0) {
+    if (!Array.isArray(position) || position.length < 3 || !position.slice(0, 3).every(Number.isFinite)) return false;
+    const angle = (Number(yaw) || 0) * Math.PI / 360;
+    chassis.origin.setValue(position[0], position[1], position[2]);
+    chassis.rotation.setValue(0, Math.sin(angle), 0, Math.cos(angle));
+    chassis.transform.setIdentity();
+    chassis.transform.setOrigin(chassis.origin);
+    chassis.transform.setRotation(chassis.rotation);
+    chassis.body.setWorldTransform(chassis.transform);
+    chassis.motionState.setWorldTransform(chassis.transform);
+    driveForceVector.setValue(0, 0, 0);
+    lateralForceVector.setValue(0, 0, 0);
+    steeringTorqueVector.setValue(0, 0, 0);
+    chassis.body.setLinearVelocity(driveForceVector);
+    chassis.body.setAngularVelocity(steeringTorqueVector);
+    chassis.body.clearForces();
+    chassis.body.activate(true);
+    controlledSpeedMps = 0;
+    world.updateSingleAabb(chassis.body);
+    vehicle.resetSuspension?.();
+    syncPlayer();
+    return true;
   }
 
   function step(dt, controls) {
@@ -268,6 +338,9 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
       return Math.atan2(2*(q.w()*q.y()+q.x()*q.z()),1-2*(q.y()*q.y()+q.x()*q.x()))*180/Math.PI;
     },
     getEnvironmentColliderCount: () => environmentBodies.length,
+    addStaticColliders,
+    removeStaticColliders,
+    setPositionForSmoke,
     getWheelPositions: () => {
       const positions = [];
       for (let i = 0; i < 4; i++) {
