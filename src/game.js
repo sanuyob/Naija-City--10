@@ -314,7 +314,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     entity.setLocalScale(nx?.86:.34,height,nz?.86:.34);
     entity.tags.add('stage09-roof-access');
     app.root.addChild(entity);
-    const destination=[cx+nx*(edge-.38),height,cz+nz*(edge-.38)];
+    const destination=routeType==='wall-run'
+      ? [routeX-nz*3.6,0,routeZ+nx*3.6]
+      : [cx+nx*(edge-.38),height,cz+nz*(edge-.38)];
     const approachYaw=Math.atan2(nx,nz)*180/Math.PI;
     const route={
       id:'roof-route-'+routeType+'-'+proxy.id.replace(/^building-/,''),
@@ -322,7 +324,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       type:routeType,height,entity,roofRoute:true,
       destination,approach:[nx,nz],approachYaw,
       routeOrdinal:routeIndex,
-      physicsColliderIndices:[tutorialObstacleCount+routeIndex,tutorialObstacleCount+buildingProxies.length*3+surfacePatches.length+buildingIndex],
+      physicsColliderIndices:[tutorialObstacleCount+routeIndex,tutorialObstacleCount+buildingProxies.length*4+surfacePatches.length+buildingIndex],
       buildingHalfExtents:[hx,hy,hz],visuals:null
     };
     buildingRouteObstacles.push(route);
@@ -334,9 +336,10 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     // approach from the front and rear elevations.
     const side=cx<0?1:-1;
     const front=cz<0?1:-1;
-    addBuildingRoute(proxy,i,'ladder',[side,0],i*3);
-    addBuildingRoute(proxy,i,'mantle',[0,front],i*3+1);
-    addBuildingRoute(proxy,i,'ledge',[0,-front],i*3+2);
+    addBuildingRoute(proxy,i,'ladder',[side,0],i*4);
+    addBuildingRoute(proxy,i,'mantle',[0,front],i*4+1);
+    addBuildingRoute(proxy,i,'ledge',[0,-front],i*4+2);
+    addBuildingRoute(proxy,i,'wall-run',[-side,0],i*4+3);
   }
   const allTraversalObstacles=[...traversalObstacles,...buildingRouteObstacles];
   let roofVisualClock=0,roofVisualCount=0;

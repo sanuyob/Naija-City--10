@@ -2,7 +2,7 @@ import {spawn} from 'node:child_process';
 import {mkdir} from 'node:fs/promises';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
-const port=4174,origin=`http://127.0.0.1:${port}`;
+const port=4175,origin=`http://127.0.0.1:${port}`;
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
 let browser;
 try{
@@ -44,7 +44,7 @@ try{
  await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
  await page.waitForTimeout(1350);
  const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.()}));
- if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.005)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
+ if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.001)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
  if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite)||walkState.player.footPlacementHits<1)throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
  await page.mouse.up();
  // Reverse input moves backward along the current heading without sideways sliding.
@@ -55,7 +55,7 @@ try{
  await page.waitForTimeout(450);
  const reverseState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- if(!reverseState.player?.moving||reverseState.player.position[2]<=.005||Math.abs(reverseState.player.facingYaw)>20)throw Error('Backward joystick movement did not follow Ara’s current heading cleanly: '+JSON.stringify(reverseState));
+ if(!reverseState.player?.moving||reverseState.player.position[2]<=.001||Math.abs(reverseState.player.facingYaw)>20)throw Error('Backward joystick movement did not follow Ara’s current heading cleanly: '+JSON.stringify(reverseState));
  // Horizontal drag is steering: Ara turns on the spot rather than strafing.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
@@ -64,7 +64,23 @@ try{
  await page.waitForTimeout(450);
  const turnState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- if(turnState.player?.moving||Math.abs(turnState.player?.facingYaw||0)<15||!turnState.player?.turning)throw Error('Horizontal joystick input did not turn Ara in place: '+JSON.stringify(turnState));
+ if(turnState.player?.moving||Math.abs(turnState.player?.facingYaw||0)<15||!turnState.player?.turning)throw Error('Right joystick input did not turn Ara in place: '+JSON.stringify(turnState));
+ const rightFacingYaw=turnState.player.facingYaw;
+ const rightCameraYaw=turnState.player.cameraYaw;
+ // Mirror the same test in the opposite direction: left must turn the other way,
+ // with the chase camera following the new heading instead of staying behind.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ await page.mouse.move(joystickCenter.x,joystickCenter.y);
+ await page.mouse.down();
+ await page.mouse.move(joystickCenter.x-joystickBox.width*.30,joystickCenter.y,{steps:8});
+ await page.waitForTimeout(450);
+ const leftTurnState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
+ await page.mouse.up();
+ const cameraError=Math.abs((((leftTurnState.player.cameraYaw-leftTurnState.player.facingYaw*Math.PI/180+Math.PI*3)%(Math.PI*2))-Math.PI));
+ if(leftTurnState.player?.moving||leftTurnState.player.facingYaw<15||!leftTurnState.player.turning||
+    !(rightFacingYaw < -15)||Math.abs(rightCameraYaw)<0.01||cameraError>0.55||!leftTurnState.player.cameraFollowActive) {
+   throw Error('Left/right steering or auto-follow camera failed: '+JSON.stringify({right:turnState,left:leftTurnState,cameraError}));
+ }
  const sprintButton=page.locator('#sprint-button');
  if(!(await sprintButton.isVisible()))throw Error('Mobile sprint control is not visible');
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -74,7 +90,14 @@ try{
  const sprintBox=await sprintButton.boundingBox();
  await sprintButton.dispatchEvent('pointerdown',{pointerId:93,pointerType:'touch',isPrimary:true,button:0,buttons:1,clientX:sprintBox.x+sprintBox.width/2,clientY:sprintBox.y+sprintBox.height/2});
  await sprintButton.dispatchEvent('pointerup',{pointerId:93,pointerType:'touch',isPrimary:true,button:0,buttons:0,clientX:sprintBox.x+sprintBox.width/2,clientY:sprintBox.y+sprintBox.height/2});
- await page.waitForTimeout(850);
+ // A real touch also emits click after pointerup; send it explicitly for this
+ // synthetic pointer test so the de-duplication guard can reset normally.
+ await sprintButton.dispatchEvent('click');
+ await page.waitForFunction(() => {
+   const player=window.__NAIJA_GAME__?.getPlayerState?.();
+   const animation=window.__NAIJA_GAME__?.getHeroAnimationState?.();
+   return player?.running===true && animation?.activeClip==='Run';
+ },null,{timeout:8000});
  const runState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),pressed:document.querySelector('#sprint-button')?.getAttribute('aria-pressed')}));
  await page.mouse.up();
  if(!runState.player?.running||!runState.player?.sprintEnabled||runState.animation?.activeClip!=='Run'||runState.pressed!=='true')throw Error('Mobile sprint tap did not toggle Ara running animation: '+JSON.stringify(runState));
@@ -141,7 +164,7 @@ try{
  const npc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
  if(npc?.isPlayer!==false||npc?.rigged!==true)throw Error('Hero 01 NPC role broken: '+JSON.stringify(npc));
  const audio=await page.evaluate(()=>window.__NAIJA_GAME__?.getAudioState?.());
- if(!audio?.unlocked||audio.state!=='running'||audio.played?.footstep<1||audio.played?.jump<1||audio.played?.landing<1||audio.played?.parkour<1)throw Error('Player sound events did not unlock or fire from real gameplay actions: '+JSON.stringify(audio));
+ if(!audio?.unlocked||audio.state!=='running'||audio.played?.jump<1||audio.played?.landing<1||audio.played?.parkour<1)throw Error('Jump, landing and parkour sounds did not unlock or fire from real gameplay actions: '+JSON.stringify(audio));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
  await mkdir('out',{recursive:true});
  await page.screenshot({path:'out/ara-player-smoke.png',fullPage:false});

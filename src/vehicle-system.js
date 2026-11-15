@@ -76,6 +76,14 @@ export async function createVehicleSystem({
   let carAsset = null;
   let carVisual = null;
   let wheelRoots = [];
+  let driverDoor = null;
+  let driverWindow = null;
+  let passengerDoor = null;
+  let passengerWindow = null;
+  let steeringWheel = null;
+  let driverDoorAngle = 0;
+  let driverDoorTarget = 0;
+  let driverDoorCloseDelay = 0;
   let vehiclePhysics = null;
   let destroyed = false;
   let occupied = false;
@@ -116,25 +124,50 @@ export async function createVehicleSystem({
     carVisual = carAsset.resource.instantiateRenderEntity();
     carVisual.name = 'naija-city-sedan-visual';
     car.addChild(carVisual);
-    // Physics origin is the chassis centre; model coordinates are authored at
-    // wheel-ground height, so offset the render hierarchy without moving Bullet.
-    carVisual.setLocalPosition(0, -.94, 0);
-    const aliases = [
-      ['wheel_FL', 'wheel_fl', 'wheel_front_left'],
-      ['wheel_FR', 'wheel_fr', 'wheel_front_right'],
-      ['wheel_RL', 'wheel_rl', 'wheel_rear_left'],
-      ['wheel_RR', 'wheel_rr', 'wheel_rear_right']
-    ];
-    wheelRoots = aliases.map(names => {
-      for (const name of names) {
-        const node = carVisual.findByName(name);
-        if (node) return node;
+    if (modelSource === 'Ara 3D Gen vehicle model') {
+      // Ara's car faces local +Z and its mesh origin is 0.356 m left of centre.
+      // The Bullet chassis faces local -Z, so flip the visual hierarchy and
+      // recenter it without changing the physics body's world transform.
+      carVisual.setLocalPosition(-.356, -.94, -.034);
+      carVisual.setLocalEulerAngles(0, 180, 0);
+      // Physics wheel order is front-left, front-right, rear-left, rear-right.
+      // Mirroring the Ara +Z-facing model swaps left/right in local space.
+      const aliases = [
+        ['Vehicle_3_Wheel_front_1'],
+        ['Vehicle_2_Wheel_front_-1'],
+        ['Vehicle_5_Wheel_rear_1'],
+        ['Vehicle_4_Wheel_rear_-1']
+      ];
+      wheelRoots = aliases.map(names => names.map(name => carVisual.findByName(name)).find(Boolean) || null);
+      driverDoor = carVisual.findByName('Vehicle_9_Door_left');
+      driverWindow = carVisual.findByName('Vehicle_10_Window_left');
+      passengerDoor = carVisual.findByName('Vehicle_7_Door_right');
+      passengerWindow = carVisual.findByName('Vehicle_8_Window_right');
+      steeringWheel = carVisual.findByName('Vehicle_6_Steering_wheel');
+      if (wheelRoots.some(root => !root)) {
+        throw new Error('Ara vehicle rig is missing one or more named wheel joints.');
       }
-      return null;
-    });
-    if (wheelRoots.some(root => !root)) {
-      wheelRoots = makeFallbackCar(app, car);
-      modelSource += ' · fallback wheel set';
+      modelSource = 'Ara 3D Gen · Saloon · mobile LOD';
+    } else {
+      // The original Blender sedan is already authored for the game chassis.
+      carVisual.setLocalPosition(0, -.94, 0);
+      const aliases = [
+        ['wheel_FL', 'wheel_fl', 'wheel_front_left'],
+        ['wheel_FR', 'wheel_fr', 'wheel_front_right'],
+        ['wheel_RL', 'wheel_rl', 'wheel_rear_left'],
+        ['wheel_RR', 'wheel_rr', 'wheel_rear_right']
+      ];
+      wheelRoots = aliases.map(names => {
+        for (const name of names) {
+          const node = carVisual.findByName(name);
+          if (node) return node;
+        }
+        return null;
+      });
+      if (wheelRoots.some(root => !root)) {
+        wheelRoots = makeFallbackCar(app, car);
+        modelSource += ' · fallback wheel set';
+      }
     }
   } catch (error) {
     console.warn('Ready-made vehicle GLB could not load; using the built-in fallback sedan.', error);
@@ -176,6 +209,10 @@ export async function createVehicleSystem({
     audioSystem?.updateVehicleEngine?.(0, .14);
     cameraYaw = vehiclePhysics.getYaw() * Math.PI / 180;
     cameraInitialized = false;
+    if (driverDoor) {
+      driverDoorTarget = 74.48;
+      driverDoorCloseDelay = .72;
+    }
     setVehicleUi(true);
     onStatus('Entered the sedan · use the left stick to steer');
     return true;
@@ -196,6 +233,10 @@ export async function createVehicleSystem({
     const exitPosition = [useRight?rightCandidate[0]:leftCandidate[0], 0, useRight?rightCandidate[1]:leftCandidate[1]];
     clearInput();
     occupied = false;
+    if (driverDoor) {
+      driverDoorTarget = 74.48;
+      driverDoorCloseDelay = .82;
+    }
     audioSystem?.stopVehicleEngine?.();
     playerPhysics?.setPlayerEnabled?.(true);
     playerController.setPosition?.(exitPosition, yaw);
@@ -259,10 +300,23 @@ export async function createVehicleSystem({
   canvas.addEventListener('pointerup', onPointerUp);
   canvas.addEventListener('pointercancel', onPointerUp);
 
+  function updateDoor(step) {
+    if (!driverDoor) return;
+    if (driverDoorCloseDelay > 0) {
+      driverDoorCloseDelay = Math.max(0, driverDoorCloseDelay - step);
+      if (driverDoorCloseDelay === 0) driverDoorTarget = 0;
+    }
+    const difference = driverDoorTarget - driverDoorAngle;
+    driverDoorAngle += Math.sign(difference) * Math.min(Math.abs(difference), 190 * step);
+    driverDoor?.setLocalEulerAngles?.(0, -driverDoorAngle, 0);
+    driverWindow?.setLocalEulerAngles?.(0, -driverDoorAngle, 0);
+  }
+
   function update(dt) {
     if (destroyed || !vehiclePhysics) return;
     const step = Math.min(.05, Math.max(0, Number(dt) || 0));
     vehiclePhysics.syncTraffic();
+    updateDoor(step);
     if (occupied) {
       const touchInput = playerController.getControlInput?.() || { x: 0, y: 0 };
       const steering = pc.math.clamp((debugSteering === null ? touchInput.x : debugSteering) + (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0), -1, 1);
@@ -335,12 +389,33 @@ export async function createVehicleSystem({
 
   function getState() {
     const speedKmh = vehiclePhysics?.getSpeedKmh?.() || 0;
+    const physicsWheelPositions = vehiclePhysics?.getWheelPositions?.() || [];
+    const renderedWheelPositions = wheelRoots.map(root => {
+      const position = root.getPosition();
+      return [position.x, position.y, position.z];
+    });
+    const wheelAlignmentMaxError = physicsWheelPositions.length === 4 && renderedWheelPositions.length === 4
+      ? Math.max(...physicsWheelPositions.map((position, index) =>
+          Math.hypot(position[0] - renderedWheelPositions[index][0],
+                     position[1] - renderedWheelPositions[index][1],
+                     position[2] - renderedWheelPositions[index][2])))
+      : null;
     return {
       stage: '10-vehicle',
       occupied,
       modelSource,
       modelReady: Boolean(carVisual || wheelRoots.length),
       wheelCount: wheelRoots.length,
+      wheelAlignmentMaxError: Number.isFinite(wheelAlignmentMaxError) ? Number(wheelAlignmentMaxError.toFixed(4)) : null,
+      modelParts: {
+        driverDoor: Boolean(driverDoor),
+        driverWindow: Boolean(driverWindow),
+        passengerDoor: Boolean(passengerDoor),
+        passengerWindow: Boolean(passengerWindow),
+        steeringWheel: Boolean(steeringWheel),
+        driverDoorAngle: Number(driverDoorAngle.toFixed(1)),
+        driverDoorTarget: Number(driverDoorTarget.toFixed(1))
+      },
       speedKmh: Number(speedKmh.toFixed(1)),
       physicsSteps: vehiclePhysics?.getStepCount?.() || 0,
       fuelPercent: Number(fuelPercent.toFixed(1)),

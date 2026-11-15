@@ -42,10 +42,17 @@ try {
     vehicle: window.__NAIJA_GAME__.getVehicleState(),
     controls: ['vehicle-controls', 'drive-accelerate', 'drive-brake', 'drive-exit'].map(id => !!document.getElementById(id))
   }));
-  if (inventory.buildings !== 48 || inventory.accessPoints !== 144 ||
+  if (inventory.buildings !== 48 || inventory.accessPoints !== 192 ||
       inventory.traversal.buildingRouteCount !== 48 ||
-      inventory.traversal.buildingAccessPointCount !== 144 ||
+      inventory.traversal.buildingAccessPointCount !== 192 ||
       inventory.vehicle.wheelCount !== 4 ||
+      !String(inventory.vehicle.modelSource).includes('Ara 3D Gen') ||
+      !inventory.vehicle.modelParts?.driverDoor ||
+      !inventory.vehicle.modelParts?.driverWindow ||
+      !inventory.vehicle.modelParts?.passengerDoor ||
+      !inventory.vehicle.modelParts?.passengerWindow ||
+      !inventory.vehicle.modelParts?.steeringWheel ||
+      inventory.vehicle.wheelAlignmentMaxError === null ||
       inventory.controls.some(value => !value)) {
     throw new Error('Building access or vehicle asset contract failed: ' + JSON.stringify(inventory));
   }
@@ -60,13 +67,16 @@ try {
   if (!entered || !seated.occupied || seated.controllerEnabled || seated.bodyEnabled || seated.hudHidden) {
     throw new Error('Vehicle enter handoff failed: ' + JSON.stringify(seated));
   }
+  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle > 15, null, { timeout: 4000 });
+  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle < 2, null, { timeout: 15000 });
 
   const startSteps = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState().physicsSteps);
   await page.evaluate(() => window.__NAIJA_GAME__.debugSetVehicleInputForSmoke(0, true, false));
   await page.waitForFunction(steps => window.__NAIJA_GAME__.getVehicleState().physicsSteps >= steps + 70, startSteps, { timeout: 60000 });
   const accelerated = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
-  if (accelerated.speedKmh < 50 || accelerated.dynamics.measuredWheelContacts < 3) {
-    throw new Error('Vehicle did not accelerate with wheel probes on road: ' + JSON.stringify(accelerated));
+  if (accelerated.speedKmh < 50 || accelerated.dynamics.measuredWheelContacts < 3 ||
+      accelerated.wheelAlignmentMaxError > .18) {
+    throw new Error('Vehicle did not accelerate with aligned wheel probes on road: ' + JSON.stringify(accelerated));
   }
 
   const brakeSteps = accelerated.physicsSteps;
@@ -81,7 +91,7 @@ try {
   await page.evaluate(() => window.__NAIJA_GAME__.debugSetVehicleInputForSmoke(1, false, false));
   await page.waitForFunction(steps => window.__NAIJA_GAME__.getVehicleState().physicsSteps >= steps + 35, steeringSteps, { timeout: 30000 });
   const turned = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
-  const turnDegrees = Math.abs(turned.yaw - braked.yaw);
+  const turnDegrees = Math.abs(((turned.yaw - braked.yaw + 540) % 360) - 180);
   if (turnDegrees < 5) {
     throw new Error('Vehicle steering did not change the chassis heading: ' + JSON.stringify({ before: braked.yaw, after: turned.yaw }));
   }
@@ -98,9 +108,11 @@ try {
       onFoot.occupied || onFoot.cameraDistance > 4.6) {
     throw new Error('Vehicle exit did not restore Ara and the close camera: ' + JSON.stringify(onFoot));
   }
+  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle > 15, null, { timeout: 5000 });
+  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle < 2, null, { timeout: 15000 });
 
   const parkour = [];
-  for (const routeType of ['ladder', 'mantle', 'ledge']) {
+  for (const routeType of ['ladder', 'mantle', 'ledge', 'wall-run']) {
     const result = await page.evaluate(type => {
       const action = window.__NAIJA_GAME__.debugTraverseBuildingForSmoke('yaba-core-01', type);
       return {
@@ -110,6 +122,8 @@ try {
         buildingId: action.traversal.lastTraversal?.buildingId,
         clip: action.traversal.lastTraversal?.clip,
         height: action.player.position[1],
+        destination: action.traversal.lastTraversal?.destination,
+        finalPosition: action.player.position,
         grounded: action.player.grounded,
         completed: action.traversal.traversalsCompleted
       };
@@ -120,7 +134,11 @@ try {
     !route.started ||
     route.requestedType !== route.completedType ||
     route.buildingId !== 'yaba-core-01' ||
-    route.height < 15 ||
+    (route.requestedType !== 'wall-run' && route.height < 15) ||
+    (route.requestedType === 'wall-run' && Math.hypot(
+      route.finalPosition[0] - route.destination[0],
+      route.finalPosition[2] - route.destination[2]
+    ) > 1.25) ||
     !route.grounded
   )) {
     throw new Error('One or more targeted building parkour routes failed: ' + JSON.stringify(parkour));
@@ -130,10 +148,12 @@ try {
 
   console.log(JSON.stringify({
     pass: true,
-    buildingNetwork: { buildings: inventory.buildings, accessPoints: inventory.accessPoints },
+    buildingNetwork: { buildings: inventory.buildings, accessPoints: inventory.accessPoints, stuntTypes: inventory.traversal.availableTypes },
     vehicle: {
       model: inventory.vehicle.modelSource,
       wheels: inventory.vehicle.wheelCount,
+      driverDoorAnimations: 'entry + exit',
+      wheelAlignmentMaxError: accelerated.wheelAlignmentMaxError,
       measuredRoadWheelContacts: accelerated.dynamics.measuredWheelContacts,
       topTestSpeedKmh: accelerated.speedKmh,
       brakedSpeedKmh: braked.speedKmh,

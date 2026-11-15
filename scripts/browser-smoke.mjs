@@ -120,7 +120,7 @@ try {
     state.game?.heroAnimationState?.displayName!=='Ara 3D Female'||
     state.game?.heroAnimationState?.playable!==true||state.game?.heroAnimations?.length!==14||
     state.game?.mainCharacterId!=='ara-female'||state.game?.hero01Role!=='city-npc'||
-    state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount<152||state.game?.traversal?.buildingRouteCount!==48||state.game?.traversal?.buildingAccessPointCount!==144||
+    state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount<152||state.game?.traversal?.buildingRouteCount!==48||state.game?.traversal?.buildingAccessPointCount!==192||
     state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||
     state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||
     state.game?.pedestrianState?.heroNpc?.isPlayer!==false||state.game?.pedestrianState?.heroNpc?.rigged!==true||

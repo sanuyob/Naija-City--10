@@ -48,25 +48,32 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 
 ## Controls
 - Desktop: WASD / arrows drive Ara, Shift sprint, Space jump, C crouch, E interact, Escape pause, drag scene to orbit.
-- Mobile landscape: the left joystick is now a steering-style stick. Drag up/down to move forward/reverse along Ara's facing direction; drag left/right to turn her, including while standing still. The right side of the screen independently orbits the camera.
+- Mobile landscape: the left joystick is a pressure-sensitive movement/steering stick. Drag up/down to move forward/reverse along Ara's facing direction; drag left/right to turn in place or while moving. The chase camera recentres behind her after a turn, while a manual right-side drag keeps camera orbit under player control.
 - Near the parked Naija City sedan, tap INTERACT to enter. Inside, the left stick steers, hold GAS to accelerate, hold BRAKE to slow down or reverse, drag the right side to orbit the car camera, and tap EXIT to get out.
 - Tap the pause control to open menus. Quick slots currently provide selection feedback but do not contain persistent items.
-- Tap the pause control to open menus. Quick slots currently provide selection feedback but do not contain persistent items.
 
 
-## Stage 09B — building parkour network
-- Added three authored rooftop-access routes to each of the 48 building collision proxies: a ladder route, a mantle route and a ledge route (144 access points total).
-- Nearby access points reveal lightweight rails, rungs or grip bars, with only the nearest four route markers rendered at once.
-- Route actions temporarily release the matching traversal and building collision proxies, animate Ara through the authored climb, then restore the collision set at the landing point.
-- This is contextual authored traversal, not unrestricted wall-climbing. A building becomes climbable at a marked access point rather than at every arbitrary wall face.
+## Stage 09B — expanded building parkour network
+- Each of the 48 building collision proxies now has four authored access routes: ladder, mantle, ledge and wall-run (192 access points total, up from 144).
+- Nearby access points reveal lightweight rails, rungs or grip bars, with only the nearest route markers rendered at once.
+- Route actions temporarily release matching traversal/building collision proxies, move Ara through an authored action, then restore collisions at the landing point.
+- This is a wide contextual parkour network, not unrestricted free-climbing on every arbitrary wall face. The wall-run routes are authored lateral transitions along the building edge.
 
-## Stage 10 — enterable sedan
-- Added an original low-poly Naija City sedan made in Blender inside ATL Sandbox, with separate named wheel nodes and a compact GLB asset under public/assets/vehicles/.
-- The loader first checks for an optional ara-3d-gen-car.glb with four named wheel nodes (wheel_FL, wheel_FR, wheel_RL, wheel_RR); it falls back to the bundled original sedan when that optional ready-made file is absent. No Ara 3D Gen vehicle download is bundled yet.
-- Uses an 820 kg Bullet chassis, four raycast wheel/suspension probes, building/street collision proxies and kinematic traffic colliders. A mobile-friendly rigid-body driving model adds acceleration, speed limiting, braking/reverse, steering and lateral grip while Bullet resolves chassis collisions.
+## Stage 10 — enterable Ara 3D Gen sports car
+- Downloaded the modern sports-car body through Ara 3D Gen's vehicle builder and exported its separate driver-side vehicle prop with the driving/boarding/alighting action set.
+- Built a phone-oriented GLB from that export: about 3.72 MB and 47,799 triangles, retaining the named chassis, four wheel joints, steering wheel, two doors and two windows. The exported character animation payload was removed; Bullet drives the wheels and a small local door animation handles the visible entry/exit cue.
+- The game aligns all four rendered wheel joints to the Bullet raycast-wheel transforms and checks the maximum positional difference in the vehicle smoke test.
+- Uses an 820 kg Bullet chassis, four raycast wheel/suspension probes, building/street collision proxies and kinematic traffic colliders. This is a hybrid arcade-driving implementation: Bullet handles the rigid-body chassis, suspension probes and collisions, while speed/steering response includes game-tuned control logic. It is not a calibrated tire/engine simulation.
+- Entering disables Ara's on-foot controller/body, enables the driving HUD and chase camera, and starts engine audio. Exiting restores the player controller/body and on-foot camera. Driver door and window animate open/closed on entry and exit; a full visible character boarding/alighting animation is still future work.
 - Vehicle telemetry includes speed, estimated fuel and engine temperature. Fuel/temperature are stylized gameplay variables, not a thermochemical engine simulation or calibrated real-world vehicle model.
-- Procedural Web Audio provides an engine tone, skid and impact feedback; pooled VFX add exhaust, skid and collision particles.
-- Physical-device tuning, damage, gear ratios, drivetrain layouts, deformable bodywork and a high-fidelity tire/suspension model remain future work.
+- Procedural Web Audio provides engine tone, skid and impact feedback; pooled VFX add exhaust, skid and collision particles.
+- The original Blender-made Naija City sedan remains available as the load fallback. Physical Android tuning, collision damage, gear ratios, drivetrain layouts, deformable bodywork and a high-fidelity tire/suspension model remain future work.
+
+## Stage 10B — original ATL Sandbox hatchback prototype
+- Created a second, original compact hatchback in Blender 5.2.2 LTS inside the ATL Sandbox. The exported GLB is about 1.14 MB, with 117 nodes, 109 mesh nodes and 14 materials.
+- The model has a teal metallic body, glasshouse, mirrors, lights, grille, dashboard, seats, steering wheel, four separately grouped wheels and named driver/passenger door hinge objects.
+- Its Blender generator is preserved at scripts/vehicles/generate-compact-hatchback.py, and the GLB is staged at public/assets/vehicles/naija-city-compact-hatchback.glb.
+- This hatchback is an asset prototype only; it is not yet wired as a second drivable car. It will need its own pivot alignment, wheel physics setup, entry/exit handling and mobile render optimisation before it enters gameplay.
 
 ## UX polish
 - Grouped left/right thumb zones and responsive sizing for landscape phone aspect ratios.
@@ -83,6 +90,8 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - Inventory, missions and quick slots are UI foundations; no persistent inventory or save system is implemented.
 
 ## Architecture
+- src/vehicle-system.js / src/vehicle-physics.js: Ara vehicle loading, enter/exit handoff, vehicle controls, Bullet chassis/raycast wheels, telemetry, engine audio and vehicle VFX.
+- scripts/vehicles/generate-compact-hatchback.py: repeatable Blender source for the separate ATL Sandbox compact hatchback prototype.
 - `src/third-person-controller.js`: locomotion, sprint/stamina, jump, crouch, touch/keyboard input and camera.
 - `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback and Stage 08A expansion integration.
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
@@ -154,4 +163,4 @@ Player feedback currently includes pooled lightweight dust/jump/landing/parkour 
 - The curated Yaba route now has foundation caps/grip strips, a wall-mounted AC condenser and service shelf, low guard rails, parapet caps, ladder brackets and wall-run grip bars. Ballistic vaults are capped at 1.55 m; taller transitions use authored mantle, ledge or ladder actions instead of oversized jumps.
 - Player effects use a fixed 24-entity pool. The browser smoke test checks sprint on/off, camera startup distance, four ground surface probes, foot-placement hits, all eight traversal types, audio/VFX and the separate Hero 01 NPC.
 
-Professional implementation references: [PlayCanvas animation blend trees](https://developer.playcanvas.com/user-manual/animation/blend-trees/), [PlayCanvas collision shapes](https://developer.playcanvas.com/user-manual/physics/collision-shapes/), [PlayCanvas optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), and [PlayCanvas particle systems](https://developer.playcanvas.com/user-manual/graphics/particles/).
+Professional implementation references: [PlayCanvas vehicle physics](https://developer.playcanvas.com/tutorials/vehicle-physics/), [PlayCanvas ray casting](https://developer.playcanvas.com/user-manual/physics/ray-casting/), [PlayCanvas animation blend trees](https://developer.playcanvas.com/user-manual/animation/blend-trees/), [PlayCanvas collision shapes](https://developer.playcanvas.com/user-manual/physics/collision-shapes/), [PlayCanvas optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), and [Ara 3D Gen vehicle animation/export guide](https://ara3dgen.com/docs/animations/).

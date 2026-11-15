@@ -70,7 +70,7 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
 
   // The chassis is a single compound-sized box, not the detailed render mesh.
   // This is the recommended mobile-friendly separation of render and collision geometry.
-  const chassisShape = own(new Ammo.btBoxShape(vector(0.9, 0.34, 1.75)));
+  const chassisShape = own(new Ammo.btBoxShape(vector(1.04, 0.60, 2.42)));
   const initialPosition = options.position || { x: 0, y: 0.94, z: 8 };
   const initialYaw = Number.isFinite(options.yaw) ? options.yaw : 180;
   const chassis = addBody({ shape: chassisShape, mass: 820, position: initialPosition, yaw: initialYaw, friction: 0.85 });
@@ -91,10 +91,10 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
   // Bullet retains these vectors through each wheel's lifetime. Keep a unique
   // set per wheel; do not free or share the vectors before the vehicle is removed.
   const wheelDefinitions = [
-    { x: -1.02, y: -0.10, z: -1.16, front: true },
-    { x:  1.02, y: -0.10, z: -1.16, front: true },
-    { x: -1.02, y: -0.10, z: 1.16, front: false },
-    { x:  1.02, y: -0.10, z: 1.16, front: false }
+    { x: -0.912, y: -0.10, z: -1.662, front: true },
+    { x:  0.912, y: -0.10, z: -1.662, front: true },
+    { x: -0.912, y: -0.10, z:  1.662, front: false },
+    { x:  0.912, y: -0.10, z:  1.662, front: false }
   ];
   wheelDefinitions.forEach((wheel, index) => {
     const connection = vector(wheel.x, wheel.y, wheel.z);
@@ -268,6 +268,15 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
       return Math.atan2(2*(q.w()*q.y()+q.x()*q.z()),1-2*(q.y()*q.y()+q.x()*q.x()))*180/Math.PI;
     },
     getEnvironmentColliderCount: () => environmentBodies.length,
+    getWheelPositions: () => {
+      const positions = [];
+      for (let i = 0; i < 4; i++) {
+        vehicle.updateWheelTransform(i, true);
+        const origin = vehicle.getWheelTransformWS(i).getOrigin();
+        positions.push([origin.x(), origin.y(), origin.z()]);
+      }
+      return positions;
+    },
     getDynamicsState: () => {
       const velocity = chassis.body.getLinearVelocity();
       const orientation=chassis.body.getWorldTransform().getRotation();

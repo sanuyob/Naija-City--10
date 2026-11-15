@@ -35,6 +35,7 @@ export function createThirdPersonController(app, camera, canvas, {
   let orbitPointer = null;
   let orbitLastX = 0, orbitLastY = 0;
   let cameraYaw = 0, cameraPitch = 0.23;
+  let manualCameraHold = 0;
   let facingYaw = 0;
   let smoothedMoveSpeed = 0;
   let smoothedTurnInput = 0;
@@ -202,11 +203,18 @@ export function createThirdPersonController(app, camera, canvas, {
   function readJoystick(event) {
     if (!joystick) return;
     const rect = joystick.getBoundingClientRect();
-    let x = (event.clientX - (rect.left + rect.width / 2)) / (rect.width * 0.38);
-    let y = (event.clientY - (rect.top + rect.height / 2)) / (rect.height * 0.38);
+    // Match the analog range to the real thumb travel inside the circular pad.
+    // The earlier 0.38 multiplier left part of the stick's usable travel unused.
+    let x = (event.clientX - (rect.left + rect.width / 2)) / (rect.width * 0.34);
+    let y = (event.clientY - (rect.top + rect.height / 2)) / (rect.height * 0.34);
     const length = Math.hypot(x, y);
     if (length > 1) { x /= length; y /= length; }
-    input.x = x; input.y = y;
+    const deadZone = 0.045;
+    const remap = value => {
+      const magnitude = Math.abs(value);
+      return magnitude <= deadZone ? 0 : Math.sign(value) * (magnitude - deadZone) / (1 - deadZone);
+    };
+    input.x = remap(x); input.y = remap(y);
     if (knob) {
       knob.style.transform = `translate(${x * 24}px, ${y * 24}px)`;
     }
@@ -296,6 +304,7 @@ export function createThirdPersonController(app, camera, canvas, {
     orbitLastX = event.clientX; orbitLastY = event.clientY;
     cameraYaw -= dx * 0.006;
     cameraPitch = pc.math.clamp(cameraPitch + dy * 0.004, -0.02, 0.72);
+    manualCameraHold = 2.1;
   };
   const onPointerUp = event => { if (event.pointerId === orbitPointer) orbitPointer = null; };
   canvas.addEventListener('pointerdown', onPointerDown);
@@ -322,7 +331,7 @@ export function createThirdPersonController(app, camera, canvas, {
     const steeringTarget = traversalMotion ? 0 : axisX;
     smoothedTurnInput += (steeringTarget - smoothedTurnInput) * (1 - Math.exp(-13 * step));
     if (Math.abs(smoothedTurnInput) > 0.018) {
-      facingYaw -= smoothedTurnInput * 188 * step;
+      facingYaw -= smoothedTurnInput * 205 * step;
       facingYaw = ((facingYaw + 540) % 360) - 180;
       player.setEulerAngles(0, facingYaw, 0);
     }
@@ -338,8 +347,15 @@ export function createThirdPersonController(app, camera, canvas, {
     smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
     const speed = smoothedMoveSpeed;
 
-    // The character's own heading is the forward basis; camera orbit remains
-    // independent so dragging the scene never unexpectedly steers Ara.
+    // The character's own heading is the forward basis. Horizontal stick
+    // movement steers on the spot or while moving; the camera gently recentres
+    // behind that heading, unless the player has recently dragged the camera.
+    manualCameraHold = Math.max(0, manualCameraHold - step);
+    if (manualCameraHold <= 0 && Math.abs(smoothedTurnInput) > 0.035) {
+      const targetCameraYaw = facingYaw * Math.PI / 180;
+      const delta = ((targetCameraYaw - cameraYaw + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+      cameraYaw += delta * (1 - Math.exp(-5.2 * step));
+    }
     const yawRadians = facingYaw * Math.PI / 180;
     forward.set(-Math.sin(yawRadians), 0, -Math.cos(yawRadians));
     right.set(Math.cos(yawRadians), 0, -Math.sin(yawRadians));
@@ -633,7 +649,8 @@ export function createThirdPersonController(app, camera, canvas, {
   }
 
   function resetCameraAfterVehicle() {
-    cameraYaw = Math.PI;
+    cameraYaw = facingYaw * Math.PI / 180;
+    manualCameraHold = 0;
     cameraPitch = 0.23;
     const p=player.getPosition();
     const height=input.crouch?1.02:1.28;
@@ -666,7 +683,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return setPosition(position, yaw);
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z)});
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z)});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,
