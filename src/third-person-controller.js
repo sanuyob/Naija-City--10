@@ -220,8 +220,19 @@ export function createThirdPersonController(app, camera, canvas, {
     }
   }
   function resetJoystick() {
+    const wasActive = joystickPointer !== null;
     joystickPointer = null; input.x = 0; input.y = 0;
     if (knob) knob.style.transform = 'translate(0, 0)';
+    // Stop the physics body at release, not merely the next desired input.
+    // This prevents residual Bullet momentum from making the character look
+    // as if an NPC is still walking after the thumb has lifted.
+    if (wasActive) {
+      const p = player.getPosition();
+      smoothedMoveSpeed = 0;
+      moving = false;
+      velocity.x = 0; velocity.z = 0;
+      physics?.teleport?.([p.x, p.y, p.z], [0, velocity.y, 0]);
+    }
   }
   joystick?.addEventListener('pointerdown', event => {
     event.preventDefault(); joystickPointer = event.pointerId;
@@ -230,8 +241,16 @@ export function createThirdPersonController(app, camera, canvas, {
   joystick?.addEventListener('pointermove', event => {
     if (event.pointerId === joystickPointer) { event.preventDefault(); readJoystick(event); }
   });
-  joystick?.addEventListener('pointerup', event => { if (event.pointerId === joystickPointer) resetJoystick(); });
-  joystick?.addEventListener('pointercancel', resetJoystick);
+  const endJoystickPointer = event => {
+    if (joystickPointer !== null && (event.pointerId === undefined || event.pointerId === joystickPointer)) resetJoystick();
+  };
+  joystick?.addEventListener('pointerup', endJoystickPointer);
+  joystick?.addEventListener('pointercancel', endJoystickPointer);
+  joystick?.addEventListener('lostpointercapture', endJoystickPointer);
+  // Pointer capture can be interrupted by mobile browser UI or orientation
+  // changes. A window-level release is the final safety net against stuck input.
+  window.addEventListener('pointerup', endJoystickPointer, true);
+  window.addEventListener('pointercancel', endJoystickPointer, true);
   const queueJump = event => {
     event.preventDefault();
     const started = typeof tryTraversal === 'function' && tryTraversal(getState()) === true;
@@ -591,6 +610,8 @@ export function createThirdPersonController(app, camera, canvas, {
     window.removeEventListener('keydown', onKeyDown);
     window.removeEventListener('keyup', onKeyUp);
     window.removeEventListener('blur', onBlur);
+    window.removeEventListener('pointerup', endJoystickPointer, true);
+    window.removeEventListener('pointercancel', endJoystickPointer, true);
     canvas.removeEventListener('pointerdown', onPointerDown);
     canvas.removeEventListener('pointermove', onPointerMove);
     canvas.removeEventListener('pointerup', onPointerUp);
