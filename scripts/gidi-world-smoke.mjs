@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 
 const port = 4176;
 const origin = `http://127.0.0.1:${port}`;
-const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
+const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
 let browser;
 try {
   let ready = false;
@@ -103,18 +103,19 @@ try {
   await page.evaluate(() => window.__NAIJA_GAME__.debugSetPlayerForSmoke([82, 0, -385], -15.5));
   const vehicleEntered = await page.evaluate(() => window.__NAIJA_GAME__.debugEnterVehicleForSmoke());
   if (!vehiclePlaced || !vehicleEntered) throw new Error('Could not place Ara and enter the vehicle at the connector threshold');
-  const vehicleStartState = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
+  // Finish the approach/door/seat phases in fixed game steps before enabling
+  // throttle; wall-clock waits are unreliable under the heavy SwiftShader scene.
+  const entryAdvance = await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceVehicleForSmoke(180));
+  const vehicleStartState = entryAdvance.vehicle;
+  if (!vehicleStartState?.occupied) throw new Error('Sedan staged entry did not reach the occupied state: '+JSON.stringify(entryAdvance));
   await page.evaluate(() => window.__NAIJA_GAME__.debugSetVehicleInputForSmoke(0, true, false));
-  const gatewayDriveSamples = [];
-  let gatewayDriveState = vehicleStartState;
-  for (let i = 0; i < 30; i++) {
-    await page.waitForTimeout(1000);
-    gatewayDriveState = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
-    gatewayDriveSamples.push({ position: gatewayDriveState.position, speedKmh: gatewayDriveState.speedKmh, wheelContacts: gatewayDriveState.dynamics?.measuredWheelContacts });
-    if (gatewayDriveState.position[2] < -447 && gatewayDriveState.position[0] > 98 && gatewayDriveState.position[1] > .35 && gatewayDriveState.position[1] < 1.7 && gatewayDriveState.dynamics?.measuredWheelContacts >= 3) break;
-  }
-  if (gatewayDriveState.position[2] >= -447 || gatewayDriveState.position[0] <= 98 || gatewayDriveState.dynamics.measuredWheelContacts < 3 || gatewayDriveState.speedKmh < 5) {
-    throw new Error('Sedan did not drive on the physical gateway with wheel contacts: ' + JSON.stringify({ vehiclePlaced, vehicleEntered, vehicleStartState, gatewayDriveState, gatewayDriveSamples }));
+  const gatewayDrive = await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceVehicleForSmoke(600,{x:98,z:-447}));
+  const gatewayDriveState = gatewayDrive.vehicle;
+  const gatewayDriveSamples = [{frames:gatewayDrive.frames,position:gatewayDriveState.position,
+    speedKmh:gatewayDriveState.speedKmh,wheelContacts:gatewayDriveState.dynamics?.measuredWheelContacts}];
+  if (!gatewayDrive.completed || gatewayDriveState.position[2] >= -447 || gatewayDriveState.position[0] <= 98 ||
+      gatewayDriveState.dynamics.measuredWheelContacts < 3 || gatewayDriveState.speedKmh < 5) {
+    throw new Error('Sedan did not drive on the physical gateway with wheel contacts: ' + JSON.stringify({ vehiclePlaced, vehicleEntered, vehicleStartState, gatewayDrive, gatewayDriveSamples }));
   }
   await page.evaluate(() => { window.__NAIJA_GAME__.debugClearVehicleInputForSmoke(); window.__NAIJA_GAME__.debugExitVehicleForSmoke(); });
 

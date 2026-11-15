@@ -3,7 +3,7 @@ import {mkdir} from 'node:fs/promises';
 import {setTimeout as delay} from 'node:timers/promises';
 import {chromium} from 'playwright';
 const port=4175,origin=`http://127.0.0.1:${port}`;
-const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','preview','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
+const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
 let browser;
 try{
  let ready=false;for(let i=0;i<40;i++){try{if((await fetch(origin)).ok){ready=true;break}}catch{}if(server.exitCode!==null)throw Error('preview exited '+server.exitCode);await delay(500)}
@@ -29,6 +29,7 @@ try{
   }}});
  if(String(state.assetStatus||'').includes('Environment startup failed')||String(state.status||'').includes('Could not start'))throw Error('Game startup failed: '+JSON.stringify({status:state.status,assetStatus:state.assetStatus}));
  if(!state.playerCharacterReady||state.characterSource!=='ara-3d-gen-female-preset'||state.characterGeometry!=='rigged-glb')throw Error('Ara GLB not active: '+JSON.stringify(state));
+ if(!['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].every(name=>state.animations.includes(name)))throw Error('Ara ladder traversal clips were not bound to her real skeleton: '+JSON.stringify(state.animations));
  if(state.characterForwardCorrection!==180)throw Error('Ara forward-facing correction failed: '+JSON.stringify(state.characterForwardCorrection));
  if(state.startupPreload?.total!==48||state.startupPreload?.loaded!==48||state.startupPreload?.failed!==0||!state.startupPreload?.ready||!state.loadingHidden)throw Error('Yaba building preload was incomplete before play: '+JSON.stringify({preload:state.startupPreload,loadingHidden:state.loadingHidden}));
  if(state.objective||state.parkourButton)throw Error('Obstructive objective HUD or duplicate parkour button remains in active controls');
@@ -101,8 +102,9 @@ try{
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
  await page.mouse.down();
- await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
+ await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.44,{steps:8});
  const sprintBox=await sprintButton.boundingBox();
+ const sprintStartSteps=await page.evaluate(()=>window.__NAIJA_GAME__?.getPhysicsState?.().player?.steps||0);
  await sprintButton.dispatchEvent('pointerdown',{pointerId:93,pointerType:'touch',isPrimary:true,button:0,buttons:1,clientX:sprintBox.x+sprintBox.width/2,clientY:sprintBox.y+sprintBox.height/2});
  await sprintButton.dispatchEvent('pointerup',{pointerId:93,pointerType:'touch',isPrimary:true,button:0,buttons:0,clientX:sprintBox.x+sprintBox.width/2,clientY:sprintBox.y+sprintBox.height/2});
  // A real touch also emits click after pointerup; send it explicitly for this
@@ -113,9 +115,14 @@ try{
    const animation=window.__NAIJA_GAME__?.getHeroAnimationState?.();
    return player?.running===true && animation?.activeClip==='Run';
  },null,{timeout:8000});
+ await page.waitForFunction(startSteps=>{
+   const game=window.__NAIJA_GAME__,player=game?.getPlayerState?.();
+   const steps=game?.getPhysicsState?.().player?.steps||0;
+   return steps>=startSteps+16&&player?.horizontalSpeed>=6.2&&player?.targetMoveSpeed>=6.8;
+ },sprintStartSteps,{timeout:30000});
  const runState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),pressed:document.querySelector('#sprint-button')?.getAttribute('aria-pressed')}));
  await page.mouse.up();
- if(!runState.player?.running||!runState.player?.sprintEnabled||runState.animation?.activeClip!=='Run'||runState.pressed!=='true')throw Error('Mobile sprint tap did not toggle Ara running animation: '+JSON.stringify(runState));
+ if(!runState.player?.running||!runState.player?.sprintEnabled||runState.animation?.activeClip!=='Run'||runState.pressed!=='true'||runState.player.horizontalSpeed<6.2)throw Error('Mobile sprint tap did not reach the tuned 7.2 m/s run state: '+JSON.stringify(runState));
  await sprintButton.tap();
  const sprintOff=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),pressed:document.querySelector('#sprint-button')?.getAttribute('aria-pressed')}));
  if(sprintOff.player?.sprintEnabled||sprintOff.pressed!=='false')throw Error('Second sprint tap did not disable sprint: '+JSON.stringify(sprintOff));
@@ -158,7 +165,7 @@ try{
  const standState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),physics:window.__NAIJA_GAME__?.getPhysicsState?.().player}));
  if(!standRestored||standState.player?.crouched||Math.abs(standState.physics?.capsuleHeight-1.8)>.01)throw Error('Standing capsule did not restore after crouch: '+JSON.stringify(standState));
  const jumpPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.debugJumpPhysicsForSmoke?.());
- if(!jumpPhysics||jumpPhysics.airborne.position[1]<=0||!jumpPhysics.landed.grounded||jumpPhysics.landed.position[1]!==0)throw Error('Jump/landing physics check failed: '+JSON.stringify(jumpPhysics));
+ if(!jumpPhysics||jumpPhysics.airborne.position[1]<.82||jumpPhysics.airborne.position[1]>1.2||!jumpPhysics.landed.grounded||jumpPhysics.landed.position[1]!==0)throw Error('Jump/landing physics must reach a controlled ~0.9 m jump and settle cleanly: '+JSON.stringify(jumpPhysics));
  if((jumpPhysics.vfx?.byType?.jump||0)<1||(jumpPhysics.vfx?.byType?.landing||0)<1)throw Error('Jump/landing VFX events did not fire: '+JSON.stringify(jumpPhysics.vfx));
  // Use the same Jump touch action as the player: at an obstacle it must parkour.
  await page.evaluate(()=>{window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0);});

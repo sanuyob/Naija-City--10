@@ -4,7 +4,7 @@ import { chromium } from 'playwright';
 
 const port = 4188;
 const origin = 'http://127.0.0.1:' + port;
-const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
+const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
 let browser;
 
 try {
@@ -40,7 +40,7 @@ try {
     accessPoints: window.__NAIJA_GAME__.buildingAccessPoints,
     traversal: window.__NAIJA_GAME__.getTraversalState(),
     vehicle: window.__NAIJA_GAME__.getVehicleState(),
-    controls: ['vehicle-controls', 'drive-accelerate', 'drive-brake', 'drive-exit'].map(id => !!document.getElementById(id))
+    controls: ['vehicle-controls', 'drive-accelerate', 'drive-brake', 'drive-left', 'drive-right', 'drive-exit'].map(id => !!document.getElementById(id))
   }));
   if (inventory.buildings !== 48 || inventory.accessPoints !== 192 ||
       inventory.traversal.buildingRouteCount !== 48 ||
@@ -53,66 +53,176 @@ try {
       !inventory.vehicle.modelParts?.passengerWindow ||
       !inventory.vehicle.modelParts?.steeringWheel ||
       inventory.vehicle.wheelAlignmentMaxError === null ||
+      !inventory.vehicle.playerCarColliderReady ||
       inventory.controls.some(value => !value)) {
     throw new Error('Building access or vehicle asset contract failed: ' + JSON.stringify(inventory));
   }
 
+  const carCollision = await page.evaluate(() => window.__NAIJA_GAME__.debugProbeVehicleColliderForSmoke());
+  const bodyCollision = await page.evaluate(() => window.__NAIJA_GAME__.debugProbeVehicleBodyCollisionForSmoke());
+  if (!carCollision.vehicleColliderReady || !carCollision.hit || carCollision.hit.surface !== 'metal' ||
+      !bodyCollision.vehicleColliderReady || !bodyCollision.blockedByCar || bodyCollision.finalOffset < 1.25 || bodyCollision.movementTowardCar < .65) {
+    throw new Error('The sedan must physically stop the player capsule, not merely be raycast-visible: ' + JSON.stringify({carCollision,bodyCollision}));
+  }
   const entered = await page.evaluate(() => window.__NAIJA_GAME__.debugEnterVehicleForSmoke());
-  const seated = await page.evaluate(() => ({
-    occupied: window.__NAIJA_GAME__.getVehicleState().occupied,
-    controllerEnabled: window.__NAIJA_GAME__.getPlayerState().controlEnabled,
-    bodyEnabled: window.__NAIJA_GAME__.getPhysicsState().player.playerBodyEnabled,
-    hudHidden: document.querySelector('#vehicle-controls')?.hidden
+  const enteringState = await page.evaluate(() => ({
+    vehicle:window.__NAIJA_GAME__.getVehicleState(),
+    visible:window.__NAIJA_GAME__.getPlayerState().visible,
+    controllerEnabled:window.__NAIJA_GAME__.getPlayerState().controlEnabled,
+    bodyEnabled:window.__NAIJA_GAME__.getPhysicsState().player.playerBodyEnabled,
+    hudHidden:document.querySelector('#vehicle-controls')?.hidden
   }));
-  if (!entered || !seated.occupied || seated.controllerEnabled || seated.bodyEnabled || seated.hudHidden) {
-    throw new Error('Vehicle enter handoff failed: ' + JSON.stringify(seated));
+  if (!entered || !enteringState.vehicle.entering || enteringState.vehicle.entryPhase !== 'approach' || !enteringState.visible ||
+      enteringState.controllerEnabled || enteringState.bodyEnabled !== true || !enteringState.hudHidden) {
+    throw new Error('Visible, collision-aware vehicle approach did not start: ' + JSON.stringify(enteringState));
   }
-  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle > 15, null, { timeout: 4000 });
-  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle < 2, null, { timeout: 15000 });
+  await page.waitForFunction(() => {
+    const car=window.__NAIJA_GAME__?.getVehicleState?.();
+    return car?.entryPhase==='door' && car?.entryAnimation==='Ara_DoorOpen' && car?.modelParts?.driverDoorAngle>15;
+  }, null, { timeout: 45000 });
+  const doorPose=await page.evaluate(()=>({vehicle:window.__NAIJA_GAME__.getVehicleState(),animation:window.__NAIJA_GAME__.getHeroAnimationState()}));
+  if(doorPose.animation.activeClip!=='Ara_DoorOpen'||!doorPose.vehicle.entering){
+    throw new Error('Ara must visibly play the dedicated door-opening pose: '+JSON.stringify(doorPose));
+  }
+  await page.waitForFunction(() => {
+    const car=window.__NAIJA_GAME__?.getVehicleState?.();
+    return car?.entryPhase==='seat' && car?.entryAnimation==='Ara_EnterVehicle';
+  }, null, { timeout: 15000 });
+  const seatPose=await page.evaluate(()=>({vehicle:window.__NAIJA_GAME__.getVehicleState(),animation:window.__NAIJA_GAME__.getHeroAnimationState(),visible:window.__NAIJA_GAME__.getPlayerState().visible}));
+  if(seatPose.animation.activeClip!=='Ara_EnterVehicle'||!seatPose.visible||seatPose.vehicle.playerCarColliderReady!==true){
+    throw new Error('Ara must play the dedicated seat-entry pose while visible: '+JSON.stringify(seatPose));
+  }
+  try {
+    await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().occupied === true, null, { timeout: 20000 });
+  } catch (error) {
+    const state=await page.evaluate(()=>window.__NAIJA_GAME__?.getVehicleState?.());
+    if(!state?.occupied)throw new Error('Vehicle entry did not complete: '+JSON.stringify({state,browserErrors:errors,waitError:error.message}));
+  }
+  const seated = await page.evaluate(() => ({
+    vehicle:window.__NAIJA_GAME__.getVehicleState(),
+    controllerEnabled:window.__NAIJA_GAME__.getPlayerState().controlEnabled,
+    bodyEnabled:window.__NAIJA_GAME__.getPhysicsState().player.playerBodyEnabled,
+    visible:window.__NAIJA_GAME__.getPlayerState().visible,
+    hudHidden:document.querySelector('#vehicle-controls')?.hidden
+  }));
+  if (!seated.vehicle.occupied || seated.vehicle.entering || seated.controllerEnabled || seated.bodyEnabled || seated.visible || seated.hudHidden) {
+    throw new Error('Vehicle enter handoff did not finish: ' + JSON.stringify(seated));
+  }
+  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle < 2, null, { timeout: 20000 });
 
-  const startSteps = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState().physicsSteps);
-  await page.evaluate(() => window.__NAIJA_GAME__.debugSetVehicleInputForSmoke(0, true, false));
-  await page.waitForFunction(steps => window.__NAIJA_GAME__.getVehicleState().physicsSteps >= steps + 70, startSteps, { timeout: 60000 });
-  const accelerated = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
+  // Check both control layouts. Two-Handed is the default: steering left,
+  // accelerator/brake right. One-Handed moves those axes onto the thumb stick.
+  const twoHandedLayout=await page.evaluate(()=>({
+    mode:window.__NAIJA_RPG_UI__?.getVehicleControlsMode?.(),
+    pedalDisplay:getComputedStyle(document.querySelector('.drive-pedals')).display,
+    steeringDisplay:getComputedStyle(document.querySelector('.drive-steering')).display
+  }));
+  if(twoHandedLayout.mode!=='two-handed'||twoHandedLayout.pedalDisplay==='none'||twoHandedLayout.steeringDisplay==='none'){
+    throw new Error('Two-Handed vehicle controls must be visible by default: '+JSON.stringify(twoHandedLayout));
+  }
+  await page.evaluate(()=>window.__NAIJA_RPG_UI__?.setVehicleControlsMode?.('one-handed'));
+  const oneHandedLayout=await page.evaluate(()=>({
+    mode:window.__NAIJA_RPG_UI__?.getVehicleControlsMode?.(),
+    pedalDisplay:getComputedStyle(document.querySelector('.drive-pedals')).display,
+    steeringDisplay:getComputedStyle(document.querySelector('.drive-steering')).display,
+    stickDisplay:getComputedStyle(document.querySelector('#move-joystick')).display
+  }));
+  if(oneHandedLayout.mode!=='one-handed'||oneHandedLayout.pedalDisplay!=='none'||oneHandedLayout.steeringDisplay!=='none'||oneHandedLayout.stickDisplay==='none'){
+    throw new Error('One-Handed layout must hide the arrow buttons and expose the thumb stick: '+JSON.stringify(oneHandedLayout));
+  }
+  await page.evaluate(()=>window.__NAIJA_RPG_UI__?.setVehicleControlsMode?.('two-handed'));
+
+  async function holdButton(selector,physicsFrames){
+    const box=await page.locator(selector).boundingBox();
+    if(!box)throw new Error('Vehicle touch control is not visible: '+selector);
+    const before=await page.evaluate(()=>window.__NAIJA_GAME__.getVehicleState().physicsSteps);
+    await page.mouse.move(box.x+box.width/2,box.y+box.height/2);
+    await page.mouse.down();
+    try{
+      // Keep the control pressed until the vehicle simulation—not wall-clock
+      // time—has advanced the requested number of frames. SwiftShader can
+      // render slowly, so releasing after a fixed delay produces false fails.
+      await page.waitForFunction(({before,physicsFrames})=>
+        window.__NAIJA_GAME__?.getVehicleState?.().physicsSteps>=before+physicsFrames,
+        {before,physicsFrames},{timeout:120000});
+      return await page.evaluate(()=>window.__NAIJA_GAME__.getVehicleState());
+    }finally{
+      await page.mouse.up();
+    }
+  }
+  const accelerated = await holdButton('#drive-accelerate',90);
   if (accelerated.speedKmh < 50 || accelerated.dynamics.measuredWheelContacts < 3 ||
-      accelerated.wheelAlignmentMaxError > .18) {
-    throw new Error('Vehicle did not accelerate with aligned wheel probes on road: ' + JSON.stringify(accelerated));
+      accelerated.wheelAlignmentMaxError > .18 || accelerated.dynamics.uprightTiltDegrees>4.5 || Math.abs(accelerated.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The Two-Handed accelerator must move the sedan without tipping and retain four wheel contacts: ' + JSON.stringify(accelerated));
   }
 
-  const brakeSteps = accelerated.physicsSteps;
-  await page.evaluate(() => window.__NAIJA_GAME__.debugSetVehicleInputForSmoke(0, false, true));
-  await page.waitForFunction(steps => window.__NAIJA_GAME__.getVehicleState().physicsSteps >= steps + 12, brakeSteps, { timeout: 30000 });
-  const braked = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
-  if (braked.speedKmh >= accelerated.speedKmh - 5) {
-    throw new Error('Brake input did not reduce speed: ' + JSON.stringify({ accelerated: accelerated.speedKmh, braked: braked.speedKmh }));
+  const turned = await holdButton('#drive-right',36);
+  const turnDegrees = Math.abs(((turned.yaw - accelerated.yaw + 540) % 360) - 180);
+  if (turnDegrees < 4 || turned.dynamics.uprightTiltDegrees>4.5 || Math.abs(turned.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The steering arrows must change heading without tumbling the car: ' + JSON.stringify({turnDegrees,turned}));
   }
 
-  const steeringSteps = braked.physicsSteps;
-  await page.evaluate(() => window.__NAIJA_GAME__.debugSetVehicleInputForSmoke(1, false, false));
-  await page.waitForFunction(steps => window.__NAIJA_GAME__.getVehicleState().physicsSteps >= steps + 35, steeringSteps, { timeout: 30000 });
-  const turned = await page.evaluate(() => window.__NAIJA_GAME__.getVehicleState());
-  const turnDegrees = Math.abs(((turned.yaw - braked.yaw + 540) % 360) - 180);
-  if (turnDegrees < 5) {
-    throw new Error('Vehicle steering did not change the chassis heading: ' + JSON.stringify({ before: braked.yaw, after: turned.yaw }));
+  const braked = await holdButton('#drive-brake',36);
+  if (braked.speedKmh >= turned.speedKmh - 4 || braked.dynamics.uprightTiltDegrees>4.5) {
+    throw new Error('The brake/reverse arrow must slow the sedan without upsetting the chassis: ' + JSON.stringify({turned:turned.speedKmh,braked}));
   }
 
   const exited = await page.evaluate(() => window.__NAIJA_GAME__.debugExitVehicleForSmoke());
+  await page.waitForFunction(() => {
+    const car=window.__NAIJA_GAME__?.getVehicleState?.();
+    const player=window.__NAIJA_GAME__?.getPlayerState?.();
+    return car&&!car.occupied&&player?.controlEnabled===true&&player?.visible===true;
+  }, null, { timeout: 15000 });
   const onFoot = await page.evaluate(() => ({
-    controllerEnabled: window.__NAIJA_GAME__.getPlayerState().controlEnabled,
-    bodyEnabled: window.__NAIJA_GAME__.getPhysicsState().player.playerBodyEnabled,
-    hudHidden: document.querySelector('#vehicle-controls')?.hidden,
-    cameraDistance: window.__NAIJA_GAME__.getPlayerState().cameraActualDistance,
-    occupied: window.__NAIJA_GAME__.getVehicleState().occupied
+    player:window.__NAIJA_GAME__.getPlayerState(),
+    vehicle:window.__NAIJA_GAME__.getVehicleState(),
+    bodyEnabled:window.__NAIJA_GAME__.getPhysicsState().player.playerBodyEnabled,
+    hudHidden:document.querySelector('#vehicle-controls')?.hidden,
+    cameraDistance:window.__NAIJA_GAME__.getPlayerState().cameraActualDistance
   }));
-  if (!exited || !onFoot.controllerEnabled || !onFoot.bodyEnabled || !onFoot.hudHidden ||
-      onFoot.occupied || onFoot.cameraDistance > 4.6) {
-    throw new Error('Vehicle exit did not restore Ara and the close camera: ' + JSON.stringify(onFoot));
+  if (!exited || !onFoot.player.controlEnabled || !onFoot.bodyEnabled || !onFoot.hudHidden ||
+      onFoot.vehicle.occupied || onFoot.cameraDistance > 4.6) {
+    throw new Error('Vehicle exit must animate Ara back outside and restore the close chase camera: ' + JSON.stringify(onFoot));
   }
-  await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle > 15, null, { timeout: 5000 });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.getVehicleState?.().modelParts?.driverDoorAngle < 2, null, { timeout: 15000 });
 
-  const parkour = [];
-  for (const routeType of ['ladder', 'mantle', 'ledge', 'wall-run']) {
+  const ladderStart=await page.evaluate(()=>window.__NAIJA_GAME__.debugStartBuildingTraversalForSmoke('yaba-core-01','ladder'));
+  if(!ladderStart.started)throw new Error('Could not start a live Yaba building ladder climb: '+JSON.stringify(ladderStart));
+  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip==='Ara_LadderClimb',null,{timeout:10000});
+  // Capture an early segment while the real application RAF is running. A
+  // good climb has pauses and pull pulses synchronized to the two-rung clip,
+  // not a constant-rate elevator curve.
+  // The browser's software renderer is slow, so complete the same controller
+  // + Bullet ladder update path at fixed 50 ms steps. This is deterministic and
+  // still exercises collision resolution, rung timing, IK, and clip switching.
+  const ladderSimulation=await page.evaluate(()=>window.__NAIJA_GAME__.debugCompleteTraversalForSmoke(600));
+  if(!ladderSimulation.completed||ladderSimulation.simulatedFrames<1){
+    throw new Error('The Bullet ladder controller did not complete its deterministic fixed-step run: '+JSON.stringify(ladderSimulation));
+  }
+  const ladderMidTrace=ladderSimulation.pulseTrace;
+  const ladderFinal=await page.evaluate(start=>{
+    const game=window.__NAIJA_GAME__,player=game.getPlayerState(),traversal=game.getTraversalState();
+    const feet=game.getHeroFootPositions?.()||null;
+    const roofGround=game.getGroundProbe?.([player.position[0],player.position[1]+.45,player.position[2]],
+      [player.position[0],player.position[1]-.45,player.position[2]])||null;
+    return {started:true,requestedType:'ladder',completedType:traversal.lastTraversal?.type,
+      buildingId:traversal.lastTraversal?.buildingId,clip:traversal.lastTraversal?.clip,
+      clips:traversal.lastTraversal?.clips||[],height:player.position[1],destination:traversal.lastTraversal?.destination,
+      finalPosition:player.position,facingYaw:player.facingYaw,expectedFacingYaw:start.expectedFacingYaw,
+      grounded:player.grounded,rungCount:traversal.lastTraversal?.rungCount||0,
+      climbDuration:traversal.lastTraversal?.duration||0,roofGround,feet,
+      footPlacementHits:player.footPlacementHits,visualBounds:game.getHeroVisualBounds?.()||null,
+      animation:game.getHeroAnimationState?.()||null,traversalsCompleted:traversal.traversalsCompleted,
+      routePosition:start.routePosition,approach:start.approach};
+  },ladderStart);
+  const ladderFootY=[ladderFinal.feet?.left?.[1],ladderFinal.feet?.right?.[1]].filter(Number.isFinite);
+  const roofY=ladderFinal.roofGround?.point?.[1];
+  const footErrors=Number.isFinite(roofY)&&ladderFootY.length?ladderFootY.map(y=>Number((y-roofY).toFixed(3))):[];
+  const ladder= {...ladderFinal,footErrors,pulseTrace:ladderMidTrace,simulatedFrames:ladderSimulation.simulatedFrames,clipChanges:ladderSimulation.clipChanges,physicsSteps:ladderSimulation.physics.steps};
+
+
+  const parkour=[ladder];
+  for (const routeType of ['mantle', 'ledge', 'wall-run']) {
     const result = await page.evaluate(type => {
       const action = window.__NAIJA_GAME__.debugTraverseBuildingForSmoke('yaba-core-01', type);
       return {
@@ -121,13 +231,24 @@ try {
         completedType: action.traversal.lastTraversal?.type,
         buildingId: action.traversal.lastTraversal?.buildingId,
         clip: action.traversal.lastTraversal?.clip,
+        clips: action.traversal.lastTraversal?.clips||[],
         height: action.player.position[1],
         destination: action.traversal.lastTraversal?.destination,
         finalPosition: action.player.position,
+        facingYaw: action.player.facingYaw,
+        expectedFacingYaw: action.expectedFacingYaw,
         grounded: action.player.grounded,
+        rungCount: action.traversal.lastTraversal?.rungCount||0,
+        climbDuration: action.traversal.lastTraversal?.duration||0,
+        roofGround: window.__NAIJA_GAME__.getGroundProbe?.(
+          [action.player.position[0],action.player.position[1]+.45,action.player.position[2]],
+          [action.player.position[0],action.player.position[1]-.45,action.player.position[2]]
+        )||null,
         completed: action.traversal.traversalsCompleted
       };
     }, routeType);
+    await page.waitForTimeout(500);
+    result.feet = await page.evaluate(()=>window.__NAIJA_GAME__.getHeroFootPositions?.()||null);
     parkour.push(result);
   }
   if (parkour.some(route =>
@@ -139,7 +260,16 @@ try {
       route.finalPosition[0] - route.destination[0],
       route.finalPosition[2] - route.destination[2]
     ) > 1.25) ||
-    !route.grounded
+    !route.grounded ||
+    Math.abs(((route.facingYaw-route.expectedFacingYaw+540)%360)-180)>2 ||
+    (route.requestedType==='ladder'&&route.rungCount<20) ||
+    (route.requestedType==='ladder'&&route.climbDuration<10) ||
+    (route.requestedType==='ladder'&&!['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].every(name=>route.clips.includes(name))) ||
+    (route.requestedType==='ladder'&&(!route.roofGround||Math.abs(route.roofGround.point?.[1]-route.height)>.16)) ||
+    (route.requestedType==='ladder'&&(!route.pulseTrace||route.pulseTrace.positiveSamples<8||route.pulseTrace.holdSamples<2||route.pulseTrace.maxStep<.02)) ||
+    (route.requestedType==='ladder'&&(route.footErrors.length!==2||route.footErrors.some(error=>error<-.08||error>.55))) ||
+    (route.requestedType==='ladder'&&route.footPlacementHits<1) ||
+    (route.requestedType!=='wall-run'&&(!route.roofGround||Math.abs(route.finalPosition[1]-route.roofGround.point[1])>.08))
   )) {
     throw new Error('One or more targeted building parkour routes failed: ' + JSON.stringify(parkour));
   }
@@ -152,7 +282,11 @@ try {
     vehicle: {
       model: inventory.vehicle.modelSource,
       wheels: inventory.vehicle.wheelCount,
-      driverDoorAnimations: 'entry + exit',
+      driverDoorAnimations: 'visible approach + Ara_DoorOpen + Ara_EnterVehicle + Ara_ExitVehicle + door close',
+      solidChassisProxy: carCollision.vehicleColliderReady && carCollision.hit?.surface==='metal' && bodyCollision.blockedByCar,
+      twoHandedTouchControls: twoHandedLayout.pedalDisplay!=='none' && twoHandedLayout.steeringDisplay!=='none',
+      oneHandedTouchControls: oneHandedLayout.stickDisplay!=='none' && oneHandedLayout.pedalDisplay==='none',
+      maximumRollPitchDegrees: Math.max(accelerated.dynamics.uprightTiltDegrees,Math.abs(accelerated.dynamics.pitchDegrees)),
       wheelAlignmentMaxError: accelerated.wheelAlignmentMaxError,
       measuredRoadWheelContacts: accelerated.dynamics.measuredWheelContacts,
       topTestSpeedKmh: accelerated.speedKmh,
@@ -160,6 +294,9 @@ try {
       steeringTurnDegrees: turnDegrees,
       exitCameraDistance: onFoot.cameraDistance
     },
+    carCollision,
+    bodyCollision,
+    entry: { visibleApproach: enteringState.visible, dedicatedDoorPose:doorPose.animation.activeClip, dedicatedSeatPose:seatPose.animation.activeClip, staged: true, final: seated },
     parkour,
     browserErrors: errors
   }, null, 2));

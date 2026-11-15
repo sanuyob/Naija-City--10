@@ -106,6 +106,9 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const scratchVelocity = vector(0, 0, 0);
   const scratchTransform = own(new Ammo.btTransform());
   const scratchOrigin = vector(0, 0, 0);
+  const colliderSyncTransform = own(new Ammo.btTransform());
+  const colliderSyncOrigin = vector(0, 0, 0);
+  const colliderSyncRotation = own(new Ammo.btQuaternion(0, 0, 0, 1));
   let steps = 0;
   let collisions = 0;
   let playerBodyEnabled = true;
@@ -212,9 +215,13 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const linear = body.getLinearVelocity();
     const supportHit = raycast([p[0], p[1] + .12, p[2]], [p[0], p[1] - .20, p[2]]);
     const raySupport = Boolean(supportHit && supportHit.normal[1] > .55 && p[1] >= supportHit.point[1] - .035 && p[1] - supportHit.point[1] < .18);
-    let grounded = (hasSupportContact() || raySupport) && linear.y() <= 1.2;
-    if (p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
-    if (p[1] < groundY) grounded = true;
+    // Ladder traversal must be allowed to rise through the ground probe's
+    // support tolerance. Otherwise a slow first rung is repeatedly snapped
+    // back to Y=0 and looks like the character is on an invisible elevator.
+    const ignoreGroundSupport=actor.ignoreGroundSupport===true;
+    let grounded = !ignoreGroundSupport && (hasSupportContact() || raySupport) && linear.y() <= 1.2;
+    if (!ignoreGroundSupport && p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
+    if (!ignoreGroundSupport && p[1] < groundY) grounded = true;
     if (grounded && p[1] <= groundY + 0.075) {
       p[1] = groundY;
       teleport(p, [linear.x(), 0, linear.z()]);
@@ -289,6 +296,44 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     return indices.length;
   }
 
+  // Keep selected static proxies synchronized with objects simulated in a
+  // different Bullet world (for example, the player sedan). The shape remains
+  // a compact OBB; only its transform changes each frame.
+  function updateStaticColliders(ownerId, items = []) {
+    const indices = colliderOwners.get(ownerId);
+    if (!indices || !Array.isArray(items)) return 0;
+    let updated = 0;
+    for (let localIndex = 0; localIndex < Math.min(indices.length, items.length); localIndex++) {
+      const index = indices[localIndex];
+      const record = colliderBodies[index];
+      const descriptor = colliderDescriptors[index];
+      const item = items[localIndex];
+      if (!record || !descriptor || !Array.isArray(item?.position) || item.position.length < 3 || !item.position.every(Number.isFinite)) continue;
+      const yaw = Number(item.rotationY) || 0;
+      descriptor.position = item.position.slice(0, 3);
+      descriptor.rotationY = yaw;
+      descriptor.surface = item.surface || descriptor.surface;
+      colliderSyncTransform.setIdentity();
+      colliderSyncOrigin.setValue(...descriptor.position);
+      colliderSyncTransform.setOrigin(colliderSyncOrigin);
+      const halfYaw = yaw * Math.PI / 360;
+      colliderSyncRotation.setValue(0, Math.sin(halfYaw), 0, Math.cos(halfYaw));
+      colliderSyncTransform.setRotation(colliderSyncRotation);
+      record.body.setWorldTransform(colliderSyncTransform);
+      record.body.getMotionState?.()?.setWorldTransform?.(colliderSyncTransform);
+      if (colliderEnabled[index]) world.updateSingleAabb(record.body);
+      updated++;
+    }
+    return updated;
+  }
+
+  function setStaticColliderEnabled(ownerId, localIndex, enabled) {
+    const indices = colliderOwners.get(ownerId);
+    if (!indices) return false;
+    const index = indices[Math.floor(Number(localIndex))];
+    return index === undefined ? false : setColliderEnabled(index, enabled);
+  }
+
   function removeStaticColliders(ownerId) {
     const indices = colliderOwners.get(ownerId);
     if (!indices) return 0;
@@ -343,7 +388,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, addStaticColliders, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, cleanup,
+    step, teleport, setColliderEnabled, addStaticColliders, updateStaticColliders, setStaticColliderEnabled, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule', playerBodyEnabled,
       steps, collisions,

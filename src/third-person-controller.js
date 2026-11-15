@@ -16,7 +16,7 @@ export function createThirdPersonController(app, camera, canvas, {
   let activeHeroCharacter = heroCharacter ?? null;
   let heroVisual = activeHeroCharacter?.root ?? null;
   if (heroVisual) {
-    heroVisual.setLocalPosition(0, 0, 0);
+    heroVisual.setLocalPosition(0, activeHeroCharacter?.visualGroundOffset || 0, 0);
     heroVisual.setLocalScale(1, 1, 1);
     player.addChild(heroVisual);
   }
@@ -171,8 +171,12 @@ export function createThirdPersonController(app, camera, canvas, {
     const end=[pc.math.clamp(destination[0],-120,4200),Math.max(0,destination[1]),pc.math.clamp(destination[2],-3900,480)];
     const dx=end[0]-p.x,dz=end[2]-p.z,distance=Math.hypot(dx,dz);
     if(distance<.2)return false;
-    if(distance>.05) {
-      facingYaw = Math.atan2(dx,-dz)*180/Math.PI;
+    if(distance>.05 || Number.isFinite(options.facingYaw)) {
+      // World-forward is (-sin(yaw), -cos(yaw)); the former positive X
+      // delta made horizontal ladder approaches face directly away from walls.
+      facingYaw = Number.isFinite(options.facingYaw)
+        ? ((options.facingYaw + 540) % 360) - 180
+        : Math.atan2(-dx,-dz)*180/Math.PI;
       player.setEulerAngles(0,facingYaw,0);
     }
     const gravity=Math.max(9,Number(physics?.getState?.().gravity)||18);
@@ -180,16 +184,23 @@ export function createThirdPersonController(app, camera, canvas, {
     const launchVelocity=Math.sqrt(2*gravity*apex);
     const actionPose=options.mode||"vault";
     const kinematicClimb=["step","mantle","ledge","ladder"].includes(actionPose);
-    const duration=kinematicClimb
-      ? Math.max(.55,Math.min(5.2,Number(options.duration)||1.0))
-      : Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
+    const phaseDurations=Array.isArray(options.phaseDurations)
+      ? options.phaseDurations.map(value=>Math.max(.05,Number(value)||.05)) : null;
+    const duration=phaseDurations?.length
+      ? phaseDurations.reduce((sum,value)=>sum+value,0)
+      : kinematicClimb
+        ? Math.max(.55,Math.min(40,Number(options.duration)||1.0))
+        : Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
     const activeClip=missingActionClip?(animationFallbacks.action||animationFallbacks.idle):clips[0];
     traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex,mode:actionPose,
       clips,activePhase:0,activeClip,missingActionClip,gravity,launchVelocity,
-      kinematic:kinematicClimb,restoreGravity:gravity};
+      kinematic:kinematicClimb,restoreGravity:gravity,phaseDurations,
+      mountPosition:Array.isArray(options.mountPosition)?options.mountPosition.slice():null,
+      ladderPosition:options.ladderPosition||null,ladderNormal:options.ladderNormal||null,
+      rungSpacing:Math.max(.2,Number(options.rungSpacing)||.4),rungCount:Math.max(1,Math.floor(Number(options.rungCount)||1)),blockedTime:0};
     if(kinematicClimb)physics?.setGravity?.(0);
     velocity.set(dx/duration,kinematicClimb?(end[1]-p.y)/duration:launchVelocity,dz/duration);
-    actionClip=activeClip;actionTimer=duration+.45;grounded=false;jumpBuffer=0;
+    actionClip=activeClip;actionTimer=duration;grounded=false;jumpBuffer=0;
     heroCharacterPose(actionPose,missingActionClip);
     transitionHeroClip(activeClip,.08);
     onEffect?.("parkour",[p.x,p.y,p.z]);
@@ -366,10 +377,10 @@ export function createThirdPersonController(app, camera, canvas, {
     const driveMagnitude = Math.hypot(axisX, axisY);
     moving = !traversalMotion && driveMagnitude > 0.12;
     running = !traversalMotion && moving && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
-    if (running) stamina = Math.max(0, stamina - 15 * step);
-    else stamina = Math.min(100, stamina + 19 * step);
+    if (running) stamina = Math.max(0, stamina - 12 * step);
+    else stamina = Math.min(100, stamina + 20 * step);
     const stickStrength = pc.math.clamp((driveMagnitude - 0.075) / 0.925, 0, 1);
-    const maxSpeed = input.crouch ? 1.05 : running ? 4.45 : 2.65;
+    const maxSpeed = input.crouch ? 1.05 : running ? 7.2 : 3.0;
     const targetMoveSpeed = moving ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
     const response = moving ? 11.5 : 24;
     smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
@@ -392,21 +403,87 @@ export function createThirdPersonController(app, camera, canvas, {
     if(traversalMotion){
       traversalMotion.elapsed+=step;
       const progress=Math.min(1,traversalMotion.elapsed/traversalMotion.duration);
-      const phase=Math.min(traversalMotion.clips.length-1,Math.floor(Math.min(.999,progress)*traversalMotion.clips.length));
+      let phase=Math.min(traversalMotion.clips.length-1,Math.floor(Math.min(.999,progress)*traversalMotion.clips.length));
+      let phaseProgress=progress;
+      if(traversalMotion.phaseDurations?.length){
+        let phaseStart=0;phase=traversalMotion.phaseDurations.length-1;
+        for(let i=0;i<traversalMotion.phaseDurations.length;i++){
+          const phaseEnd=phaseStart+traversalMotion.phaseDurations[i];
+          if(traversalMotion.elapsed<phaseEnd||i===traversalMotion.phaseDurations.length-1){
+            phase=i;phaseProgress=pc.math.clamp((traversalMotion.elapsed-phaseStart)/traversalMotion.phaseDurations[i],0,1);break;
+          }
+          phaseStart=phaseEnd;
+        }
+      }
       if(phase!==traversalMotion.activePhase){traversalMotion.activePhase=phase;traversalMotion.activeClip=traversalMotion.clips[phase]||traversalMotion.activeClip;actionClip=traversalMotion.activeClip;transitionHeroClip(traversalMotion.activeClip,.12);}
       if(traversalMotion.kinematic){
-        // Step-ups, mantles, ledge pulls and ladders need a controlled climb,
-        // not a generic ballistic jump that lands back at street level.
-        const eased=progress*progress*(3-2*progress);
-        const target=traversalMotion.start.map((value,index)=>value+(traversalMotion.end[index]-value)*eased);
-        velocity.set((target[0]-p.x)/step,(target[1]-p.y)/step,(target[2]-p.z)/step);
-        proposedPosition=target;
-        physics?.teleport?.(target,[velocity.x,velocity.y,velocity.z]);
+        const smooth=t=>t*t*(3-2*t);
+        let target;
+        if(traversalMotion.mode==='ladder'&&traversalMotion.mountPosition&&traversalMotion.phaseDurations?.length===3){
+          const mount=traversalMotion.mountPosition;
+          const climbHeight=Math.max(0,traversalMotion.end[1]-mount[1]);
+          const rungCount=traversalMotion.rungCount;
+          if(phase===0){
+            const eased=smooth(phaseProgress);
+            target=traversalMotion.start.map((value,index)=>value+(mount[index]-value)*eased);
+          }else if(phase===1){
+            // Hold/grip followed by a distinct pull to the next rung. This
+            // replaces the old constant smoothstep elevator trajectory.
+            const rungPhase=phaseProgress*rungCount;
+            const rungIndex=Math.min(rungCount-1,Math.floor(rungPhase));
+            const within=rungPhase-rungIndex;
+            const pull=smooth(pc.math.clamp((within-.16)/.64,0,1));
+            const rungHeight=climbHeight/rungCount;
+            const climbed=phaseProgress>=1?climbHeight:(rungIndex+pull)*rungHeight;
+            target=[mount[0],mount[1]+climbed,mount[2]];
+          }else{
+            const top=[mount[0],traversalMotion.end[1],mount[2]];
+            const eased=smooth(phaseProgress);
+            target=top.map((value,index)=>value+(traversalMotion.end[index]-value)*eased);
+          }
+          // The climb clip is a two-rung cycle. Apply two-bone arm and leg IK
+          // only during the rung-pull phase; mount and top-out use their own
+          // authored poses so the hands visibly release the ladder.
+          if(phase===1)activeHeroCharacter?.applyClimbHandPlacement?.({
+            ladderPosition:traversalMotion.ladderPosition,normal:traversalMotion.ladderNormal,
+            rootY:target[1],topY:traversalMotion.end[1],rungSpacing:traversalMotion.rungSpacing,
+            rungIndex:Math.floor(Math.max(0,target[1]-mount[1])/traversalMotion.rungSpacing),alpha:Math.min(1,step*18)
+          });
+        }else{
+          const eased=smooth(progress);
+          target=traversalMotion.start.map((value,index)=>value+(traversalMotion.end[index]-value)*eased);
+        }
+        const requestedVelocity=[(target[0]-p.x)/step,(target[1]-p.y)/step,(target[2]-p.z)/step];
+        if(traversalMotion.mode==='ladder'&&physics?.step){
+          // Ladder movement is no longer a per-frame teleport. Bullet keeps
+          // the capsule live against the building proxy while the root follows
+          // the rung-timed displacement curve. Only the ladder trigger is
+          // released; walls and roof surfaces remain solid.
+          const body={position:currentPosition.slice(),velocity:[velocity.x,requestedVelocity[1],velocity.z],
+            radius:.30,height:1.78,grounded:false,traversing:true,ignoreGroundSupport:true};
+          physics.step(body,requestedVelocity,step);
+          proposedPosition=body.position.slice();
+          velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);
+          traversalMotion.lastGrounded=Boolean(body.grounded);
+          const error=Math.hypot(target[0]-proposedPosition[0],target[1]-proposedPosition[1],target[2]-proposedPosition[2]);
+          traversalMotion.blockedTime=error>.22?traversalMotion.blockedTime+step:Math.max(0,traversalMotion.blockedTime-step*2);
+        }else{
+          velocity.set(requestedVelocity[0],requestedVelocity[1],requestedVelocity[2]);
+          proposedPosition=target;
+          physics?.teleport?.(target,[velocity.x,velocity.y,velocity.z]);
+        }
         grounded=progress>=1;
-        if(progress>=1){
-          proposedPosition=traversalMotion.end.slice();
-          velocity.y=0;
-          physics?.teleport?.(proposedPosition,[velocity.x,0,velocity.z]);
+        if(traversalMotion.blockedTime>1.25){
+          // Stop cleanly rather than letting a blocked capsule ghost through a
+          // facade. The player remains at the last collision-resolved point.
+          physics?.setGravity?.(traversalMotion.restoreGravity);
+          velocity.set(0,0,0);grounded=Boolean(traversalMotion.lastGrounded);traversalMotion=null;actionTimer=0;actionClip="";
+          heroCharacterPose(null,false);
+          onEffect?.("landing",proposedPosition);
+        }else if(progress>=1){
+          proposedPosition=proposedPosition.slice();
+          velocity.set(0,0,0);
+          grounded=Boolean(traversalMotion.lastGrounded);
           physics?.setGravity?.(traversalMotion.restoreGravity);
           traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
           onEffect?.("landing",proposedPosition);
@@ -433,7 +510,7 @@ export function createThirdPersonController(app, camera, canvas, {
         }
       }
     }else{
-      if(jumpBuffer>0&&coyote>0){velocity.y=6.45;grounded=false;coyote=0;jumpBuffer=0;jumpStartTimer=.22;transitionHeroClip('Hero01_JumpStart',.07);onEffect?.("jump",currentPosition);}
+      if(jumpBuffer>0&&coyote>0){velocity.y=5.8;grounded=false;coyote=0;jumpBuffer=0;jumpStartTimer=.22;transitionHeroClip('Hero01_JumpStart',.07);onEffect?.("jump",currentPosition);}
       const desired=[movement.x*speed,0,movement.z*speed];
       if(physics?.step){
         const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded};
@@ -447,10 +524,9 @@ export function createThirdPersonController(app, camera, canvas, {
       }
     }
     input.jumpQueued=false;
-    // Scripted step/mantle/ledge/ladder trajectories already have their
-    // dedicated traversal obstacle temporarily released from Bullet. Do not
-    // run the ordinary building-proxy resolver over these authored paths:
-    // it can pin the capsule against the very ledge it is climbing.
+    // Authored traversal paths are resolved either by Bullet (ladders) or by
+    // their temporary obstacle release (short mantles/ledges). Do not apply a
+    // second AABB resolver to those already collision-checked trajectories.
     const resolvedPosition=(traversalMotion?.kinematic || scriptedKinematicFrame)
       ? proposedPosition
       : typeof resolveMovement==='function'
@@ -470,7 +546,7 @@ export function createThirdPersonController(app, camera, canvas, {
     // lateral movement never create autonomous rotation.
 
     if (heroVisual?.anim) {
-      const animationSpeed = input.crouch ? 0 : Math.min(3.75, Math.hypot(velocity.x, velocity.z));
+      const animationSpeed = input.crouch ? 0 : Math.min(7.2, Math.hypot(velocity.x, velocity.z));
       heroVisual.anim.setFloat?.('moveSpeed', animationSpeed);
       if(!wasGrounded&&grounded){landingTimer=.28;onEffect?.("landing",[p.x,p.y,p.z]);}
       if(traversalMotion){heroCharacterPose(traversalMotion.mode,traversalMotion.missingActionClip);transitionHeroClip(traversalMotion.activeClip,.1);}
@@ -526,16 +602,22 @@ export function createThirdPersonController(app, camera, canvas, {
     if (heroVisual?.anim && grounded && !traversalMotion && !input.crouch) {
       const feet = activeHeroCharacter?.getFootPositions?.();
       if (feet?.left && feet?.right) {
+        // Probe the complete foot-to-floor column. The earlier short ray
+        // ended above some elevated roof surfaces when a landing pose lifted
+        // the ankle bone, so it never reached the actual collision plane.
         const probe = foot => physics?.raycast?.(
-          [foot[0], foot[1] + .26, foot[2]],
-          [foot[0], foot[1] - .48, foot[2]]
+          [foot[0], Math.max(foot[1] + .24, p.y + 1.82), foot[2]],
+          [foot[0], p.y - .24, foot[2]]
         );
         const leftHit = probe(feet.left), rightHit = probe(feet.right);
         if (leftHit || rightHit) footPlacementHits++;
+        // Pass complete ray hits: the rig helper needs the point (and can
+        // later use the normal) rather than receiving the point array itself.
         activeHeroCharacter?.applyFootPlacement?.({
-          left: leftHit?.point,
-          right: rightHit?.point
-        }, Math.min(1, step * 9));
+          left: leftHit,
+          right: rightHit
+        }, Math.min(1, step * 12));
+
       }
     }
 
@@ -643,6 +725,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return Boolean(heroVisual);
   }
 
+
   function setPosition(position, yaw = 0) {
     if (!Array.isArray(position) || position.length !== 3 || !position.every(Number.isFinite)) return false;
     player.setPosition(position[0], position[1], position[2]);
@@ -661,6 +744,7 @@ export function createThirdPersonController(app, camera, canvas, {
     lastFootstepCycle = null;
     lastFootstepProgress = null;
     input.jumpQueued = false;
+    if(!controlEnabled)resetCameraAfterVehicle();
     return true;
   }
 
@@ -709,7 +793,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return setPosition(position, yaw);
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z)});
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,

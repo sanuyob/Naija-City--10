@@ -74,8 +74,14 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
   const initialPosition = options.position || { x: 0, y: 0.94, z: 8 };
   const initialYaw = Number.isFinite(options.yaw) ? options.yaw : 180;
   const chassis = addBody({ shape: chassisShape, mass: 820, position: initialPosition, yaw: initialYaw, friction: 0.85 });
-  chassis.body.setDamping(0.025, 0.12);
+  chassis.body.setDamping(0.025, 0.18);
+  // A player sedan should steer around world-up, not roll or pitch like a
+  // loose box. Bullet's angular factor locks X/Z while preserving yaw.
+  const uprightAngularFactor = vector(0, 1, 0);
+  chassis.body.setAngularFactor(uprightAngularFactor);
   chassis.body.setActivationState(4);
+  chassis.body.setCcdMotionThreshold?.(0.5);
+  chassis.body.setCcdSweptSphereRadius?.(0.62);
 
   const tuning = own(new Ammo.btVehicleTuning());
   const raycaster = own(new Ammo.btDefaultVehicleRaycaster(world));
@@ -273,8 +279,10 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     // Vehicle dynamics: v = v + a*dt, yaw-rate follows steering and speed.
     // The Bullet rigid body still resolves chassis impacts against city proxies.
     const speedSign=controlledSpeedMps<-.05?-1:1;
-    const yawRate=-steeringInput*Math.min(1.05,.045+Math.abs(controlledSpeedMps)*.085)*speedSign;
-    steeringTorqueVector.setValue(0,yawRate*820,0);
+    const yawRate=-steeringInput*Math.min(.82,.045+Math.abs(controlledSpeedMps)*.045)*speedSign;
+    // setAngularVelocity expects radians/second. Multiplying this by chassis
+    // mass (820 kg) was the source of the violent spin/tumble on throttle.
+    steeringTorqueVector.setValue(0,yawRate,0);
     chassis.body.setAngularVelocity(steeringTorqueVector);
     driveForceVector.setValue(fx*controlledSpeedMps,linear.y(),fz*controlledSpeedMps);
     chassis.body.setLinearVelocity(driveForceVector);
@@ -352,8 +360,17 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     },
     getDynamicsState: () => {
       const velocity = chassis.body.getLinearVelocity();
+      const angularVelocity=chassis.body.getAngularVelocity();
       const orientation=chassis.body.getWorldTransform().getRotation();
-      const forward=[-2*(orientation.x()*orientation.z()+orientation.w()*orientation.y()),0,-(1-2*(orientation.x()*orientation.x()+orientation.y()*orientation.y()))];
+      const qx=orientation.x(),qy=orientation.y(),qz=orientation.z(),qw=orientation.w();
+      // Measure upright tilt from the transformed local up axis; Euler roll
+      // is ambiguous at a 180-degree yaw and falsely reports 180° for upright cars.
+      const uprightTilt=Math.acos(Math.max(-1,Math.min(1,1-2*(qx*qx+qz*qz))))*180/Math.PI;
+      // In this Y-up scene, heading is rotation about Y. Measure nose-up/down
+      // from the car's local forward axis, not the yaw quaternion component.
+      const forwardY=2*(qw*qx-qy*qz);
+      const pitch=Math.asin(Math.max(-1,Math.min(1,forwardY)))*180/Math.PI;
+      const forward=[-2*(qx*qz+qw*qy),0,-(1-2*(qx*qx+qy*qy))];
       const wheels = [];
       for (let i=0;i<4;i++) {
         try {
@@ -381,7 +398,7 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
           wheels.push(result);
         } catch { wheels.push({inContact:null,suspensionLength:null,groundRayHit:false}); }
       }
-      return {velocity:[velocity.x(),velocity.y(),velocity.z()],orientation:[orientation.x(),orientation.y(),orientation.z(),orientation.w()],forward,simulationSteps,wheels,measuredWheelContacts:wheels.filter(w=>w.contactMeasured).length};
+      return {velocity:[velocity.x(),velocity.y(),velocity.z()],angularVelocity:[angularVelocity.x(),angularVelocity.y(),angularVelocity.z()],orientation:[qx,qy,qz,qw],uprightTiltDegrees:uprightTilt,pitchDegrees:pitch,forward,simulationSteps,wheels,measuredWheelContacts:wheels.filter(w=>w.contactMeasured).length};
     },
     cleanup,
     vehicle,

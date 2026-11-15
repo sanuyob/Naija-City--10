@@ -5,7 +5,7 @@ const views = {
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
   map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
   character: ['PLAYER PROFILE', 'Player', '<div class="profile"><b>AF</b><div><strong>ARA 3D FEMALE</strong><p>Main playable character</p><small>THE_FEMALE_EXECUTIVE · ARA 3D GEN</small></div></div><div class="mission character-import-card"><small>ONLY PLAYABLE CHARACTER</small><b>ARA 3D FEMALE · MAIN PLAYER</b><p>Ara is the only playable character. Hero 01 is a city NPC. The ready-made Female Executive character is bundled from Ara 3D Gen with a game rig and locomotion/parkour animations.</p><p id="player-character-status" role="status">Ara 3D Gen Female Executive · loading built-in character asset…</p></div><div class="stat">Player role <b>MAIN</b></div><div class="stat">Character slot <b>01</b></div>'],
-  settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><p class="muted">Landscape-first controls. Gameplay settings are expanded in later stages.</p>'],
+  settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><div class="setting">Vehicle controls <button data-setting="vehicle-controls" data-mode="two-handed" aria-pressed="true">TWO-HANDED</button></div><p class="muted">Two-Handed uses left/right steering and separate accelerator/brake buttons. One-Handed uses the movement stick for steering and forward/reverse.</p>'],
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
 
@@ -54,8 +54,14 @@ export function mountRPGInterface() {
         <span id="vehicle-fuel">FUEL 100%</span>
       </div>
       <button id="drive-exit" type="button" aria-label="Exit vehicle">EXIT</button>
-      <button id="drive-brake" type="button" aria-label="Brake or reverse">BRAKE<br><small>REVERSE</small></button>
-      <button id="drive-accelerate" type="button" aria-label="Accelerate">GAS<br><small>HOLD</small></button>
+      <div class="drive-steering" aria-label="Steering">
+        <button id="drive-left" type="button" aria-label="Steer left">←<small>LEFT</small></button>
+        <button id="drive-right" type="button" aria-label="Steer right">→<small>RIGHT</small></button>
+      </div>
+      <div class="drive-pedals" aria-label="Accelerator and brake">
+        <button id="drive-accelerate" type="button" aria-label="Accelerate">↑<small>ACCELERATE</small></button>
+        <button id="drive-brake" type="button" aria-label="Brake or reverse">↓<small>BRAKE / REVERSE</small></button>
+      </div>
     </section>
     <div class="quick-slots" aria-label="Quick access slots">
       <button data-slot="1" aria-label="Quick slot 1"><b>1</b><small>EMPTY</small></button>
@@ -75,6 +81,7 @@ export function mountRPGInterface() {
 
   let paused = false;
   let characterRequired = false;
+  let vehicleControlsMode = 'two-handed';
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
@@ -156,6 +163,10 @@ export function mountRPGInterface() {
     }
     const setting = event.target.closest('[data-setting]');
     if (setting) {
+      if(setting.dataset.setting==='vehicle-controls'){
+        setVehicleControlsMode(vehicleControlsMode==='two-handed'?'one-handed':'two-handed');
+        return;
+      }
       const enabled = setting.getAttribute('aria-pressed') !== 'true';
       setting.setAttribute('aria-pressed', String(enabled));
       setting.textContent = enabled ? 'ON' : 'OFF';
@@ -194,6 +205,17 @@ export function mountRPGInterface() {
     root.querySelector('#hud-player-state').textContent = 'STATUS · ' + (state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY');
   }
   function setWorldActivity() { /* Compatibility hook; no centre-screen population banner. */ }
+  function setVehicleControlsMode(mode='two-handed') {
+    vehicleControlsMode=mode==='one-handed'?'one-handed':'two-handed';
+    root.classList.toggle('vehicle-controls-one-handed',vehicleControlsMode==='one-handed');
+    const button=root.querySelector('[data-setting="vehicle-controls"]');
+    if(button){
+      button.dataset.mode=vehicleControlsMode;
+      button.textContent=vehicleControlsMode==='two-handed'?'TWO-HANDED':'ONE-HANDED';
+      button.setAttribute('aria-pressed',String(vehicleControlsMode==='two-handed'));
+    }
+    return vehicleControlsMode;
+  }
   function setVehicleMode(active, state = {}) {
     const driving = Boolean(active);
     root.classList.toggle('in-vehicle', driving);
@@ -214,6 +236,7 @@ export function mountRPGInterface() {
   return window.__NAIJA_RPG_UI__ = {
     stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, setVehicleMode, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
+    setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     isPlayerCharacterRequired: () => characterRequired
   };
 }

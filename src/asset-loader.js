@@ -22,10 +22,7 @@ function createAraCrouchTracks(root) {
     }
     return null;
   };
-  const roles = {
-    hips: pick('Hips','Pelvis'),
-    spine: pick('Spine2','Chest','Spine')
-  };
+  const roles = { hips: pick('Hips','Pelvis'), spine: pick('Spine2','Chest','Spine') };
   const pathFor = node => {
     const path = []; let current = node;
     while (current && current !== root) { path.unshift(current.name); current = current.parent; }
@@ -66,6 +63,123 @@ function createAraCrouchTracks(root) {
     return new pc.AnimTrack(name, duration, [input], outputs, curves);
   };
   return [makeTrack('Ara_Crouch', false), makeTrack('Ara_CrouchWalk', true)];
+}
+
+
+// Ara's bundled Female Executive preset has no authored ladder clips. Build a
+// small rung-cycle on her real Mixamo-style skeleton, then let two-bone IK put
+// wrists and ankles on the actual ladder/roof contact points at runtime.
+function createAraTraversalTracks(root) {
+  const bones = new Map();
+  for (const render of root.findComponents('render')) {
+    for (const meshInstance of render.meshInstances || []) {
+      for (const bone of meshInstance.skinInstance?.bones || []) {
+        if (bone?.name) bones.set(bone.name.toLowerCase().replace(/[^a-z0-9]/g, ''), bone);
+      }
+    }
+  }
+  const pick = (...names) => {
+    for (const name of names) {
+      const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      for (const [candidate, bone] of bones) if (candidate === key || candidate.endsWith(key)) return bone;
+    }
+    return null;
+  };
+  const roles = {
+    hips: pick('Hips'), spine: pick('Spine2','Chest','Spine'),
+    leftUpperArm: pick('LeftArm','UpperArm_L'), rightUpperArm: pick('RightArm','UpperArm_R'),
+    leftForeArm: pick('LeftForeArm','LowerArm_L'), rightForeArm: pick('RightForeArm','LowerArm_R'),
+    leftThigh: pick('LeftUpLeg','Thigh_L'), rightThigh: pick('RightUpLeg','Thigh_R'),
+    leftKnee: pick('LeftLeg','Shin_L'), rightKnee: pick('RightLeg','Shin_R')
+  };
+  const pathFor = node => {
+    const path=[]; let current=node;
+    while(current&&current!==root){path.unshift(current.name);current=current.parent;}
+    return current===root&&path.length?path:null;
+  };
+  const times=[0,.25,.5,.75,1];
+  const makeTrack=(name,duration,pose)=>{
+    const input=new pc.AnimData(1,new Float32Array(times.map(t=>t*duration)));
+    const outputs=[],curves=[];
+    const addRotation=(bone,frames)=>{
+      if(!bone||!frames)return;
+      const path=pathFor(bone);if(!path)return;
+      const base=bone.getLocalRotation().clone(),data=[];
+      for(const angles of frames){
+        const delta=new pc.Quat().setFromEulerAngles(angles[0],angles[1],angles[2]);
+        const q=base.clone().mul(delta);data.push(q.x,q.y,q.z,q.w);
+      }
+      const index=outputs.length;outputs.push(new pc.AnimData(4,new Float32Array(data)));
+      curves.push(new pc.AnimCurve([{entityPath:path,component:'graph',propertyPath:['localRotation']}],0,index,pc.INTERPOLATION_LINEAR));
+    };
+    const addPosition=(bone,frames)=>{
+      if(!bone||!frames)return;
+      const path=pathFor(bone);if(!path)return;
+      const base=bone.getLocalPosition(),data=[];
+      for(const offset of frames)data.push(base.x+offset[0],base.y+offset[1],base.z+offset[2]);
+      const index=outputs.length;outputs.push(new pc.AnimData(3,new Float32Array(data)));
+      curves.push(new pc.AnimCurve([{entityPath:path,component:'graph',propertyPath:['localPosition']}],0,index,pc.INTERPOLATION_LINEAR));
+    };
+    addPosition(roles.hips,pose.hips);
+    addRotation(roles.spine,pose.spine);
+    addRotation(roles.leftUpperArm,pose.leftUpperArm);
+    addRotation(roles.rightUpperArm,pose.rightUpperArm);
+    addRotation(roles.leftForeArm,pose.leftForeArm);
+    addRotation(roles.rightForeArm,pose.rightForeArm);
+    addRotation(roles.leftThigh,pose.leftThigh);
+    addRotation(roles.rightThigh,pose.rightThigh);
+    addRotation(roles.leftKnee,pose.leftKnee);
+    addRotation(roles.rightKnee,pose.rightKnee);
+    if(!curves.length)throw new Error('Ara ladder animation could not bind to the character skeleton.');
+    return new pc.AnimTrack(name,duration,[input],outputs,curves);
+  };
+  return [
+    makeTrack('Ara_LadderMount',.68,{
+      spine:[[-5,0,0],[-10,0,0],[-9,0,0],[-4,0,0],[0,0,0]],
+      leftThigh:[[8,0,0],[12,0,0],[8,0,0],[3,0,0],[0,0,0]],rightThigh:[[8,0,0],[12,0,0],[8,0,0],[3,0,0],[0,0,0]],
+      leftKnee:[[8,0,0],[15,0,0],[12,0,0],[5,0,0],[0,0,0]],rightKnee:[[8,0,0],[15,0,0],[12,0,0],[5,0,0],[0,0,0]]
+    }),
+    makeTrack('Ara_LadderClimb',.92,{
+      spine:[[-7,0,0],[-10,0,0],[-7,0,0],[-10,0,0],[-7,0,0]],
+      leftThigh:[[15,0,0],[-8,0,0],[-15,0,0],[8,0,0],[15,0,0]],rightThigh:[[-15,0,0],[8,0,0],[15,0,0],[-8,0,0],[-15,0,0]],
+      leftKnee:[[20,0,0],[34,0,0],[20,0,0],[8,0,0],[20,0,0]],rightKnee:[[8,0,0],[20,0,0],[34,0,0],[20,0,0],[8,0,0]]
+    }),
+    makeTrack('Ara_LadderDismount',.72,{
+      spine:[[-9,0,0],[-5,0,0],[2,0,0],[4,0,0],[0,0,0]],
+      leftThigh:[[12,0,0],[4,0,0],[-5,0,0],[-2,0,0],[0,0,0]],rightThigh:[[12,0,0],[4,0,0],[-5,0,0],[-2,0,0],[0,0,0]],
+      leftKnee:[[22,0,0],[14,0,0],[5,0,0],[0,0,0],[0,0,0]],rightKnee:[[22,0,0],[14,0,0],[5,0,0],[0,0,0],[0,0,0]]
+    }),
+    makeTrack('Ara_DoorOpen',.56,{
+      spine:[[0,0,0],[-3,0,0],[-5,0,0],[-3,0,0],[0,0,0]],
+      rightUpperArm:[[0,0,0],[-10,0,-22],[-12,0,-34],[-7,0,-25],[0,0,0]],
+      rightForeArm:[[0,0,0],[0,0,-24],[0,0,-46],[0,0,-25],[0,0,0]],
+      leftUpperArm:[[0,0,0],[-3,0,8],[-4,0,10],[-2,0,5],[0,0,0]]
+    }),
+    makeTrack('Ara_EnterVehicle',.78,{
+      hips:[[0,0,0],[0,-.04,.015],[0,-.13,.07],[0,-.08,.04],[0,0,0]],
+      spine:[[0,0,0],[9,0,0],[17,0,0],[11,0,0],[0,0,0]],
+      rightUpperArm:[[0,0,0],[-12,0,-18],[-16,0,-30],[-8,0,-14],[0,0,0]],
+      leftUpperArm:[[0,0,0],[-8,0,13],[-12,0,22],[-5,0,10],[0,0,0]],
+      rightForeArm:[[0,0,0],[0,0,-24],[0,0,-38],[0,0,-18],[0,0,0]],
+      leftForeArm:[[0,0,0],[0,0,18],[0,0,32],[0,0,12],[0,0,0]],
+      leftThigh:[[0,0,0],[12,0,0],[32,0,0],[24,0,0],[0,0,0]],
+      rightThigh:[[0,0,0],[18,0,0],[46,0,0],[32,0,0],[0,0,0]],
+      leftKnee:[[0,0,0],[18,0,0],[34,0,0],[24,0,0],[0,0,0]],
+      rightKnee:[[0,0,0],[22,0,0],[48,0,0],[30,0,0],[0,0,0]]
+    }),
+    makeTrack('Ara_ExitVehicle',.72,{
+      hips:[[0,0,0],[0,-.12,.06],[0,-.06,.02],[0,-.02,0],[0,0,0]],
+      spine:[[0,0,0],[14,0,0],[10,0,0],[4,0,0],[0,0,0]],
+      rightUpperArm:[[-5,0,-16],[-12,0,-28],[-10,0,-20],[-4,0,-8],[0,0,0]],
+      leftUpperArm:[[-5,0,10],[-10,0,20],[-7,0,14],[-2,0,5],[0,0,0]],
+      rightForeArm:[[0,0,-18],[0,0,-34],[0,0,-24],[0,0,-10],[0,0,0]],
+      leftForeArm:[[0,0,16],[0,0,28],[0,0,18],[0,0,8],[0,0,0]],
+      leftThigh:[[30,0,0],[22,0,0],[10,0,0],[4,0,0],[0,0,0]],
+      rightThigh:[[42,0,0],[30,0,0],[14,0,0],[5,0,0],[0,0,0]],
+      leftKnee:[[32,0,0],[24,0,0],[10,0,0],[2,0,0],[0,0,0]],
+      rightKnee:[[46,0,0],[32,0,0],[14,0,0],[3,0,0],[0,0,0]]
+    })
+  ];
 }
 
 function loadAsset(app, name, type, url) {
@@ -268,9 +382,16 @@ export async function loadHeroCharacter(app, {
     }
     if (!clipNames.length) throw new Error('The character GLB has no playable animation clips.');
     if (characterId === 'ara-female') {
-      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk');
+      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk', 'Ara_LadderMount', 'Ara_LadderClimb', 'Ara_LadderDismount',
+        'Ara_DoorOpen', 'Ara_EnterVehicle', 'Ara_ExitVehicle');
       clipDurations.Ara_Crouch = .96;
       clipDurations.Ara_CrouchWalk = .96;
+      clipDurations.Ara_LadderMount = .68;
+      clipDurations.Ara_LadderClimb = .92;
+      clipDurations.Ara_LadderDismount = .72;
+      clipDurations.Ara_DoorOpen = .56;
+      clipDurations.Ara_EnterVehicle = .78;
+      clipDurations.Ara_ExitVehicle = .72;
     }
 
     const findClip = patterns => clipNames.find(name => patterns.some(pattern => pattern.test(name)));
@@ -294,6 +415,9 @@ export async function loadHeroCharacter(app, {
     const loopable = new Set(clipNames.filter(name =>
       /(?:^|_)(?:idle|walk|jog|run|sprint|crouch)(?:_|$)/i.test(name)
     ));
+    // A long ladder route repeats a short rung cycle until the character reaches the roof.
+    loopable.add('Hero01_LadderClimb');
+    loopable.add('Ara_LadderClimb');
     for (const name of [defaultClips.idle, defaultClips.walk, defaultClips.run, defaultClips.crouch, defaultClips.crouchWalk]) {
       if (name) loopable.add(name);
     }
@@ -304,7 +428,7 @@ export async function loadHeroCharacter(app, {
       instanceRoot.addComponent('anim', { activate: true });
       if (!instanceRoot.anim) throw new Error('PlayCanvas did not create animation component for ' + instanceName);
       if (characterId === 'ara-female') {
-        const customTracks = createAraCrouchTracks(instanceRoot);
+        const customTracks = [...createAraCrouchTracks(instanceRoot), ...createAraTraversalTracks(instanceRoot)];
         const tracks = new Map();
         for (const animation of animationAssets) {
           const track = animation?.resource || animation;
@@ -319,7 +443,7 @@ export async function loadHeroCharacter(app, {
           { name: 'START' },
           { name: 'Locomotion', loop: true, defaultState: true, blendTree: {
             type: pc.ANIM_BLEND_1D, parameter: 'moveSpeed', children: [
-              { name: 'Idle', point: 0 }, { name: 'Walk', point: 1.6 }, { name: 'Run', point: 3.75 }
+              { name: 'Idle', point: 0 }, { name: 'Walk', point: 3.0 }, { name: 'Run', point: 7.2 }
             ]
           }},
           { name: defaultClips.crouch, loop: true },
@@ -332,8 +456,8 @@ export async function loadHeroCharacter(app, {
         });
         const layer = instanceRoot.anim.baseLayer;
         layer.assignAnimation('Locomotion.Idle', tracks.get(defaultClips.idle));
-        layer.assignAnimation('Locomotion.Walk', tracks.get(defaultClips.walk));
-        layer.assignAnimation('Locomotion.Run', tracks.get(defaultClips.run));
+        layer.assignAnimation('Locomotion.Walk', tracks.get(defaultClips.walk), 1.08, true);
+        layer.assignAnimation('Locomotion.Run', tracks.get(defaultClips.run), 1.28, true);
         layer.assignAnimation(defaultClips.crouch, tracks.get(defaultClips.crouch));
         layer.assignAnimation(defaultClips.crouchWalk, tracks.get(defaultClips.crouchWalk));
         for (const name of actionNames) layer.assignAnimation(name, tracks.get(name), 1, loopable.has(name));
@@ -390,6 +514,19 @@ export async function loadHeroCharacter(app, {
     const setProceduralPose = () => false;
 
 
+    const getVisualBounds = () => {
+      const min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
+      for(const render of root.findComponents('render'))for(const mesh of render.meshInstances||[]){
+        const bounds=mesh.aabb;if(!bounds)continue;const lo=bounds.getMin(),hi=bounds.getMax();
+        min[0]=Math.min(min[0],lo.x);min[1]=Math.min(min[1],lo.y);min[2]=Math.min(min[2],lo.z);
+        max[0]=Math.max(max[0],hi.x);max[1]=Math.max(max[1],hi.y);max[2]=Math.max(max[2],hi.z);
+      }
+      return Number.isFinite(min[0])?{min,max}:null;
+    };
+
+    const bindPoseBounds=getVisualBounds();
+    const visualGroundOffset=bindPoseBounds?.min?.[1]<0?Math.max(0,-bindPoseBounds.min[1]+.015):0;
+
     const getRigSnapshot = () => {
       const boneMap = new Map();
       let skinnedMeshCount = 0, weightedVertexCount = 0;
@@ -412,8 +549,24 @@ export async function loadHeroCharacter(app, {
       };
     };
 
-    const leftFootBone = root.findByName('LeftFoot') || root.findByName('LeftToeBase');
-    const rightFootBone = root.findByName('RightFoot') || root.findByName('RightToeBase');
+    const skinBones = renderMeshInstances.flatMap(mesh => mesh.skinInstance?.bones || []);
+    const normalizedBoneName = value => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const findBone = (...aliases) => {
+      const targets = aliases.map(normalizedBoneName);
+      return skinBones.find(bone => targets.includes(normalizedBoneName(bone?.name))) || null;
+    };
+    const leftFootBone = findBone('LeftFoot','LeftToeBase','Foot_L','LFoot') || root.findByName('LeftFoot') || root.findByName('LeftToeBase');
+    const rightFootBone = findBone('RightFoot','RightToeBase','Foot_R','RFoot') || root.findByName('RightFoot') || root.findByName('RightToeBase');
+    const leftHandBone = findBone('LeftHand','Hand_L','LHand','LeftWrist');
+    const rightHandBone = findBone('RightHand','Hand_R','RHand','RightWrist');
+    const leftUpperArm = findBone('LeftArm','UpperArm_L');
+    const rightUpperArm = findBone('RightArm','UpperArm_R');
+    const leftForeArm = findBone('LeftForeArm','LowerArm_L');
+    const rightForeArm = findBone('RightForeArm','LowerArm_R');
+    const leftUpperLeg = findBone('LeftUpLeg','Thigh_L');
+    const rightUpperLeg = findBone('RightUpLeg','Thigh_R');
+    const leftLowerLeg = findBone('LeftLeg','Shin_L');
+    const rightLowerLeg = findBone('RightLeg','Shin_R');
     const getFootPositions = () => {
       const read = bone => {
         if (!bone) return null;
@@ -422,33 +575,90 @@ export async function loadHeroCharacter(app, {
       };
       return { left: read(leftFootBone), right: read(rightFootBone) };
     };
-    // Small world-space ankle corrections from ground probes. Keep the
-    // correction deliberately bounded; this is a lightweight foot-placement
-    // pass, not a full two-bone IK solver.
-    const applyFootPlacement = (targets, alpha = .28) => {
-      const place = (bone, hit) => {
-        if (!bone || !hit?.point || hit.point.length < 3) return;
-        const p = bone.getPosition();
-        const correction = pc.math.clamp(hit.point[1] - p.y, -.14, .14);
-        const blend = pc.math.clamp(alpha, 0, 1);
-        bone.setPosition(p.x, p.y + correction * blend, p.z);
-        // Align the sole a little toward the contacted plane without allowing
-        // extreme ankle twists on steep edges or noisy collision normals.
-        const normal = hit.normal || [0,1,0];
-        const pitch = pc.math.clamp(Math.atan2(normal[2],normal[1])*180/Math.PI,-12,12);
-        const roll = pc.math.clamp(-Math.atan2(normal[0],normal[1])*180/Math.PI,-12,12);
-        const rotation = bone.getLocalEulerAngles();
-        bone.setLocalEulerAngles(rotation.x + pitch*blend, rotation.y, rotation.z + roll*blend);
+    // Foot contact uses the ankle endpoint only for small corrections. Large
+    // pose offsets are handled by the controller's visual-grounding pass so
+    // the leg animation is not stretched or collapsed to fake contact.
+    const applyFootPlacement = (targets, alpha = .45) => {
+      const place=(upper,lower,foot,hit,side)=>{
+        if(!upper||!lower||!foot||!hit?.point||hit.point.length<3)return false;
+        const p=foot.getPosition();
+        // The selected Mixamo Foot bones sit at the ankle, not at the sole.
+        // A 34 cm offset left the foot visibly floating; use a small ankle
+        // clearance and let two-bone IK move the knee/ankle as one chain.
+        const targetY=hit.point[1]+.09;
+        const delta=targetY-p.y;
+        if(Math.abs(delta)>.78)return false;
+        const target=[p.x,p.y+delta*pc.math.clamp(alpha,0,1),p.z];
+        const pole=[side*.12,-.10,1];
+        return solveTwoBone(upper,lower,foot,target,pole);
       };
-      place(leftFootBone, targets?.left);
-      place(rightFootBone, targets?.right);
+      root.syncHierarchy();
+      const left=place(leftUpperLeg,leftLowerLeg,leftFootBone,targets?.left,-1);
+      const right=place(rightUpperLeg,rightLowerLeg,rightFootBone,targets?.right,1);
+      return Boolean(left||right);
     };
-    const skinBones = renderMeshInstances.flatMap(mesh => mesh.skinInstance?.bones || []);
-    const findSkinBone = name => skinBones.find(bone => bone?.name === name) || null;
+
+    // Two-bone arm IK keeps limb lengths intact while reaching the next rung.
+    const solveTwoBone = (upper,lower,end,target,pole) => {
+      if(!upper||!lower||!end||!Array.isArray(target)||!target.every(Number.isFinite))return false;
+      root.syncHierarchy();
+      const origin=upper.getPosition().clone(),middle=lower.getPosition().clone(),tip=end.getPosition().clone();
+      const upperLength=origin.distance(middle),lowerLength=middle.distance(tip);
+      if(upperLength<.04||lowerLength<.04)return false;
+      const toTarget=new pc.Vec3(target[0],target[1],target[2]).sub(origin),rawDistance=toTarget.length();
+      if(rawDistance<.01)return false;
+      const distance=pc.math.clamp(rawDistance,Math.abs(upperLength-lowerLength)+.015,upperLength+lowerLength-.015);
+      const direction=toTarget.normalize(),bend=new pc.Vec3(pole[0],pole[1],pole[2]);
+      bend.sub(direction.clone().mulScalar(bend.dot(direction)));
+      if(bend.length()<.001){bend.set(0,0,1);bend.sub(direction.clone().mulScalar(bend.dot(direction)));}
+      bend.normalize();
+      const along=(upperLength*upperLength-lowerLength*lowerLength+distance*distance)/(2*distance);
+      const height=Math.sqrt(Math.max(0,upperLength*upperLength-along*along));
+      const desiredMiddle=origin.clone().add(direction.clone().mulScalar(along)).add(bend.mulScalar(height));
+      const upperDelta=new pc.Quat().setFromDirections(middle.clone().sub(origin).normalize(),desiredMiddle.clone().sub(origin).normalize());
+      upper.setRotation(upperDelta.mul(upper.getRotation().clone()));root.syncHierarchy();
+      const currentMiddle=lower.getPosition().clone(),currentTip=end.getPosition().clone();
+      const lowerDelta=new pc.Quat().setFromDirections(currentTip.sub(currentMiddle).normalize(),new pc.Vec3(target[0],target[1],target[2]).sub(currentMiddle).normalize());
+      lower.setRotation(lowerDelta.mul(lower.getRotation().clone()));root.syncHierarchy();
+      return true;
+    };
+
+    // Alternate the hands between real rung heights. The character root pauses
+    // at each pull phase; this IK pass keeps wrists on the ladder plane while
+    // the authored leg/spine cycle supplies the climbing effort.
+    const applyClimbHandPlacement = data => {
+      if(!data?.ladderPosition||!data.normal)return false;
+      const [x,baseY,z]=data.ladderPosition,n=data.normal,spacing=Math.max(.2,data.rungSpacing||.4);
+      const rung=Math.max(0,Math.floor(data.rungIndex||0)),top=Number.isFinite(data.topY)?data.topY:Infinity;
+      const tangent=[n[1],-n[0]],alpha=pc.math.clamp(data.alpha||.25,.10,.55),leftAhead=rung%2===0;
+      const place=(upper,lower,hand,side,offset)=>{
+        if(!upper||!lower||!hand)return;
+        const p=hand.getPosition(),handRung=rung+offset;
+        const target=[x-n[0]*.055+tangent[0]*side*.22,
+          Math.min(top-.14,baseY+.32+handRung*spacing),
+          z-n[1]*.055+tangent[1]*side*.22];
+        const smoothed=[p.x+(target[0]-p.x)*alpha,p.y+(target[1]-p.y)*alpha,p.z+(target[2]-p.z)*alpha];
+        const pole=[tangent[0]*side,-.18,tangent[1]*side];
+        solveTwoBone(upper,lower,hand,smoothed,pole);
+      };
+      place(leftUpperArm,leftForeArm,leftHandBone,-1,leftAhead?4:3);
+      place(rightUpperArm,rightForeArm,rightHandBone,1,leftAhead?3:4);
+      const placeFoot=(upper,lower,foot,side,footRung)=>{
+        if(!upper||!lower||!foot)return;
+        const p=foot.getPosition(),rungY=baseY+.32+Math.max(0,footRung)*spacing+.09;
+        const target=[x-n[0]*.035+tangent[0]*side*.14,
+          Math.min(top-.10,rungY),z-n[1]*.035+tangent[1]*side*.14];
+        const smoothed=[p.x+(target[0]-p.x)*alpha,p.y+(target[1]-p.y)*alpha,p.z+(target[2]-p.z)*alpha];
+        solveTwoBone(upper,lower,foot,smoothed,[tangent[0]*side,.12,tangent[1]*side]);
+      };
+      placeFoot(leftUpperLeg,leftLowerLeg,leftFootBone,-1,Math.max(0,rung-(leftAhead?0:1)));
+      placeFoot(rightUpperLeg,rightLowerLeg,rightFootBone,1,Math.max(0,rung-(leftAhead?1:0)));
+      return Boolean(leftHandBone&&rightHandBone&&leftFootBone&&rightFootBone);
+    };
     const getFacingDirection = () => {
-      const head = findSkinBone('Head');
-      const leftEye = findSkinBone('LeftEye');
-      const rightEye = findSkinBone('RightEye');
+      const head = findBone('Head');
+      const leftEye = findBone('LeftEye');
+      const rightEye = findBone('RightEye');
       if (!head || !leftEye || !rightEye) return null;
       const h = head.getPosition(), l = leftEye.getPosition(), r = rightEye.getPosition();
       const x = (l.x + r.x) * .5 - h.x;
@@ -482,9 +692,9 @@ export async function loadHeroCharacter(app, {
       ' · ' + clipNames.length + ' animation clips');
     return {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
-      renderMeshCount: renderMeshInstances.length, skinnedMeshCount,
+      renderMeshCount: renderMeshInstances.length, skinnedMeshCount, visualGroundOffset,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression, getRigSnapshot, getFootPositions, applyFootPlacement, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
+      setFaceExpression, getRigSnapshot, getVisualBounds, getFootPositions, applyFootPlacement, applyClimbHandPlacement, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };
