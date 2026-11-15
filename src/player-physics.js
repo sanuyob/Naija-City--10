@@ -106,6 +106,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const scratchOrigin = vector(0, 0, 0);
   let steps = 0;
   let collisions = 0;
+  let playerBodyEnabled = true;
   let activeGravity = gravity;
 
   function setGravity(value) {
@@ -263,8 +264,21 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     return true;
   }
 
+  function setPlayerEnabled(enabled) {
+    const next = Boolean(enabled);
+    if (next === playerBodyEnabled) return playerBodyEnabled;
+    if (next) {
+      world.addRigidBody(body, 2, 1);
+      world.updateSingleAabb(body);
+    } else {
+      world.removeRigidBody(body);
+    }
+    playerBodyEnabled = next;
+    return playerBodyEnabled;
+  }
+
   function cleanup() {
-    try { world.removeRigidBody(body); } catch {}
+    if (playerBodyEnabled) { try { world.removeRigidBody(body); } catch {} }
     for (const collider of colliderBodies) {
       try { world.removeRigidBody(collider); } catch {}
     }
@@ -274,9 +288,9 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, setGravity, setCrouched, canFitCapsule, raycast, cleanup,
+    step, teleport, setColliderEnabled, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, cleanup,
     getState: () => ({
-      mode: 'ammo-bullet-capsule',
+      mode: 'ammo-bullet-capsule', playerBodyEnabled,
       steps, collisions,
       colliderCount: colliderBodies.length,
       capsuleRadius: radius,

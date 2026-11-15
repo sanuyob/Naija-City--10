@@ -11,32 +11,42 @@ const PROFILES={
 };
 export function createTraversalSystem({playerController,physics=null,obstacles=[],onEffect}={}) {
  if(!playerController)throw new Error("Traversal requires player controller");
- const list=obstacles.filter(o=>o?.entity&&PROFILES[o.type]);let activeId=null,timer=0,started=0,completed=0,last=null,blocked=null,activeColliderIndex=-1;
+ const list=obstacles.filter(o=>o?.entity&&PROFILES[o.type]);let activeId=null,timer=0,started=0,completed=0,last=null,blocked=null,activeColliderIndices=[];
  function resolveMovement(current,proposed){for(const o of list){if(o.id===activeId)continue;const p=o.entity.getPosition(),s=o.entity.getLocalScale();if((proposed[1]||0)>o.height+.15)continue;if(Math.abs(proposed[0]-p.x)<Math.abs(s.x)*.5+.32&&Math.abs(proposed[2]-p.z)<Math.abs(s.z)*.5+.32)return current;}return proposed;}
- function tryContextualTraversal(state=playerController.getState()){
+ function tryContextualTraversal(state=playerController.getState(),targetObstacleId=null){
   if(!state?.grounded||state.traversing||timer>0){blocked="Player must be grounded and free";return false;}
-  const yaw=(Number(state.facingYaw)||0)*Math.PI/180,fx=Math.sin(yaw),fz=-Math.cos(yaw),[x,y,z]=state.position;let best=null;
-  for(const o of list){const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.12||along>5.2||lateral>Math.abs(s.x)*.5+1.15)continue;if(!best||along<best.along)best={o,along};}
+  const yaw=(Number(state.facingYaw)||0)*Math.PI/180,fx=-Math.sin(yaw),fz=-Math.cos(yaw),[x,y,z]=state.position;let best=null;
+  for(const o of list){if(targetObstacleId&&o.id!==targetObstacleId)continue;const p=o.entity.getPosition(),s=o.entity.getLocalScale(),dx=p.x-x,dz=p.z-z,along=dx*fx+dz*fz,lateral=Math.abs(dx*fz-dz*fx);if(along<.12||along>5.2||lateral>Math.abs(s.x)*.5+1.15)continue;if(!best||along<best.along)best={o,along};}
   if(!best){blocked="No traversal surface in front — move closer and face the obstacle";return false;}
   const profile=PROFILES[best.o.type],s=best.o.entity.getLocalScale(),clearance=best.along+Math.abs(s.z)*.5+.72;
   const climbToTop=new Set(["step","mantle","ledge","ladder"]).has(best.o.type);
   const targetY=climbToTop?Math.max(y,Number(best.o.height)||0):Math.max(0,y);
-  // Climb actions finish centred on the platform footprint so the capsule
-  // lands on its top surface when the temporary traversal collider returns.
-  // Vaults and wall moves continue past the obstacle before touching down.
   const obstaclePosition=best.o.entity.getPosition();
-  const destination=climbToTop
-    ? [obstaclePosition.x,targetY,obstaclePosition.z]
-    : [x+fx*clearance,targetY,z+fz*clearance];
+  // Roof routes place the player on the actual roof plane, just outside the
+  // facade. Ordinary tutorial ledges retain their existing centred landing.
+  const destination=best.o.destination
+    ? best.o.destination.map((value,index)=>index===1?targetY:value)
+    : climbToTop
+      ? [obstaclePosition.x,targetY,obstaclePosition.z]
+      : [x+fx*clearance,targetY,z+fz*clearance];
   const clearanceMargin=best.o.type==="step"?.30:best.o.type==="ladder"?.34:.46;
   // Ballistic vaults stay human-scale. Taller obstacles must be climbed via
   // authored mantle/ledge/ladder routes instead of receiving a huge jump.
   const requiredApex=Math.min(1.55,Math.max(profile.apex,Number(best.o.height||0)+clearanceMargin));
-  const colliderIndex=list.indexOf(best.o);
-  const ok=playerController.performTraversal(profile.clips[0],destination,{duration:profile.duration,apex:requiredApex,mode:profile.mode,clips:profile.clips,obstacleId:best.o.id,obstacleHeight:best.o.height});
+  const colliderIndices=Array.isArray(best.o.physicsColliderIndices)
+    ? best.o.physicsColliderIndices
+    : [list.indexOf(best.o)];
+  const actionDuration=best.o.roofRoute
+    ? Math.max(1.8,Math.min(5.2,1.45+Number(best.o.height||0)*.22))
+    : profile.duration;
+  const ok=playerController.performTraversal(profile.clips[0],destination,{duration:actionDuration,apex:requiredApex,mode:profile.mode,clips:profile.clips,obstacleId:best.o.id,obstacleHeight:best.o.height});
   if(!ok){blocked="Traversal is blocked here — reposition in front of the obstacle";return false;}
-  activeId=best.o.id;activeColliderIndex=colliderIndex;physics?.setColliderEnabled?.(colliderIndex,false);timer=Math.max(2.4,profile.duration*2.2);started++;blocked=null;last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination};onEffect?.("parkour",state.position);return true;
+  activeId=best.o.id;activeColliderIndices=colliderIndices.slice();
+  for(const colliderIndex of activeColliderIndices)physics?.setColliderEnabled?.(colliderIndex,false);
+  timer=Math.max(2.4,actionDuration*2.2);started++;blocked=null;
+  last={obstacle:best.o.id,type:best.o.type,clip:profile.clips[0],clips:profile.clips.slice(),destination,roofRoute:Boolean(best.o.roofRoute),buildingId:best.o.buildingId||null,duration:actionDuration};
+  onEffect?.("parkour",state.position);return true;
  }
- function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));const finished=!playerController.getState().traversing;if(finished||timer===0){if(activeColliderIndex>=0)physics?.setColliderEnabled?.(activeColliderIndex,true);activeColliderIndex=-1;activeId=null;timer=0;completed++;}}
- return {tryContextualTraversal,resolveMovement,update,getState:()=>({stage:"09-traversal",obstacleCount:list.length,availableTypes:[...new Set(list.map(o=>o.type))],traversalsStarted:started,traversalsCompleted:completed,activeObstacleId:activeId,lastTraversal:last,lastBlockedReason:blocked,obstacles:list.map(o=>({id:o.id,type:o.type,height:o.height}))})};
+ function update(dt){if(timer<=0)return;timer=Math.max(0,timer-Math.min(.05,Math.max(0,dt)));const finished=!playerController.getState().traversing;if(finished||timer===0){for(const colliderIndex of activeColliderIndices)physics?.setColliderEnabled?.(colliderIndex,true);activeColliderIndices=[];activeId=null;timer=0;completed++;}}
+ return {tryContextualTraversal,resolveMovement,update,getState:()=>({stage:"09-traversal",obstacleCount:list.length,buildingRouteCount:new Set(list.filter(o=>o.roofRoute).map(o=>o.buildingId)).size,buildingAccessPointCount:list.filter(o=>o.roofRoute).length,availableTypes:[...new Set(list.map(o=>o.type))],traversalsStarted:started,traversalsCompleted:completed,activeObstacleId:activeId,lastTraversal:last,lastBlockedReason:blocked,obstacles:list.map(o=>({id:o.id,type:o.type,height:o.height,roofRoute:Boolean(o.roofRoute),buildingId:o.buildingId||null}))})};
 }

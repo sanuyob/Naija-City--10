@@ -47,9 +47,26 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - Safe-area-aware layout for display cutouts and gesture areas.
 
 ## Controls
-- Desktop: WASD / arrows move, Shift sprint, Space jump, C crouch, E interact, Escape pause, drag scene to orbit.
-- Mobile landscape: left joystick moves; right buttons jump, hold sprint, toggle crouch and interact.
+- Desktop: WASD / arrows drive Ara, Shift sprint, Space jump, C crouch, E interact, Escape pause, drag scene to orbit.
+- Mobile landscape: the left joystick is now a steering-style stick. Drag up/down to move forward/reverse along Ara's facing direction; drag left/right to turn her, including while standing still. The right side of the screen independently orbits the camera.
+- Near the parked Naija City sedan, tap INTERACT to enter. Inside, the left stick steers, hold GAS to accelerate, hold BRAKE to slow down or reverse, drag the right side to orbit the car camera, and tap EXIT to get out.
 - Tap the pause control to open menus. Quick slots currently provide selection feedback but do not contain persistent items.
+- Tap the pause control to open menus. Quick slots currently provide selection feedback but do not contain persistent items.
+
+
+## Stage 09B — building parkour network
+- Added three authored rooftop-access routes to each of the 48 building collision proxies: a ladder route, a mantle route and a ledge route (144 access points total).
+- Nearby access points reveal lightweight rails, rungs or grip bars, with only the nearest four route markers rendered at once.
+- Route actions temporarily release the matching traversal and building collision proxies, animate Ara through the authored climb, then restore the collision set at the landing point.
+- This is contextual authored traversal, not unrestricted wall-climbing. A building becomes climbable at a marked access point rather than at every arbitrary wall face.
+
+## Stage 10 — enterable sedan
+- Added an original low-poly Naija City sedan made in Blender inside ATL Sandbox, with separate named wheel nodes and a compact GLB asset under public/assets/vehicles/.
+- The loader first checks for an optional ara-3d-gen-car.glb with four named wheel nodes (wheel_FL, wheel_FR, wheel_RL, wheel_RR); it falls back to the bundled original sedan when that optional ready-made file is absent. No Ara 3D Gen vehicle download is bundled yet.
+- Uses an 820 kg Bullet chassis, four raycast wheel/suspension probes, building/street collision proxies and kinematic traffic colliders. A mobile-friendly rigid-body driving model adds acceleration, speed limiting, braking/reverse, steering and lateral grip while Bullet resolves chassis collisions.
+- Vehicle telemetry includes speed, estimated fuel and engine temperature. Fuel/temperature are stylized gameplay variables, not a thermochemical engine simulation or calibrated real-world vehicle model.
+- Procedural Web Audio provides an engine tone, skid and impact feedback; pooled VFX add exhaust, skid and collision particles.
+- Physical-device tuning, damage, gear ratios, drivetrain layouts, deformable bodywork and a high-fidelity tire/suspension model remain future work.
 
 ## UX polish
 - Grouped left/right thumb zones and responsive sizing for landscape phone aspect ratios.

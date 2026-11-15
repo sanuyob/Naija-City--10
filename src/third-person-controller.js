@@ -37,6 +37,8 @@ export function createThirdPersonController(app, camera, canvas, {
   let cameraYaw = 0, cameraPitch = 0.23;
   let facingYaw = 0;
   let smoothedMoveSpeed = 0;
+  let smoothedTurnInput = 0;
+  let controlEnabled = true;
   const cameraProbe = new pc.Vec3();
   const cameraDistance = 3.85;
   const cameraTarget = new pc.Vec3();
@@ -178,7 +180,7 @@ export function createThirdPersonController(app, camera, canvas, {
     const actionPose=options.mode||"vault";
     const kinematicClimb=["step","mantle","ledge","ladder"].includes(actionPose);
     const duration=kinematicClimb
-      ? Math.max(.55,Math.min(2.8,Number(options.duration)||1.0))
+      ? Math.max(.55,Math.min(5.2,Number(options.duration)||1.0))
       : Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
     const activeClip=missingActionClip?(animationFallbacks.action||animationFallbacks.idle):clips[0];
     traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex,mode:actionPose,
@@ -302,6 +304,7 @@ export function createThirdPersonController(app, camera, canvas, {
   canvas.addEventListener('pointercancel', onPointerUp);
 
   function update(dt) {
+    if (!controlEnabled) return;
     const step = Math.min(dt, 0.05);
     // Preserve the authored kinematic path on its completion frame too. The
     // traversal state is cleared before the final position is applied.
@@ -313,26 +316,34 @@ export function createThirdPersonController(app, camera, canvas, {
     const magnitude = Math.hypot(axisX, axisY);
     if (magnitude > 1) { axisX /= magnitude; axisY /= magnitude; }
     if (traversalMotion) { axisX = 0; axisY = 0; }
-    moving = !traversalMotion && Math.hypot(axisX, axisY) > 0.12;
+    // GTA-style steering: the stick's horizontal axis turns Ara; its vertical
+    // axis drives forward/reverse along the direction she is facing. Turning
+    // no longer creates sideways strafing that makes the rig appear to slide.
+    const steeringTarget = traversalMotion ? 0 : axisX;
+    smoothedTurnInput += (steeringTarget - smoothedTurnInput) * (1 - Math.exp(-13 * step));
+    if (Math.abs(smoothedTurnInput) > 0.018) {
+      facingYaw -= smoothedTurnInput * 188 * step;
+      facingYaw = ((facingYaw + 540) % 360) - 180;
+      player.setEulerAngles(0, facingYaw, 0);
+    }
+    const driveMagnitude = Math.abs(axisY);
+    moving = !traversalMotion && driveMagnitude > 0.12;
     running = !traversalMotion && moving && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
     if (running) stamina = Math.max(0, stamina - 15 * step);
     else stamina = Math.min(100, stamina + 19 * step);
-    // The Ara FBX walk take is a 1.067 s cycle and run is 0.733 s.
-    // Keep travel speed proportionate to a 1.8 m human rather than making every step slide.
-    const stickStrength = pc.math.clamp((Math.hypot(axisX, axisY) - 0.075) / 0.925, 0, 1);
+    const stickStrength = pc.math.clamp((driveMagnitude - 0.075) / 0.925, 0, 1);
     const maxSpeed = input.crouch ? 1.05 : running ? 4.45 : 2.65;
     const targetMoveSpeed = moving ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
-    const response = moving ? 6.2 : 8.5;
+    const response = moving ? 7.4 : 9.2;
     smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
     const speed = smoothedMoveSpeed;
 
-    // Camera-relative movement: joystick up moves toward the camera's forward direction.
-    forward.set(-Math.sin(cameraYaw), 0, -Math.cos(cameraYaw));
-    right.set(Math.cos(cameraYaw), 0, -Math.sin(cameraYaw));
-    movement.set(0, 0, 0);
-    movement.add(right.clone().mulScalar(axisX));
-    movement.add(forward.clone().mulScalar(-axisY));
-    if (movement.lengthSq() > 1) movement.normalize();
+    // The character's own heading is the forward basis; camera orbit remains
+    // independent so dragging the scene never unexpectedly steers Ara.
+    const yawRadians = facingYaw * Math.PI / 180;
+    forward.set(-Math.sin(yawRadians), 0, -Math.cos(yawRadians));
+    right.set(Math.cos(yawRadians), 0, -Math.sin(yawRadians));
+    movement.copy(forward).mulScalar(-axisY);
 
     const p=player.getPosition(),currentPosition=[p.x,p.y,p.z];
     if(grounded)coyote=.14;else coyote=Math.max(0,coyote-step);
@@ -415,16 +426,8 @@ export function createThirdPersonController(app, camera, canvas, {
     player.setPosition(p);
     if (!heroVisual) player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
 
-    if (moving) {
-      const desiredYaw = Math.atan2(movement.x, -movement.z) * 180 / Math.PI;
-      const difference = ((desiredYaw - facingYaw + 540) % 360) - 180;
-      // Keep the desired heading independently of PlayCanvas' Euler readback
-      // around 180 degrees; that readback folds some reverse headings.
-      if (Math.abs(difference) > 120) facingYaw = desiredYaw;
-      else facingYaw += difference * Math.min(1, step * 18);
-      facingYaw = ((facingYaw + 540) % 360) - 180;
-      player.setEulerAngles(0, facingYaw, 0);
-    }
+    // Facing is updated by the horizontal steering axis above, including turns
+    // while stationary; reverse input deliberately does not rotate the model.
 
     if (heroVisual?.anim) {
       const animationSpeed = input.crouch ? 0 : Math.min(3.75, Math.hypot(velocity.x, velocity.z));
@@ -578,17 +581,92 @@ export function createThirdPersonController(app, camera, canvas, {
     player.destroy();
   }
 
-  function setPositionForSmoke(position, yaw = 0) {
+  function setControlEnabled(enabled) {
+    controlEnabled = Boolean(enabled);
+    if (!controlEnabled) {
+      resetJoystick();
+      input.jumpQueued = false;
+      input.sprint = false;
+      sprintToggled = false;
+      sprintButton?.setAttribute('aria-pressed', 'false');
+      sprintButton?.classList.remove('is-pressed');
+      smoothedMoveSpeed = 0;
+      smoothedTurnInput = 0;
+    }
+    return controlEnabled;
+  }
+
+  function setVisible(visible) {
+    if (heroVisual) heroVisual.enabled = Boolean(visible);
+    return Boolean(heroVisual);
+  }
+
+  function setPosition(position, yaw = 0) {
     if (!Array.isArray(position) || position.length !== 3 || !position.every(Number.isFinite)) return false;
     player.setPosition(position[0], position[1], position[2]);
-    physics?.teleport?.(position,[0,0,0]);
+    physics?.teleport?.(position, [0, 0, 0]);
     facingYaw = ((Number(yaw) || 0) + 540) % 360 - 180;
     player.setEulerAngles(0, facingYaw, 0);
-    velocity.set(0,0,0);smoothedMoveSpeed=0;grounded=true;traversalMotion=null;jumpBuffer=0;jumpStartTimer=0;coyote=.14;footstepClock=0;lastFootstepCycle=null;lastFootstepProgress=null;input.jumpQueued=false;
+    velocity.set(0, 0, 0);
+    smoothedMoveSpeed = 0;
+    smoothedTurnInput = 0;
+    grounded = true;
+    traversalMotion = null;
+    jumpBuffer = 0;
+    jumpStartTimer = 0;
+    coyote = .14;
+    footstepClock = 0;
+    lastFootstepCycle = null;
+    lastFootstepProgress = null;
+    input.jumpQueued = false;
     return true;
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z)});
+  function getControlInput() {
+    const keyX = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0);
+    const keyY = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
+    return {
+      x: pc.math.clamp(input.x + keyX, -1, 1),
+      y: pc.math.clamp(input.y + keyY, -1, 1),
+      controlEnabled
+    };
+  }
+
+  function resetCameraAfterVehicle() {
+    cameraYaw = Math.PI;
+    cameraPitch = 0.23;
+    const p=player.getPosition();
+    const height=input.crouch?1.02:1.28;
+    const horizontal=Math.cos(cameraPitch)*cameraDistance;
+    cameraTarget.set(p.x,p.y+height,p.z);
+    desiredCamera.set(
+      p.x+Math.sin(cameraYaw)*horizontal,
+      p.y+height+Math.sin(cameraPitch)*cameraDistance+.35,
+      p.z+Math.cos(cameraYaw)*horizontal
+    );
+    const hit=physics?.raycast?.(
+      [cameraTarget.x,cameraTarget.y,cameraTarget.z],
+      [desiredCamera.x,desiredCamera.y,desiredCamera.z]
+    );
+    if(hit){
+      const dx=desiredCamera.x-cameraTarget.x,dy=desiredCamera.y-cameraTarget.y,dz=desiredCamera.z-cameraTarget.z;
+      const length=Math.hypot(dx,dy,dz)||1;
+      const safe=Math.max(.72,Math.hypot(hit.point[0]-cameraTarget.x,hit.point[1]-cameraTarget.y,hit.point[2]-cameraTarget.z)-.24);
+      const ratio=Math.min(1,safe/length);
+      desiredCamera.set(cameraTarget.x+dx*ratio,cameraTarget.y+dy*ratio,cameraTarget.z+dz*ratio);
+    }
+    smoothedCamera.copy(desiredCamera);
+    cameraInitialized=true;
+    camera.setPosition(smoothedCamera);
+    camera.lookAt(cameraTarget);
+    return true;
+  }
+
+  function setPositionForSmoke(position, yaw = 0) {
+    return setPosition(position, yaw);
+  }
+
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z)});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy,
@@ -596,6 +674,11 @@ export function createThirdPersonController(app, camera, canvas, {
     playAnimation,
     playFaceExpression,
     setCrouched,
+    setControlEnabled,
+    setVisible,
+    setPosition,
+    getControlInput,
+    resetCameraAfterVehicle,
     performTraversal,
     setPositionForSmoke,
     queueJumpForSmoke,

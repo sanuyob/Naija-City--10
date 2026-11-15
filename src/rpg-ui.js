@@ -47,6 +47,16 @@ export function mountRPGInterface() {
         <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
       </div>
     </div>
+    <section class="vehicle-controls" id="vehicle-controls" aria-label="Vehicle driving controls" hidden>
+      <div class="vehicle-readout" id="vehicle-status">
+        <b id="vehicle-speed">0 km/h</b>
+        <span id="vehicle-temp">ENGINE 77°C</span>
+        <span id="vehicle-fuel">FUEL 100%</span>
+      </div>
+      <button id="drive-exit" type="button" aria-label="Exit vehicle">EXIT</button>
+      <button id="drive-brake" type="button" aria-label="Brake or reverse">BRAKE<br><small>REVERSE</small></button>
+      <button id="drive-accelerate" type="button" aria-label="Accelerate">GAS<br><small>HOLD</small></button>
+    </section>
     <div class="quick-slots" aria-label="Quick access slots">
       <button data-slot="1" aria-label="Quick slot 1"><b>1</b><small>EMPTY</small></button>
       <button data-slot="2" aria-label="Quick slot 2"><b>2</b><small>EMPTY</small></button>
@@ -184,8 +194,25 @@ export function mountRPGInterface() {
     root.querySelector('#hud-player-state').textContent = 'STATUS · ' + (state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY');
   }
   function setWorldActivity() { /* Compatibility hook; no centre-screen population banner. */ }
+  function setVehicleMode(active, state = {}) {
+    const driving = Boolean(active);
+    root.classList.toggle('in-vehicle', driving);
+    const controls = root.querySelector('#vehicle-controls');
+    if (controls) controls.hidden = !driving;
+    if (!driving) return;
+    const speed = root.querySelector('#vehicle-speed');
+    const temp = root.querySelector('#vehicle-temp');
+    const fuel = root.querySelector('#vehicle-fuel');
+    if (speed) speed.textContent = Math.round(Math.abs(state.speedKmh || 0)) + ' km/h';
+    if (temp) {
+      const temperature = Math.round(state.engineTempC || 77);
+      temp.textContent = 'ENGINE ' + temperature + '°C';
+      temp.dataset.state = temperature > 108 ? 'hot' : temperature > 98 ? 'warm' : 'normal';
+    }
+    if (fuel) fuel.textContent = 'FUEL ' + Math.round(state.fuelPercent ?? 100) + '%';
+  }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, setVehicleMode, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     isPlayerCharacterRequired: () => characterRequired
   };

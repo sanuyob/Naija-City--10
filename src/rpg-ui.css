@@ -197,3 +197,28 @@
 .loading-track{width:min(340px,72vw);height:5px;overflow:hidden;border-radius:9px;background:#ffffff24}
 .loading-track i{display:block;width:0;height:100%;background:#d7b878;transition:width .18s ease}
 .city-loading>span{color:#aebdb2;font:9px ui-monospace,monospace;letter-spacing:.13em}
+
+/* Stage 10 — vehicle mode uses the same left steering stick and two pedals. */
+.vehicle-controls{position:absolute;right:calc(18px + var(--safe-right,0px));bottom:calc(74px + var(--safe-bottom,0px));display:grid;grid-template-columns:60px 64px 64px;align-items:end;gap:8px;pointer-events:auto}
+.vehicle-controls[hidden]{display:none}
+.vehicle-controls button{min-height:64px;border:1px solid #ffffff65;border-radius:13px;background:#091411e8;color:#f2f3eb;font-size:10px;font-weight:800;letter-spacing:.08em;touch-action:none;user-select:none;-webkit-user-select:none}
+.vehicle-controls button small{font-size:7px;color:#d3c29b}
+#drive-exit{min-height:42px;height:42px;align-self:end;background:#263a36;border-color:#94b6a4}
+#drive-brake{background:#70422fdb;border-color:#d49b77}
+#drive-accelerate{background:#245d44e8;border-color:#8bd4a5}
+.vehicle-readout{position:absolute;right:0;bottom:76px;display:grid;gap:4px;min-width:190px;padding:9px 12px;border:1px solid #d6b47777;border-radius:10px;background:#07110fee;text-align:right}
+.vehicle-readout b{font:700 21px/1 Arial,sans-serif;color:#f0d49a}
+.vehicle-readout span{font:700 8px/1.2 ui-monospace,monospace;color:#bdc9c1;letter-spacing:.1em}
+.vehicle-readout #vehicle-temp[data-state=warm]{color:#f0c36d}
+.vehicle-readout #vehicle-temp[data-state=hot]{color:#ff795b}
+#rpg-interface.in-vehicle .actions,#rpg-interface.in-vehicle .quick-slots{display:none}
+#rpg-interface.in-vehicle .vehicle-controls{display:grid}
+#rpg-interface.in-vehicle .stick{border-color:#d6b477aa;background:#08110f99}
+#drive-accelerate:active,#drive-brake:active{filter:brightness(1.3);transform:scale(.96)}
+@media (orientation:landscape) and (max-height:560px){
+ .vehicle-controls{right:calc(12px + var(--safe-right,0px));bottom:calc(58px + var(--safe-bottom,0px));grid-template-columns:52px 56px 56px;gap:6px}
+ .vehicle-controls button{min-height:54px;font-size:9px}
+ #drive-exit{height:36px;min-height:36px}
+ .vehicle-readout{bottom:64px;min-width:156px;padding:7px 9px}
+ .vehicle-readout b{font-size:18px}
+}

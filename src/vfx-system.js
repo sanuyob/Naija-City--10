@@ -9,7 +9,10 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
     jump: [0.54, 0.77, 0.96],
     landing: [0.81, 0.68, 0.44],
     parkour: [0.96, 0.7, 0.25],
-    arrival: [0.38, 0.85, 0.66]
+    arrival: [0.38, 0.85, 0.66],
+    exhaust: [0.38, 0.42, 0.43],
+    skid: [0.18, 0.19, 0.19],
+    collision: [0.86, 0.56, 0.20]
   };
   const pool = [];
   const stats = { emitted: 0, expired: 0, active: 0, byType: {}, bySurface: {} };
@@ -44,7 +47,7 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
   function emit(type = 'dust', position = [0, 0, 0], intensity = 1, surface = 'asphalt') {
     const effect = colors[type] ? type : 'dust';
     const [x, y, z] = position;
-    const desired = Math.max(2, Math.min(7, Math.round((effect === 'landing' ? 6 : effect === 'parkour' ? 5 : 3) * Math.max(0.5, intensity))));
+    const desired = Math.max(2, Math.min(7, Math.round((effect === 'landing' || effect === 'collision' ? 6 : effect === 'parkour' || effect === 'skid' ? 5 : 3) * Math.max(0.5, intensity))));
     let made = 0;
     const seed = stats.emitted + pool.length * 0.618;
 
@@ -52,17 +55,17 @@ export function createVfxSystem({ app, poolSize = 24 } = {}) {
       const particle = pool[i];
       if (particle.active) continue;
       const angle = (i * 2.399963 + seed * 0.37) % (Math.PI * 2);
-      const radial = effect === 'parkour' ? 0.78 : effect === 'landing' ? 0.62 : 0.22;
+      const radial = effect === 'parkour' || effect === 'skid' ? 0.78 : effect === 'landing' || effect === 'collision' ? 0.62 : effect === 'exhaust' ? .12 : 0.22;
       particle.active = true;
       particle.age = 0;
-      particle.life = effect === 'dust' ? 0.46 : effect === 'landing' ? 0.52 : effect === 'parkour' ? 0.4 : 0.58;
+      particle.life = effect === 'dust' ? 0.46 : effect === 'landing' || effect === 'collision' ? 0.52 : effect === 'parkour' || effect === 'skid' ? 0.4 : 0.58;
       particle.type = effect;
-      particle.size = effect === 'landing' ? 0.13 : effect === 'parkour' ? 0.105 : 0.09;
+      particle.size = effect === 'landing' || effect === 'collision' ? 0.13 : effect === 'parkour' || effect === 'skid' ? 0.105 : effect === 'exhaust' ? 0.06 : 0.09;
       particle.position[0] = x + Math.cos(angle) * 0.11;
       particle.position[1] = y + (effect === 'jump' ? 0.12 : 0.035);
       particle.position[2] = z + Math.sin(angle) * 0.11;
       particle.velocity[0] = Math.cos(angle) * radial;
-      particle.velocity[1] = effect === 'jump' ? 1.55 : effect === 'parkour' ? 0.72 : effect === 'arrival' ? 0.95 : 0.48;
+      particle.velocity[1] = effect === 'jump' ? 1.55 : effect === 'parkour' ? 0.72 : effect === 'arrival' ? 0.95 : effect === 'exhaust' ? .28 : effect === 'collision' ? 1.1 : 0.48;
       particle.velocity[2] = Math.sin(angle) * radial;
       particle.rotation[0] = effect === 'dust' || effect === 'landing' ? -90 : 0;
       particle.rotation[1] = angle * 57.2958;

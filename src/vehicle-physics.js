@@ -26,7 +26,7 @@ export async function loadAmmo() {
   return Ammo;
 }
 
-export async function createVehiclePhysics(car, traffic, wheelRoots) {
+export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], options = {}) {
   const Ammo = await loadAmmo();
   const owned = [];
   const own = value => { owned.push(value); return value; };
@@ -65,29 +65,36 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
 
   // A simple low-poly collision floor is deliberately cheaper than colliding
   // against every visible road and pavement primitive.
-  const groundShape = own(new Ammo.btBoxShape(vector(100, 0.1, 100)));
-  const ground = addBody({ shape: groundShape, mass: 0, position: { x: 0, y: -0.1, z: -18 }, friction: 1.0 });
+  const groundShape = own(new Ammo.btBoxShape(vector(100, 0.1, 310)));
+  const ground = addBody({ shape: groundShape, mass: 0, position: { x: 0, y: -0.1, z: 135 }, friction: 1.0 });
 
   // The chassis is a single compound-sized box, not the detailed render mesh.
   // This is the recommended mobile-friendly separation of render and collision geometry.
   const chassisShape = own(new Ammo.btBoxShape(vector(0.9, 0.34, 1.75)));
-  const chassis = addBody({ shape: chassisShape, mass: 820, position: { x: 0, y: 0.94, z: 8 }, yaw: 180, friction: 0.85 });
+  const initialPosition = options.position || { x: 0, y: 0.94, z: 8 };
+  const initialYaw = Number.isFinite(options.yaw) ? options.yaw : 180;
+  const chassis = addBody({ shape: chassisShape, mass: 820, position: initialPosition, yaw: initialYaw, friction: 0.85 });
   chassis.body.setDamping(0.025, 0.12);
   chassis.body.setActivationState(4);
 
   const tuning = own(new Ammo.btVehicleTuning());
   const raycaster = own(new Ammo.btDefaultVehicleRaycaster(world));
   const vehicle = own(new Ammo.btRaycastVehicle(tuning, chassis.body, raycaster));
+  const driveForceVector = vector(0,0,0);
+  const lateralForceVector = vector(0,0,0);
+  const steeringTorqueVector = vector(0,0,0);
+  let controlledSpeedMps = 0;
+  let simulationSteps = 0;
   vehicle.setCoordinateSystem(0, 1, 2);
   world.addAction(vehicle);
 
   // Bullet retains these vectors through each wheel's lifetime. Keep a unique
   // set per wheel; do not free or share the vectors before the vehicle is removed.
   const wheelDefinitions = [
-    { x: -0.79, y: -0.10, z: 1.16, front: true },
-    { x:  0.79, y: -0.10, z: 1.16, front: true },
-    { x: -0.79, y: -0.10, z: -1.16, front: false },
-    { x:  0.79, y: -0.10, z: -1.16, front: false }
+    { x: -1.02, y: -0.10, z: -1.16, front: true },
+    { x:  1.02, y: -0.10, z: -1.16, front: true },
+    { x: -1.02, y: -0.10, z: 1.16, front: false },
+    { x:  1.02, y: -0.10, z: 1.16, front: false }
   ];
   wheelDefinitions.forEach((wheel, index) => {
     const connection = vector(wheel.x, wheel.y, wheel.z);
@@ -103,6 +110,27 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
 
   // Scripted traffic remains AI-driven, but now each car has a kinematic Bullet
   // collider. The player chassis can physically collide with it and lose momentum.
+  // Compact static collision proxies let the car hit real buildings and street
+  // infrastructure without asking Bullet to collide with every visual mesh.
+  const environmentBodies = [];
+  for (const item of (options.colliders || [])) {
+    let position, halfExtents, rotationY = Number(item?.rotationY) || 0;
+    if (Array.isArray(item?.position) && Array.isArray(item?.halfExtents)) {
+      position = item.position; halfExtents = item.halfExtents;
+    } else {
+      const p = item?.entity?.getPosition?.(), s = item?.entity?.getLocalScale?.();
+      if (!p || !s) continue;
+      position = [p.x,p.y,p.z];
+      halfExtents = [Math.abs(s.x)/2,Math.abs(s.y)/2,Math.abs(s.z)/2];
+      rotationY = item?.entity?.getEulerAngles?.().y || rotationY;
+    }
+    if (!position || !halfExtents || halfExtents[1] < 0.18) continue;
+    const shape = own(new Ammo.btBoxShape(vector(
+      Math.max(.04,halfExtents[0]),Math.max(.04,halfExtents[1]),Math.max(.04,halfExtents[2])
+    )));
+    environmentBodies.push(addBody({shape,mass:0,position:{x:position[0],y:position[1],z:position[2]},yaw:rotationY,friction:.88}));
+  }
+
   const trafficBodies = traffic.map(item => {
     const shape = own(new Ammo.btBoxShape(vector(0.86, 0.55, 1.62)));
     const p = item.entity.getPosition();
@@ -143,27 +171,69 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
   }
 
   function step(dt, controls) {
-    const speed = vehicle.getCurrentSpeedKmHour();
-    const accelerating = controls.accelerate;
-    const braking = controls.brake;
-    const steering = (controls.left ? 1 : 0) - (controls.right ? 1 : 0);
-    let engineForce = 0;
-    let brakeForce = 0;
-    if (accelerating && Math.abs(speed) < 115) engineForce = speed < -2 ? 0 : 2100;
-    if (braking) {
-      if (speed > 2) brakeForce = 2600;
-      else if (speed < -2) brakeForce = 2200;
-      else engineForce = -1050;
+    const h=Math.max(0,Math.min(.05,Number(dt)||0));
+    if(!h)return;
+    const transform=chassis.body.getWorldTransform();
+    const rotation=transform.getRotation();
+    const forwardX=-2*(rotation.x()*rotation.z()+rotation.w()*rotation.y());
+    const forwardZ=-(1-2*(rotation.x()*rotation.x()+rotation.y()*rotation.y()));
+    const forwardLength=Math.hypot(forwardX,forwardZ)||1;
+    const fx=forwardX/forwardLength,fz=forwardZ/forwardLength;
+    const linear=chassis.body.getLinearVelocity();
+    const actualForwardSpeed=linear.x()*fx+linear.z()*fz;
+    // Use post-collision rigid-body velocity as the next frame's speed. This
+    // lets wall/vehicle impacts naturally slow the car without fake teleporting.
+    if(Math.abs(actualForwardSpeed)<Math.abs(controlledSpeedMps)+1.5 || Math.abs(controlledSpeedMps)<.25) {
+      controlledSpeedMps=actualForwardSpeed;
     }
-    vehicle.applyEngineForce(engineForce, 2);
-    vehicle.applyEngineForce(engineForce, 3);
-    for (let i = 0; i < 4; i++) vehicle.setBrake(brakeForce, i);
-    const steerLimit = 0.42 * Math.max(0.28, 1 - Math.abs(speed) / 170);
-    const steerAngle = steering * steerLimit * (speed < -1 ? -1 : 1);
-    vehicle.setSteeringValue(steerAngle, 0);
-    vehicle.setSteeringValue(steerAngle, 1);
-    world.stepSimulation(Math.min(dt, 0.05), 4, 1 / 60);
+    const accelerating=Boolean(controls.accelerate),braking=Boolean(controls.brake);
+    const steeringInput=Math.max(-1,Math.min(1,Number(controls.steering)||0));
+    if(controls.enabled===false) {
+      controlledSpeedMps=approach(controlledSpeedMps,0,12*h);
+    } else if(accelerating&&!braking) {
+      if(controlledSpeedMps<-.4) controlledSpeedMps=approach(controlledSpeedMps,0,10*h);
+      else controlledSpeedMps=Math.min(23.6,controlledSpeedMps+10.5*h);
+    } else if(braking) {
+      if(controlledSpeedMps>.3) controlledSpeedMps=Math.max(0,controlledSpeedMps-13*h);
+      else controlledSpeedMps=Math.max(-5.5,controlledSpeedMps-4.2*h);
+    } else {
+      controlledSpeedMps=approach(controlledSpeedMps,0,(.7+Math.abs(controlledSpeedMps)*.10)*h);
+    }
+
+    // Vehicle dynamics: v = v + a*dt, yaw-rate follows steering and speed.
+    // The Bullet rigid body still resolves chassis impacts against city proxies.
+    const speedSign=controlledSpeedMps<-.05?-1:1;
+    const yawRate=-steeringInput*Math.min(1.05,.045+Math.abs(controlledSpeedMps)*.085)*speedSign;
+    steeringTorqueVector.setValue(0,yawRate*820,0);
+    chassis.body.setAngularVelocity(steeringTorqueVector);
+    driveForceVector.setValue(fx*controlledSpeedMps,linear.y(),fz*controlledSpeedMps);
+    chassis.body.setLinearVelocity(driveForceVector);
+    chassis.body.activate(true);
+
+    const speedKmh=Math.abs(controlledSpeedMps*3.6);
+    const steerAngle=-steeringInput*.52*Math.max(.42,1-speedKmh/130);
+    vehicle.setSteeringValue(steerAngle,0);
+    vehicle.setSteeringValue(steerAngle,1);
+    vehicle.applyEngineForce(0,2);
+    vehicle.applyEngineForce(0,3);
+    const parkBrake=braking&&Math.abs(controlledSpeedMps)>.4?900:0;
+    for(let i=0;i<4;i++)vehicle.setBrake(parkBrake,i);
+    world.stepSimulation(h,4,1/60);
+    simulationSteps++;
+    const postTransform=chassis.body.getWorldTransform();
+    const postRotation=postTransform.getRotation();
+    const postForwardX=-2*(postRotation.x()*postRotation.z()+postRotation.w()*postRotation.y());
+    const postForwardZ=-(1-2*(postRotation.x()*postRotation.x()+postRotation.y()*postRotation.y()));
+    const postLength=Math.hypot(postForwardX,postForwardZ)||1;
+    const postVelocity=chassis.body.getLinearVelocity();
+    const postSpeed=postVelocity.x()*postForwardX/postLength+postVelocity.z()*postForwardZ/postLength;
+    controlledSpeedMps=postSpeed;
     syncPlayer();
+  }
+
+  function approach(value,target,delta) {
+    if(value<target)return Math.min(target,value+delta);
+    return Math.max(target,value-delta);
   }
 
   function syncTraffic() {
@@ -177,6 +247,7 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
     }
     try { world.removeRigidBody(chassis.body); } catch {}
     try { world.removeRigidBody(ground.body); } catch {}
+    for (const record of environmentBodies) { try { world.removeRigidBody(record.body); } catch {} }
     // Destroy in reverse allocation order after detaching everything from Bullet.
     for (let i = owned.length - 1; i >= 0; i--) {
       try { Ammo.destroy(owned[i]); } catch {}
@@ -189,7 +260,47 @@ export async function createVehiclePhysics(car, traffic, wheelRoots) {
     step,
     syncTraffic,
     syncPlayer,
-    getSpeedKmh: () => vehicle.getCurrentSpeedKmHour(),
+    getSpeedKmh: () => controlledSpeedMps*3.6,
+    getStepCount: () => simulationSteps,
+    getPosition: () => { const p=car.getPosition(); return [p.x,p.y,p.z]; },
+    getYaw: () => {
+      const q=chassis.body.getWorldTransform().getRotation();
+      return Math.atan2(2*(q.w()*q.y()+q.x()*q.z()),1-2*(q.y()*q.y()+q.x()*q.x()))*180/Math.PI;
+    },
+    getEnvironmentColliderCount: () => environmentBodies.length,
+    getDynamicsState: () => {
+      const velocity = chassis.body.getLinearVelocity();
+      const orientation=chassis.body.getWorldTransform().getRotation();
+      const forward=[-2*(orientation.x()*orientation.z()+orientation.w()*orientation.y()),0,-(1-2*(orientation.x()*orientation.x()+orientation.y()*orientation.y()))];
+      const wheels = [];
+      for (let i=0;i<4;i++) {
+        try {
+          const info=vehicle.getWheelInfo(i);
+          const ray=info.get_m_raycastInfo?.();
+          const wheelTransform=vehicle.getWheelTransformWS(i);
+          const wheelOrigin=wheelTransform.getOrigin();
+          const probeFrom=vector(wheelOrigin.x(),wheelOrigin.y()+.5,wheelOrigin.z());
+          const probeTo=vector(wheelOrigin.x(),wheelOrigin.y()-1.4,wheelOrigin.z());
+          const callback=own(new Ammo.ClosestRayResultCallback(probeFrom,probeTo));
+          world.rayTest(probeFrom,probeTo,callback);
+          const rayHit=callback.hasHit()?callback.get_m_hitPointWorld():null;
+          const result={
+            inContact: ray?.get_m_isInContact?.() ?? ray?.m_isInContact ?? null,
+            suspensionLength: info.get_m_raycastInfo?.()?.get_m_suspensionLength?.() ?? info.get_m_suspensionLength?.() ?? null,
+            engineForce: info.get_m_engineForce?.() ?? null,
+            rotation: info.get_m_rotation?.() ?? null,
+            wheelPosition:[wheelOrigin.x(),wheelOrigin.y(),wheelOrigin.z()],
+            groundRayHit:Boolean(rayHit),
+            contactMeasured:Boolean(rayHit && rayHit.y() < wheelOrigin.y() + .1 && rayHit.y() > wheelOrigin.y()-1.4),
+            groundRayY:rayHit?rayHit.y():null
+          };
+          Ammo.destroy(callback);Ammo.destroy(probeFrom);Ammo.destroy(probeTo);
+          owned.splice(owned.indexOf(callback),1);owned.splice(owned.indexOf(probeFrom),1);owned.splice(owned.indexOf(probeTo),1);
+          wheels.push(result);
+        } catch { wheels.push({inContact:null,suspensionLength:null,groundRayHit:false}); }
+      }
+      return {velocity:[velocity.x(),velocity.y(),velocity.z()],orientation:[orientation.x(),orientation.y(),orientation.z(),orientation.w()],forward,simulationSteps,wheels,measuredWheelContacts:wheels.filter(w=>w.contactMeasured).length};
+    },
     cleanup,
     vehicle,
     world,

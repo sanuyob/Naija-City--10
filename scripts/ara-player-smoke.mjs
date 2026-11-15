@@ -47,15 +47,24 @@ try{
  if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.005)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
  if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite)||walkState.player.footPlacementHits<1)throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
  await page.mouse.up();
- // Reversing the stick direction must turn the visible character, not leave it walking side-on.
+ // Reverse input moves backward along the current heading without sideways sliding.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
  await page.mouse.down();
  await page.mouse.move(joystickCenter.x,joystickCenter.y+joystickBox.height*.30,{steps:8});
  await page.waitForTimeout(450);
- const reverseState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),face:window.__NAIJA_GAME__?.getHeroAnimationState?.().visualForward}));
+ const reverseState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- if(!reverseState.player?.moving||reverseState.player.position[2]<=0||Math.abs(reverseState.player.facingYaw)<120||reverseState.face?.[2]<.5)throw Error('Backward joystick movement did not turn Ara to face the reverse direction: '+JSON.stringify(reverseState));
+ if(!reverseState.player?.moving||reverseState.player.position[2]<=.005||Math.abs(reverseState.player.facingYaw)>20)throw Error('Backward joystick movement did not follow Ara’s current heading cleanly: '+JSON.stringify(reverseState));
+ // Horizontal drag is steering: Ara turns on the spot rather than strafing.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ await page.mouse.move(joystickCenter.x,joystickCenter.y);
+ await page.mouse.down();
+ await page.mouse.move(joystickCenter.x+joystickBox.width*.30,joystickCenter.y,{steps:8});
+ await page.waitForTimeout(450);
+ const turnState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
+ await page.mouse.up();
+ if(turnState.player?.moving||Math.abs(turnState.player?.facingYaw||0)<15||!turnState.player?.turning)throw Error('Horizontal joystick input did not turn Ara in place: '+JSON.stringify(turnState));
  const sprintButton=page.locator('#sprint-button');
  if(!(await sprintButton.isVisible()))throw Error('Mobile sprint control is not visible');
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));

@@ -9,7 +9,8 @@ export function createAudioSystem() {
   let unlocked = false;
   let destroyed = false;
   let lastFootstepAt = -Infinity;
-  const played = { footstep: 0, jump: 0, landing: 0, parkour: 0 };
+  const played = { footstep: 0, jump: 0, landing: 0, parkour: 0, vehicleStart: 0, vehicleSkid: 0, vehicleImpact: 0 };
+  let engineOscillator = null, engineFilter = null, engineGain = null;
   const playedSurfaces = { asphalt:0, concrete:0, grass:0, metal:0, wet:0 };
   const now = () => context?.currentTime || 0;
 
@@ -102,15 +103,59 @@ export function createAudioSystem() {
     return true;
   }
 
+  function startVehicleEngine() {
+    if (!ensureContext() || !context || !master) return false;
+    if (engineOscillator) return true;
+    engineOscillator = context.createOscillator();
+    engineFilter = context.createBiquadFilter();
+    engineGain = context.createGain();
+    engineOscillator.type = 'sawtooth';
+    engineFilter.type = 'lowpass';
+    engineFilter.frequency.value = 360;
+    engineGain.gain.value = 0.0001;
+    engineOscillator.connect(engineFilter);
+    engineFilter.connect(engineGain);
+    engineGain.connect(master);
+    engineOscillator.start();
+    played.vehicleStart++;
+    return true;
+  }
+
+  function updateVehicleEngine(speedKmh = 0, throttle = 0) {
+    if (!engineOscillator && !startVehicleEngine()) return false;
+    if (!context || !engineOscillator || !engineGain || !engineFilter) return false;
+    const speed = Math.max(0, Math.abs(Number(speedKmh) || 0));
+    const load = Math.max(0, Math.min(1, Number(throttle) || 0));
+    const frequency = 48 + speed * 0.78 + load * 38;
+    const nowAt = context.currentTime;
+    engineOscillator.frequency.setTargetAtTime(Math.min(260, frequency), nowAt, 0.08);
+    engineFilter.frequency.setTargetAtTime(Math.min(1800, 280 + speed * 12 + load * 520), nowAt, 0.08);
+    engineGain.gain.setTargetAtTime(0.025 + load * 0.055 + Math.min(.025,speed*.00028), nowAt, 0.10);
+    return true;
+  }
+
+  function stopVehicleEngine() {
+    if (!engineOscillator || !context || !engineGain) return false;
+    const oscillator = engineOscillator;
+    engineGain.gain.setTargetAtTime(0.0001, context.currentTime, 0.08);
+    try { oscillator.stop(context.currentTime + .32); } catch {}
+    engineOscillator = null; engineFilter = null; engineGain = null;
+    return true;
+  }
+
+  function playVehicleSkid() { return play('vehicleSkid'); }
+  function playVehicleImpact() { return play('vehicleImpact'); }
+
   function destroy() {
     destroyed = true;
     window.removeEventListener('pointerdown', unlock);
     window.removeEventListener('keydown', unlock);
+    stopVehicleEngine();
     if (context && context.state !== 'closed') context.close().catch(() => {});
     context = null;
     master = null;
     noiseBuffer = null;
   }
 
-  return { play, unlock, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour'], played: { ...played }, playedSurfaces: { ...playedSurfaces }, mode: 'procedural-web-audio', surfaceProfiles: ['asphalt','concrete','grass','metal','wet'] }) };
+  return { play, unlock, startVehicleEngine, updateVehicleEngine, stopVehicleEngine, playVehicleSkid, playVehicleImpact, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour', 'vehicle-engine', 'vehicle-skid', 'vehicle-impact'], played: { ...played }, playedSurfaces: { ...playedSurfaces }, mode: 'procedural-web-audio', surfaceProfiles: ['asphalt','concrete','grass','metal','wet'] }) };
 }
