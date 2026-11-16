@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { getAraGaitStance } from './ara-gait-contact.js';
 
 /**
  * Lightweight third-person controller for the Stage 06 mobile prototype.
@@ -68,6 +69,61 @@ export function createThirdPersonController(app, camera, canvas, {
   let lastFootstepProgress = null;
   let footstepContacts = 0;
   let footPlacementHits = 0;
+  const footLockState={
+    left:{active:false,kind:null,anchor:null},
+    right:{active:false,kind:null,anchor:null},
+    lastCorrection:[0,0,0],lastSupportSide:null,maxCorrection:0,applications:0
+  };
+  const resetFootLock=()=>{
+    for(const side of ['left','right']){footLockState[side].active=false;footLockState[side].kind=null;footLockState[side].anchor=null;}
+    footLockState.lastCorrection=[0,0,0];footLockState.lastSupportSide=null;
+  };
+  function applyGroundedFootLock(){
+    const layer=heroVisual?.anim?.baseLayer;
+    const clip=layer?.activeState;
+    if(activeHeroCharacter?.characterId!=='ara-female'||!grounded||!moving||traversalMotion||input.crouch||
+       !['Walk','Run'].includes(clip)||layer?.transitioning){resetFootLock();return {active:false,correction:[0,0,0]};}
+    const stance=getAraGaitStance(clip,layer.activeStateProgress);
+    const limbs=activeHeroCharacter.getLimbPositions?.();
+    if(!limbs){resetFootLock();return {active:false,correction:[0,0,0]};}
+    const baseY=player.getPosition().y;
+    const corrections=[];
+    for(const side of ['left','right']){
+      const state=footLockState[side];
+      if(!stance[side]){state.active=false;state.kind=null;state.anchor=null;continue;}
+      const candidates=[
+        {kind:'toe',point:limbs[side+'SoleToe']},
+        {kind:'heel',point:limbs[side+'SoleHeel']}
+      ].filter(item=>Array.isArray(item.point)&&item.point.length===3&&item.point.every(Number.isFinite));
+      candidates.sort((a,b)=>Math.abs(a.point[1]-baseY)-Math.abs(b.point[1]-baseY));
+      const contact=candidates[0];
+      if(!contact||Math.abs(contact.point[1]-baseY)>.085){state.active=false;state.kind=null;state.anchor=null;continue;}
+      if(!state.active||state.kind!==contact.kind){state.anchor=contact.point.slice();state.kind=contact.kind;state.active=true;}
+      const dx=state.anchor[0]-contact.point[0];
+      const dz=state.anchor[2]-contact.point[2];
+      corrections.push({side,x:dx,z:dz,clearance:Math.abs(contact.point[1]-baseY)});
+    }
+    if(!corrections.length){footLockState.lastCorrection=[0,0,0];footLockState.lastSupportSide=null;return {active:false,correction:[0,0,0]};}
+    corrections.sort((a,b)=>a.clearance-b.clearance);
+    // During double-support transitions, pin the lowest shoe (the true load
+    // bearing contact). Averaging conflicting toe-off/landing corrections
+    // makes both shoes drift, so only blend when the vectors already agree.
+    let dx=corrections[0].x,dz=corrections[0].z;
+    if(corrections.length>1&&Math.hypot(corrections[0].x-corrections[1].x,corrections[0].z-corrections[1].z)<.012){
+      dx=(corrections[0].x+corrections[1].x)*.5;
+      dz=(corrections[0].z+corrections[1].z)*.5;
+    }
+    const length=Math.hypot(dx,dz),limit=.065;
+    if(length>limit){dx*=limit/length;dz*=limit/length;}
+    const correction=[dx,0,dz];
+    if(Math.hypot(dx,dz)>.0001&&activeHeroCharacter.applyHipsWorldOffset?.(correction)){
+      footLockState.applications++;
+      footLockState.maxCorrection=Math.max(footLockState.maxCorrection,Math.hypot(dx,dz));
+    }
+    footLockState.lastCorrection=correction;
+    footLockState.lastSupportSide=corrections[0].side;
+    return {active:true,correction,contacts:corrections.length,supportSide:corrections[0].side,phaseFrame:stance.frame};
+  }
   let availableHeroClips = new Set(activeHeroCharacter?.clipNames || []);
   let heroClipDurations = activeHeroCharacter?.clipDurations || {};
   let heroDefaults = activeHeroCharacter?.defaultClips || {
@@ -116,8 +172,7 @@ export function createThirdPersonController(app, camera, canvas, {
     const resolvedName = resolveHeroClip(name);
     const layer = heroVisual?.anim?.baseLayer;
     if (!layer || !resolvedName) return false;
-    const locomotionClips = [animationFallbacks.idle, animationFallbacks.walk, animationFallbacks.run];
-    const targetState = locomotionClips.includes(resolvedName) ? 'Locomotion' : resolvedName;
+    const targetState = resolvedName;
     if (activeHeroClip === resolvedName && layer.activeState === targetState) return false;
     try {
       if (layer.activeState !== targetState) layer.transition(targetState, blendTime);
@@ -127,6 +182,27 @@ export function createThirdPersonController(app, camera, canvas, {
       console.warn('Character animation transition failed:', name, '→', resolvedName, error);
       return false;
     }
+  }
+
+  function syncLocomotionPlaybackRates(horizontalSpeed) {
+    const layer = heroVisual?.anim?.baseLayer;
+    const clips = layer?._controller?.animEvaluator?.clips;
+    if (!Array.isArray(clips)) return null;
+    const speed = Math.max(0, Number(horizontalSpeed) || 0);
+    // Calibrated from the Blender 5.2.2 foot-locked gait exports and
+    // PlayCanvas sole-marker traces. The clip cadence scales with actual
+    // horizontal physics speed so planted steps stay synchronized.
+    const WALK_CONTACT_SPEED = 1.515;
+    const RUN_CONTACT_SPEED = 3.55;
+    const walkRate = pc.math.clamp(speed / WALK_CONTACT_SPEED, 0.08, 3.6);
+    const runRate = pc.math.clamp(speed / RUN_CONTACT_SPEED, 0.08, 3.6);
+    const rates = { walk: walkRate, run: runRate };
+    for (const clip of clips) {
+      const trackName = String(clip?.track?.name || clip?.name || '').toLowerCase();
+      if (trackName.includes('walk')) clip.speed = walkRate;
+      else if (trackName.includes('run') || trackName.includes('sprint')) clip.speed = runRate;
+    }
+    return rates;
   }
 
   function setCrouched(value) {
@@ -192,13 +268,21 @@ export function createThirdPersonController(app, camera, canvas, {
         ? Math.max(.55,Math.min(40,Number(options.duration)||1.0))
         : Math.max(.55,Math.min(2.8,2*launchVelocity/gravity));
     const activeClip=missingActionClip?(animationFallbacks.action||animationFallbacks.idle):clips[0];
+    const ladderBodyWasEnabled = actionPose === 'ladder'
+      ? physics?.getState?.().playerBodyEnabled !== false
+      : false;
     traversalMotion={start:[p.x,p.y,p.z],end,duration,elapsed:0,apex,mode:actionPose,
       clips,activePhase:0,activeClip,missingActionClip,gravity,launchVelocity,
       kinematic:kinematicClimb,restoreGravity:gravity,phaseDurations,
+      playerBodyWasEnabled:ladderBodyWasEnabled,
       mountPosition:Array.isArray(options.mountPosition)?options.mountPosition.slice():null,
       ladderPosition:options.ladderPosition||null,ladderNormal:options.ladderNormal||null,
       rungSpacing:Math.max(.2,Number(options.rungSpacing)||.4),rungCount:Math.max(1,Math.floor(Number(options.rungCount)||1)),blockedTime:0};
     if(kinematicClimb)physics?.setGravity?.(0);
+    // The authored ladder path owns the root transform for the whole climb.
+    // Disable the dynamic Bullet capsule temporarily so physics cannot pull
+    // the player down or push it through the facade while the animation runs.
+    if(actionPose === 'ladder' && ladderBodyWasEnabled) physics?.setPlayerEnabled?.(false);
     velocity.set(dx/duration,kinematicClimb?(end[1]-p.y)/duration:launchVelocity,dz/duration);
     actionClip=activeClip;actionTimer=duration;grounded=false;jumpBuffer=0;
     heroCharacterPose(actionPose,missingActionClip);
@@ -380,7 +464,7 @@ export function createThirdPersonController(app, camera, canvas, {
     if (running) stamina = Math.max(0, stamina - 12 * step);
     else stamina = Math.min(100, stamina + 20 * step);
     const stickStrength = pc.math.clamp((driveMagnitude - 0.075) / 0.925, 0, 1);
-    const maxSpeed = input.crouch ? 1.05 : running ? 7.2 : 3.0;
+    const maxSpeed = input.crouch ? 1.05 : running ? 7.2 : 1.8;
     const targetMoveSpeed = moving ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
     const response = moving ? 11.5 : 24;
     smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
@@ -441,50 +525,39 @@ export function createThirdPersonController(app, camera, canvas, {
             const eased=smooth(phaseProgress);
             target=top.map((value,index)=>value+(traversalMotion.end[index]-value)*eased);
           }
-          // The climb clip is a two-rung cycle. Apply two-bone arm and leg IK
-          // only during the rung-pull phase; mount and top-out use their own
-          // authored poses so the hands visibly release the ladder.
-          if(phase===1)activeHeroCharacter?.applyClimbHandPlacement?.({
-            ladderPosition:traversalMotion.ladderPosition,normal:traversalMotion.ladderNormal,
-            rootY:target[1],topY:traversalMotion.end[1],rungSpacing:traversalMotion.rungSpacing,
-            rungIndex:Math.floor(Math.max(0,target[1]-mount[1])/traversalMotion.rungSpacing),alpha:Math.min(1,step*18)
-          });
+          // Ladder poses are now authored and baked on Ara's actual rig in Blender.
+          // Do not layer runtime two-bone IK over those rotations: it stretches the limbs.
         }else{
           const eased=smooth(progress);
           target=traversalMotion.start.map((value,index)=>value+(traversalMotion.end[index]-value)*eased);
         }
         const requestedVelocity=[(target[0]-p.x)/step,(target[1]-p.y)/step,(target[2]-p.z)/step];
-        if(traversalMotion.mode==='ladder'&&physics?.step){
-          // Ladder movement is no longer a per-frame teleport. Bullet keeps
-          // the capsule live against the building proxy while the root follows
-          // the rung-timed displacement curve. Only the ladder trigger is
-          // released; walls and roof surfaces remain solid.
-          const body={position:currentPosition.slice(),velocity:[velocity.x,requestedVelocity[1],velocity.z],
-            radius:.30,height:1.78,grounded:false,traversing:true,ignoreGroundSupport:true};
-          physics.step(body,requestedVelocity,step);
-          proposedPosition=body.position.slice();
-          velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);
-          traversalMotion.lastGrounded=Boolean(body.grounded);
-          const error=Math.hypot(target[0]-proposedPosition[0],target[1]-proposedPosition[1],target[2]-proposedPosition[2]);
-          traversalMotion.blockedTime=error>.22?traversalMotion.blockedTime+step:Math.max(0,traversalMotion.blockedTime-step*2);
-        }else{
-          velocity.set(requestedVelocity[0],requestedVelocity[1],requestedVelocity[2]);
-          proposedPosition=target;
-          physics?.teleport?.(target,[velocity.x,velocity.y,velocity.z]);
-        }
+        // One movement authority per mode: ladder roots follow the authored
+        // rung path with the Bullet body detached; other authored climbs can
+        // still use the physics solver or a synchronized transform.
+        velocity.set(requestedVelocity[0],requestedVelocity[1],requestedVelocity[2]);
+        proposedPosition=target;
+        if(traversalMotion.mode!=='ladder') physics?.teleport?.(target,[velocity.x,velocity.y,velocity.z]);
         grounded=progress>=1;
-        if(traversalMotion.blockedTime>1.25){
-          // Stop cleanly rather than letting a blocked capsule ghost through a
-          // facade. The player remains at the last collision-resolved point.
+        const finishLadderBody=(position)=>{
           physics?.setGravity?.(traversalMotion.restoreGravity);
-          velocity.set(0,0,0);grounded=Boolean(traversalMotion.lastGrounded);traversalMotion=null;actionTimer=0;actionClip="";
+          if(traversalMotion.mode==='ladder'&&traversalMotion.playerBodyWasEnabled){
+            physics?.setPlayerEnabled?.(true);
+            physics?.teleport?.(position,[0,0,0]);
+          }
+        };
+        if(traversalMotion.blockedTime>1.25){
+          // The root was authored to reach the roof, but a failed route is
+          // treated as an abort. Reattach physics at the last safe position.
+          finishLadderBody(proposedPosition);
+          velocity.set(0,0,0);grounded=false;traversalMotion=null;actionTimer=0;actionClip="";
           heroCharacterPose(null,false);
           onEffect?.("landing",proposedPosition);
         }else if(progress>=1){
           proposedPosition=proposedPosition.slice();
           velocity.set(0,0,0);
-          grounded=Boolean(traversalMotion.lastGrounded);
-          physics?.setGravity?.(traversalMotion.restoreGravity);
+          grounded=true;
+          finishLadderBody(proposedPosition);
           traversalMotion=null;actionTimer=0;actionClip="";heroCharacterPose(null,false);
           onEffect?.("landing",proposedPosition);
         }
@@ -547,7 +620,9 @@ export function createThirdPersonController(app, camera, canvas, {
 
     if (heroVisual?.anim) {
       const animationSpeed = input.crouch ? 0 : Math.min(7.2, Math.hypot(velocity.x, velocity.z));
-      heroVisual.anim.setFloat?.('moveSpeed', animationSpeed);
+      // The active Idle/Walk/Run state is discrete. Playback cadence follows
+      // measured physics speed; we do not blend two incompatible gait cycles.
+      const locomotionPlaybackRates = syncLocomotionPlaybackRates(animationSpeed);
       if(!wasGrounded&&grounded){landingTimer=.28;onEffect?.("landing",[p.x,p.y,p.z]);}
       if(traversalMotion){heroCharacterPose(traversalMotion.mode,traversalMotion.missingActionClip);transitionHeroClip(traversalMotion.activeClip,.1);}
       else if (landingTimer > 0) {
@@ -611,19 +686,17 @@ export function createThirdPersonController(app, camera, canvas, {
         );
         const leftHit = probe(feet.left), rightHit = probe(feet.right);
         if (leftHit || rightHit) footPlacementHits++;
-        // Pass complete ray hits: the rig helper needs the point (and can
-        // later use the normal) rather than receiving the point array itself.
-        activeHeroCharacter?.applyFootPlacement?.({
-          left: leftHit,
-          right: rightHit
-        }, Math.min(1, step * 12));
+        // These are support diagnostics only. Keep the imported walk/run rig
+        // animation intact; per-frame IK on top of its authored rotations caused
+        // visible knee twists and mesh deformation. Ground contact is corrected
+        // by the physics capsule's surface snap instead.
 
       }
     }
 
     if(moving&&grounded&&!traversalMotion){
       const layer = heroVisual?.anim?.baseLayer;
-      const loopState = layer?.activeState === 'Locomotion' || layer?.activeState === heroDefaults.crouchWalk;
+      const loopState = [heroDefaults.walk, heroDefaults.run, heroDefaults.crouchWalk].includes(layer?.activeState);
       const progress = loopState ? layer.activeStateProgress : null;
       if (Number.isFinite(progress)) {
         const cycle = Math.floor(progress * 2);
@@ -796,7 +869,8 @@ export function createThirdPersonController(app, camera, canvas, {
   const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
-    player, update, destroy,
+    player, update, destroy, applyGroundedFootLock, resetFootLock,
+    getFootLockState:()=>({applications:footLockState.applications,maxCorrection:footLockState.maxCorrection,lastCorrection:footLockState.lastCorrection.slice(),supportSide:footLockState.lastSupportSide,leftActive:footLockState.left.active,rightActive:footLockState.right.active}),
     interact: () => onInteract?.(getState()),
     playAnimation,
     playFaceExpression,
@@ -809,18 +883,25 @@ export function createThirdPersonController(app, camera, canvas, {
     performTraversal,
     setPositionForSmoke,
     queueJumpForSmoke,
+    getClipDuration: name => {
+      const resolved = resolveHeroClip(name);
+      return heroClipDurations[resolved] || heroClipDurations[name] || null;
+    },
     getAnimationState: () => ({
       activeClip: activeHeroClip, activeState: heroVisual?.anim?.baseLayer?.activeState || null,
       transitioning: heroVisual?.anim?.baseLayer?.transitioning || false,
       transitionProgress: heroVisual?.anim?.baseLayer?.transitionProgress ?? null,
       activeStateCurrentTime: heroVisual?.anim?.baseLayer?.activeStateCurrentTime ?? null,
       activeStateDuration: heroVisual?.anim?.baseLayer?.activeStateDuration ?? null,
+      activeStateProgress: heroVisual?.anim?.baseLayer?.activeStateProgress ?? null,
       componentPlaying: heroVisual?.anim?.playing ?? null,
       componentEnabled: heroVisual?.anim?.enabled ?? null,
       entityEnabled: heroVisual?.enabled ?? null,
       layerPlaying: heroVisual?.anim?.baseLayer?.playing ?? null,
       layerPlayable: heroVisual?.anim?.baseLayer?.playable ?? null,
       availableStates: heroVisual?.anim?.baseLayer?.states || [],
+      locomotionPlaybackRates: syncLocomotionPlaybackRates(Math.hypot(velocity.x,velocity.z)),
+      evaluatorClips: (heroVisual?.anim?.baseLayer?._controller?.animEvaluator?.clips||[]).map(clip=>({name:clip.name,trackName:clip.track?.name||null,speed:clip.speed,playing:clip.playing})),
       requestedClip: actionClip,
       availableClipCount: availableHeroClips.size,
       source: activeHeroCharacter?.source || 'ara-female-not-installed',

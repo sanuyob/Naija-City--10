@@ -66,9 +66,9 @@ function createAraCrouchTracks(root) {
 }
 
 
-// Ara's bundled Female Executive preset has no authored ladder clips. Build a
-// small rung-cycle on her real Mixamo-style skeleton, then let two-bone IK put
-// wrists and ankles on the actual ladder/roof contact points at runtime.
+// Ara's short door/vehicle interaction poses are local to her existing rig.
+// Ladder mount, climb and dismount are authored and baked in Blender, then
+// imported as ordinary GLB animation tracks (no runtime limb IK).
 function createAraTraversalTracks(root) {
   const bones = new Map();
   for (const render of root.findComponents('render')) {
@@ -134,21 +134,6 @@ function createAraTraversalTracks(root) {
     return new pc.AnimTrack(name,duration,[input],outputs,curves);
   };
   return [
-    makeTrack('Ara_LadderMount',.68,{
-      spine:[[-5,0,0],[-10,0,0],[-9,0,0],[-4,0,0],[0,0,0]],
-      leftThigh:[[8,0,0],[12,0,0],[8,0,0],[3,0,0],[0,0,0]],rightThigh:[[8,0,0],[12,0,0],[8,0,0],[3,0,0],[0,0,0]],
-      leftKnee:[[8,0,0],[15,0,0],[12,0,0],[5,0,0],[0,0,0]],rightKnee:[[8,0,0],[15,0,0],[12,0,0],[5,0,0],[0,0,0]]
-    }),
-    makeTrack('Ara_LadderClimb',.92,{
-      spine:[[-7,0,0],[-10,0,0],[-7,0,0],[-10,0,0],[-7,0,0]],
-      leftThigh:[[15,0,0],[-8,0,0],[-15,0,0],[8,0,0],[15,0,0]],rightThigh:[[-15,0,0],[8,0,0],[15,0,0],[-8,0,0],[-15,0,0]],
-      leftKnee:[[20,0,0],[34,0,0],[20,0,0],[8,0,0],[20,0,0]],rightKnee:[[8,0,0],[20,0,0],[34,0,0],[20,0,0],[8,0,0]]
-    }),
-    makeTrack('Ara_LadderDismount',.72,{
-      spine:[[-9,0,0],[-5,0,0],[2,0,0],[4,0,0],[0,0,0]],
-      leftThigh:[[12,0,0],[4,0,0],[-5,0,0],[-2,0,0],[0,0,0]],rightThigh:[[12,0,0],[4,0,0],[-5,0,0],[-2,0,0],[0,0,0]],
-      leftKnee:[[22,0,0],[14,0,0],[5,0,0],[0,0,0],[0,0,0]],rightKnee:[[22,0,0],[14,0,0],[5,0,0],[0,0,0],[0,0,0]]
-    }),
     makeTrack('Ara_DoorOpen',.56,{
       spine:[[0,0,0],[-3,0,0],[-5,0,0],[-3,0,0],[0,0,0]],
       rightUpperArm:[[0,0,0],[-10,0,-22],[-12,0,-34],[-7,0,-25],[0,0,0]],
@@ -325,7 +310,7 @@ export async function loadHeroCharacter(app, {
         const buffer = await response.arrayBuffer();
         const bytes = new Uint8Array(buffer);
         if (bytes.length < 20 || bytes[0] !== 0x67 || bytes[1] !== 0x6c || bytes[2] !== 0x54 || bytes[3] !== 0x46) throw new Error('Bundled Ara character is not a valid GLB.');
-        metadata = { source: 'Ara 3D Gen · ready-made Female Executive preset', sourceFileName: 'Ara_Female_Executive_Animated.glb', glbBytes: bytes.length };
+        metadata = { source: 'Ara 3D Gen · ready-made Female Executive preset', sourceFileName: 'Ara_Female_Executive_Animated_Ladder.glb', glbBytes: bytes.length };
         source = 'ara-3d-gen-female-preset';
         blobUrl = URL.createObjectURL(new Blob([buffer], { type: 'model/gltf-binary' }));
       } else {
@@ -382,13 +367,9 @@ export async function loadHeroCharacter(app, {
     }
     if (!clipNames.length) throw new Error('The character GLB has no playable animation clips.');
     if (characterId === 'ara-female') {
-      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk', 'Ara_LadderMount', 'Ara_LadderClimb', 'Ara_LadderDismount',
-        'Ara_DoorOpen', 'Ara_EnterVehicle', 'Ara_ExitVehicle');
+      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk', 'Ara_DoorOpen', 'Ara_EnterVehicle', 'Ara_ExitVehicle');
       clipDurations.Ara_Crouch = .96;
       clipDurations.Ara_CrouchWalk = .96;
-      clipDurations.Ara_LadderMount = .68;
-      clipDurations.Ara_LadderClimb = .92;
-      clipDurations.Ara_LadderDismount = .72;
       clipDurations.Ara_DoorOpen = .56;
       clipDurations.Ara_EnterVehicle = .78;
       clipDurations.Ara_ExitVehicle = .72;
@@ -403,7 +384,7 @@ export async function loadHeroCharacter(app, {
       jump: findClip([/jump.*in.?air|in.?air/i]) || findClip([/^jump$/i]) || findClip([/jump|leap/i]) || null,
       landing: findClip([/jump.*land|land(ing)?/i]) || findClip([/idle/i]) || null,
       vault: findClip([/vault/i]) || null,
-      climb: findClip([/climb|ledge|mantle|ladder/i]) || null,
+      climb: findClip([/climb up ledge|ledge|mantle/i]) || findClip([/^climb$/i, /climb(?!.*ladder)/i]) || null,
       roll: findClip([/roll/i]) || null,
       dodgeLeft: findClip([/dodge.*left|left.*dodge/i]) || null,
       dodgeRight: findClip([/dodge.*right|right.*dodge/i]) || null,
@@ -439,30 +420,34 @@ export async function loadHeroCharacter(app, {
         const actionNames = [...tracks.keys()].filter(name =>
           ![defaultClips.idle, defaultClips.walk, defaultClips.run, defaultClips.crouch, defaultClips.crouchWalk].includes(name)
         );
+        // Use separate locomotion states rather than blending Walk and Run.
+        // Their source clips have different foot-contact phases and cycle
+        // durations; mixing them made the stance feet drift even when each
+        // clip's playback rate matched the physics velocity. State transitions
+        // give us one gait authority at a time, with the fade kept short.
+        const stateNames = [...new Set([
+          defaultClips.idle, defaultClips.walk, defaultClips.run,
+          defaultClips.crouch, defaultClips.crouchWalk, ...actionNames
+        ].filter(Boolean))];
         const states = [
           { name: 'START' },
-          { name: 'Locomotion', loop: true, defaultState: true, blendTree: {
-            type: pc.ANIM_BLEND_1D, parameter: 'moveSpeed', children: [
-              { name: 'Idle', point: 0 }, { name: 'Walk', point: 3.0 }, { name: 'Run', point: 7.2 }
-            ]
-          }},
-          { name: defaultClips.crouch, loop: true },
-          { name: defaultClips.crouchWalk, loop: true },
-          ...actionNames.map(name => ({ name, loop: loopable.has(name) }))
+          ...stateNames.map(name => ({ name, loop: loopable.has(name) ||
+            [defaultClips.idle, defaultClips.walk, defaultClips.run,
+             defaultClips.crouch, defaultClips.crouchWalk].includes(name),
+            ...(name === defaultClips.idle ? { defaultState: true } : {}) }))
         ];
         instanceRoot.anim.loadStateGraph({
-          layers: [{ name: 'Base', states, transitions: [{ from: 'START', to: 'Locomotion' }] }],
-          parameters: { moveSpeed: { name: 'moveSpeed', type: pc.ANIM_PARAMETER_FLOAT, value: 0 } }
+          layers: [{ name: 'Base', states, transitions: [{ from: 'START', to: defaultClips.idle }] }],
+          parameters: {}
         });
         const layer = instanceRoot.anim.baseLayer;
-        layer.assignAnimation('Locomotion.Idle', tracks.get(defaultClips.idle));
-        layer.assignAnimation('Locomotion.Walk', tracks.get(defaultClips.walk), 1.08, true);
-        layer.assignAnimation('Locomotion.Run', tracks.get(defaultClips.run), 1.28, true);
-        layer.assignAnimation(defaultClips.crouch, tracks.get(defaultClips.crouch));
-        layer.assignAnimation(defaultClips.crouchWalk, tracks.get(defaultClips.crouchWalk));
+        layer.assignAnimation(defaultClips.idle, tracks.get(defaultClips.idle), 1, true);
+        layer.assignAnimation(defaultClips.walk, tracks.get(defaultClips.walk), 1, true);
+        layer.assignAnimation(defaultClips.run, tracks.get(defaultClips.run), 1, true);
+        layer.assignAnimation(defaultClips.crouch, tracks.get(defaultClips.crouch), 1, true);
+        layer.assignAnimation(defaultClips.crouchWalk, tracks.get(defaultClips.crouchWalk), 1, true);
         for (const name of actionNames) layer.assignAnimation(name, tracks.get(name), 1, loopable.has(name));
-        instanceRoot.anim.setFloat('moveSpeed', 0);
-        layer.transition('Locomotion', .12);
+        layer.transition(defaultClips.idle, .12);
       } else {
         for (const animation of animationAssets) {
           const track = animation?.resource || animation;
@@ -525,6 +510,9 @@ export async function loadHeroCharacter(app, {
     };
 
     const bindPoseBounds=getVisualBounds();
+    // The updated Walk/Run clips are foot-locked against the shoe-sole markers.
+    // Do not lift the whole character to hide the old toe dip; keep only a
+    // bind-pose correction when the model itself extends below its floor plane.
     const visualGroundOffset=bindPoseBounds?.min?.[1]<0?Math.max(0,-bindPoseBounds.min[1]+.015):0;
 
     const getRigSnapshot = () => {
@@ -555,10 +543,26 @@ export async function loadHeroCharacter(app, {
       const targets = aliases.map(normalizedBoneName);
       return skinBones.find(bone => targets.includes(normalizedBoneName(bone?.name))) || null;
     };
-    const leftFootBone = findBone('LeftFoot','LeftToeBase','Foot_L','LFoot') || root.findByName('LeftFoot') || root.findByName('LeftToeBase');
-    const rightFootBone = findBone('RightFoot','RightToeBase','Foot_R','RFoot') || root.findByName('RightFoot') || root.findByName('RightToeBase');
+    const hipsBone = findBone('Hips','Pelvis');
+    const leftFootBone = findBone('LeftToeBase','LeftFoot','Foot_L','LFoot') || root.findByName('LeftToeBase') || root.findByName('LeftFoot');
+    const rightFootBone = findBone('RightToeBase','RightFoot','Foot_R','RFoot') || root.findByName('RightToeBase') || root.findByName('RightFoot');
+    // Keep the support point used by footstep/raycast effects, and expose the
+    // actual toe-tip joints separately for stance/sliding diagnostics.
+    const leftToeTipBone = findBone('LeftToe_End','LeftToeEnd') || leftFootBone;
+    const rightToeTipBone = findBone('RightToe_End','RightToeEnd') || rightFootBone;
+    // Blender-authored sole landmarks are ordinary non-rendered glTF nodes,
+    // bone-parented to the actual foot joints. They measure the shoe contact
+    // surface without adding runtime IK or influencing the skinned mesh.
+    const leftSoleToe = root.findByName('Ara_Left_SoleToe') || null;
+    const leftSoleHeel = root.findByName('Ara_Left_SoleHeel') || null;
+    const rightSoleToe = root.findByName('Ara_Right_SoleToe') || null;
+    const rightSoleHeel = root.findByName('Ara_Right_SoleHeel') || null;
     const leftHandBone = findBone('LeftHand','Hand_L','LHand','LeftWrist');
     const rightHandBone = findBone('RightHand','Hand_R','RHand','RightWrist');
+    const leftHandTipBone = findBone('LeftHandIndex1','LeftHandMiddle1','LeftHand');
+    const rightHandTipBone = findBone('RightHandIndex1','RightHandMiddle1','RightHand');
+    const leftAnkleBone = findBone('LeftFoot');
+    const rightAnkleBone = findBone('RightFoot');
     const leftUpperArm = findBone('LeftArm','UpperArm_L');
     const rightUpperArm = findBone('RightArm','UpperArm_R');
     const leftForeArm = findBone('LeftForeArm','LowerArm_L');
@@ -567,94 +571,39 @@ export async function loadHeroCharacter(app, {
     const rightUpperLeg = findBone('RightUpLeg','Thigh_R');
     const leftLowerLeg = findBone('LeftLeg','Shin_L');
     const rightLowerLeg = findBone('RightLeg','Shin_R');
-    const getFootPositions = () => {
-      const read = bone => {
-        if (!bone) return null;
-        const p = bone.getPosition();
-        return [p.x, p.y, p.z];
-      };
-      return { left: read(leftFootBone), right: read(rightFootBone) };
+    const readRigPoint = bone => {
+      if (!bone) return null;
+      const p = bone.getPosition();
+      return [p.x, p.y, p.z];
     };
-    // Foot contact uses the ankle endpoint only for small corrections. Large
-    // pose offsets are handled by the controller's visual-grounding pass so
-    // the leg animation is not stretched or collapsed to fake contact.
-    const applyFootPlacement = (targets, alpha = .45) => {
-      const place=(upper,lower,foot,hit,side)=>{
-        if(!upper||!lower||!foot||!hit?.point||hit.point.length<3)return false;
-        const p=foot.getPosition();
-        // The selected Mixamo Foot bones sit at the ankle, not at the sole.
-        // A 34 cm offset left the foot visibly floating; use a small ankle
-        // clearance and let two-bone IK move the knee/ankle as one chain.
-        const targetY=hit.point[1]+.09;
-        const delta=targetY-p.y;
-        if(Math.abs(delta)>.78)return false;
-        const target=[p.x,p.y+delta*pc.math.clamp(alpha,0,1),p.z];
-        const pole=[side*.12,-.10,1];
-        return solveTwoBone(upper,lower,foot,target,pole);
-      };
-      root.syncHierarchy();
-      const left=place(leftUpperLeg,leftLowerLeg,leftFootBone,targets?.left,-1);
-      const right=place(rightUpperLeg,rightLowerLeg,rightFootBone,targets?.right,1);
-      return Boolean(left||right);
+    const getFootPositions = () => ({ left: readRigPoint(leftFootBone), right: readRigPoint(rightFootBone) });
+    const describeMarker = node => {
+      if (!node) return null;
+      const local=node.getLocalPosition?.();
+      return {name:node.name,parent:node.parent?.name||null,parentType:node._parent?._type||null,
+        localPosition:local?[local.x,local.y,local.z]:null};
     };
-
-    // Two-bone arm IK keeps limb lengths intact while reaching the next rung.
-    const solveTwoBone = (upper,lower,end,target,pole) => {
-      if(!upper||!lower||!end||!Array.isArray(target)||!target.every(Number.isFinite))return false;
-      root.syncHierarchy();
-      const origin=upper.getPosition().clone(),middle=lower.getPosition().clone(),tip=end.getPosition().clone();
-      const upperLength=origin.distance(middle),lowerLength=middle.distance(tip);
-      if(upperLength<.04||lowerLength<.04)return false;
-      const toTarget=new pc.Vec3(target[0],target[1],target[2]).sub(origin),rawDistance=toTarget.length();
-      if(rawDistance<.01)return false;
-      const distance=pc.math.clamp(rawDistance,Math.abs(upperLength-lowerLength)+.015,upperLength+lowerLength-.015);
-      const direction=toTarget.normalize(),bend=new pc.Vec3(pole[0],pole[1],pole[2]);
-      bend.sub(direction.clone().mulScalar(bend.dot(direction)));
-      if(bend.length()<.001){bend.set(0,0,1);bend.sub(direction.clone().mulScalar(bend.dot(direction)));}
-      bend.normalize();
-      const along=(upperLength*upperLength-lowerLength*lowerLength+distance*distance)/(2*distance);
-      const height=Math.sqrt(Math.max(0,upperLength*upperLength-along*along));
-      const desiredMiddle=origin.clone().add(direction.clone().mulScalar(along)).add(bend.mulScalar(height));
-      const upperDelta=new pc.Quat().setFromDirections(middle.clone().sub(origin).normalize(),desiredMiddle.clone().sub(origin).normalize());
-      upper.setRotation(upperDelta.mul(upper.getRotation().clone()));root.syncHierarchy();
-      const currentMiddle=lower.getPosition().clone(),currentTip=end.getPosition().clone();
-      const lowerDelta=new pc.Quat().setFromDirections(currentTip.sub(currentMiddle).normalize(),new pc.Vec3(target[0],target[1],target[2]).sub(currentMiddle).normalize());
-      lower.setRotation(lowerDelta.mul(lower.getRotation().clone()));root.syncHierarchy();
+    const getSoleMarkerInfo = () => ({leftToe:describeMarker(leftSoleToe),leftHeel:describeMarker(leftSoleHeel),
+      rightToe:describeMarker(rightSoleToe),rightHeel:describeMarker(rightSoleHeel)});
+    const applyHipsWorldOffset = offset => {
+      if (!hipsBone || !Array.isArray(offset) || offset.length < 3 || !offset.every(Number.isFinite)) return false;
+      const parent=hipsBone.parent;
+      if (!parent?.getWorldTransform) return false;
+      const inverse=parent.getWorldTransform().clone().invert();
+      const local=inverse.transformVector(new pc.Vec3(offset[0],offset[1],offset[2]),new pc.Vec3());
+      const p=hipsBone.getLocalPosition();
+      hipsBone.setLocalPosition(p.x+local.x,p.y+local.y,p.z+local.z);
       return true;
     };
-
-    // Alternate the hands between real rung heights. The character root pauses
-    // at each pull phase; this IK pass keeps wrists on the ladder plane while
-    // the authored leg/spine cycle supplies the climbing effort.
-    const applyClimbHandPlacement = data => {
-      if(!data?.ladderPosition||!data.normal)return false;
-      const [x,baseY,z]=data.ladderPosition,n=data.normal,spacing=Math.max(.2,data.rungSpacing||.4);
-      const rung=Math.max(0,Math.floor(data.rungIndex||0)),top=Number.isFinite(data.topY)?data.topY:Infinity;
-      const tangent=[n[1],-n[0]],alpha=pc.math.clamp(data.alpha||.25,.10,.55),leftAhead=rung%2===0;
-      const place=(upper,lower,hand,side,offset)=>{
-        if(!upper||!lower||!hand)return;
-        const p=hand.getPosition(),handRung=rung+offset;
-        const target=[x-n[0]*.055+tangent[0]*side*.22,
-          Math.min(top-.14,baseY+.32+handRung*spacing),
-          z-n[1]*.055+tangent[1]*side*.22];
-        const smoothed=[p.x+(target[0]-p.x)*alpha,p.y+(target[1]-p.y)*alpha,p.z+(target[2]-p.z)*alpha];
-        const pole=[tangent[0]*side,-.18,tangent[1]*side];
-        solveTwoBone(upper,lower,hand,smoothed,pole);
-      };
-      place(leftUpperArm,leftForeArm,leftHandBone,-1,leftAhead?4:3);
-      place(rightUpperArm,rightForeArm,rightHandBone,1,leftAhead?3:4);
-      const placeFoot=(upper,lower,foot,side,footRung)=>{
-        if(!upper||!lower||!foot)return;
-        const p=foot.getPosition(),rungY=baseY+.32+Math.max(0,footRung)*spacing+.09;
-        const target=[x-n[0]*.035+tangent[0]*side*.14,
-          Math.min(top-.10,rungY),z-n[1]*.035+tangent[1]*side*.14];
-        const smoothed=[p.x+(target[0]-p.x)*alpha,p.y+(target[1]-p.y)*alpha,p.z+(target[2]-p.z)*alpha];
-        solveTwoBone(upper,lower,foot,smoothed,[tangent[0]*side,.12,tangent[1]*side]);
-      };
-      placeFoot(leftUpperLeg,leftLowerLeg,leftFootBone,-1,Math.max(0,rung-(leftAhead?0:1)));
-      placeFoot(rightUpperLeg,rightLowerLeg,rightFootBone,1,Math.max(0,rung-(leftAhead?1:0)));
-      return Boolean(leftHandBone&&rightHandBone&&leftFootBone&&rightFootBone);
-    };
+    const getLimbPositions = () => ({
+      leftHand: readRigPoint(leftHandBone), rightHand: readRigPoint(rightHandBone),
+      leftHandTip: readRigPoint(leftHandTipBone), rightHandTip: readRigPoint(rightHandTipBone),
+      leftFoot: readRigPoint(leftFootBone), rightFoot: readRigPoint(rightFootBone),
+      leftToeTip: readRigPoint(leftToeTipBone), rightToeTip: readRigPoint(rightToeTipBone),
+      leftSoleToe: readRigPoint(leftSoleToe), leftSoleHeel: readRigPoint(leftSoleHeel),
+      rightSoleToe: readRigPoint(rightSoleToe), rightSoleHeel: readRigPoint(rightSoleHeel),
+      leftAnkle: readRigPoint(leftAnkleBone), rightAnkle: readRigPoint(rightAnkleBone)
+    });
     const getFacingDirection = () => {
       const head = findBone('Head');
       const leftEye = findBone('LeftEye');
@@ -694,7 +643,7 @@ export async function loadHeroCharacter(app, {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount, visualGroundOffset,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression, getRigSnapshot, getVisualBounds, getFootPositions, applyFootPlacement, applyClimbHandPlacement, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
+      setFaceExpression, getRigSnapshot, getVisualBounds, getFootPositions, getLimbPositions, getSoleMarkerInfo, applyHipsWorldOffset, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
       setProceduralPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };

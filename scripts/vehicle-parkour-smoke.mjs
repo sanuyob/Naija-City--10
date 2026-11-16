@@ -188,18 +188,15 @@ try {
 
   const ladderStart=await page.evaluate(()=>window.__NAIJA_GAME__.debugStartBuildingTraversalForSmoke('yaba-core-01','ladder'));
   if(!ladderStart.started)throw new Error('Could not start a live Yaba building ladder climb: '+JSON.stringify(ladderStart));
-  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip==='Ara_LadderClimb',null,{timeout:10000});
-  // Capture an early segment while the real application RAF is running. A
-  // good climb has pauses and pull pulses synchronized to the two-rung clip,
-  // not a constant-rate elevator curve.
-  // The browser's software renderer is slow, so complete the same controller
-  // + Bullet ladder update path at fixed 50 ms steps. This is deterministic and
-  // still exercises collision resolution, rung timing, IK, and clip switching.
-  const ladderSimulation=await page.evaluate(()=>window.__NAIJA_GAME__.debugCompleteTraversalForSmoke(600));
-  if(!ladderSimulation.completed||ladderSimulation.simulatedFrames<1){
-    throw new Error('The Bullet ladder controller did not complete its deterministic fixed-step run: '+JSON.stringify(ladderSimulation));
+  // Run the real PlayCanvas AnimComponentSystem and Bullet solver together at
+  // deterministic 50 ms steps. Unlike the old helper, this advances the
+  // imported skeletal animation on every physics step and samples limb motion.
+  const ladderSimulation=await page.evaluate(()=>window.__NAIJA_GAME__.debugCompleteTraversalForSmoke(900));
+  if(!ladderSimulation.completed||ladderSimulation.simulatedFrames<5||!ladderSimulation.animationSystemAvailable){
+    throw new Error('The PlayCanvas animation + Bullet ladder simulation did not complete: '+JSON.stringify(ladderSimulation));
   }
   const ladderMidTrace=ladderSimulation.pulseTrace;
+  const ladderPulseMetrics={positiveSamples:ladderMidTrace.positiveSamples,holdSamples:ladderMidTrace.holdSamples,maxStep:ladderMidTrace.maxStep};
   const ladderFinal=await page.evaluate(start=>{
     const game=window.__NAIJA_GAME__,player=game.getPlayerState(),traversal=game.getTraversalState();
     const feet=game.getHeroFootPositions?.()||null;
@@ -218,8 +215,52 @@ try {
   const ladderFootY=[ladderFinal.feet?.left?.[1],ladderFinal.feet?.right?.[1]].filter(Number.isFinite);
   const roofY=ladderFinal.roofGround?.point?.[1];
   const footErrors=Number.isFinite(roofY)&&ladderFootY.length?ladderFootY.map(y=>Number((y-roofY).toFixed(3))):[];
-  const ladder= {...ladderFinal,footErrors,pulseTrace:ladderMidTrace,simulatedFrames:ladderSimulation.simulatedFrames,clipChanges:ladderSimulation.clipChanges,physicsSteps:ladderSimulation.physics.steps};
+  const ladder= {...ladderFinal,footErrors,pulseTrace:ladderPulseMetrics,clipChanges:ladderSimulation.clipChanges,limbMotion:ladderSimulation.limbMotion,animationSteps:ladderSimulation.animationSteps,physicsSteps:ladderSimulation.physics?.steps||0};
 
+  // Walk on the roof using real keyboard events and fixed-step PlayCanvas
+  // controller/animation updates. This verifies that the capsule remains on
+  // the raised roof and that the authored feet do not skate across it.
+  await page.keyboard.down('w');
+  const roofWalkRun=await page.evaluate(()=>window.__NAIJA_GAME__.debugAdvanceTraversalForSmoke(30));
+  await page.keyboard.up('w');
+  const roofSettle=await page.evaluate(()=>window.__NAIJA_GAME__.debugAdvanceTraversalForSmoke(4));
+  const roofWalkSamples=roofWalkRun.trace||[];
+  const validRoofWalk=roofWalkSamples.filter(x=>Number.isFinite(x.roofY));
+  const maxRoofPenetration=validRoofWalk.length?Math.max(...validRoofWalk.map(x=>x.roofY-x.position[1])):Infinity;
+  const maxRoofError=validRoofWalk.length?Math.max(...validRoofWalk.map(x=>Math.abs(x.roofY-x.position[1]))):Infinity;
+  const roofTravel=roofWalkSamples.length>1?Math.hypot(roofWalkSamples.at(-1).position[0]-roofWalkSamples[0].position[0],roofWalkSamples.at(-1).position[2]-roofWalkSamples[0].position[2]):0;
+  // Select the sole marker (toe or heel) nearest the roof plane for each
+  // foot. Reset on marker switches so heel-to-toe rocking is not counted as
+  // sliding. Only real sole contacts within 10 cm of the collision surface
+  // contribute to the planted-foot displacement measurement.
+  const footSlideFor=side=>{
+    let previous=null,max=0,total=0,count=0,contacts=0;
+    for(const sample of roofWalkSamples){
+      if(!Number.isFinite(sample.roofY)){previous=null;continue;}
+      const candidates=[
+        {kind:'toe',point:sample.limbs?.[side+'SoleToe']},
+        {kind:'heel',point:sample.limbs?.[side+'SoleHeel']}
+      ].filter(item=>item.point?.every(Number.isFinite));
+      if(!candidates.length){previous=null;continue;}
+      candidates.sort((a,b)=>Math.abs(a.point[1]-sample.roofY)-Math.abs(b.point[1]-sample.roofY));
+      const contact=candidates[0];
+      if(Math.abs(contact.point[1]-sample.roofY)>.10){previous=null;continue;}
+      contacts++;
+      if(previous&&sample.time-previous.time>.034)previous=null;
+      if(previous&&previous.kind===contact.kind){
+        const delta=Math.hypot(contact.point[0]-previous.point[0],contact.point[2]-previous.point[2]);
+        max=Math.max(max,delta);total+=delta;count++;
+      }
+      previous={kind:contact.kind,point:contact.point};
+    }
+    return {max:Number(max.toFixed(3)),mean:Number((count?total/count:0).toFixed(3)),pairs:count,contacts};
+  };
+  const leftFootSlide=footSlideFor('left'),rightFootSlide=footSlideFor('right');
+  ladder.roofWalk={samples:roofWalkSamples.length,validSamples:validRoofWalk.length,
+    maxRoofPenetration:Number(maxRoofPenetration.toFixed(3)),maxRoofError:Number(maxRoofError.toFixed(3)),travel:Number(roofTravel.toFixed(3)),
+    leftFootSlide,rightFootSlide,
+    maxLeftFootSlide:leftFootSlide.max,maxRightFootSlide:rightFootSlide.max,
+    final:{position:roofSettle.player.position,grounded:roofSettle.player.grounded,animationSystemAvailable:roofSettle.animationSystemAvailable}};
 
   const parkour=[ladder];
   for (const routeType of ['mantle', 'ledge', 'wall-run']) {
@@ -267,6 +308,10 @@ try {
     (route.requestedType==='ladder'&&!['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].every(name=>route.clips.includes(name))) ||
     (route.requestedType==='ladder'&&(!route.roofGround||Math.abs(route.roofGround.point?.[1]-route.height)>.16)) ||
     (route.requestedType==='ladder'&&(!route.pulseTrace||route.pulseTrace.positiveSamples<8||route.pulseTrace.holdSamples<2||route.pulseTrace.maxStep<.02)) ||
+    (route.requestedType==='ladder'&&['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].some(name=>!route.clipChanges.includes(name))) ||
+    (route.requestedType==='ladder'&&['leftHandTip','rightHandTip','leftFoot','rightFoot'].some(name=>(route.limbMotion?.[name]?.verticalRange||0)<.12)) ||
+    (route.requestedType==='ladder'&&(!route.roofWalk?.validSamples||route.roofWalk.maxRoofPenetration>.08||route.roofWalk.maxRoofError>.08||route.roofWalk.final?.grounded!==true||route.roofWalk.travel<.5)) ||
+    (route.requestedType==='ladder'&&Math.max(route.roofWalk?.maxLeftFootSlide??Infinity,route.roofWalk?.maxRightFootSlide??Infinity)>.10) ||
     (route.requestedType==='ladder'&&(route.footErrors.length!==2||route.footErrors.some(error=>error<-.08||error>.55))) ||
     (route.requestedType==='ladder'&&route.footPlacementHits<1) ||
     (route.requestedType!=='wall-run'&&(!route.roofGround||Math.abs(route.finalPosition[1]-route.roofGround.point[1])>.08))

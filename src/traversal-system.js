@@ -75,9 +75,14 @@ export function createTraversalSystem({playerController,physics=null,obstacles=[
    const rungSpacing=Math.max(.25,Number(best.o.rungSpacing)||.4);
    const climbHeight=Math.max(.25,destination[1]-mountPosition[1]);
    const rungCount=Math.max(1,Math.ceil(climbHeight/rungSpacing));
-   const climbDuration=Math.min(30,Math.max(.5,rungCount*.46));
-   const mountDuration=.68;
-   const dismountDuration=.72;
+   // The Blender-authored loop alternates both hands and feet twice per
+   // full clip. Each half-cycle is one physical rung, so root travel advances
+   // one rung every half of the exported clip duration.
+   const mountDuration=playerController.getClipDuration?.('Ara_LadderMount')||.75;
+   const climbCycle=playerController.getClipDuration?.('Ara_LadderClimb')||.958;
+   const rungDuration=climbCycle*.5;
+   const dismountDuration=playerController.getClipDuration?.('Ara_LadderDismount')||.75;
+   const climbDuration=Math.max(.5,rungCount*rungDuration);
    const phaseDurations=[mountDuration,climbDuration,dismountDuration];
    actionDuration=phaseDurations.reduce((sum,value)=>sum+value,0);
    ladderOptions={mountPosition,ladderPosition:[obstaclePosition.x,obstaclePosition.y-Math.abs(s.y)*.5,obstaclePosition.z],

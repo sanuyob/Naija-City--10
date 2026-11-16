@@ -229,7 +229,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   let araLoadError=null;
   try{
     heroCharacter=await loadHeroCharacter(app,{
-      bundledUrl:'assets/hero/Ara_Female_Executive_Animated.glb',
+      bundledUrl:'assets/hero/Ara_Female_Executive_Animated_Ladder.glb',
       characterId:'ara-female',
       statusLabel:assetStatusLabel
     });
@@ -535,6 +535,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       }
     }
     playerController.update(step);
+    playerController.applyGroundedFootLock?.();
     traversalSystem.update(step);
     vehicleSystem?.update(step);
     companionSystem.update(step);
@@ -576,13 +577,14 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:10,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getGidiState:()=>gidiStreamer.getState(),
+  const gameApi={ready:true,stage:10,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroLimbPositions:()=>heroCharacter?.getLimbPositions?.()||null,getHeroSoleMarkerInfo:()=>heroCharacter?.getSoleMarkerInfo?.()||null,getHeroFootLockState:()=>playerController.getFootLockState?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getGidiState:()=>gidiStreamer.getState(),
     surfacePatches:surfacePatches.map(patch=>({id:patch.id,surface:patch.surface,position:patch.position.slice(),halfExtents:patch.halfExtents.slice()})),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,getTrafficPositions:()=>traffic.map(item=>({name:item.entity.name,position:item.entity.getPosition().toArray()})),trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(import.meta.env.DEV && new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugLoadGidiForSmoke=async(position=[100,0,-450])=>{playerController.setPositionForSmoke(position,0);await gidiStreamer.update(position,1);return gidiStreamer.getState();};
     gameApi.debugGetGidiStateForSmoke=()=>gidiStreamer.getState();
     gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
+    gameApi.debugSetControlEnabledForSmoke=value=>playerController.setControlEnabled(value);
     gameApi.debugSetCrouchedForSmoke=value=>playerController.setCrouched(value);
     gameApi.debugEnterVehicleForSmoke=()=>vehicleSystem?.debugEnter?.()||false;
     gameApi.debugExitVehicleForSmoke=()=>vehicleSystem?.debugExit?.()||false;
@@ -634,8 +636,11 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       const start=[p.x+route.approach[0]*2.2,0,p.z+route.approach[1]*2.2];
       playerController.setPositionForSmoke(start,route.approachYaw);
       const started=traversalSystem.tryContextualTraversal(playerController.getState(),route.id);
-      const traversalFrames=Math.min(1200,Math.ceil((.68+Math.ceil(route.height/.4)*.46+.72)/.05)+8);
-      for(let i=0;i<traversalFrames;i++){playerController.update(.05);traversalSystem.update(.05);vfxSystem.update(.05);}
+      const mountDuration=playerController.getClipDuration?.('Ara_LadderMount')||.75;
+      const climbCycle=playerController.getClipDuration?.('Ara_LadderClimb')||.958;
+      const dismountDuration=playerController.getClipDuration?.('Ara_LadderDismount')||.75;
+      const traversalFrames=Math.min(1800,Math.ceil((mountDuration+Math.ceil(route.height/.4)*climbCycle+dismountDuration)/.05)+12);
+      for(let i=0;i<traversalFrames;i++){playerController.update(.05);traversalSystem.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);}
       return {started,route:route.id,buildingId:route.buildingId,routeType:route.type,height:route.height,
         expectedFacingYaw:route.approachYaw,player:playerController.getState(),traversal:traversalSystem.getState(),feet:heroCharacter?.getFootPositions?.()||null,visualBounds:heroCharacter?.getVisualBounds?.()||null,traversalFrames};
     };
@@ -649,7 +654,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       const started=traversalSystem.tryContextualTraversal(playerController.getState(),route.id);
       return {started,route:route.id,buildingId:route.buildingId,routeType:route.type,height:route.height,
         expectedFacingYaw:route.approachYaw,start,before,routePosition:p.toArray(),approach:route.approach.slice(),
-        expectedDuration:.68+Math.ceil(route.height/.4)*.46+.72};
+        expectedDuration:(playerController.getClipDuration?.('Ara_LadderMount')||.75)+Math.ceil(route.height/.4)*(playerController.getClipDuration?.('Ara_LadderClimb')||.958)+(playerController.getClipDuration?.('Ara_LadderDismount')||.75)};
     };
     gameApi.debugProbeWorldCollisionForSmoke=()=>({
       buildingBlocked:playerPhysics.canFitCapsule?.([-9.2,0,-82],1.8)===false,
@@ -666,53 +671,116 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       return {startX:start[0],endX:actor.position[0],buildingBoundaryX:-12.45,
         stoppedByBuilding:actor.position[0]<-12.5,physics:playerPhysics.getState()};
     };
-    gameApi.debugAdvanceTraversalForSmoke=(frames=30)=>{
-      const count=Math.max(1,Math.min(60,Math.floor(Number(frames)||30)));
+    gameApi.debugAdvanceTraversalForSmoke=(frames=90)=>{
+      const count=Math.max(1,Math.min(180,Math.floor(Number(frames)||90)));
+      const step=1/60;
+      const trace=[];
+      const animationSystem=app.systems?.anim;
       for(let i=0;i<count;i++){
-        playerController.update(0.05);
-        traversalSystem.update(0.05);
+        playerController.update(step);
+        traversalSystem.update(step);
+        // Step PlayCanvas's actual AnimComponentSystem alongside Bullet, then
+        // pin the active shoe marker before collecting this 60 Hz sample.
+        animationSystem?.onAnimationUpdate?.(step);
+        const footLock=playerController.applyGroundedFootLock?.()||null;
+        vfxSystem.update(step);
+        {
+          const player=playerController.getState();
+          const roof=playerPhysics.raycast?.([player.position[0],player.position[1]+.45,player.position[2]],
+            [player.position[0],player.position[1]-.45,player.position[2]])||null;
+          trace.push({time:Number(((i+1)*step).toFixed(5)),dt:step,position:player.position,grounded:player.grounded,roofY:roof?.point?.[1]??null,groundY:roof?.point?.[1]??null,
+            clip:playerController.getAnimationState()?.activeClip||'',activeStateProgress:playerController.getAnimationState()?.activeStateProgress??null,
+            locomotionPlaybackRates:playerController.getAnimationState()?.locomotionPlaybackRates||null,footLock,
+            evaluatorClips:playerController.getAnimationState()?.evaluatorClips||[],limbs:heroCharacter?.getLimbPositions?.()||null});
+        }
       }
-      vfxSystem.update(.05);
-      return {player:playerController.getState(),traversal:traversalSystem.getState()};
+      app.render?.();
+      return {player:playerController.getState(),traversal:traversalSystem.getState(),trace,
+        animationSystemAvailable:!!animationSystem?.onAnimationUpdate};
     };
-    gameApi.debugCompleteTraversalForSmoke=(maxFrames=600)=>{
-      const limit=Math.max(1,Math.min(900,Math.floor(Number(maxFrames)||600)));
-      const samples=[],clipChanges=[];
+    gameApi.debugAdvanceLocomotionForSmoke=(frames=120,dt=1/60)=>{
+      const count=Math.max(1,Math.min(360,Math.floor(Number(frames)||120)));
+      const step=Math.max(1/120,Math.min(1/30,Number(dt)||1/60));
+      const trace=[];
+      const animationSystem=app.systems?.anim;
+      if(!animationSystem?.onAnimationUpdate)throw new Error('PlayCanvas AnimComponentSystem.onAnimationUpdate is unavailable');
+      for(let i=0;i<count;i++){
+        playerController.update(step);
+        animationSystem.onAnimationUpdate(step);
+        const footLock=playerController.applyGroundedFootLock?.()||null;
+        const player=playerController.getState();
+        const limbs=heroCharacter?.getLimbPositions?.()||null;
+        const ground=playerPhysics.raycast?.([player.position[0],player.position[1]+.7,player.position[2]],
+          [player.position[0],player.position[1]-.65,player.position[2]])||null;
+        const animation=playerController.getAnimationState?.()||{};
+        trace.push({time:Number(((i+1)*step).toFixed(5)),dt:step,position:player.position,
+          grounded:player.grounded,groundY:ground?.point?.[1]??null,horizontalSpeed:player.horizontalSpeed,
+          running:player.running,moving:player.moving,facingYaw:player.facingYaw,clip:animation.activeClip||'',activeState:animation.activeState||'',
+          activeStateProgress:animation.activeStateProgress??null,activeStateCurrentTime:animation.activeStateCurrentTime??null,activeStateDuration:animation.activeStateDuration??null,locomotionPlaybackRates:animation.locomotionPlaybackRates||null,
+          footLock,footLockState:playerController.getFootLockState?.()||null,limbs});
+      }
+      app.render?.();
+      return {player:playerController.getState(),trace,animationSystemAvailable:true,dt:step};
+    };
+    gameApi.debugCompleteTraversalForSmoke=(maxFrames=900)=>{
+      const limit=Math.max(1,Math.min(1800,Math.floor(Number(maxFrames)||900)));
+      const samples=[],clipChanges=[],animationTrace=[];
+      const limbSamples={leftHandTip:[],rightHandTip:[],leftFoot:[],rightFoot:[]};
+      const animationSystem=app.systems?.anim;
+      if(!animationSystem?.onAnimationUpdate)throw new Error('PlayCanvas AnimComponentSystem.onAnimationUpdate is unavailable');
       let previousY=playerController.getState().position[1],lastClip='';
-      let simulatedFrames=0;
+      let simulatedFrames=0,animationSteps=0;
+      const sampleLimbs=()=>{
+        const player=playerController.getState(),limbs=heroCharacter?.getLimbPositions?.()||{};
+        for(const key of Object.keys(limbSamples))if(limbs[key])limbSamples[key].push(limbs[key][1]);
+      };
       for(let i=0;i<limit;i++){
         playerController.update(.05);
         traversalSystem.update(.05);
+        animationSystem.onAnimationUpdate(.05);
+        animationSteps++;
         vfxSystem.update(.05);
         const player=playerController.getState();
         const delta=player.position[1]-previousY;
         samples.push(Number(delta.toFixed(5)));
         previousY=player.position[1];
-        const clip=playerController.getAnimationState()?.activeClip||'';
+        const animationState=playerController.getAnimationState()||{};
+        const clip=animationState.activeClip||'';
         if(clip&&clip!==lastClip){clipChanges.push(clip);lastClip=clip;}
+        if(i%2===0)sampleLimbs();
+        if(i%10===0){
+          const limbs=heroCharacter?.getLimbPositions?.()||{};
+          animationTrace.push({frame:i,rootY:player.position[1],clip,state:animationState.activeState,
+            time:animationState.activeStateCurrentTime,leftHandY:limbs.leftHand?.[1],rightHandY:limbs.rightHand?.[1],
+            leftFootY:limbs.leftFoot?.[1],rightFootY:limbs.rightFoot?.[1]});
+        }
         simulatedFrames++;
         if(!player.traversing)break;
       }
-      // A ladder deliberately suppresses ordinary floor support while Ara is
-      // gripping the rungs. Give Bullet a few normal controller frames after
-      // the dismount so the rooftop contact is re-established before checking
-      // the final grounded state, just as the next rendered game frames do.
+      // The ladder controller owns Ara's root while the Bullet capsule is detached.
+      // After dismount, physics is reattached at the roof and receives a few
+      // ordinary frames to establish real rooftop support.
       for(let i=0;i<4&&!playerController.getState().grounded;i++){
         playerController.update(.05);
         traversalSystem.update(.05);
+        animationSystem.onAnimationUpdate(.05);
+        animationSteps++;
         vfxSystem.update(.05);
         const player=playerController.getState();
         samples.push(Number((player.position[1]-previousY).toFixed(5)));
         previousY=player.position[1];
         const clip=playerController.getAnimationState()?.activeClip||'';
         if(clip&&clip!==lastClip){clipChanges.push(clip);lastClip=clip;}
+        sampleLimbs();
         simulatedFrames++;
       }
       const positive=samples.filter(value=>value>.001),holds=samples.filter(value=>Math.abs(value)<.001).length;
-      return {completed:!playerController.getState().traversing,simulatedFrames,
+      const limbMotion=Object.fromEntries(Object.entries(limbSamples).map(([key,values])=>[key,{samples:values.length,verticalRange:values.length?Number((Math.max(...values)-Math.min(...values)).toFixed(3)):0,min:values.length?Number(Math.min(...values).toFixed(3)):null,max:values.length?Number(Math.max(...values).toFixed(3)):null}]));
+      app.render?.();
+      return {completed:!playerController.getState().traversing,simulatedFrames,animationSteps,animationSystemAvailable:true,limbMotion,
         pulseTrace:{samples,positiveSamples:positive.length,holdSamples:holds,
           maxStep:Math.max(0,...samples),minStep:Math.min(...positive,0)},
-        clipChanges,player:playerController.getState(),traversal:traversalSystem.getState(),
+        clipChanges,animationTrace,player:playerController.getState(),traversal:traversalSystem.getState(),
         physics:playerPhysics.getState(),feet:heroCharacter?.getFootPositions?.()||null};
     };
     gameApi.debugTraverseTypeForSmoke=type=>{
@@ -725,11 +793,11 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       const duration=Number(traversalSystem.getState().lastTraversal?.duration)||2.9;
       const frames=Math.min(900,Math.max(58,Math.ceil(duration/.05)+12));
       for(let i=0;i<frames&&playerController.getState().traversing;i++){
-        playerController.update(.05);traversalSystem.update(.05);vfxSystem.update(.05);
+        playerController.update(.05);traversalSystem.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);
       }
       // Let the normal Bullet support test settle after a rung-based climb.
       for(let i=0;i<4&&!playerController.getState().grounded&&!playerController.getState().traversing;i++){
-        playerController.update(.05);traversalSystem.update(.05);vfxSystem.update(.05);
+        playerController.update(.05);traversalSystem.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);
       }
       const traversal=traversalSystem.getState(),player=playerController.getState();
       const distanceTravelled=Math.hypot(player.position[0]-startPosition[0],player.position[2]-startPosition[2]);
@@ -739,8 +807,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.debugJumpPhysicsForSmoke=()=>{
       playerController.setPositionForSmoke([0,0,0],0);playerController.queueJumpForSmoke();
       // Sample the rising phase near the jump apex (about 0.25 seconds).
-      for(let i=0;i<5;i++){playerController.update(.05);vfxSystem.update(.05);}const airborne=playerController.getState();
-      for(let i=0;i<42;i++){playerController.update(.05);vfxSystem.update(.05);}
+      for(let i=0;i<5;i++){playerController.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);}const airborne=playerController.getState();
+      for(let i=0;i<42;i++){playerController.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);}
       return {airborne,landed:playerController.getState(),vfx:vfxSystem.getState()};
     };
   }

@@ -30,7 +30,7 @@ try{
  if(String(state.assetStatus||'').includes('Environment startup failed')||String(state.status||'').includes('Could not start'))throw Error('Game startup failed: '+JSON.stringify({status:state.status,assetStatus:state.assetStatus}));
  if(!state.playerCharacterReady||state.characterSource!=='ara-3d-gen-female-preset'||state.characterGeometry!=='rigged-glb')throw Error('Ara GLB not active: '+JSON.stringify(state));
  if(!['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].every(name=>state.animations.includes(name)))throw Error('Ara ladder traversal clips were not bound to her real skeleton: '+JSON.stringify(state.animations));
- if(state.characterForwardCorrection!==180)throw Error('Ara forward-facing correction failed: '+JSON.stringify(state.characterForwardCorrection));
+ if(Math.abs(state.characterForwardCorrection-180)>.01)throw Error('Ara forward-facing correction failed: '+JSON.stringify(state.characterForwardCorrection));
  if(state.startupPreload?.total!==48||state.startupPreload?.loaded!==48||state.startupPreload?.failed!==0||!state.startupPreload?.ready||!state.loadingHidden)throw Error('Yaba building preload was incomplete before play: '+JSON.stringify({preload:state.startupPreload,loadingHidden:state.loadingHidden}));
  if(state.objective||state.parkourButton)throw Error('Obstructive objective HUD or duplicate parkour button remains in active controls');
  if(!(state.cameraActualDistance>0&&state.cameraActualDistance<4.6))throw Error('Third-person camera did not initialize at the closer chase distance: '+state.cameraActualDistance);
@@ -44,9 +44,13 @@ try{
  await page.mouse.down();
  await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
  await page.waitForTimeout(1350);
- const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.()}));
+ const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.(),limbs:window.__NAIJA_GAME__?.getHeroLimbPositions?.()}));
  if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.001)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
  if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite)||walkState.player.footPlacementHits<1)throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
+ if(!['leftSoleToe','leftSoleHeel','rightSoleToe','rightSoleHeel'].every(key=>walkState.limbs?.[key]?.every(Number.isFinite)))throw Error('Blender sole-contact landmarks did not load into PlayCanvas: '+JSON.stringify(walkState.limbs));
+ const walkPlayback=walkState.animation?.locomotionPlaybackRates?.walk;
+ const walkEvaluatorSpeed=walkState.animation?.evaluatorClips?.find(clip=>clip.trackName==='Walk')?.speed;
+ if(!Number.isFinite(walkPlayback)||Math.abs(walkPlayback-walkState.player.horizontalSpeed/1.515)>.06||!Number.isFinite(walkEvaluatorSpeed)||Math.abs(walkEvaluatorSpeed-walkPlayback)>.06)throw Error('Walk clip playback is not synchronized to measured player speed: '+JSON.stringify({player:walkState.player,animation:walkState.animation}));
  await page.mouse.up();
  // Reverse input moves backward along the current heading without sideways sliding.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -123,6 +127,9 @@ try{
  const runState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),pressed:document.querySelector('#sprint-button')?.getAttribute('aria-pressed')}));
  await page.mouse.up();
  if(!runState.player?.running||!runState.player?.sprintEnabled||runState.animation?.activeClip!=='Run'||runState.pressed!=='true'||runState.player.horizontalSpeed<6.2)throw Error('Mobile sprint tap did not reach the tuned 7.2 m/s run state: '+JSON.stringify(runState));
+ const runPlayback=runState.animation?.locomotionPlaybackRates?.run;
+ const runEvaluatorSpeed=runState.animation?.evaluatorClips?.find(clip=>clip.trackName==='Run')?.speed;
+ if(!Number.isFinite(runPlayback)||Math.abs(runPlayback-runState.player.horizontalSpeed/3.55)>.06||!Number.isFinite(runEvaluatorSpeed)||Math.abs(runEvaluatorSpeed-runPlayback)>.06)throw Error('Run clip playback is not synchronized to measured player speed: '+JSON.stringify({player:runState.player,animation:runState.animation}));
  await sprintButton.tap();
  const sprintOff=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),pressed:document.querySelector('#sprint-button')?.getAttribute('aria-pressed')}));
  if(sprintOff.player?.sprintEnabled||sprintOff.pressed!=='false')throw Error('Second sprint tap did not disable sprint: '+JSON.stringify(sprintOff));
@@ -143,7 +150,9 @@ try{
  if(!bulletCollision?.stoppedByBuilding||bulletCollision.endX>=bulletCollision.buildingBoundaryX)throw Error('Live Bullet movement did not stop at the building proxy: '+JSON.stringify(bulletCollision));
  await page.waitForTimeout(400);
  const crouchStarted=await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetCrouchedForSmoke?.(true));
- await page.waitForTimeout(1200);
+ // Advance the real PlayCanvas animation system deterministically instead of
+ // relying on requestAnimationFrame timing in a background headless tab.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceLocomotionForSmoke?.(72,1/60));
  const crouchState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),physics:window.__NAIJA_GAME__?.getPhysicsState?.().player,animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),rig:window.__NAIJA_GAME__?.getHeroRigSnapshot?.()}));
  const standingHipsY=state.rig?.bones?.find(bone=>bone.name==='Hips')?.position?.[1];
  const crouchedHipsY=crouchState.rig?.bones?.find(bone=>bone.name==='Hips')?.position?.[1];
@@ -172,7 +181,7 @@ try{
  const jumpBox=await page.locator('#jump-button').boundingBox();
  await page.locator('#jump-button').dispatchEvent('pointerdown',{pointerId:90,pointerType:'touch',isPrimary:true,button:0,buttons:1,clientX:jumpBox.x+jumpBox.width/2,clientY:jumpBox.y+jumpBox.height/2});
  const jumpActionClip=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroAnimationState?.().activeClip);
- const parkour=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(30));
+ const parkour=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(60));
  if(!parkour?.traversal?.lastTraversal||parkour.traversal.lastTraversal.type!=='step'||parkour.traversal.traversalsStarted<1||parkour.traversal.traversalsCompleted<1||parkour.player.position[1]<.3||jumpActionClip!=='Climb up ledge')throw Error('Jump touch action did not perform and complete nearby step parkour: '+JSON.stringify({parkour,jumpActionClip}));
  // Away from a traversal surface the same Jump button must perform an ordinary jump.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,45],0));

@@ -213,8 +213,12 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const origin = transform.getOrigin();
     const p = [origin.x(), origin.y() - halfHeight, origin.z()];
     const linear = body.getLinearVelocity();
-    const supportHit = raycast([p[0], p[1] + .12, p[2]], [p[0], p[1] - .20, p[2]]);
-    const raySupport = Boolean(supportHit && supportHit.normal[1] > .55 && p[1] >= supportHit.point[1] - .035 && p[1] - supportHit.point[1] < .18);
+    // Probe farther above and below the capsule feet. The old 12 cm / 20 cm
+    // ray only detected support; it never corrected penetration on elevated
+    // surfaces, so the capsule could settle visibly inside rooftop colliders.
+    const supportHit = raycast([p[0], p[1] + .42, p[2]], [p[0], p[1] - .26, p[2]]);
+    const supportDelta = supportHit ? p[1] - supportHit.point[1] : Infinity;
+    const raySupport = Boolean(supportHit && supportHit.normal[1] > .55 && supportDelta >= -.22 && supportDelta <= .22);
     // Ladder traversal must be allowed to rise through the ground probe's
     // support tolerance. Otherwise a slow first rung is repeatedly snapped
     // back to Y=0 and looks like the character is on an invisible elevator.
@@ -222,7 +226,15 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     let grounded = !ignoreGroundSupport && (hasSupportContact() || raySupport) && linear.y() <= 1.2;
     if (!ignoreGroundSupport && p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
     if (!ignoreGroundSupport && p[1] < groundY) grounded = true;
-    if (grounded && p[1] <= groundY + 0.075) {
+    // Snap the feet to the actual support hit, including rooftops, platforms,
+    // and raised walkways. This is deliberately disabled during ladder ascent
+    // and other authored traversal so it cannot pull the character off a rung.
+    if (!ignoreGroundSupport && grounded && raySupport && linear.y() <= 1.2) {
+      if (Math.abs(supportDelta) > .005) {
+        p[1] = supportHit.point[1];
+        teleport(p, [linear.x(), 0, linear.z()]);
+      }
+    } else if (grounded && p[1] <= groundY + 0.075) {
       p[1] = groundY;
       teleport(p, [linear.x(), 0, linear.z()]);
     }
