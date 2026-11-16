@@ -23,7 +23,8 @@ export function createStage08EBuildings({app}) {
   const maxConcurrent=2;
 
   async function loadOne(item) {
-    if(loading.has(item.id)||loaded.has(item.id)) return;
+    if(loading.has(item.id)) return false;
+    if(loaded.has(item.id)) return true;
     const loadStarted=performance.now();
     loading.add(item.id); activeLoads++; state.loadingBuildings=loading.size;
     let asset=assetsById.get(item.id);
@@ -60,11 +61,13 @@ export function createStage08EBuildings({app}) {
       if(item.hero){state.heroBuildingId=item.id;state.heroBuildingLoaded=true;state.heroLoadMs=Math.round(performance.now()-loadStarted);state.heroTextureEncoding=item.textureEncoding||'unknown';state.heroPbrMaterials=[...(item.pbrMaterials||[])];}
       state.loadedBuildings=loaded.size;
       state.staticBatching=Boolean(batchGroup);
+      return true;
     } catch(error) {
       state.failedBuildings++;
       if(item.hero)state.heroLoadError=error.message;
       state.failures.push(item.id+': '+error.message);
       console.error('Stage 08E GLB load failed:',item.id,error);
+      return false;
     } finally {
       loading.delete(item.id); activeLoads=Math.max(0,activeLoads-1); state.loadingBuildings=loading.size;
     }
@@ -108,8 +111,44 @@ export function createStage08EBuildings({app}) {
     return [x,y,z];
   }
 
+  function getCollisionProxies() {
+    return entries.map(item => ({
+      id: 'building-' + item.id,
+      position: [item.position[0], item.position[1] + item.size[1] / 2, item.position[2]],
+      halfExtents: [item.size[0] / 2, item.size[1] / 2, item.size[2] / 2],
+      rotationY: Number(item.rotationY) || 0,
+      source: 'stage08e-building-manifest'
+    }));
+  }
+
+  async function preloadArea(position=[0,0,0],radius=220,onProgress=()=>{}) {
+    if(!state.ready) throw new Error('Building manifest must be initialized before preload');
+    const targets=entries
+      .map(item=>({...item,distance:Math.hypot(position[0]-item.position[0],position[2]-item.position[2])}))
+      .filter(item=>item.distance<=radius)
+      .sort((a,b)=>a.distance-b.distance);
+    state.preloading=true;
+    state.preloadTotal=targets.length;
+    state.preloadCompleted=0;
+    state.preloadFailed=0;
+    let cursor=0;
+    const worker=async()=>{
+      while(cursor<targets.length){
+        const item=targets[cursor++];
+        const ok=await loadOne(item);
+        state.preloadCompleted++;
+        if(!ok)state.preloadFailed++;
+        onProgress({total:targets.length,completed:state.preloadCompleted,loaded:state.loadedBuildings,failed:state.preloadFailed,percent:targets.length?state.preloadCompleted/targets.length*100:100});
+      }
+    };
+    await Promise.all(Array.from({length:Math.min(maxConcurrent,targets.length)},worker));
+    state.preloading=false;
+    state.preloadReady=state.preloadFailed===0;
+    return {total:targets.length,loaded:state.loadedBuildings,failed:state.preloadFailed,ready:state.preloadReady};
+  }
+
   function update(position) {
-    if(!state.ready||!position) return;
+    if(!state.ready||!position||state.preloading) return;
     state.lastPlayerPosition=[position[0],position[1],position[2]];
     tick++;
     if(tick%8===0) {
@@ -117,7 +156,7 @@ export function createStage08EBuildings({app}) {
       for(const item of loaded.values()) {
         const dx=position[0]-item.position[0],dz=position[2]-item.position[2];
         const distance=Math.hypot(dx,dz); item.distance=distance;
-        if(distance>210&&item.asset!==undefined&&item.entity&&item.asset.name!==masterAssetId) {
+        if(distance>300&&item.asset!==undefined&&item.entity&&item.asset.name!==masterAssetId) {
           item.entity.destroy();
           item.asset.unload();
           loaded.delete(item.asset.name);
@@ -125,7 +164,7 @@ export function createStage08EBuildings({app}) {
           state.loadedBuildings=loaded.size;
           continue;
         }
-        item.entity.enabled=distance<=210;
+        item.entity.enabled=distance<=300;
         const level=distance<75?0:distance<145?1:2;
         item.lods.forEach((lod,i)=>{lod.enabled=item.entity.enabled&&i===level;});
         if(item.entity.enabled) state['lod'+level]++;
@@ -135,12 +174,12 @@ export function createStage08EBuildings({app}) {
     const candidates=entries
       .filter(item=>!loaded.has(item.id)&&!loading.has(item.id)&&!state.failures.some(f=>f.startsWith(item.id+':')))
       .map(item=>({...item,distance:Math.hypot(position[0]-item.position[0],position[2]-item.position[2])}))
-      .filter(item=>item.distance<=150)
+      .filter(item=>item.distance<=220)
       .sort((a,b)=>Number(Boolean(b.hero))-Number(Boolean(a.hero))||a.distance-b.distance);
     state.lastCandidateCount=candidates.length;
     state.activeDistricts=[...new Set(candidates.map(item=>item.district).filter(Boolean))];
     for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
   }
 
-  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static circle-vs-AABB building colliders';state.collisionRadius=collisionRadius;return state;},update,resolveMovement,getState:()=>({...state,streaming:'distance-based progressive loading with unload/eviction outside 210m (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterMaterialAsset:masterAssetId})};
+  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static rotated-box Bullet proxies';state.collisionRadius=collisionRadius;return state;},preloadArea,update,resolveMovement,getCollisionProxies,getState:()=>({...state,streaming:'startup-preloaded district + progressive background loading with 300m eviction (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterAsset:masterAssetId})};
 }

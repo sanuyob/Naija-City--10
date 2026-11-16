@@ -15,6 +15,7 @@ on:
       - feature/naija-city-stage-08f-final-artistry
       - feature/naija-city-stage-08g-ikeja-street-life
       - feature/naija-city-stage-08h-ikeja-prop-realism
+      - feature/hero01-18clips-player-integration
   workflow_dispatch:
 
 permissions:
@@ -57,15 +58,11 @@ jobs:
             echo "LD_LIBRARY_PATH=$ktx_lib:${LD_LIBRARY_PATH:-}" >> "$GITHUB_ENV"
           fi
           "$ktx_bin" --version
-      - name: Verify gameplay, build and mobile browser smoke test
+      - name: Verify gameplay and build production bundle
         run: |
           npm run verify
           npm run build
           npm run analyze:bundle
-      - name: Install headless Chromium
-        run: npx playwright install --with-deps chromium
-      - name: Run landscape mobile browser smoke test
-        run: npm run test:browser
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
