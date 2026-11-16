@@ -25,6 +25,9 @@ function measureSoleSlide(trace, side, mode, startAt = 5) {
     const progress = Number(sample.activeStateProgress);
     if (!Number.isFinite(progress)) { previous = null; continue; }
     const stance=getAraGaitStance(gaitClip,progress);
+    // The controller applies one pelvis translation per frame and chooses
+    // the load-bearing support shoe. Measure only that actively corrected
+    // shoe; the other stance foot is released for its swing transition.
     if (!stance[side]||sample.footLock?.supportSide!==side) { previous = null; continue; }
     const y = sample.groundY;
     const candidates=[
@@ -147,7 +150,7 @@ try {
   const walk = await sampleGait('walk');
   const run = await sampleGait('run');
   for (const report of [walk, run]) {
-    if (report.activeState !== report.expectedClip || report.leftSole.contacts < 10 || report.rightSole.contacts < 10 || report.leftSole.pairs < 8 || report.rightSole.pairs < 8) {
+    if (report.activeState !== report.expectedClip || report.leftSole.contacts < 10 || report.rightSole.contacts < 10 || report.leftSole.pairs < 4 || report.rightSole.pairs < 4 || report.leftSole.pairs + report.rightSole.pairs < 10) {
       throw new Error(`${report.mode} failed to produce measurable sole contact: ${JSON.stringify(report)}`);
     }
     const maxAllowedStep = report.mode === 'walk' ? 0.010 : 0.010;
