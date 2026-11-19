@@ -19,6 +19,16 @@ const stage08fMaterials=JSON.parse(await readFile(new URL('../public/assets/stag
 const generator=await readFile(new URL('./generate-stage-08e-assets.mjs',import.meta.url),'utf8');
 const stage08eManifest=JSON.parse(await readFile(new URL('../public/assets/stage-08e-manifest.json',import.meta.url),'utf8'));
 const buildingFiles=(await readdir(new URL('../public/assets/buildings/',import.meta.url))).filter(name=>name.endsWith('.glb'));
+const curatedYabaAsset=await readFile(new URL('../public/assets/curated-buildings/gidi-yaba-mixeduse-upgrade-01.glb',import.meta.url));
+const curatedYabaExternalResourceFunction=async uri=>{
+  assert.ok(uri.startsWith('textures/')&&!uri.includes('..'),'Curated Yaba GLB attempted to load a texture outside its shared library: '+uri);
+  return new Uint8Array(await readFile(new URL('../public/assets/curated-buildings/'+uri,import.meta.url)));
+};
+const curatedYabaValidation=await validator.validateBytes(new Uint8Array(curatedYabaAsset),{uri:'gidi-yaba-mixeduse-upgrade-01.glb',format:'glb',writeTimestamp:false,maxIssues:100,externalResourceFunction:curatedYabaExternalResourceFunction});
+const curatedYabaManifestEntry=stage08eManifest.models.find(model=>model.id==='expansion-shop-38');
+const curatedYabaBatchEntries=stage08eManifest.models.filter(model=>model.architectureStandard==='GIDI-YABA-ARCHITECTURE-STANDARD-V1');
+const curatedYabaSharedTextureDirectory=new URL('../public/assets/curated-buildings/textures/',import.meta.url);
+const curatedYabaSharedTextureFiles=(await readdir(curatedYabaSharedTextureDirectory)).filter(name=>name.endsWith('.ktx2')).sort();
 const controller=await readFile(new URL('../src/third-person-controller.js',import.meta.url),'utf8');
 const gidiStreamer=await readFile(new URL('../src/gidi-world-streamer.js',import.meta.url),'utf8');
 const gidiGenerator=await readFile(new URL('./generate-gidi-world.mjs',import.meta.url),'utf8');
@@ -377,7 +387,7 @@ assert.match(stage08e,/stage08e-static-buildings/,'Compatible static building ge
 assert.match(stage08e,/maxConcurrent=2/,'Progressive building streaming must limit concurrent loads');
 assert.match(stage08e,/\.unload\(\)/,'Distant GLB containers must be evicted from memory');
 assert.ok(stage08eManifest.models.every(model=>typeof model.district==='string'),'Every building must be assigned to a spatial streaming district');
-assert.match(generator,/KHR_texture_basisu|Basis\/KTX2 compression is a remaining optimization task/,'Texture compression status must be explicit');
+assert.match(generator,/KHR_texture_basisu|curated Yaba replacement uses KTX2 Basis/,'Stage 08E must record the curated Yaba KTX2 material delivery status');
 assert.equal(stage08eManifest.models.length,48,'Stage 08E must produce an individual GLB placement for all 48 existing buildings');
 assert.equal(buildingFiles.length,48,'All 48 generated building GLBs must exist');
 assert.equal(stage08eManifest.models.filter(model=>model.kind==='residential').length,8);
@@ -403,6 +413,71 @@ for(const filename of buildingFiles){
  assert.ok(json.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes.TANGENT!==undefined)),filename+' mesh primitives must include tangent attributes');
  assert.equal(json.materials.length,filename==='yaba-core-01.glb'?7:6,filename+' must use the expected material-family count (seven for the Stage 08F hero, six for Stage 08E buildings)');
 }
+
+assert.equal(curatedYabaAsset.readUInt32LE(0),0x46546c67,'Curated Yaba architecture must be a GLB 2.0 container');
+assert.equal(curatedYabaAsset.readUInt32LE(4),2,'Curated Yaba architecture must use GLB 2.0');
+assert.equal(curatedYabaAsset.readUInt32LE(8),curatedYabaAsset.length,'Curated Yaba GLB length must match the file');
+assert.equal(curatedYabaValidation.issues.numErrors,0,'Khronos glTF Validator rejected curated Yaba architecture: '+JSON.stringify(curatedYabaValidation.issues.messages));
+const curatedYabaExpectedValidatorLimits=new Set(['UNSUPPORTED_EXTENSION','VALUE_NOT_IN_LIST','UNUSED_OBJECT','IMAGE_UNRECOGNIZED_FORMAT','URI_GLB']);
+assert.ok(curatedYabaValidation.issues.messages.every(issue=>curatedYabaExpectedValidatorLimits.has(issue.code)),'Curated Yaba KTX2 GLB has an unexpected Khronos Validator issue: '+JSON.stringify(curatedYabaValidation.issues.messages));
+assert.ok(!curatedYabaValidation.issues.messages.some(issue=>issue.code==='MESH_PRIMITIVE_GENERATED_TANGENT_SPACE'),'Curated Yaba normal-mapped geometry must provide explicit MikkTSpace tangents');
+const curatedYabaJsonLength=curatedYabaAsset.readUInt32LE(12);
+const curatedYabaGltf=JSON.parse(curatedYabaAsset.subarray(20,20+curatedYabaJsonLength).toString('utf8').trim());
+for(const nodeName of ['BuildingRoot','ASSET_ORIENTATION','LOD0','LOD1','LOD2','COLLISION_PROXY']) assert.ok(curatedYabaGltf.nodes.some(node=>node.name===nodeName),'Curated Yaba architecture must include '+nodeName);
+const curatedYabaRoot=curatedYabaGltf.nodes.find(node=>node.name==='BuildingRoot');
+assert.ok(!curatedYabaRoot.rotation&&(!curatedYabaRoot.scale||curatedYabaRoot.scale.every(value=>Math.abs(value-1)<1e-5)),'Curated Yaba outer root must not override the game-managed placement transform');
+assert.equal(curatedYabaManifestEntry?.url,'/assets/curated-buildings/gidi-yaba-mixeduse-upgrade-01.glb','Stage 08E manifest must route expansion-shop-38 to the curated Yaba GLB');
+assert.equal(curatedYabaManifestEntry.bytes,curatedYabaAsset.length,'Stage 08E manifest byte count must match the curated Yaba GLB');
+assert.deepEqual(curatedYabaManifestEntry.size,[8.4,7.4,13.5],'Curated Yaba architecture must fit its expansion-shop-38 placement');
+assert.equal(stage08eManifest.models.length,48,'Curated Yaba replacement must preserve all 48 Stage 08E placements');
+assert.equal(curatedYabaGltf.images.length,24,'Curated Yaba PBR GLB must embed 24 dedicated KTX2 texture maps');
+assert.ok(curatedYabaGltf.images.every(image=>typeof image.uri==='string'&&image.uri.startsWith('textures/')&&image.uri.endsWith('.ktx2')&&image.bufferView===undefined),'All curated Yaba texture maps must use external shared KTX2 Basis files');
+assert.ok(curatedYabaGltf.extensionsUsed?.includes('KHR_texture_basisu')&&curatedYabaGltf.extensionsRequired?.includes('KHR_texture_basisu'),'Curated Yaba must declare KHR_texture_basisu as required');
+assert.equal(curatedYabaGltf.materials.length,8,'Curated Yaba must contain eight dedicated PBR material families');
+assert.ok(curatedYabaGltf.materials.every(material=>material.pbrMetallicRoughness?.baseColorTexture&&material.pbrMetallicRoughness?.metallicRoughnessTexture&&material.normalTexture),'Every curated Yaba PBR material must have base-colour, normal and roughness/metallic texture slots');
+assert.ok(curatedYabaGltf.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes?.TANGENT!==undefined)),'All curated Yaba geometry must contain MikkTSpace tangent attributes');
+assert.ok(curatedYabaManifestEntry.textureCompression==='KHR_texture_basisu'&&curatedYabaManifestEntry.textureMipmaps===true,'Stage 08E must preserve curated Yaba KTX2 compression and mipmap metadata');
+assert.ok(curatedYabaManifestEntry.materialFamilies?.length===8,'Stage 08E must preserve the eight curated Yaba material-family labels');
+assert.equal(curatedYabaManifestEntry.materialResolution?.hero,2048,'Curated Yaba facade materials must preserve their 2K target resolution');
+assert.equal(curatedYabaManifestEntry.materialResolution?.trim,1024,'Curated Yaba detail materials must preserve their 1K target resolution');
+
+assert.equal(curatedYabaBatchEntries.length,39,'GIDI Yaba architecture standard must cover the anchor plus 38 other existing commercial/mixed-use placements');
+assert.equal(stage08eManifest.yabaArchitectureStandard?.newlyUpgradedPlacementCount,38,'Yaba batch 02 must upgrade exactly 38 existing placements');
+assert.equal(stage08eManifest.yabaArchitectureStandard?.curatedPlacementCount,39,'Yaba standard must record 39 curated placements including the anchor');
+assert.equal(curatedYabaSharedTextureFiles.length,24,'The shared Yaba PBR texture library must contain exactly 24 KTX2 maps');
+const curatedYabaSharedMapSet=new Set(curatedYabaSharedTextureFiles);
+const curatedYabaSharedUris=curatedYabaGltf.images.map(image=>image.uri).sort();
+let curatedYabaGeometryBytes=0;
+for(const model of curatedYabaBatchEntries){
+  const assetBytes=await readFile(new URL('../public'+model.url,import.meta.url));
+  assert.equal(assetBytes.length,model.bytes,model.id+' manifest byte count must match its curated GLB');
+  const jsonLength=assetBytes.readUInt32LE(12);
+  const gltf=JSON.parse(assetBytes.subarray(20,20+jsonLength).toString('utf8').trim());
+  assert.equal(gltf.images?.length,24,model.id+' must reference the same 24 shared KTX2 maps');
+  assert.deepEqual(gltf.images.map(image=>image.uri).sort(),curatedYabaSharedUris,model.id+' must use exactly the same shared texture URI set');
+  assert.ok(gltf.images.every(image=>image.bufferView===undefined&&image.uri?.startsWith('textures/')&&image.uri.endsWith('.ktx2')),model.id+' must not embed duplicate texture payloads');
+  assert.ok(gltf.extensionsRequired?.includes('KHR_texture_basisu'),model.id+' must require KTX2 Basis');
+  assert.equal(gltf.materials?.length,8,model.id+' must use the shared eight-family PBR material vocabulary');
+  assert.ok(gltf.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes?.TANGENT!==undefined)),model.id+' must supply MikkTSpace tangents');
+  for(const name of ['BuildingRoot','ASSET_ORIENTATION','LOD0','LOD1','LOD2','COLLISION_PROXY']) assert.ok(gltf.nodes.some(node=>node.name===name),model.id+' is missing '+name);
+  const rootNode=gltf.nodes.find(node=>node.name==='BuildingRoot');
+  assert.ok(!rootNode.rotation&&(!rootNode.scale||rootNode.scale.every(value=>Math.abs(value-1)<1e-5)),model.id+' outer root must retain neutral game-managed transform');
+  curatedYabaGeometryBytes+=assetBytes.length;
+  const validation=await validator.validateBytes(new Uint8Array(assetBytes),{uri:model.id+'.glb',format:'glb',writeTimestamp:false,maxIssues:100,externalResourceFunction:curatedYabaExternalResourceFunction});
+  assert.equal(validation.issues.numErrors,0,model.id+' failed glTF validation: '+JSON.stringify(validation.issues.messages));
+  assert.ok(validation.issues.messages.every(issue=>curatedYabaExpectedValidatorLimits.has(issue.code)),model.id+' has an unexpected validator issue: '+JSON.stringify(validation.issues.messages));
+}
+const curatedYabaSharedMapBytes=await Promise.all(curatedYabaSharedTextureFiles.map(async filename=>{
+  const bytes=await readFile(new URL('../public/assets/curated-buildings/textures/'+filename,import.meta.url));
+  assert.deepEqual([...bytes.subarray(0,12)],[0xab,0x4b,0x54,0x58,0x20,0x32,0x30,0xbb,0x0d,0x0a,0x1a,0x0a],filename+' must be a valid KTX2 container');
+  return bytes.length;
+})).then(values=>values.reduce((sum,value)=>sum+value,0));
+assert.equal(curatedYabaSharedMapBytes,stage08eManifest.yabaArchitectureStandard.uniqueSharedTexturePayloadBytes,'Shared Yaba texture payload must exist once and match manifest accounting');
+assert.equal(curatedYabaBatchEntries.reduce((sum,model)=>sum+model.bytes,0),curatedYabaGeometryBytes,'Curated Yaba geometry byte accounting must match all 39 GLBs');
+assert.equal(stage08eManifest.models.length,48,'Yaba building upgrades must preserve all 48 existing world placements');
+assert.equal(curatedYabaBatchEntries.filter(model=>model.kind==='mixed-use').length,5,'Yaba curated batch must preserve all five mixed-use placements including the anchor');
+assert.equal(curatedYabaBatchEntries.filter(model=>model.kind==='commercial').length,34,'Yaba curated batch must include 34 commercial placements');
+assert.equal(stage08eManifest.models.filter(model=>model.kind==='residential').length,8,'The eight existing neighbourhood homes must remain unchanged');
 
 assert.match(game,/createActorPhysics/,'Stage 09 mounts shared kinematic physics');
 assert.match(game,/createPedestrianSystem/,'Stage 09 mounts live pedestrians');
@@ -431,7 +506,7 @@ assert.match(gameSource,/createVehicleSystem/,'The live game must mount the ente
 assert.match(gameSource,/vehicleSystem\?\.update/,'The live update loop must advance the vehicle');
 assert.match(gameSource,/__NAIJA_VEHICLE_ENTER__/,'The game must expose the contextual enterable vehicle action');
 
-console.log('Stage 08E checks passed: 48 unique Nigerian commercial, mixed-use and residential GLBs, embedded PBR maps, UVs, three LODs and separate collision proxies.');
+console.log('Stage 08E checks passed: 48 existing placements; 39 curated Yaba assets share 24 external KTX2 maps; eight neighbourhood homes retain their existing maps; UVs, three LODs and separate collision proxies verified.');
 console.log('Stage 08A checks passed: expanded terrain, connected road grid, 16 neighbourhood buildings and pocket parks.');
 console.log('Stage 08B checks passed: Nigerian shopfronts, awnings, roller shutters, balconies, security grilles, AC units and rooftop water tanks.');
 console.log('Stage 08C checks passed: static kerbs, storm drains, utility poles and wires, streetlights, road signs, park furniture, bus shelters and roadside stalls with bounded static batching.');

@@ -15,7 +15,7 @@ function hideLegacyBuildings(app) {
 }
 
 export function createStage08EBuildings({app}) {
-  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'embedded PNG; hero KTX2 pilot pending',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
+  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'shared Yaba KTX2 Basis library; residential PNG assets retained',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
   const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,96);
