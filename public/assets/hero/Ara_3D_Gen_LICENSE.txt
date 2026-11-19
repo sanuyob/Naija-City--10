@@ -1,0 +1,21 @@
+Ara 3D Gen — ready-made preset export provenance
+
+Character: The Female Executive
+File: Ara_Female_Executive_Animated.glb
+Source project: https://github.com/olatunde85/3d-gen
+Builder: https://ara3dgen.com
+
+The Ara 3D Gen source code is distributed under the MIT License.
+The MakeHuman-derived character data used to build this character (base mesh,
+shape targets, skins and proxy assets) is CC0 1.0 (public domain), according to
+the upstream project's LICENSE file. The exported character may be used in
+commercial or non-commercial products without attribution.
+
+Animation note: The Walk, Run and other mocap-derived clips are based in part
+on the CMU Graphics Lab Motion Capture Database (mocap.cs.cmu.edu; created with
+funding from NSF EIA-0196217). The motion data may be used in commercial and
+non-commercial products, but may not be resold on its own. Other animation
+clips are authored by Ara 3D Gen contributors.
+
+This file records the upstream notices relevant to this bundled export. See the
+upstream repository for the complete source-code MIT license and asset notices.

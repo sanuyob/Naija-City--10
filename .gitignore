@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.cache/
+out/
+public/assets/buildings/
+public/assets/stage-08e-manifest.json
+public/assets/wasm/basis/
