@@ -189,7 +189,9 @@ assert.doesNotMatch(rpg,/character-switch-button|data-player-action|SWITCH TO|SE
 assert.doesNotMatch(game,/switchPlayerCharacter|getCharacterRoster|__NAIJA_SWITCH_PLAYER__|diagnosticMarker|render-diagnostic-marker/,'The game must not expose character switching or the blocking diagnostic cube');
 assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip names');
 assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
-assert.match(controller,/targetMoveSpeed = moving/,'Ground speed must scale with analog joystick pressure');
+assert.match(controller,/targetMoveSpeed = hasMoveInput \? maxSpeed \* Math\.pow\(stickStrength/,'Ground speed must scale with active analog joystick pressure');
+assert.match(controller,/moving = !traversalMotion && horizontalSpeed >/,'Walk and idle states must follow measured horizontal motion');
+assert.match(controller,/Math\.atan2\(-moveX, -moveZ\)/,'Ara must face her travel direction for forward, reverse and lateral movement');
 assert.match(controller,/smoothedMoveSpeed/,'Ground movement must accelerate and decelerate smoothly');
 assert.match(controller,/syncLocomotionPlaybackRates/,'Walk/run animation playback must track actual horizontal movement speed');
 assert.match(controller,/setPlayerEnabled\?\.\(false\)/,'Ladder animation must use one authored root-movement authority with the dynamic capsule detached');

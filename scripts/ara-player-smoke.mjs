@@ -52,6 +52,14 @@ try{
  const walkEvaluatorSpeed=walkState.animation?.evaluatorClips?.find(clip=>clip.trackName==='Walk')?.speed;
  if(!Number.isFinite(walkPlayback)||Math.abs(walkPlayback-walkState.player.horizontalSpeed/1.515)>.06||!Number.isFinite(walkEvaluatorSpeed)||Math.abs(walkEvaluatorSpeed-walkPlayback)>.06)throw Error('Walk clip playback is not synchronized to measured player speed: '+JSON.stringify({player:walkState.player,animation:walkState.animation}));
  await page.mouse.up();
+ // Fixed-step locomotion check: normal walk should settle near the authored
+ // 1.515 m/s cadence, then return to Idle after the input is released.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ await page.keyboard.down('w');
+ const calibratedWalk=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceLocomotionForSmoke?.(90));
+ await page.keyboard.up('w');
+ const calibratedStop=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceLocomotionForSmoke?.(30));
+ if(calibratedWalk?.player?.horizontalSpeed<1.3||calibratedWalk?.player?.horizontalSpeed>1.75||calibratedWalk?.trace?.at(-1)?.clip!=='Walk'||calibratedStop?.player?.horizontalSpeed>.12||calibratedStop?.trace?.at(-1)?.clip!=='Idle')throw Error('Ara normal walk cadence/start-stop response is outside its tuned range: '+JSON.stringify({walk:calibratedWalk?.player,walkClip:calibratedWalk?.trace?.at(-1)?.clip,stop:calibratedStop?.player,stopClip:calibratedStop?.trace?.at(-1)?.clip}));
  // Reverse input moves backward along the current heading without sideways sliding.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
  await page.mouse.move(joystickCenter.x,joystickCenter.y);
@@ -60,7 +68,7 @@ try{
  await page.waitForTimeout(450);
  const reverseState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- if(!reverseState.player?.moving||reverseState.player.position[2]<=.001||Math.abs(reverseState.player.facingYaw)>20)throw Error('Backward joystick movement did not follow Ara’s current heading cleanly: '+JSON.stringify(reverseState));
+ if(!reverseState.player?.moving||reverseState.player.position[2]<=.001||Math.abs(Math.abs(reverseState.player.facingYaw)-180)>28)throw Error('Backward joystick movement must turn Ara to face her travel direction: '+JSON.stringify(reverseState));
  // Horizontal drag must translate Ara sideways relative to the camera, not
  // rotate her in place like an autonomous NPC.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
@@ -70,8 +78,8 @@ try{
  await page.waitForTimeout(450);
  const strafeState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
  await page.mouse.up();
- if(!strafeState.player?.moving||Math.abs(strafeState.player.position[0])<.01||Math.abs(strafeState.player.facingYaw)>20) {
-   throw Error('Horizontal joystick input must strafe without autonomous rotation: '+JSON.stringify(strafeState));
+ if(!strafeState.player?.moving||Math.abs(strafeState.player.position[0])<.01||Math.abs(Math.abs(strafeState.player.facingYaw)-90)>28) {
+   throw Error('Horizontal joystick input must make Ara face the direction of travel instead of sliding sideways: '+JSON.stringify(strafeState));
  }
  // Drag the world camera, then push forward: movement must follow the new
  // camera view rather than the old character heading.

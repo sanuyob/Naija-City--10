@@ -552,6 +552,7 @@ export async function createVehicleSystem({
       },
       speedKmh: Number(speedKmh.toFixed(1)),
       physicsSteps: vehiclePhysics?.getStepCount?.() || 0,
+      physicsTimeSeconds: Number((vehiclePhysics?.getSimulationTime?.() || 0).toFixed(4)),
       fuelPercent: Number(fuelPercent.toFixed(1)),
       engineTempC: Number(engineTempC.toFixed(1)),
       engineLoad: Number(engineLoad.toFixed(2)),

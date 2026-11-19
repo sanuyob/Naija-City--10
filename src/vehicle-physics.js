@@ -91,6 +91,7 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
   const steeringTorqueVector = vector(0,0,0);
   let controlledSpeedMps = 0;
   let simulationSteps = 0;
+  let simulationTimeSeconds = 0;
   vehicle.setCoordinateSystem(0, 1, 2);
   world.addAction(vehicle);
 
@@ -265,13 +266,13 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     const accelerating=Boolean(controls.accelerate),braking=Boolean(controls.brake);
     const steeringInput=Math.max(-1,Math.min(1,Number(controls.steering)||0));
     if(controls.enabled===false) {
-      controlledSpeedMps=approach(controlledSpeedMps,0,12*h);
+      controlledSpeedMps=approach(controlledSpeedMps,0,20*h);
     } else if(accelerating&&!braking) {
-      if(controlledSpeedMps<-.4) controlledSpeedMps=approach(controlledSpeedMps,0,10*h);
+      if(controlledSpeedMps<-.4) controlledSpeedMps=approach(controlledSpeedMps,0,14*h);
       else controlledSpeedMps=Math.min(23.6,controlledSpeedMps+10.5*h);
     } else if(braking) {
-      if(controlledSpeedMps>.3) controlledSpeedMps=Math.max(0,controlledSpeedMps-13*h);
-      else controlledSpeedMps=Math.max(-5.5,controlledSpeedMps-4.2*h);
+      if(controlledSpeedMps>.3) controlledSpeedMps=Math.max(0,controlledSpeedMps-22*h);
+      else controlledSpeedMps=Math.max(-5.5,controlledSpeedMps-5.0*h);
     } else {
       controlledSpeedMps=approach(controlledSpeedMps,0,(.7+Math.abs(controlledSpeedMps)*.10)*h);
     }
@@ -279,7 +280,7 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     // Vehicle dynamics: v = v + a*dt, yaw-rate follows steering and speed.
     // The Bullet rigid body still resolves chassis impacts against city proxies.
     const speedSign=controlledSpeedMps<-.05?-1:1;
-    const yawRate=-steeringInput*Math.min(.82,.045+Math.abs(controlledSpeedMps)*.045)*speedSign;
+    const yawRate=-steeringInput*Math.min(1.10,.18+Math.abs(controlledSpeedMps)*.072)*speedSign;
     // setAngularVelocity expects radians/second. Multiplying this by chassis
     // mass (820 kg) was the source of the violent spin/tumble on throttle.
     steeringTorqueVector.setValue(0,yawRate,0);
@@ -289,15 +290,16 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     chassis.body.activate(true);
 
     const speedKmh=Math.abs(controlledSpeedMps*3.6);
-    const steerAngle=-steeringInput*.52*Math.max(.42,1-speedKmh/130);
+    const steerAngle=-steeringInput*.64*Math.max(.48,1-speedKmh/155);
     vehicle.setSteeringValue(steerAngle,0);
     vehicle.setSteeringValue(steerAngle,1);
     vehicle.applyEngineForce(0,2);
     vehicle.applyEngineForce(0,3);
-    const parkBrake=braking&&Math.abs(controlledSpeedMps)>.4?900:0;
+    const parkBrake=0; // Longitudinal braking is already applied through controlledSpeedMps; avoid stacking Bullet wheel torque.
     for(let i=0;i<4;i++)vehicle.setBrake(parkBrake,i);
     world.stepSimulation(h,4,1/60);
     simulationSteps++;
+    simulationTimeSeconds += h;
     const postTransform=chassis.body.getWorldTransform();
     const postRotation=postTransform.getRotation();
     const postForwardX=-2*(postRotation.x()*postRotation.z()+postRotation.w()*postRotation.y());
@@ -340,6 +342,7 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     syncPlayer,
     getSpeedKmh: () => controlledSpeedMps*3.6,
     getStepCount: () => simulationSteps,
+    getSimulationTime: () => simulationTimeSeconds,
     getPosition: () => { const p=car.getPosition(); return [p.x,p.y,p.z]; },
     getYaw: () => {
       const q=chassis.body.getWorldTransform().getRotation();

@@ -450,23 +450,30 @@ export function createThirdPersonController(app, camera, canvas, {
     let moveZ = cameraRightZ * axisX + cameraForwardZ * -axisY;
     const moveLength = Math.hypot(moveX, moveZ);
     if (moveLength > 1) { moveX /= moveLength; moveZ /= moveLength; }
-    if (!traversalMotion && axisY < -0.14 && moveLength > 0.12) {
+    const driveMagnitude = Math.hypot(axisX, axisY);
+    const hasMoveInput = !traversalMotion && driveMagnitude > 0.12;
+    // Ara turns toward the direction the stick is actually moving. The old
+    // controller played a forward walk while sliding sideways/backwards, which
+    // made her feet and torso look disconnected from the travel direction.
+    if (hasMoveInput && moveLength > 0.12) {
       const targetFacing = Math.atan2(-moveX, -moveZ) * 180 / Math.PI;
-      let yawDelta = ((targetFacing - facingYaw + 540) % 360) - 180;
-      facingYaw += yawDelta * (1 - Math.exp(-12 * step));
+      const yawDelta = ((targetFacing - facingYaw + 540) % 360) - 180;
+      facingYaw += yawDelta * (1 - Math.exp(-15 * step));
       facingYaw = ((facingYaw + 540) % 360) - 180;
       player.setEulerAngles(0, facingYaw, 0);
     }
     smoothedTurnInput = 0;
-    const driveMagnitude = Math.hypot(axisX, axisY);
-    moving = !traversalMotion && driveMagnitude > 0.12;
-    running = !traversalMotion && moving && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
+    running = hasMoveInput && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
     if (running) stamina = Math.max(0, stamina - 12 * step);
     else stamina = Math.min(100, stamina + 20 * step);
     const stickStrength = pc.math.clamp((driveMagnitude - 0.075) / 0.925, 0, 1);
-    const maxSpeed = input.crouch ? 1.05 : running ? 7.2 : 1.8;
-    const targetMoveSpeed = moving ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
-    const response = moving ? 11.5 : 24;
+    // The authored Ara walk gait is calibrated around 1.515 m/s. Keeping the
+    // normal walk close to that speed avoids the brisk, almost jogging cadence
+    // produced by the old 1.8 m/s target.
+    const maxSpeed = input.crouch ? 1.05 : running ? 7.2 : 1.55;
+    const targetMoveSpeed = hasMoveInput ? maxSpeed * Math.pow(stickStrength, 0.78) : 0;
+    // Give starts a little more weight and releases a crisp, predictable stop.
+    const response = hasMoveInput ? 10.5 : 28;
     smoothedMoveSpeed += (targetMoveSpeed - smoothedMoveSpeed) * (1 - Math.exp(-response * step));
     const speed = smoothedMoveSpeed;
 
@@ -613,10 +620,15 @@ export function createThirdPersonController(app, camera, canvas, {
       physics.teleport(resolvedPosition,[velocity.x,velocity.y,velocity.z]);
     }
     player.setPosition(p);
+    // Drive the animation state from measured motion, not only from the thumb
+    // position. This prevents the Walk clip appearing at a near-zero speed and
+    // lets the final planted step finish before Ara returns to Idle.
+    const horizontalSpeed = Math.hypot(velocity.x, velocity.z);
+    moving = !traversalMotion && horizontalSpeed > (input.crouch ? 0.14 : 0.22);
     if (!heroVisual) player.setLocalScale(1, input.crouch ? 0.78 : 1, 1);
 
-    // Facing changes only in response to forward movement input. Reverse and
-    // lateral movement never create autonomous rotation.
+    // Heading now follows actual travel direction for forward, reverse and
+    // lateral stick input; manual camera orbit remains independent.
 
     if (heroVisual?.anim) {
       const animationSpeed = input.crouch ? 0 : Math.min(7.2, Math.hypot(velocity.x, velocity.z));

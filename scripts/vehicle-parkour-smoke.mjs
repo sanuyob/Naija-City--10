@@ -156,15 +156,29 @@ try {
     throw new Error('The Two-Handed accelerator must move the sedan without tipping and retain four wheel contacts: ' + JSON.stringify(accelerated));
   }
 
-  const turned = await holdButton('#drive-right',36);
-  const turnDegrees = Math.abs(((turned.yaw - accelerated.yaw + 540) % 360) - 180);
-  if (turnDegrees < 4 || turned.dynamics.uprightTiltDegrees>4.5 || Math.abs(turned.dynamics.pitchDegrees)>4.5) {
-    throw new Error('The steering arrows must change heading without tumbling the car: ' + JSON.stringify({turnDegrees,turned}));
+  // Check braking independently on a straight run, before turning or collision
+  // geometry can contaminate the measured deceleration.
+  const braked = await holdButton('#drive-brake',12);
+  const brakeSeconds = Math.max(.001,braked.physicsTimeSeconds-accelerated.physicsTimeSeconds);
+  const brakeDecelerationMps2 = Math.max(0,(accelerated.speedKmh-braked.speedKmh)/3.6)/brakeSeconds;
+  if (brakeDecelerationMps2 < 16 || braked.dynamics.uprightTiltDegrees>4.5) {
+    throw new Error('The brake/reverse arrow must deliver strong, stable forward deceleration: ' + JSON.stringify({beforeBrake:accelerated.speedKmh,braked,brakeDecelerationMps2}));
   }
 
-  const braked = await holdButton('#drive-brake',36);
-  if (braked.speedKmh >= turned.speedKmh - 4 || braked.dynamics.uprightTiltDegrees>4.5) {
-    throw new Error('The brake/reverse arrow must slow the sedan without upsetting the chassis: ' + JSON.stringify({turned:turned.speedKmh,braked}));
+  // Reset to the known clear test lane, then verify both steering directions.
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,8],180));
+  const steeringStart = await holdButton('#drive-accelerate',90);
+  const turned = await holdButton('#drive-right',36);
+  const turnDegrees = Math.abs(((turned.yaw - steeringStart.yaw + 540) % 360) - 180);
+  const turnSeconds = Math.max(.001,turned.physicsTimeSeconds-steeringStart.physicsTimeSeconds);
+  const turnRateDegreesPerSecond = turnDegrees/turnSeconds;
+  if (turnRateDegreesPerSecond < 42 || turned.dynamics.uprightTiltDegrees>4.5 || Math.abs(turned.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The right steering button must respond decisively without tumbling the car: ' + JSON.stringify({turnDegrees,turnRateDegreesPerSecond,turned}));
+  }
+  const turnedLeft = await holdButton('#drive-left',18);
+  const leftTurnDegrees = Math.abs(((turnedLeft.yaw - turned.yaw + 540) % 360) - 180);
+  if (leftTurnDegrees < 8 || turnedLeft.dynamics.uprightTiltDegrees>4.5 || Math.abs(turnedLeft.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The left steering button must produce a responsive turn in the opposite direction: ' + JSON.stringify({turned,turnedLeft,leftTurnDegrees}));
   }
 
   const exited = await page.evaluate(() => window.__NAIJA_GAME__.debugExitVehicleForSmoke());
@@ -336,7 +350,10 @@ try {
       measuredRoadWheelContacts: accelerated.dynamics.measuredWheelContacts,
       topTestSpeedKmh: accelerated.speedKmh,
       brakedSpeedKmh: braked.speedKmh,
+      brakeDecelerationMps2: Number(brakeDecelerationMps2.toFixed(2)),
       steeringTurnDegrees: turnDegrees,
+      steeringRateDegreesPerSecond: Number(turnRateDegreesPerSecond.toFixed(1)),
+      oppositeSteeringTurnDegrees: Number(leftTurnDegrees.toFixed(1)),
       exitCameraDistance: onFoot.cameraDistance
     },
     carCollision,

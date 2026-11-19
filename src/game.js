@@ -589,12 +589,13 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.debugEnterVehicleForSmoke=()=>vehicleSystem?.debugEnter?.()||false;
     gameApi.debugExitVehicleForSmoke=()=>vehicleSystem?.debugExit?.()||false;
     gameApi.debugSetVehicleInputForSmoke=(steering=0,accelerate=false,brake=false)=>vehicleSystem?.debugSetInput?.(steering,accelerate,brake)||null;
-    gameApi.debugAdvanceVehicleForSmoke=(maxFrames=300,target=null)=>{
+    gameApi.debugAdvanceVehicleForSmoke=(maxFrames=300,target=null,dt=1/60)=>{
       const limit=Math.max(1,Math.min(1200,Math.floor(Number(maxFrames)||300)));
+      const step=Math.max(1/120,Math.min(.05,Number(dt)||1/60));
       let frames=0,state=vehicleSystem?.getState?.()||null;
       for(let i=0;i<limit;i++){
-        vehicleSystem?.update(.05);
-        vfxSystem.update(.05);
+        vehicleSystem?.update(step);
+        vfxSystem.update(step);
         frames++;
         state=vehicleSystem?.getState?.()||null;
         if(target&&state?.occupied&&state.position[0]>Number(target.x??Infinity)&&
