@@ -19,6 +19,8 @@ import { createPedestrianSystem } from './pedestrian-system.js';
 import { createVfxSystem } from './vfx-system.js';
 import { createAudioSystem } from './audio-system.js';
 import { createVehicleSystem } from './vehicle-system.js';
+import { createWorldInteractionSystem } from './world-interaction-system.js';
+import { hasClearLineOfSight } from './character-perception.js';
 
 export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatusLabel }) {
   const canvas = document.getElementById('application');
@@ -420,6 +422,17 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   }
 
   const actorWorldColliders=[...traversalObstacles,...gatewayColliders];
+  const navigationColliders=[
+    ...allTraversalObstacles,
+    ...buildingProxies,
+    ...(stage08C.collisionProxies||[]),
+    ...(stage08G.collisionProxies||[]),
+    ...gatewayColliders
+  ].filter(item=>{
+    const halfY=Array.isArray(item?.halfExtents)?Math.abs(item.halfExtents[1]):Math.abs(item?.entity?.getLocalScale?.().y||0)/2;
+    const centerY=Array.isArray(item?.position)?item.position[1]:(item?.entity?.getPosition?.().y||0);
+    return halfY>=.28&&centerY+halfY>.85;
+  });
   const actorPhysics=createActorPhysics({colliders:actorWorldColliders,groundY:0,gravity:18});
   const playerWorldColliders=[
     ...allTraversalObstacles,
@@ -456,25 +469,31 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       return traversalSystem ? traversalSystem.resolveMovement(current,cityResolved) : cityResolved;
     },
     heroCharacter,physics:playerPhysics,onEffect:emitPlayerFeedback,
+    onCharacterEvent:event=>{
+      if(event.type==='damage')window.__NAIJA_RPG_UI__?.showToast('Impact · health '+Math.round(event.health));
+      else if(event.type==='healing')window.__NAIJA_RPG_UI__?.showToast('Recovered '+Math.round(event.amount)+' health');
+      else if(event.type==='stamina-empty')window.__NAIJA_RPG_UI__?.showToast('Stamina depleted');
+    },
     onInteract:state=>{
-      if(vehicleSystem?.toggle(state)){
+      if(vehicleSystem?.toggle(state)) return;
+      const nearestInteractable=interactionSystem?.findNearest(state);
+      if(nearestInteractable?.available){
+        interactionSystem.interact(state);
         return;
       }
       if(traversalSystem?.tryContextualTraversal(state)){
         window.__NAIJA_RPG_UI__?.showToast('Traversal started · '+(traversalSystem.getState().lastTraversal?.clip||'movement'));
         return;
       }
-      playerController?.playAnimation?.('Hero01_Interact');
-      const [px,,pz]=state.position;
-      const targets=[{name:'Street kiosk',x:-7.9,z:-17},{name:'Bus stop',x:7.3,z:-37}];
-      const nearest=targets.map(target=>({...target,distance:Math.hypot(px-target.x,pz-target.z)})).sort((a,b)=>a.distance-b.distance)[0];
-      if(nearest&&nearest.distance<4.5)window.__NAIJA_RPG_UI__?.showToast(nearest.name+' nearby — vendor/transport interaction is not active yet.');
-      else window.__NAIJA_RPG_UI__?.showToast('Nothing nearby to interact with.');
+      window.__NAIJA_RPG_UI__?.showToast(nearestInteractable
+        ? nearestInteractable.name+' is too far away or blocked.'
+        : 'Nothing nearby to interact with.');
     }
   });
 
   traversalSystem=createTraversalSystem({playerController,physics:playerPhysics,obstacles:allTraversalObstacles,onEffect:(type,position)=>vfxSystem.emit(type,position)});
   let vehicleSystem=null;
+  let interactionSystem=null;
   try{
     vehicleSystem=await createVehicleSystem({
       app,camera,canvas,traffic,playerController,playerPhysics,
@@ -488,6 +507,21 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     window.__NAIJA_RPG_UI__?.showToast('Vehicle unavailable · walking mode remains active');
   }
 
+  interactionSystem=createWorldInteractionSystem({
+    getPlayerState:()=>playerController.getState(),
+    defaultRange:3.25,
+    lineOfSight:(from,to)=>hasClearLineOfSight(from,to,navigationColliders,.03),
+    onMessage:message=>window.__NAIJA_RPG_UI__?.showToast(message)
+  });
+  interactionSystem.register({
+    id:'yaba-street-kiosk',name:'Street kiosk',position:[-5.5,0,-17],range:3.25,prompt:'TALK · STREET KIOSK',
+    onInteract:()=>({message:'You greet the kiosk owner. Vendor trading will connect to the inventory system next.'})
+  });
+  interactionSystem.register({
+    id:'yaba-bus-stop',name:'Bus stop',position:[5.8,0,-37],range:3.25,prompt:'CHECK · BUS STOP',
+    onInteract:()=>({message:'Bus stop · the route board is not connected yet.'})
+  });
+
   const gidiStreamer=createGidiWorldStreamer({app,playerPhysics,vehicleSystem,statusLabel:assetStatusLabel,fullDetailRadius:160,mediumDetailRadius:360,unloadRadius:900,collisionLoadRadius:220,collisionUnloadRadius:460});
   gidiStreamer.start().catch(error=>console.warn('GIDI infrastructure load failed:',error));
 
@@ -495,7 +529,10 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     app,playerController,heroCharacter:heroCharacter||hero01NpcCharacter,obstacles:traversalObstacles,physics:actorPhysics,maxActive:2,
     onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message),onEffect:(type,position)=>vfxSystem.emit(type,position)
   });
-  const pedestrianSystem=createPedestrianSystem({app,physics:actorPhysics,colliders:traversalObstacles,heroCharacter:hero01NpcCharacter});
+  const pedestrianSystem=createPedestrianSystem({
+    app,physics:actorPhysics,colliders:actorWorldColliders,occluders:navigationColliders,
+    navigationColliders,heroCharacter:hero01NpcCharacter
+  });
   stage08E.update(playerController.getState().position);
   const stage08FProfiler = createStage08FDeviceProfiler({ app, canvas, device, stage08E });
   window.__NAIJA_STAGE08F_PROFILE__ = stage08FProfiler;
@@ -542,7 +579,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     const playerState=playerController.getState();
     const vehicleState=vehicleSystem?.getState?.();
     const worldActorState=vehicleState?.occupied
-      ? {...playerState,position:vehicleState.position}
+      ? {...playerState,position:vehicleState.position,vehicleOccupied:true,noiseEvent:true}
       : playerState;
     gidiStreamer.update(worldActorState.position,step);
     pedestrianSystem.update(step,worldActorState);
@@ -550,7 +587,12 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     stage08E.update(worldActorState.position);
     if(!vehicleState?.occupied)updateRoofAccessVisuals(playerState.position,step);
     hudClock+=step;
-    if(hudClock>=0.12){hudClock=0;window.__NAIJA_RPG_UI__?.setVitals(playerState);window.__NAIJA_RPG_UI__?.setWorldActivity?.({pedestrians:10,companions:companionSystem.getState().activeCount});}
+    if(hudClock>=0.12){
+      hudClock=0;
+      window.__NAIJA_RPG_UI__?.setVitals(playerState);
+      window.__NAIJA_RPG_UI__?.setWorldActivity?.({pedestrians:10,companions:companionSystem.getState().activeCount});
+      window.__NAIJA_RPG_UI__?.setInteractionPrompt?.(interactionSystem?.findNearest(playerState)||null);
+    }
   });
 
   // Documented AppStats telemetry; GPU memory is estimated tracked resource usage.
@@ -577,7 +619,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:10,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroLimbPositions:()=>heroCharacter?.getLimbPositions?.()||null,getHeroSoleMarkerInfo:()=>heroCharacter?.getSoleMarkerInfo?.()||null,getHeroFootLockState:()=>playerController.getFootLockState?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getGidiState:()=>gidiStreamer.getState(),
+  const gameApi={ready:true,stage:10,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),getInteractionState:()=>interactionSystem?.getState?.()||null,getCharacterSimulationState:()=>({vitals:playerController.getVitalsState?.(),facial:playerController.getFacialAnimationState?.(),footLock:playerController.getFootLockState?.(),pedestrians:pedestrianSystem.getState(),interactions:interactionSystem?.getState?.()}),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroLimbPositions:()=>heroCharacter?.getLimbPositions?.()||null,getHeroSoleMarkerInfo:()=>heroCharacter?.getSoleMarkerInfo?.()||null,getHeroFootLockState:()=>playerController.getFootLockState?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getGidiState:()=>gidiStreamer.getState(),
     surfacePatches:surfacePatches.map(patch=>({id:patch.id,surface:patch.surface,position:patch.position.slice(),halfExtents:patch.halfExtents.slice()})),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,getTrafficPositions:()=>traffic.map(item=>({name:item.entity.name,position:item.entity.getPosition().toArray()})),trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(import.meta.env.DEV && new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugLoadGidiForSmoke=async(position=[100,0,-450])=>{playerController.setPositionForSmoke(position,0);await gidiStreamer.update(position,1);return gidiStreamer.getState();};
@@ -586,6 +628,24 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
     gameApi.debugSetControlEnabledForSmoke=value=>playerController.setControlEnabled(value);
     gameApi.debugSetCrouchedForSmoke=value=>playerController.setCrouched(value);
+    gameApi.debugApplyPlayerDamageForSmoke=(amount=25,options={})=>playerController.applyDamage(amount,{source:'smoke-impact',...options});
+    gameApi.debugHealPlayerForSmoke=(amount=25)=>playerController.heal(amount,{source:'smoke-heal'});
+    gameApi.debugRecoverPlayerForSmoke=options=>playerController.recoverFromDowned(options||{});
+    gameApi.debugSetFaceExpressionForSmoke=(name='happy',weight=1)=>playerController.playFaceExpression(name,weight);
+    gameApi.debugSetFaceVisemeForSmoke=(name,weight=1)=>playerController.playFaceViseme(name,weight);
+    gameApi.debugAdvanceCharacterSimulationForSmoke=(frames=60,dt=1/60)=>{
+      const limit=Math.max(1,Math.min(600,Math.floor(Number(frames)||60)));
+      const step=Math.max(1/120,Math.min(1/30,Number(dt)||1/60));
+      const animationSystem=app.systems?.anim;
+      for(let i=0;i<limit;i++){
+        playerController.update(step);
+        animationSystem?.onAnimationUpdate?.(step);
+        playerController.applyGroundedFootLock?.();
+        vfxSystem.update(step);
+      }
+      app.render?.();
+      return {frames:limit,dt:step,player:playerController.getState(),animation:playerController.getAnimationState(),facial:playerController.getFacialAnimationState?.()||null};
+    };
     gameApi.debugEnterVehicleForSmoke=()=>vehicleSystem?.debugEnter?.()||false;
     gameApi.debugExitVehicleForSmoke=()=>vehicleSystem?.debugExit?.()||false;
     gameApi.debugSetVehicleInputForSmoke=(steering=0,accelerate=false,brake=false)=>vehicleSystem?.debugSetInput?.(steering,accelerate,brake)||null;

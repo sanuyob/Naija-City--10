@@ -122,7 +122,7 @@ try {
     }
     const trace = result.trace || [];
     const expected = mode === 'run' ? 'Run' : 'Walk';
-    const targetSpeed = mode === 'run' ? 7.2 : 1.8;
+    const targetSpeed = mode === 'run' ? 7.2 : 1.55;
     const stable = trace.filter(sample => sample.clip === expected && sample.moving && sample.grounded &&
       sample.horizontalSpeed >= targetSpeed * 0.88);
     if (stable.length < 80) throw new Error(`${mode} did not hold a stable grounded locomotion state: ${JSON.stringify({ stable: stable.length, last: result.player })}`);

@@ -1,5 +1,7 @@
 import * as pc from 'playcanvas';
 import { getAraGaitStance } from './ara-gait-contact.js';
+import { createCharacterVitals } from './character-vitals.js';
+import { createFacialAnimation } from './facial-animation.js';
 
 /**
  * Lightweight third-person controller for the Stage 06 mobile prototype.
@@ -7,7 +9,7 @@ import { getAraGaitStance } from './ara-gait-contact.js';
  * Hero 01 is created separately as a moving city NPC by pedestrian-system.js.
  */
 export function createThirdPersonController(app, camera, canvas, {
-  onInteract, onTraversal, tryTraversal, resolveMovement, heroCharacter, physics, onEffect
+  onInteract, onTraversal, tryTraversal, resolveMovement, heroCharacter, physics, onEffect, onCharacterEvent = () => {}
 } = {}) {
   // The player root owns movement, camera follow and collision. The visible
   // body must be the imported Ara female rig; Hero 01 is now a separate NPC.
@@ -15,6 +17,8 @@ export function createThirdPersonController(app, camera, canvas, {
   player.setPosition(0, 0, 0);
   app.root.addChild(player);
   let activeHeroCharacter = heroCharacter ?? null;
+  const vitals = createCharacterVitals({ onEvent: event => onCharacterEvent?.(event) });
+  const facialAnimation = createFacialAnimation(activeHeroCharacter);
   let heroVisual = activeHeroCharacter?.root ?? null;
   if (heroVisual) {
     heroVisual.setLocalPosition(0, activeHeroCharacter?.visualGroundOffset || 0, 0);
@@ -49,7 +53,6 @@ export function createThirdPersonController(app, camera, canvas, {
   let cameraInitialized = false;
   const velocity = new pc.Vec3();
   let grounded = true;
-  let stamina = 100;
   let gaitTime = 0;
   let moving = false;
   let running = false;
@@ -61,6 +64,7 @@ export function createThirdPersonController(app, camera, canvas, {
   let actionClip = '';
   let actionTimer = 0;
   let landingTimer = 0;
+  let recoveryTimer = 0;
   let traversalMotion = null;
   let jumpBuffer = 0;
   let coyote = 0;
@@ -233,7 +237,56 @@ export function createThirdPersonController(app, camera, canvas, {
   }
 
   function playFaceExpression(name, weight = 1) {
-    return activeHeroCharacter?.setFaceExpression?.(name, weight) ?? false;
+    return facialAnimation.setExpression(name, weight) || facialAnimation.setMorph(name, weight);
+  }
+
+  function playFaceViseme(name, weight = 1) {
+    return facialAnimation.setViseme(name, weight);
+  }
+
+  function applyDamage(amount, options = {}) {
+    const result = vitals.applyDamage(amount, options);
+    if (!result.applied) return result;
+    const p = player.getPosition();
+    const direction = Array.isArray(options.direction) ? options.direction : [0, 0, 0];
+    const directionLength = Math.hypot(direction[0] || 0, direction[2] || 0) || 1;
+    const impulse = Math.max(0, Math.min(3.5, Number(options.knockback ?? 0.8) || 0));
+    velocity.x += (direction[0] || 0) / directionLength * impulse;
+    velocity.z += (direction[2] || 0) / directionLength * impulse;
+    if (physics?.teleport) physics.teleport([p.x, p.y, p.z], [velocity.x, velocity.y, velocity.z]);
+    resetFootLock();
+    if (!result.downed) {
+      actionClip = availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.landing;
+      actionTimer = 0.38;
+      transitionHeroClip(actionClip, 0.07);
+    } else {
+      actionTimer = 0;
+      actionClip = '';
+      setControlEnabled(false);
+      transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.08);
+    }
+    onEffect?.('hit-reaction', [p.x, p.y, p.z], { source: options.source || 'world' });
+    return result;
+  }
+
+  function heal(amount, options = {}) {
+    return vitals.heal(amount, options);
+  }
+
+  function recoverFromDowned(options = {}) {
+    const result = vitals.recover(options);
+    if (!result.applied) return result;
+    const p = player.getPosition();
+    velocity.set(0, 0, 0);
+    smoothedMoveSpeed = 0;
+    physics?.teleport?.([p.x, p.y, p.z], [0, 0, 0]);
+    grounded = true;
+    recoveryTimer = 0.85;
+    setControlEnabled(true);
+    actionTimer = 0;
+    actionClip = '';
+    transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.12);
+    return result;
   }
 
   function performTraversal(name,destination,options={}) {
@@ -427,8 +480,16 @@ export function createThirdPersonController(app, camera, canvas, {
   canvas.addEventListener('pointercancel', onPointerUp);
 
   function update(dt) {
-    if (!controlEnabled) return;
     const step = Math.min(dt, 0.05);
+    facialAnimation.update(step);
+    if (!controlEnabled) { vitals.update(step, { active: false }); return; }
+    if (recoveryTimer > 0) {
+      recoveryTimer = Math.max(0, recoveryTimer - step);
+      if (recoveryTimer === 0) {
+        vitals.finishRecovery();
+        transitionHeroClip(heroDefaults.idle, 0.18);
+      }
+    }
     // Preserve the authored kinematic path on its completion frame too. The
     // traversal state is cleared before the final position is applied.
     const scriptedKinematicFrame = traversalMotion?.kinematic === true;
@@ -463,9 +524,8 @@ export function createThirdPersonController(app, camera, canvas, {
       player.setEulerAngles(0, facingYaw, 0);
     }
     smoothedTurnInput = 0;
-    running = hasMoveInput && !input.crouch && (sprintToggled || input.sprint || keys.shift) && stamina > 0;
-    if (running) stamina = Math.max(0, stamina - 12 * step);
-    else stamina = Math.min(100, stamina + 20 * step);
+    running = hasMoveInput && !input.crouch && (sprintToggled || input.sprint || keys.shift) && vitals.getState().canSprint;
+    vitals.update(step, { sprinting: running, active: controlEnabled });
     const stickStrength = pc.math.clamp((driveMagnitude - 0.075) / 0.925, 0, 1);
     // The authored Ara walk gait is calibrated around 1.515 m/s. Keeping the
     // normal walk close to that speed avoids the brisk, almost jogging cadence
@@ -658,7 +718,7 @@ export function createThirdPersonController(app, camera, canvas, {
       } else if (moving) {
         heroCharacterPose(null,false);
         transitionHeroClip('Hero01_Walk');
-      } else if (stamina < 30) {
+      } else if (vitals.getState().stamina < 30) {
         heroCharacterPose(null,false);
         transitionHeroClip('Hero01_TiredIdle');
       } else {
@@ -791,6 +851,7 @@ export function createThirdPersonController(app, camera, canvas, {
   }
 
   function setControlEnabled(enabled) {
+    if (enabled && vitals.getState().downed) return false;
     controlEnabled = Boolean(enabled);
     if (!controlEnabled) {
       resetJoystick();
@@ -878,7 +939,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return setPosition(position, yaw);
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,stamina,health:100,cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
+  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy, applyGroundedFootLock, resetFootLock,
@@ -886,6 +947,12 @@ export function createThirdPersonController(app, camera, canvas, {
     interact: () => onInteract?.(getState()),
     playAnimation,
     playFaceExpression,
+    playFaceViseme,
+    applyDamage,
+    heal,
+    recoverFromDowned,
+    getVitalsState: vitals.getState,
+    getFacialAnimationState: facialAnimation.getState,
     setCrouched,
     setControlEnabled,
     setVisible,
@@ -924,6 +991,8 @@ export function createThirdPersonController(app, camera, canvas, {
       parkourUsesLocomotionFallback: !availableHeroClips.has('Hero01_VaultLow') &&
         !availableHeroClips.has('Hero01_Mantle') && !availableHeroClips.has('Hero01_LedgePullUp'),
       faceMorphCount: activeHeroCharacter?.morphNames?.length ?? 0,
+      facialAnimation: facialAnimation.getState(),
+      vitals: vitals.getState(),
       playable: !!heroVisual?.anim?.playable
     }),
     getRigSnapshot:()=>activeHeroCharacter?.getRigSnapshot?.()||{skinnedMeshCount:0,weightedVertexCount:0,weightedClothingMeshCount:0,boneCount:0,bones:[]},

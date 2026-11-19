@@ -30,7 +30,7 @@ export function mountRPGInterface() {
       <div class="player-status"><b>LVL 01</b><span>ARA FEMALE · MAIN PLAYER</span><small>100 XP TO NEXT LEVEL</small></div>
       <label>HEALTH <b id="hud-health-value">100</b><i class="meter"><i id="hud-health-fill" style="width:100%"></i></i></label>
       <label>STAMINA <b id="hud-stamina-value">100</b><i class="meter stamina"><i id="hud-stamina-fill" style="width:100%"></i></i></label>
-      <small class="player-state" id="hud-player-state">STATUS · READY</small>
+      <small class="player-state" id="hud-player-state">STATUS · READY</small><small class="interaction-prompt" id="hud-interaction-prompt" hidden></small>
     </section>
     <section class="minimap" aria-label="Minimap">
       <div>LOCAL AREA <b>YABA</b></div>
@@ -202,9 +202,17 @@ export function mountRPGInterface() {
     root.querySelector('#hud-stamina-value').textContent = stamina;
     root.querySelector('#hud-health-fill').style.width = health + '%';
     root.querySelector('#hud-stamina-fill').style.width = stamina + '%';
-    root.querySelector('#hud-player-state').textContent = 'STATUS · ' + (state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY');
+    const label = state.downed ? 'DOWNED' : state.state === 'recovering' ? 'RECOVERING' : state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY';
+    root.querySelector('#hud-player-state').textContent = 'STATUS · ' + label;
   }
   function setWorldActivity() { /* Compatibility hook; no centre-screen population banner. */ }
+  function setInteractionPrompt(info) {
+    const prompt = root.querySelector('#hud-interaction-prompt');
+    if (!prompt) return;
+    const active = Boolean(info?.available && info?.prompt);
+    prompt.hidden = !active;
+    prompt.textContent = active ? info.prompt : '';
+  }
   function setVehicleControlsMode(mode='two-handed') {
     vehicleControlsMode=mode==='one-handed'?'one-handed':'two-handed';
     root.classList.toggle('vehicle-controls-one-handed',vehicleControlsMode==='one-handed');
@@ -234,7 +242,7 @@ export function mountRPGInterface() {
     if (fuel) fuel.textContent = 'FUEL ' + Math.round(state.fuelPercent ?? 100) + '%';
   }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, setVehicleMode, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, setInteractionPrompt, setVehicleMode, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     isPlayerCharacterRequired: () => characterRequired

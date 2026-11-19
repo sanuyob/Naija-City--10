@@ -1,5 +1,8 @@
 import * as pc from "playcanvas";
 import { createActorPhysics } from "./actor-physics.js";
+import { BT, action, condition, createBehaviourTree, selector, sequence } from "./behavior-tree.js";
+import { createCharacterPerception } from "./character-perception.js";
+import { createNavigationGrid } from "./navigation-grid.js";
 
 const DEFS = [
   ["Hero 01", -5.82, -9, [.13,.31,.48], [.34,.18,.1]],
@@ -15,12 +18,14 @@ const DEFS = [
 ];
 
 /** Ten sidewalk pedestrians; Hero 01 is a rigged, independently controlled city NPC. */
-export function createPedestrianSystem({ app, physics, colliders = [], heroCharacter = null } = {}) {
+export function createPedestrianSystem({ app, physics, colliders = [], heroCharacter = null, occluders = colliders, navigationColliders = occluders } = {}) {
   if (!app) throw new Error("Pedestrians require app");
   const solver = physics || createActorPhysics({ colliders });
   const materials = new Map();
   const actors = [];
-  const stats = { updates: 0, moved: 0, greetings: 0, routeChanges: 0 };
+  const perception = createCharacterPerception({ occluders, viewDistance: 14, fieldOfView: 125, hearingDistance: 17, vehicleHearingDistance: 32 });
+  const navigation = createNavigationGrid({ colliders: navigationColliders, cellSize: 1.35, agentHeight: 1.75, groundY: 0, minColliderHeight: .55 });
+  const stats = { updates: 0, moved: 0, greetings: 0, routeChanges: 0, sightings: 0, heardEvents: 0, behaviourTicks: 0, pathRequests: 0 };
 
   const material = color => {
     const key = color.join(",");
@@ -45,6 +50,110 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
     || heroCharacter?.defaultClips?.idle || null;
   const walkClip = heroCharacter?.clipNames?.find(name => /^Hero01_Walk$/i.test(name))
     || heroCharacter?.defaultClips?.walk || heroCharacter?.defaultClips?.run || null;
+
+  const facePlayer = (actor, player) => {
+    const dx = player[0] - actor.motion.position[0];
+    const dz = player[2] - actor.motion.position[2];
+    actor.facingYaw = Math.atan2(dx, -dz) * 180 / Math.PI;
+    actor.root.setEulerAngles(0, actor.facingYaw, 0);
+  };
+
+  function buildBehaviour(actor) {
+    return createBehaviourTree(selector(
+      sequence(
+        condition(ctx => ctx.senses.visible && actor.noticeCooldown <= 0),
+        action(ctx => {
+          stats.sightings++;
+          actor.noticeCooldown = 2.8;
+          actor.notice = .58;
+          actor.state = ctx.senses.distance < 2.6 ? 'greeting' : 'noticing-player';
+          actor.desired = [0, 0, 0];
+          facePlayer(actor, ctx.player);
+          if (ctx.senses.distance < 2.6) stats.greetings++;
+          return BT.SUCCESS;
+        })
+      ),
+      sequence(
+        condition(ctx => ctx.senses.heard && !ctx.senses.visible && actor.noticeCooldown <= 0),
+        action(ctx => {
+          stats.heardEvents++;
+          actor.noticeCooldown = 1.65;
+          actor.investigate = .48;
+          actor.state = 'hearing-alert';
+          actor.desired = [0, 0, 0];
+          facePlayer(actor, ctx.player);
+          return BT.SUCCESS;
+        })
+      ),
+      sequence(
+        condition(() => actor.notice > 0),
+        action(ctx => {
+          actor.notice = Math.max(0, actor.notice - ctx.dt);
+          actor.state = actor.state === 'greeting' ? 'greeting' : 'noticing-player';
+          actor.desired = [0, 0, 0];
+          facePlayer(actor, ctx.player);
+          return actor.notice > 0 ? BT.RUNNING : BT.SUCCESS;
+        })
+      ),
+      sequence(
+        condition(() => actor.investigate > 0),
+        action(ctx => {
+          actor.investigate = Math.max(0, actor.investigate - ctx.dt);
+          actor.state = 'hearing-alert';
+          actor.desired = [0, 0, 0];
+          facePlayer(actor, ctx.player);
+          return actor.investigate > 0 ? BT.RUNNING : BT.SUCCESS;
+        })
+      ),
+      sequence(
+        condition(() => actor.wait > 0),
+        action(ctx => {
+          actor.wait = Math.max(0, actor.wait - ctx.dt);
+          actor.state = actor.role.startsWith('Vendor') ? 'browsing' : 'waiting';
+          actor.desired = [0, 0, 0];
+          return actor.wait > 0 ? BT.RUNNING : BT.SUCCESS;
+        })
+      ),
+      sequence(
+        condition(() => {
+          const target = actor.route[actor.waypoint];
+          return Math.hypot(target[0] - actor.motion.position[0], target[2] - actor.motion.position[2]) < .75;
+        }),
+        action(() => {
+          if (actor.waypoint === 0 || actor.waypoint === 3) {
+            actor.direction *= -1;
+            stats.routeChanges++;
+          }
+          actor.waypoint = Math.max(0, Math.min(3, actor.waypoint + actor.direction));
+          actor.wait = actor.isHero01 ? .25 : actor.role === 'Vendor' ? 1.2 : .35;
+          actor.path = [];
+          actor.pathTarget = null;
+          actor.state = 'waiting';
+          actor.desired = [0, 0, 0];
+          return BT.SUCCESS;
+        })
+      ),
+      action(() => {
+        const p = actor.motion.position;
+        const target = actor.route[actor.waypoint];
+        if (!actor.pathTarget || Math.hypot(target[0] - actor.pathTarget[0], target[2] - actor.pathTarget[2]) > .01 || actor.pathIndex >= actor.path.length) {
+          actor.path = navigation.findPath(p, target, { radius: actor.motion.radius, maxNodes: 950 });
+          actor.pathTarget = target.slice();
+          actor.pathIndex = 0;
+          stats.pathRequests++;
+          if (!actor.path.length) actor.path = [target.slice()];
+        }
+        while (actor.pathIndex < actor.path.length - 1 && Math.hypot(actor.path[actor.pathIndex][0] - p[0], actor.path[actor.pathIndex][2] - p[2]) < .65) actor.pathIndex++;
+        const next = actor.path[Math.min(actor.pathIndex, actor.path.length - 1)] || target;
+        const dx = next[0] - p[0], dz = next[2] - p[2];
+        const remaining = Math.hypot(dx, dz);
+        const speed = actor.isHero01 ? 1.18 : actor.role === 'Courier' ? 1.55 : actor.role === 'Student' ? 1.35 : 1.1;
+        actor.desired = remaining > .02 ? [dx / remaining * speed, 0, dz / remaining * speed] : [0, 0, 0];
+        actor.state = 'walking';
+        return BT.SUCCESS;
+      })
+    ));
+  }
 
   for (let i = 0; i < DEFS.length; i++) {
     const [role, x, z, shirt, skin] = DEFS[i];
@@ -106,9 +215,19 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
       state: "walking",
       wait: 0,
       notice: 0,
+      investigate: 0,
+      noticeCooldown: 0,
       gait: 0,
-      activeClip: ""
+      activeClip: "",
+      path: [],
+      pathIndex: 0,
+      pathTarget: null,
+      desired: [0, 0, 0],
+      facingYaw: 0,
+      senses: { visible: false, heard: false, distance: Infinity, source: 'none' },
+      behaviour: null
     };
+    actor.behaviour = buildBehaviour(actor);
     actors.push(actor);
     if (isHero01 && walkClip) {
       actor.activeClip = walkClip;
@@ -139,48 +258,25 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
 
     for (const actor of actors) {
       const p = actor.motion.position;
+      actor.noticeCooldown = Math.max(0, actor.noticeCooldown - h);
       const distance = Math.hypot(player[0] - p[0], player[2] - p[2]);
-      let desired = [0,0,0];
-
-      if (actor.notice > 0) {
-        actor.notice = Math.max(0, actor.notice - h);
-        actor.state = "noticing-player";
-        actor.root.setEulerAngles(0, Math.atan2(player[0] - p[0], -(player[2] - p[2])) * 180 / Math.PI, 0);
-      } else if (distance < 2.6) {
-        actor.notice = .55;
-        actor.state = "noticing-player";
-        stats.greetings++;
-      } else if (actor.wait > 0) {
-        actor.wait = Math.max(0, actor.wait - h);
-        actor.state = actor.role.startsWith("Vendor") ? "browsing" : "waiting";
-      } else {
-        const target = actor.route[actor.waypoint];
-        const dx = target[0] - p[0];
-        const dz = target[2] - p[2];
-        const remaining = Math.hypot(dx, dz);
-        if (remaining < .75) {
-          if (actor.waypoint === 0 || actor.waypoint === 3) {
-            actor.direction *= -1;
-            stats.routeChanges++;
-          }
-          actor.waypoint = Math.max(0, Math.min(3, actor.waypoint + actor.direction));
-          actor.wait = actor.isHero01 ? .25 : actor.role === "Vendor" ? 1.2 : .35;
-          actor.state = "waiting";
-        } else {
-          const speed = actor.isHero01 ? 1.18 : actor.role === "Courier" ? 1.55 : actor.role === "Student" ? 1.35 : 1.1;
-          desired = [dx / remaining * speed, 0, dz / remaining * speed];
-          actor.state = "walking";
-        }
-      }
-
+      const senses = perception.sense(
+        { position: p, yaw: actor.facingYaw, eyeHeight: 1.45 },
+        { position: player, eyeHeight: playerState?.vehicleOccupied ? 1.0 : 1.1 },
+        { running: Boolean(playerState?.running), vehicle: Boolean(playerState?.vehicleOccupied), noise: Boolean(playerState?.noiseEvent) }
+      );
+      actor.senses = senses;
+      actor.behaviour.tick({ actor, player, playerState, senses, distance, dt: h });
+      stats.behaviourTicks++;
       const oldX = p[0], oldZ = p[2];
-      solver.step(actor.motion, desired, h, [playerBody, ...actors.filter(other => other !== actor).map(other => other.motion)]);
+      solver.step(actor.motion, actor.desired, h, [playerBody, ...actors.filter(other => other !== actor).map(other => other.motion)]);
       actor.root.setPosition(...p);
 
       const vx = actor.motion.velocity[0];
       const vz = actor.motion.velocity[2];
       if (Math.hypot(vx, vz) > .12) {
-        actor.root.setEulerAngles(0, Math.atan2(vx, -vz) * 180 / Math.PI, 0);
+        actor.facingYaw = Math.atan2(vx, -vz) * 180 / Math.PI;
+        actor.root.setEulerAngles(0, actor.facingYaw, 0);
         actor.gait += h * 7.5;
       }
 
@@ -215,6 +311,12 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
       moved: stats.moved,
       greetings: stats.greetings,
       routeChanges: stats.routeChanges,
+      sightings: stats.sightings,
+      heardEvents: stats.heardEvents,
+      behaviourTicks: stats.behaviourTicks,
+      pathRequests: stats.pathRequests,
+      perception: perception.getState(),
+      navigation: navigation.getState(),
       states: actors.reduce((result, actor) => {
         result[actor.state] = (result[actor.state] || 0) + 1;
         return result;
@@ -228,6 +330,7 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
         state: heroNpc.state,
         activeClip: heroNpc.activeClip,
         position: heroNpc.motion.position.slice(),
+        senses: { ...heroNpc.senses },
         moved: stats.moved > 0 && heroNpc.motion.velocity.some(value => Math.abs(value) > .05),
         rigged: !!heroNpc.root.anim
       } : null,
@@ -235,6 +338,7 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
         id: actor.id,
         role: actor.role,
         state: actor.state,
+        senses: { ...actor.senses },
         position: actor.motion.position.slice()
       }))
     };
