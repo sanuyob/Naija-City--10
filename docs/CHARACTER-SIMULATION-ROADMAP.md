@@ -13,18 +13,18 @@ A modular, mobile-conscious character simulation system for Ara, companions, and
 | Character controller | Integrated | Camera-relative touch/keyboard movement, speed synchronization, stamina gate, collisions, coyote/buffered jump, crouch and vehicle handoff. |
 | Physics and collisions | Integrated | Bullet capsule for the player, Bullet vehicle body/wheels, and a separate lightweight kinematic actor solver. |
 | Procedural animation | Partial | Speed-calibrated locomotion, root/facing response, footstep events and pelvis-based grounded foot-lock correction. |
-| Foot placement / ground detection | Existing / partial | Ground raycasts, support snapping and animated sole-marker diagnostics. The new two-bone solver is currently a tested math utility, not yet applied to Ara's animated leg bones. |
+| Foot placement / ground detection | Integrated / terrain-conditioned IK | Ground raycasts, support snapping, animated sole markers and the proven pelvis foot-lock remain. The two-bone solver now rotates Ara's actual thigh/shin bones after animation evaluation when grounded foot height needs a meaningful correction; level-ground gait is left on the stable pelvis lock path. |
 | Behavior trees | Integrated for pedestrians | Reusable selector/sequence/action/condition nodes choose notice, investigate, wait, waypoint and path-follow actions. |
 | AI perception | Integrated for pedestrians | Range + field-of-view + oriented-box line-of-sight checks and simple running/vehicle hearing signals. |
 | Navigation | Integrated as A* grid | Pedestrian A* routes around collision proxies; this is a grid navigator, not a baked polygon NavMesh. |
 | Health and stamina | Integrated | Real health/stamina state, drain/regeneration, recovery delay, damage invulnerability and downed/recovering state. |
 | Hit reaction | Basic integrated | Damage events, optional bounded knockback, a short bracing pose, and impact feedback. A dedicated authored hit-reaction animation is still needed. |
-| Recovery | Logical recovery integrated | A downed player can recover to a configured health/stamina state, play a temporary recovery posture and regain control. Physical ragdoll/get-up blending is not yet present. |
+| Recovery | Physical handoff integrated; authored get-up still pending | Lethal damage transfers from animation to Bullet bodies, disables the player capsule, then recovery removes the ragdoll, samples the pelvis location/orientation, restores the capsule and controls, and crossfades to the available crouch/idle posture. Ara's asset has no dedicated front/back get-up clip yet. |
 | Interaction system | Integrated foundation | Data-driven interactable registry, distance/visibility checks, contextual HUD prompt, plus Yaba kiosk and bus-stop interactions. Vendor inventory and transit schedules remain future work. |
 | Vehicle transition | Existing / integrated | Door open, seat entry, vehicle occupancy, exit animation and return to character controls. |
 | Facial animation | Integrated | Expression presets, smoothed morph targets, autonomous blink layer and speech viseme channel control over the 34 available morphs. |
 | Motion matching | Prototype utility | A tested trajectory-feature scorer ranks supplied candidates by speed, direction, turn rate and movement state. It is not a full pose-search database and is not the live locomotion driver. |
-| Ragdoll physics | Not yet implemented | Requires mapped body-segment rigid bodies, constraints, safe handoff from animation, collision filtering, and a controlled get-up/pose-recovery transition. |
+| Ragdoll physics | Integrated prototype; refinement pending | Eleven low-count Bullet bodies (pelvis, chest, head, upper/lower arms and thighs/shins) use ten cone-twist/hinge constraints in the existing player Ammo world. Physics drives Ara's mapped bones; the capsule is disabled during the fall and the ragdoll is disposed on recovery. Body self-collision is disabled for stability/mobile cost. |
 
 ## Next build phases
 
@@ -34,11 +34,11 @@ Completed in this branch: vitals, reusable behaviour-tree nodes, perception/line
 
 ### Phase 2 — Full body animation and IK
 
-Bind the two-bone solver to Ara's actual thigh/shin/foot joint chains through a separate post-animation pose layer. Use ground hit normals and bounded ankle targets. Preserve the existing authored walk and run clips; IK must be enabled only when the foot is in stance and disabled during jumps, ladder traversal and vehicle transitions. Add a small clip blend graph for start, stop, pivot, reverse and lateral movement.
+The two-bone solver is now bound to Ara's actual thigh/shin/foot nodes. The controller runs after PlayCanvas animation evaluation and uses it for grounded height correction while preserving the existing authored walk/run gait and pelvis-based horizontal foot lock. Next: add surface-normal-aware foot orientation, terrain/step tests, a leg pole-vector calibration pass, and explicit IK weight fades for transitions, jumps, ladder traversal and vehicle entry/exit. Add a small clip blend graph for start, stop, pivot, reverse and lateral movement.
 
 ### Phase 3 — Ragdoll and physical recovery
 
-Create a low-body-count physics proxy rig with pelvis, torso, head, upper/lower arms and upper/lower legs. Add stable constraints, mass ratios, angular limits, collision filters and a low-frequency update budget. On impact, blend from animation to physics; on recovery, sample body pose and choose a suitable authored get-up animation. Do not activate this on mobile until it passes stability and frame-time tests.
+A first 11-body / 10-joint Bullet rig now runs in the existing player physics world, with constrained limbs, collision against static city surfaces, animation-to-physics handoff, body-to-bone synchronization, capsule disable and deterministic resource teardown. Browser smoke verifies a fall, ground settling and recovery. Next: tune joint frames/limits and mass distribution against more poses and impact directions; add optional self-collision only where stable; author front/back get-up clips and blend from the sampled ragdoll pose into those clips. Profile on the target Android device before enabling broader damage/impact cases.
 
 ### Phase 4 — Real motion matching
 
@@ -57,8 +57,9 @@ Move from simple per-NPC routes to district-specific navigation data, social sch
 - A* routes avoid solid proxies and never drive through a blocked diagonal corner.
 - Interactions require range and a clear view; the nearest available target is exposed to the HUD.
 - Facial expression and viseme channels are smoothed and do not overwrite unrelated face channels.
-- IK never applies on top of incompatible full-body actions and never moves the physics capsule.
-- Ragdoll and motion matching are not accepted as complete until they are implemented, profiled and separately tested on the target Android device.
+- Ara's two-bone IK must keep the foot planted without degrading the measured walk/run sole-slide limits; it never moves the physics capsule.
+- Ragdoll startup must disable the player capsule, constrain all mapped body segments, collide against the city floor and return the character to a valid capsule state on recovery.
+- Ragdoll joint quality, full-body recovery blending and motion matching are not accepted as production-complete until profiled and separately tested on the target Android device.
 
 ## Mobile budget
 

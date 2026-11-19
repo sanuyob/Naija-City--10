@@ -1,4 +1,5 @@
 import { loadAmmo } from './vehicle-physics.js';
+import { createCharacterRagdoll } from './character-ragdoll.js';
 
 /**
  * Bullet-backed player capsule. Visible character geometry is separate from
@@ -112,6 +113,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   let steps = 0;
   let collisions = 0;
   let playerBodyEnabled = true;
+  let activeRagdoll = null;
   let activeGravity = gravity;
 
   function setGravity(value) {
@@ -375,8 +377,42 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     return true;
   }
 
+  function startRagdoll(rig, options = {}) {
+    if (activeRagdoll) return { active: true, ...activeRagdoll.getState() };
+    try {
+      const ragdoll = createCharacterRagdoll({
+        Ammo, world, rig,
+        initialVelocity: Array.isArray(options.velocity) ? options.velocity : [0, 0, 0]
+      });
+      setPlayerEnabled(false);
+      activeRagdoll = ragdoll;
+      return { active: true, ...ragdoll.getState() };
+    } catch (error) {
+      return { active: false, error: String(error?.message || error) };
+    }
+  }
+
+  function stepRagdoll(dt) {
+    if (!activeRagdoll) return null;
+    return activeRagdoll.step(dt);
+  }
+
+  function getRagdollState() {
+    return activeRagdoll?.getState?.() || { active: false, bodyCount: 0, constraintCount: 0, stepCount: 0 };
+  }
+
+  function stopRagdoll({ enablePlayer = true } = {}) {
+    if (!activeRagdoll) return { active: false };
+    const state = activeRagdoll.getState();
+    activeRagdoll.dispose();
+    activeRagdoll = null;
+    if (enablePlayer) setPlayerEnabled(true);
+    return { ...state, active: false };
+  }
+
   function setPlayerEnabled(enabled) {
     const next = Boolean(enabled);
+    if (activeRagdoll && next) return false;
     if (next === playerBodyEnabled) return playerBodyEnabled;
     if (next) {
       world.addRigidBody(body, 2, 1);
@@ -389,6 +425,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   function cleanup() {
+    if (activeRagdoll) { try { activeRagdoll.dispose(); } catch {} activeRagdoll = null; }
     if (playerBodyEnabled) { try { world.removeRigidBody(body); } catch {} }
     for (const collider of colliderBodies) {
       if (!collider) continue;
@@ -400,9 +437,9 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, addStaticColliders, updateStaticColliders, setStaticColliderEnabled, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, cleanup,
+    step, teleport, setColliderEnabled, addStaticColliders, updateStaticColliders, setStaticColliderEnabled, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, startRagdoll, stepRagdoll, stopRagdoll, getRagdollState, cleanup,
     getState: () => ({
-      mode: 'ammo-bullet-capsule', playerBodyEnabled,
+      mode: 'ammo-bullet-capsule', playerBodyEnabled, ragdoll: getRagdollState(),
       steps, collisions,
       colliderCount: colliderBodies.filter(Boolean).length,
       capsuleRadius: radius,

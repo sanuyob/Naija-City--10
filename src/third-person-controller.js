@@ -65,6 +65,9 @@ export function createThirdPersonController(app, camera, canvas, {
   let actionTimer = 0;
   let landingTimer = 0;
   let recoveryTimer = 0;
+  let ragdollActive = false;
+  let ragdollRootOffset = [0, 0.94, 0];
+  let lastRagdollState = null;
   let traversalMotion = null;
   let jumpBuffer = 0;
   let coyote = 0;
@@ -76,7 +79,7 @@ export function createThirdPersonController(app, camera, canvas, {
   const footLockState={
     left:{active:false,kind:null,anchor:null},
     right:{active:false,kind:null,anchor:null},
-    lastCorrection:[0,0,0],lastSupportSide:null,maxCorrection:0,applications:0
+    lastCorrection:[0,0,0],lastSupportSide:null,maxCorrection:0,applications:0,ikApplications:0,lastIKError:0,lastIKSide:null
   };
   const resetFootLock=()=>{
     for(const side of ['left','right']){footLockState[side].active=false;footLockState[side].kind=null;footLockState[side].anchor=null;}
@@ -105,7 +108,7 @@ export function createThirdPersonController(app, camera, canvas, {
       if(!state.active||state.kind!==contact.kind){state.anchor=contact.point.slice();state.kind=contact.kind;state.active=true;}
       const dx=state.anchor[0]-contact.point[0];
       const dz=state.anchor[2]-contact.point[2];
-      corrections.push({side,x:dx,z:dz,clearance:Math.abs(contact.point[1]-baseY)});
+      corrections.push({side,x:dx,z:dz,clearance:Math.abs(contact.point[1]-baseY),kind:contact.kind,contact:contact.point});
     }
     if(!corrections.length){footLockState.lastCorrection=[0,0,0];footLockState.lastSupportSide=null;return {active:false,correction:[0,0,0]};}
     corrections.sort((a,b)=>a.clearance-b.clearance);
@@ -120,13 +123,40 @@ export function createThirdPersonController(app, camera, canvas, {
     const length=Math.hypot(dx,dz),limit=.065;
     if(length>limit){dx*=limit/length;dz*=limit/length;}
     const correction=[dx,0,dz];
-    if(Math.hypot(dx,dz)>.0001&&activeHeroCharacter.applyHipsWorldOffset?.(correction)){
+    // Keep Ara's proven pelvis translation as the primary world-space foot
+    // lock. IK then handles the residual ankle height/leg pose rather than
+    // replacing a stable trajectory with a high-gain joint solve.
+    const pelvisApplied=Math.hypot(dx,dz)>.0001&&activeHeroCharacter.applyHipsWorldOffset?.(correction)===true;
+    if(pelvisApplied){
       footLockState.applications++;
       footLockState.maxCorrection=Math.max(footLockState.maxCorrection,Math.hypot(dx,dz));
     }
+    const correctedLimbs=activeHeroCharacter.getLimbPositions?.()||limbs;
+    let ikApplied=0,lastIKError=0;
+    for(const item of corrections){
+      const markerName=item.side+(item.kind==='heel'?'SoleHeel':'SoleToe');
+      const marker=correctedLimbs[markerName];
+      const ankle=correctedLimbs[item.side+'Ankle']||correctedLimbs[item.side+'Foot'];
+      if(!Array.isArray(marker)||!Array.isArray(ankle)||!marker.every(Number.isFinite)||!ankle.every(Number.isFinite))continue;
+      const verticalCorrection=baseY-marker[1];
+      // Do not perturb a clean flat-ground gait just to exercise IK. Trigger
+      // the joint solve when the sole actually needs a meaningful height
+      // adjustment (e.g. uneven ground/step contact) and the horizontal foot
+      // lock is already stable.
+      if(Math.abs(verticalCorrection)<.045||Math.hypot(item.x,item.z)>.02)continue;
+      const target=[ankle[0],ankle[1]+verticalCorrection,ankle[2]];
+      const result=activeHeroCharacter.applyLimbIK?.(item.side,target,.72);
+      if(result?.applied){
+        ikApplied++;
+        lastIKError=result.error;
+        footLockState.ikApplications++;
+        footLockState.lastIKError=result.error;
+        footLockState.lastIKSide=item.side;
+      }
+    }
     footLockState.lastCorrection=correction;
     footLockState.lastSupportSide=corrections[0].side;
-    return {active:true,correction,contacts:corrections.length,supportSide:corrections[0].side,phaseFrame:stance.frame};
+    return {active:true,correction,contacts:corrections.length,supportSide:corrections[0].side,phaseFrame:stance.frame,ikApplied,lastIKError};
   }
   let availableHeroClips = new Set(activeHeroCharacter?.clipNames || []);
   let heroClipDurations = activeHeroCharacter?.clipDurations || {};
@@ -244,6 +274,47 @@ export function createThirdPersonController(app, camera, canvas, {
     return facialAnimation.setViseme(name, weight);
   }
 
+  function startCharacterRagdoll() {
+    const rigPose = activeHeroCharacter?.getRagdollPose?.();
+    const hipPosition = rigPose?.hips?.position;
+    const playerPosition = player.getPosition();
+    if (Array.isArray(hipPosition)) {
+      ragdollRootOffset = [
+        hipPosition[0] - playerPosition.x,
+        hipPosition[1] - playerPosition.y,
+        hipPosition[2] - playerPosition.z
+      ];
+    }
+    const result = physics?.startRagdoll?.(activeHeroCharacter, {
+      velocity: [velocity.x, velocity.y, velocity.z]
+    });
+    if (result?.active) {
+      ragdollActive = true;
+      lastRagdollState = result;
+      if (heroVisual?.anim) heroVisual.anim.playing = false;
+      resetFootLock();
+    }
+    return result || { active: false, error: 'Ragdoll physics adapter unavailable' };
+  }
+
+  function updateRagdoll(step) {
+    if (!ragdollActive) return null;
+    const state = physics?.stepRagdoll?.(step);
+    if (!state?.active || !state.rootPosition) return state || null;
+    lastRagdollState = state;
+    const rootPosition = [
+      state.rootPosition[0] - ragdollRootOffset[0],
+      Math.max(Number(physics?.getState?.().groundY) || 0, state.rootPosition[1] - ragdollRootOffset[1]),
+      state.rootPosition[2] - ragdollRootOffset[2]
+    ];
+    player.setPosition(rootPosition[0], rootPosition[1], rootPosition[2]);
+    // Moving the camera/player anchor also moves Ara's parent entity. Reapply
+    // the exact Bullet world pose after that parent shift so the mesh stays
+    // attached to the physical body transforms.
+    if (state.pose) activeHeroCharacter?.applyRagdollPose?.(state.pose);
+    return state;
+  }
+
   function applyDamage(amount, options = {}) {
     const result = vitals.applyDamage(amount, options);
     if (!result.applied) return result;
@@ -263,7 +334,11 @@ export function createThirdPersonController(app, camera, canvas, {
       actionTimer = 0;
       actionClip = '';
       setControlEnabled(false);
-      transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.08);
+      const ragdoll = startCharacterRagdoll();
+      if (!ragdoll.active) {
+        // Keep the previous non-physics downed fallback on unsupported rigs.
+        transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.08);
+      }
     }
     onEffect?.('hit-reaction', [p.x, p.y, p.z], { source: options.source || 'world' });
     return result;
@@ -276,16 +351,44 @@ export function createThirdPersonController(app, camera, canvas, {
   function recoverFromDowned(options = {}) {
     const result = vitals.recover(options);
     if (!result.applied) return result;
-    const p = player.getPosition();
+    let recoveryPosition = player.getPosition();
+    let recoveryYaw = facingYaw;
+    if (ragdollActive) {
+      const state = physics?.getRagdollState?.() || lastRagdollState || {};
+      const pelvis = state.rootPosition;
+      if (Array.isArray(pelvis) && pelvis.length === 3) {
+        const x = pelvis[0] - ragdollRootOffset[0];
+        const z = pelvis[2] - ragdollRootOffset[2];
+        const ground = physics?.raycast?.([x, pelvis[1] + 1.8, z], [x, pelvis[1] - 3.0, z]);
+        const groundY = Number.isFinite(ground?.point?.[1]) ? ground.point[1] : (Number(physics?.getState?.().groundY) || 0);
+        recoveryPosition = new pc.Vec3(x, groundY, z);
+        if (Array.isArray(state.rootRotation)) {
+          const q = new pc.Quat(state.rootRotation[0], state.rootRotation[1], state.rootRotation[2], state.rootRotation[3]);
+          const forward = q.transformVector(new pc.Vec3(0, 0, -1), new pc.Vec3());
+          if (Math.hypot(forward.x, forward.z) > 0.15) recoveryYaw = Math.atan2(-forward.x, -forward.z) * 180 / Math.PI;
+        }
+      }
+      physics?.stopRagdoll?.({ enablePlayer: false });
+      ragdollActive = false;
+      lastRagdollState = null;
+      player.setPosition(recoveryPosition);
+      player.setEulerAngles(0, recoveryYaw, 0);
+      physics?.teleport?.([recoveryPosition.x, recoveryPosition.y, recoveryPosition.z], [0, 0, 0]);
+      physics?.setPlayerEnabled?.(true);
+      if (heroVisual?.anim) {
+        heroVisual.anim.enabled = true;
+        heroVisual.anim.playing = true;
+      }
+    }
     velocity.set(0, 0, 0);
     smoothedMoveSpeed = 0;
-    physics?.teleport?.([p.x, p.y, p.z], [0, 0, 0]);
+    physics?.teleport?.([recoveryPosition.x, recoveryPosition.y, recoveryPosition.z], [0, 0, 0]);
     grounded = true;
     recoveryTimer = 0.85;
     setControlEnabled(true);
     actionTimer = 0;
     actionClip = '';
-    transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.12);
+    transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.32);
     return result;
   }
 
@@ -482,7 +585,11 @@ export function createThirdPersonController(app, camera, canvas, {
   function update(dt) {
     const step = Math.min(dt, 0.05);
     facialAnimation.update(step);
-    if (!controlEnabled) { vitals.update(step, { active: false }); return; }
+    if (!controlEnabled) {
+      vitals.update(step, { active: false });
+      if (ragdollActive) updateRagdoll(step);
+      return;
+    }
     if (recoveryTimer > 0) {
       recoveryTimer = Math.max(0, recoveryTimer - step);
       if (recoveryTimer === 0) {
@@ -943,7 +1050,7 @@ export function createThirdPersonController(app, camera, canvas, {
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy, applyGroundedFootLock, resetFootLock,
-    getFootLockState:()=>({applications:footLockState.applications,maxCorrection:footLockState.maxCorrection,lastCorrection:footLockState.lastCorrection.slice(),supportSide:footLockState.lastSupportSide,leftActive:footLockState.left.active,rightActive:footLockState.right.active}),
+    getFootLockState:()=>({applications:footLockState.applications,ikApplications:footLockState.ikApplications,lastIKError:footLockState.lastIKError,lastIKSide:footLockState.lastIKSide,maxCorrection:footLockState.maxCorrection,lastCorrection:footLockState.lastCorrection.slice(),supportSide:footLockState.lastSupportSide,leftActive:footLockState.left.active,rightActive:footLockState.right.active}),
     interact: () => onInteract?.(getState()),
     playAnimation,
     playFaceExpression,
@@ -952,6 +1059,7 @@ export function createThirdPersonController(app, camera, canvas, {
     heal,
     recoverFromDowned,
     getVitalsState: vitals.getState,
+    getRagdollState: () => ragdollActive ? (physics?.getRagdollState?.() || lastRagdollState) : { active: false, bodyCount: 0, constraintCount: 0 },
     getFacialAnimationState: facialAnimation.getState,
     setCrouched,
     setControlEnabled,

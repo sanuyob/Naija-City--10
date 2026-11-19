@@ -1,5 +1,6 @@
 import * as pc from 'playcanvas';
 import { loadSavedPlayerCharacter } from './player-character-store.js';
+import { solveTwoBoneIK } from './two-bone-ik.js';
 
 const base = import.meta.env.BASE_URL || '/';
 const resolveAssetUrl = value => new URL(String(value).replace(/^\//, ''), new URL(base, window.location.origin)).href;
@@ -604,6 +605,86 @@ export async function loadHeroCharacter(app, {
       rightSoleToe: readRigPoint(rightSoleToe), rightSoleHeel: readRigPoint(rightSoleHeel),
       leftAnkle: readRigPoint(leftAnkleBone), rightAnkle: readRigPoint(rightAnkleBone)
     });
+
+    // Solve a real animated leg chain and write the resulting world rotations
+    // back to Ara's thigh and shin nodes. This runs from the controller after
+    // PlayCanvas has evaluated the current animation pose.
+    const legChains = {
+      left: { upper: leftUpperLeg, lower: leftLowerLeg, end: leftAnkleBone || leftFootBone },
+      right: { upper: rightUpperLeg, lower: rightLowerLeg, end: rightAnkleBone || rightFootBone }
+    };
+    const readPoint = node => {
+      const p = node?.getPosition?.();
+      return p ? [p.x, p.y, p.z] : null;
+    };
+    const vectorBetween = (from, to) => new pc.Vec3(to[0]-from[0], to[1]-from[1], to[2]-from[2]);
+    const applyLimbIK = (side, targetWorld, weight = 1) => {
+      const chain = legChains[side];
+      const blend = Math.max(0, Math.min(1, Number(weight)));
+      if (!chain?.upper || !chain?.lower || !chain?.end ||
+          !Array.isArray(targetWorld) || targetWorld.length !== 3 ||
+          !targetWorld.every(Number.isFinite) || blend <= 0) return { applied: false, reason: 'invalid-chain-or-target' };
+      root.syncHierarchy?.();
+      const hip = readPoint(chain.upper), knee = readPoint(chain.lower), foot = readPoint(chain.end);
+      if (!hip || !knee || !foot) return { applied: false, reason: 'missing-world-pose' };
+      const upperLength = Math.hypot(knee[0]-hip[0], knee[1]-hip[1], knee[2]-hip[2]);
+      const lowerLength = Math.hypot(foot[0]-knee[0], foot[1]-knee[1], foot[2]-knee[2]);
+      if (upperLength < 0.08 || lowerLength < 0.08) return { applied: false, reason: 'degenerate-chain' };
+      const solved = solveTwoBoneIK(hip, targetWorld, upperLength, lowerLength, [knee[0]-hip[0], knee[1]-hip[1], knee[2]-hip[2]]);
+      const currentUpperDirection = vectorBetween(hip, knee).normalize();
+      const desiredUpperDirection = vectorBetween(hip, solved.joint).normalize();
+      const upperDelta = new pc.Quat().setFromDirections(currentUpperDirection, desiredUpperDirection);
+      const upperStartRotation = chain.upper.getRotation().clone();
+      const upperTargetRotation = new pc.Quat().mul2(upperDelta, upperStartRotation);
+      const upperBlendedRotation = new pc.Quat().slerp(upperStartRotation, upperTargetRotation, blend);
+      chain.upper.setRotation(upperBlendedRotation);
+      root.syncHierarchy?.();
+
+      const solvedKnee = readPoint(chain.lower), currentFoot = readPoint(chain.end);
+      if (!solvedKnee || !currentFoot) return { applied: false, reason: 'pose-refresh-failed' };
+      const currentLowerDirection = vectorBetween(solvedKnee, currentFoot).normalize();
+      const desiredLowerDirection = vectorBetween(solvedKnee, solved.effector).normalize();
+      const lowerDelta = new pc.Quat().setFromDirections(currentLowerDirection, desiredLowerDirection);
+      const lowerStartRotation = chain.lower.getRotation().clone();
+      const lowerTargetRotation = new pc.Quat().mul2(lowerDelta, lowerStartRotation);
+      chain.lower.setRotation(new pc.Quat().slerp(lowerStartRotation, lowerTargetRotation, blend));
+      root.syncHierarchy?.();
+      const actual = readPoint(chain.end);
+      const error = actual ? Math.hypot(actual[0]-targetWorld[0], actual[1]-targetWorld[1], actual[2]-targetWorld[2]) : Infinity;
+      return { applied: true, reachable: solved.reachable, error, target: targetWorld.slice(), actual, upperLength, lowerLength };
+    };
+
+    const ragdollBoneNodes = () => ({
+      hips: hipsBone, spine2: findBone('Spine2'), neck: findBone('Neck'), head: findBone('Head'),
+      leftUpperArm, leftForeArm, leftHand: leftHandBone,
+      rightUpperArm: rightUpperArm, rightForeArm, rightHand: rightHandBone,
+      leftThigh: leftUpperLeg, leftShin: leftLowerLeg, leftFoot: leftAnkleBone,
+      rightThigh: rightUpperLeg, rightShin: rightLowerLeg, rightFoot: rightAnkleBone
+    });
+    const getRagdollPose = () => {
+      root.syncHierarchy?.();
+      const pose = {};
+      for (const [key, node] of Object.entries(ragdollBoneNodes())) {
+        if (!node?.getPosition || !node?.getRotation) continue;
+        const p = node.getPosition(), q = node.getRotation();
+        pose[key] = { position: [p.x, p.y, p.z], rotation: [q.x, q.y, q.z, q.w] };
+      }
+      return pose;
+    };
+    const applyRagdollPose = pose => {
+      if (!pose || typeof pose !== 'object') return false;
+      const nodes = ragdollBoneNodes();
+      // Parent-first application preserves the world pose of descendants.
+      for (const key of ['hips','spine2','neck','head','leftUpperArm','leftForeArm','leftHand','rightUpperArm','rightForeArm','rightHand','leftThigh','leftShin','leftFoot','rightThigh','rightShin','rightFoot']) {
+        const item = pose[key], node = nodes[key];
+        if (!node || !Array.isArray(item?.position) || !Array.isArray(item?.rotation) ||
+            !item.position.every(Number.isFinite) || !item.rotation.every(Number.isFinite)) continue;
+        node.setPosition(item.position[0], item.position[1], item.position[2]);
+        node.setRotation(new pc.Quat(item.rotation[0], item.rotation[1], item.rotation[2], item.rotation[3]));
+      }
+      root.syncHierarchy?.();
+      return true;
+    };
     const getFacingDirection = () => {
       const head = findBone('Head');
       const leftEye = findBone('LeftEye');
@@ -644,7 +725,7 @@ export async function loadHeroCharacter(app, {
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount, visualGroundOffset,
       morphNames: Array.from(morphNames).sort(),
       setFaceExpression, getRigSnapshot, getVisualBounds, getFootPositions, getLimbPositions, getSoleMarkerInfo, applyHipsWorldOffset, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
-      setProceduralPose, hasAnimation: name => clipNames.includes(name),
+      setProceduralPose, applyLimbIK, getRagdollPose, getRagdollBones: ragdollBoneNodes, applyRagdollPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };
   } catch (error) {

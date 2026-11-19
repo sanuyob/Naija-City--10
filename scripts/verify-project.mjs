@@ -46,6 +46,8 @@ const navigationGrid=await readFile(new URL('../src/navigation-grid.js',import.m
 const worldInteractions=await readFile(new URL('../src/world-interaction-system.js',import.meta.url),'utf8');
 const facialAnimation=await readFile(new URL('../src/facial-animation.js',import.meta.url),'utf8');
 const twoBoneIK=await readFile(new URL('../src/two-bone-ik.js',import.meta.url),'utf8');
+const characterRagdoll=await readFile(new URL('../src/character-ragdoll.js',import.meta.url),'utf8');
+const araIKRagdollSmoke=await readFile(new URL('./ara-ik-ragdoll-smoke.mjs',import.meta.url),'utf8');
 const motionMatching=await readFile(new URL('../src/motion-matching.js',import.meta.url),'utf8');
 const simulationCoreTest=await readFile(new URL('./character-simulation-core.test.mjs',import.meta.url),'utf8');
 const simulationBrowserTest=await readFile(new URL('./character-simulation-integration-smoke.mjs',import.meta.url),'utf8');
@@ -541,12 +543,20 @@ assert.match(rpg,/setInteractionPrompt/,'The HUD must display contextual interac
 assert.match(facialAnimation,/eyeBlinkLeft/,'Facial animation must include autonomous blinking');
 assert.match(facialAnimation,/viseme_aa/,'Facial animation must include speech visemes');
 assert.match(twoBoneIK,/solveTwoBoneIK/,'The animation toolset must include a validated two-bone IK solver');
+assert.match(loader,/applyLimbIK/,'The IK solver must be connected to Ara live leg bones');
+assert.match(controller,/applyLimbIK/,'Grounded foot placement must be able to call Ara skeleton IK');
+assert.match(playerPhysics,/startRagdoll/,'The player Bullet world must expose a ragdoll handoff');
+assert.match(characterRagdoll,/btConeTwistConstraint/,'The physical ragdoll must use constrained articulated joints');
+assert.match(characterRagdoll,/btHingeConstraint/,'The physical ragdoll must use hinged limb joints');
+assert.match(characterRagdoll,/applyRagdollPose/,'The ragdoll must synchronize body transforms back to Ara bones');
+assert.match(araIKRagdollSmoke,/bodyCount === 11/,'Browser smoke must verify the live 11-body Ara ragdoll');
+assert.match(araIKRagdollSmoke,/endEffectorError/,'Browser smoke must measure live skeleton IK error');
 assert.match(motionMatching,/scoreMotionCandidates/,'The animation toolset must include motion-feature candidate scoring');
 assert.match(game,/debugAdvanceCharacterSimulationForSmoke/,'The character simulation must expose deterministic fixed-step testing');
 assert.match(simulationCoreTest,/createCharacterVitals/,'Character simulation core regression test must cover vitals');
 assert.match(simulationBrowserTest,/debugApplyPlayerDamageForSmoke/,'Character simulation integration test must cover damage and recovery');
 
-console.log('Character simulation checks passed: vitals, behaviour trees, vision/hearing, A-star routing, interactables, facial morphs, IK math and motion-feature scoring.');
+console.log('Character simulation checks passed: vitals, behaviour trees, vision/hearing, A-star routing, interactables, facial morphs, live Ara bone IK, Bullet ragdoll and motion-feature scoring.');
 console.log('Stage 08E checks passed: 48 existing placements; 39 curated Yaba assets share 24 external KTX2 maps; eight neighbourhood homes retain their existing maps; UVs, three LODs and separate collision proxies verified.');
 console.log('Stage 08A checks passed: expanded terrain, connected road grid, 16 neighbourhood buildings and pocket parks.');
 console.log('Stage 08B checks passed: Nigerian shopfronts, awnings, roller shutters, balconies, security grilles, AC units and rooftop water tanks.');
