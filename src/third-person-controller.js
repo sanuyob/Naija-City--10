@@ -383,11 +383,14 @@ export function createThirdPersonController(app, camera, canvas, {
       0,
       (direction[2] || 0) / directionLength * impulse
     ];
-    velocity.x += impactVelocity[0];
-    velocity.z += impactVelocity[2];
-    if (physics?.teleport) physics.teleport([p.x, p.y, p.z], [velocity.x, velocity.y, velocity.z]);
     resetFootLock();
     if (!result.downed) {
+      // Ordinary hit reactions keep the impact on the kinematic player body.
+      // For a downing hit, pass it separately to the ragdoll so sampled bone
+      // velocities do not already contain the same impulse and double it.
+      velocity.x += impactVelocity[0];
+      velocity.z += impactVelocity[2];
+      if (physics?.teleport) physics.teleport([p.x, p.y, p.z], [velocity.x, velocity.y, velocity.z]);
       actionClip = availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.landing;
       actionTimer = 0.38;
       transitionHeroClip(actionClip, 0.07);
@@ -833,7 +836,7 @@ export function createThirdPersonController(app, camera, canvas, {
         const finishLadderBody=(position)=>{
           physics?.setGravity?.(traversalMotion.restoreGravity);
           if(traversalMotion.mode==='ladder'&&traversalMotion.playerBodyWasEnabled){
-            if (options.enablePhysicsBody !== false) physics?.setPlayerEnabled?.(true);
+            physics?.setPlayerEnabled?.(true);
             physics?.teleport?.(position,[0,0,0]);
           }
         };

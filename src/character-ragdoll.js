@@ -96,7 +96,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const body = own(new Ammo.btRigidBody(info));
     body.setFriction(0.82);
     body.setRestitution(0.015);
-    body.setDamping(0.07, 0.72);
+    body.setDamping(0.07, 0.82);
     body.setActivationState(4);
     body.setUserIndex(2300 + segments.length);
     const sampledMotion = boneVelocities?.[boneKey] || {};
@@ -104,7 +104,10 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const hasSampledLinear = Array.isArray(sampledMotion.linear);
     const boneLinear = hasSampledLinear ? sampledMotion.linear.map(v => Number(v) || 0) : initialVelocity.map(v => Number(v) || 0);
     const centerOffset = sub(center, bonePose.position);
-    const impact = hasSampledLinear && Array.isArray(impactVelocity)
+    // The gameplay impact is authoritative and must be transferred even when
+    // a bone has no valid animation-velocity sample (for example immediately
+    // after a teleport, spawn, or animation reset).
+    const impact = Array.isArray(impactVelocity)
       ? impactVelocity.map(v => Number(v) || 0) : [0, 0, 0];
     // A stale/fast animation sample may point opposite to the actual hit. Keep
     // the pelvis's inherited component bounded against the requested impact so
@@ -219,11 +222,11 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const pelvis = makeNodeBody(
       'pelvis', 'hips',
       new Ammo.btBoxShape(vector([0.145, 0.095, 0.115])),
-      13.5, hipsPose.position, hipsPose.rotation, hipsPose
+      15, hipsPose.position, hipsPose.rotation, hipsPose
     );
     // The torso proxy must span pelvis-to-upper-spine; using Spine2-to-Neck
     // leaves most of the chest unsupported and puts the spine joint at the wrong end.
-    const chest = capsuleBody('chest', 'spine2', 'spine2', 0.145, 20.5, 'hips');
+    const chest = capsuleBody('chest', 'spine2', 'spine2', 0.145, 19, 'hips');
     const headPose = readNode(bones.head);
     const headCenter = add(headPose.position, rotate(headPose.rotation, [0, 0.065, 0]));
     const head = makeNodeBody('head', 'head', new Ammo.btSphereShape(0.115), 5.5, headCenter, headPose.rotation, headPose);
@@ -240,13 +243,13 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     ballJoint('spine', pelvis, chest, getPoint(bones.hips), [0.50, 0.42, 0.36]);
     ballJoint('neck', chest, head, getPoint(bones.neck), [0.38, 0.34, 0.28]);
     ballJoint('left-shoulder', chest, leftUpperArm, getPoint(bones.leftUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.12, 2.42);
+    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.22, 2.42);
     ballJoint('right-shoulder', chest, rightUpperArm, getPoint(bones.rightUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.12, 2.42);
+    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.22, 2.42);
     ballJoint('left-hip', pelvis, leftThigh, getPoint(bones.leftThigh), [1.00, 0.85, 0.72]);
-    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.12, 2.50);
+    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.22, 2.50);
     ballJoint('right-hip', pelvis, rightThigh, getPoint(bones.rightThigh), [1.00, 0.85, 0.72]);
-    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.12, 2.50);
+    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.22, 2.50);
 
 
   } catch (error) {

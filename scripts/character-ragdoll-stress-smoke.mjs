@@ -29,7 +29,10 @@ async function settleAndRecover(page, label) {
   assert(Number.isFinite(resting.maxBodySpeed) && resting.maxBodySpeed < 3,
     `${label}: physics did not settle cleanly (speed ${resting.maxBodySpeed})`);
   assert((resting.hingeLimitViolations || []).length === 0,
-    `${label}: hinge-limit violation(s): ${resting.hingeLimitViolations}`);
+    `${label}: hinge-limit violation(s): ${JSON.stringify((resting.jointConfigurations || []).filter(joint => resting.hingeLimitViolations.includes(joint.name)))}`);
+  const hinges = (resting.jointConfigurations || []).filter(joint => joint.type === 'hinge');
+  assert(hinges.length === 4 && hinges.every(joint => Number.isFinite(joint.angle)),
+    `${label}: expected four measurable elbow/knee hinge angles`);
 
   const recovery = await page.evaluate(() =>
     window.__NAIJA_GAME__.debugRecoverPlayerForSmoke({ health: 100, stamina: 100 })
@@ -98,21 +101,35 @@ try {
       window.__NAIJA_PLAY_HERO_ANIMATION__?.('Idle', 1);
     });
     await advance(page, 5);
-    const damage = await page.evaluate(direction =>
-      window.__NAIJA_GAME__.debugApplyPlayerDamageForSmoke(100, {
+    // Read the just-created Bullet bodies in the same browser task as the
+    // damage event. A separate evaluate yields to requestAnimationFrame and
+    // can measure a later solver step rather than the transferred impact.
+    const impactStart = await page.evaluate(direction => {
+      const damage = window.__NAIJA_GAME__.debugApplyPlayerDamageForSmoke(100, {
         knockback: 1.6,
         direction
-      }), item.vector
-    );
+      });
+      return { damage, ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll };
+    }, item.vector);
+    const damage = impactStart.damage;
+    const start = impactStart.ragdoll;
     assert(damage?.downed, `${item.name}: did not enter the downed state`);
-
-    const start = await page.evaluate(() => window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll);
     assert(start.active && start.bodyCount === 11 && start.constraintCount === 10,
       `${item.name}: articulated ragdoll did not start`);
     assert(Math.abs(start.totalMass - 72) < 0.01,
       `${item.name}: body mass budget mismatch (${start.totalMass} kg)`);
-    assert(start.jointConfigurations?.length === 10,
-      `${item.name}: joint configuration diagnostics missing`);
+    const expectedMasses = {
+      pelvis: 15, chest: 19, head: 5.5,
+      'left-upper-arm': 2.4, 'left-forearm': 1.4,
+      'right-upper-arm': 2.4, 'right-forearm': 1.4,
+      'left-thigh': 8.1, 'left-shin': 4.35,
+      'right-thigh': 8.1, 'right-shin': 4.35
+    };
+    assert(Object.entries(expectedMasses).every(([name, mass]) => Math.abs(start.bodyMasses?.[name] - mass) < 0.001),
+      `${item.name}: segment mass profile drifted: ${JSON.stringify(start.bodyMasses)}`);
+    assert(start.jointConfigurations?.length === 10 && start.jointConfigurations.every(joint =>
+      Array.isArray(joint.limits) && joint.limits.length >= 2 && joint.limits.every(Number.isFinite)),
+      `${item.name}: joint configuration diagnostics/limits missing`);
     assert(finiteVector(start.rootLinearVelocity),
       `${item.name}: pelvis velocity diagnostics missing`);
     const dot = start.rootLinearVelocity[0] * item.vector[0] + start.rootLinearVelocity[2] * item.vector[2];
@@ -133,14 +150,15 @@ try {
   const terrainResults = [];
   const terrainCases = [
     {
-      name: 'two-step-landing',
+      name: 'three-step-staircase',
       owner: 'character-stress-stairs',
-      start: [12.5, 0.56, 0],
+      start: [11.7, 0.56, 0],
       colliders: [
-        { id: 'stress-lower-step', position: [10.5, 0.14, 0], halfExtents: [4, 0.14, 3.5], surface: 'concrete' },
-        { id: 'stress-upper-step', position: [12.5, 0.42, 0], halfExtents: [2.2, 0.14, 2.4], surface: 'concrete' }
+        { id: 'stress-lower-step', position: [10.8, 0.14, 0], halfExtents: [0.45, 0.14, 2.5], surface: 'concrete' },
+        { id: 'stress-middle-step', position: [11.7, 0.28, 0], halfExtents: [0.45, 0.28, 2.5], surface: 'concrete' },
+        { id: 'stress-upper-step', position: [12.6, 0.42, 0], halfExtents: [0.45, 0.42, 2.5], surface: 'concrete' }
       ],
-      minGroundY: 0.42,
+      minGroundY: 0.56,
       minNormalY: 0.90
     },
     {
