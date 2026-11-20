@@ -362,7 +362,7 @@ assert.match(audio,/procedural-web-audio/,'The audio layer must expose its proce
 assert.match(audio,/played: \{ \.\.\.played \}/,'The audio layer must expose effect-event counters for QA');
 assert.match(physics,/stepSimulation\(h,4,1\/60\)/,'Bullet vehicle world must use fixed 60 Hz substeps');
 assert.match(css,/touch-action:\s*none/);
-assert.match(vite,/chunkSizeWarningLimit:\s*1200/);
+assert.match(vite,/chunkSizeWarningLimit:\s*1600/);
 assert.ok(pkg.dependencies?.playcanvas);
 assert.ok(pkg.devDependencies?.vite);
 assert.match(game,/createStage08EBuildings/,'Stage 08E GLB architecture must be mounted in the live scene');
