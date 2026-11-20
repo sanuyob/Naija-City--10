@@ -685,7 +685,7 @@ hero.pbrMaterials=['weathered-plaster','corrugated-roofing','tinted-shopfront-gl
 hero.pbrResolution=2048;
 hero.materialSources=[sources.plaster.id,sources.roofing.id,sources.cladding.id];
 hero.collision='COLLISION_PROXY';
-manifest.textureEncoding='hero pilot KTX2 Basis Universal; remaining 47 GLBs retain Stage 08E embedded PNG maps';
+manifest.textureEncoding='Shared KTX2 Basis library for 39 curated Yaba commercial/mixed-use assets; the Stage 08F Computer Village hero uses its own 10 KTX2 maps; 8 neighbourhood-home GLBs retain their existing embedded PNG maps';
 manifest.heroPilot={id:assetId,name:hero.name,textureEncoding:hero.textureEncoding,resolution:2048,materials:hero.pbrMaterials,sourceIds:hero.materialSources,license:'CC0-1.0',collisionProxy:'separate simplified envelope; physics runtime integration pending'};
 await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n');
 const bytes=(await readFile(join(buildingDir,heroFile))).length;

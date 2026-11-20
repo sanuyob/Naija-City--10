@@ -160,8 +160,19 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     }
   }
 
+  const solidName = /(?:main-road-kerb|distributor-kerb|cross-street-kerb|utility-pole|streetlight-pole|road-sign-post|bus-shelter-post|bus-stop-pole|park-bench-seat|park-bench-back|park-bin-body|park-planter-edge|roadside-stall-support|roadside-stall-leg|pedestrian-bollard)/;
+  const collisionProxies = (app.root.findByTag('stage08c-street-detail') || [])
+    .filter(entity => solidName.test(entity.name))
+    .map(entity => {
+      const p = entity.getPosition(), size = entity.getLocalScale(), r = entity.getEulerAngles();
+      return { id: entity.name + '-' + entity.getGuid(), position: [p.x,p.y,p.z],
+        halfExtents: [Math.abs(size.x)/2,Math.abs(size.y)/2,Math.abs(size.z)/2],
+        rotationY: r.y, source: 'stage08c-street-infrastructure' };
+    });
+
   return {
     stage: '08C',
+    collisionProxies,
     utilityPoles: poleZ.length * 2,
     overheadWireRuns: (poleZ.length - 1) * 2 * 3,
     distributorStreetlights: 16,

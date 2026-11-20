@@ -1,0 +1,11 @@
+Vehicle prop provenance
+
+This mobile-optimized vehicle prop was exported from Ara 3D Gen:
+https://ara3dgen.com/
+Project source: https://github.com/olatunde85/3d-gen
+
+The source repository's MIT license applies to the repository source code.
+The accompanying character-export license file names MakeHuman character data
+and selected CMU motion clips; it does not explicitly state a separate license
+for the generated vehicle prop. The generated vehicle is retained here with
+its source provenance and original export metadata for review.

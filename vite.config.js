@@ -1,12 +1,14 @@
 import { defineConfig } from 'vite';
 
 // The standalone PlayCanvas runtime is intentionally kept as a lazy game chunk.
-// A 1,200 KiB per-chunk warning threshold is paired with stricter CI budgets:
-// 50 KiB for the initial entry and 1,400 KiB / 400 KiB gzip for all JS.
+// CI enforces a 1,560 KiB maximum JS chunk, plus initial-entry and total gzip budgets.
+// Keep the warning slightly above the hard CI ceiling so the analyzer gives the actionable failure.
 export default defineConfig({
   // GitHub Pages serves project sites beneath /<repository>/.
   base: process.env.GITHUB_ACTIONS ? '/Naija-City--10/' : '/',
   build: {
-    chunkSizeWarningLimit: 1200
+    chunkSizeWarningLimit: 1600,
+    minify: 'terser',
+    terserOptions: { compress: { passes: 8, pure_getters: true, toplevel: true }, mangle: { toplevel: true } }
   }
 });

@@ -1,64 +1,59 @@
 # Naija City — Hero Character & Crew System Roadmap
 
-**Specification:** Hero Character & Crew System v0.1  
-**Approved decisions:** two active companions; grounded contextual parkour; balanced action presentation.  
-**Target runtime:** PlayCanvas 2.24, browser and Android.  
-**Status:** staged implementation; no hero GLB or animation source files are currently present in the repository.
+**Specification:** Hero Character & Crew System v0.1
+**Target runtime:** PlayCanvas 2.24, browser and Android
+**Current integration status:** Animation runtime, Ara player rig and the first connected character-simulation stack are present in the GIDI integration candidate for `main` (November 20, 2026). The original staged roadmap remains the plan for completing the custom hero and crew.
 
 ## Delivery rule
 
-Each stage has its own scope, acceptance gate and follow-up stage. A stage is complete only when its required assets exist, its code is integrated, automated checks pass, and the relevant browser/Android checks pass. Work that cannot be completed safely within a stage is recorded in the next stage rather than silently omitted or represented as finished.
+Each stage has its own scope, acceptance gate and follow-up stage. A stage is complete only when its required assets exist, its code is integrated, automated checks pass, and the relevant browser/device checks pass. Work that cannot be completed safely within a stage is recorded as follow-up rather than represented as finished.
 
 ## Stage breakdown
 
-| Stage | Scope | Exit gate |
+| Stage | Scope | Current state / next gate |
 |---|---|---|
-| Character 01A — Animation runtime foundation | Register PlayCanvas AnimComponentSystem; document the asset contract and integration boundary. | Build/verification pass; current placeholder gameplay remains unchanged. |
-| Character 01B — Hero model, materials and rig | Create the original Nigerian streetwear hero, production mesh, UVs, PBR materials, reusable humanoid skeleton, facial controls and attachment sockets. | GLB validates; scale/orientation/materials/skeleton/skin weights reviewed; model loads in a test scene. |
-| Character 02 — Core locomotion | Replace procedural limb swing with rigged idle, walk, jog, sprint, strafe, start/stop and turns; preserve existing input, stamina, camera and collision behaviour. | Smooth transitions, no broken bindings, no unacceptable foot sliding; browser and Android test. |
-| Character 03 — Contextual parkour | Traversal detection and the 18 approved grounded traversal clips, with geometry checks and controlled movement handoff. | Valid obstacle tests, no arbitrary climbing, target alignment and collision tests. |
-| Character 04 — Everyday interactions and face | Phone, greeting, pickup, inspect, door, sit/stand; facial expressions, eye/head look and dialogue cues. | Interaction clips trigger correctly and restore locomotion; facial controls remain lightweight. |
-| Character 05 — Equipment and balanced action presentation | Fictional equipment poses, non-lethal gadget animation, mission camera/audio cues and selection UI. | Animation and UI work without interrupting normal exploration; fictional presentation only. |
-| Character 06 — Crew roster and command system | Recurring tech specialist, driver and field-support roles; two active companions maximum; seven approved commands; radio/phone acknowledgement and reliable arrival/unavailable states. | Companions do not spawn beside the player, obstruct routes or exceed active cap; deterministic mobile AI. |
-| Character 07 — Polish, profiling and Android acceptance | Animation cleanup, foot/hand IK where justified, LOD, memory/draw-call/frame-time profiling and device testing. | Acceptance checklist passes on target Android device; unresolved issues are filed as separate follow-up stages. |
+| Character 01A — Animation runtime foundation | Register PlayCanvas AnimComponentSystem and document the animation integration boundary. | Completed on main in commit 45646ca; retained in the integrated game tree. |
+| Character 01B — Hero model, materials and rig | Mesh, UVs, PBR materials, reusable humanoid skeleton, facial controls and attachment sockets. | Ara 3D Female Executive GLB is integrated as the current playable prototype asset. Final project-owned protagonist design and wardrobe remain open. |
+| Character 02 — Core locomotion | Rigged idle, walk, run, jump, crouch, turns and speed-synchronized transitions. | Prototype integrated and browser-tested. Calibrated flat-ground sole lock and two-bone terrain IK are active. Start/stop, reverse/strafe transitions and device profiling still need polish. |
+| Character 03 — Contextual parkour | Grounded traversal, geometry checks and controlled movement handoff. | Existing ladder, mantle, ledge, wall-run and other traversal prototype is integrated and smoke-tested. Full authored 18-clip set and expanded obstacle acceptance remain future work. |
+| Character 04 — Everyday interactions and face | Phone, greeting, pickup, inspect, door, sit/stand; expressions, eye/head look and dialogue cues. | Facial expression, blink and viseme channels and basic world interactions are integrated. The full everyday animation set remains open. |
+| Character 05 — Equipment and balanced action presentation | Fictional equipment poses, non-lethal gadgets, mission camera/audio cues and selection UI. | Not complete; retain as a separate future stage. |
+| Character 06 — Crew roster and command system | Recurring tech specialist, driver and field-support roles; no more than two active companions. | Pedestrian behaviour/perception and a companion foundation exist; full crew roster, commands and schedule logic remain open. |
+| Character 07 — Polish, profiling and Android acceptance | Animation cleanup, LOD, memory/draw-call/frame-time profiling and Android device testing. | Browser verification is in place. Real-device profiling and final acceptance on the target Android phone remain open. |
 
-## Approved character direction
+## Character direction and prototype asset
 
-- Fictional Nigerian male protagonist, young adult, approximately 24–26.
-- Grounded semi-photorealistic proportions and modern Lagos streetwear.
-- Replaceable wardrobe parts must preserve the same rig and attachment contract.
-- No superhero proportions or full-time military-operator styling.
-- Two active companions at once; the wider recurring crew may have additional roster members.
-- Grounded contextual traversal, not unlimited climbing.
-- Balanced cinematic action presentation, with normal city exploration remaining central.
+The approved long-term direction remains a grounded Nigerian protagonist with replaceable wardrobe parts, a stable rig contract and non-superhero proportions. The currently integrated playable model is the bundled Ara 3D Female Executive preset. It is a functional prototype avatar, not a claim that the final project-owned protagonist design is finished.
+
+Current rig facts from the integrated asset: 70 bones, 25 skinned meshes, 32,346 weighted vertices and 22 available animation states. The game also retains a separate Hero 01 city NPC asset. Ara's available clips are not the full planned 60-clip target library.
 
 ## Animation contract
 
-The target library is 60 named clips across locomotion (14), parkour/traversal (18), everyday interactions (8), squad interactions (10) and fictional equipment/action presentation (10). The approved names and definitions live in the design specification supplied by the project owner. Facial expressions, blinking and eye movement are separate facial channels, not extra body clips.
+The target library remains 60 named clips across locomotion (14), parkour/traversal (18), everyday interactions (8), squad interactions (10) and fictional equipment/action presentation (10). Facial expressions, blinking and eye movement remain separate channels, not additional body clips.
 
-All clips must target one stable humanoid skeleton hierarchy and consistent rest pose, scale, axis convention and naming. Animation-only GLBs may be used only after a test proves that their tracks bind to the exact hero hierarchy in PlayCanvas. Do not assume a separate animation GLB will bind merely because it imports.
+All clips must target a stable humanoid hierarchy and consistent rest pose, scale, axis convention and naming. Animation-only GLBs may be used only after a binding test proves their tracks target the exact runtime skeleton.
 
 ## Runtime architecture
 
-- The existing third-person controller remains authoritative for player translation, collision, stamina and input.
-- Animation is presentation driven by controller state; traversal may request a bounded movement action, but visual root motion must not silently desynchronise collision.
-- Base locomotion state graph; masked upper-body layer for phone/gestures/equipment; full-body overrides for traversal and other whole-body actions; facial controls kept separate.
-- Animation events may trigger footstep/landing/interaction cues, but must not become the source of truth for physics.
-- AnimComponentSystem is registered in Character 01A. Actual character components, state graphs and clip bindings wait until a validated rigged asset exists.
-
-## Asset and verification contract
-
-Preferred first deliverable is a single hero GLB with mesh, skeleton, skinning, materials and a small pilot animation set. Later animation-only files may be considered after binding tests. Validate each GLB with the repository's glTF validator and inspect the imported hierarchy and animation names in PlayCanvas. Keep texture sizes and mesh complexity appropriate for Android; do not default to 4K maps.
+- The third-person controller remains authoritative for player translation, collision, stamina and input.
+- PlayCanvas AnimComponentSystem drives rigged presentation; animation events do not become the source of truth for physics.
+- Bullet/Ammo simulates the player capsule and the temporary articulated ragdoll. The rendered skeleton is blended into the physical pose over a bounded handoff interval.
+- Ragdoll recovery samples posture and ground support, then blends to a procedural face-up or face-down get-up sequence. Those get-up tracks are runtime-generated, not animator-authored motion capture.
+- Ara's two-bone leg IK is applied after animation evaluation on uneven support; flat-ground walking remains on the calibrated low-slide foot-lock path.
+- Physics and world objects use metre-scale units. The player ragdoll uses 11 rigid bodies and 10 constraints with a configured 72 kg segment budget.
 
 ## Current repository findings
 
-- The live player is created from primitive meshes in src/third-person-controller.js; its gait is procedural.
-- src/game.js creates the PlayCanvas app and wires the controller.
-- src/asset-loader.js loads manifest models as container assets and instantiates render entities.
-- public/assets/manifest.json currently contains only diagnostic cube/checker assets; there is no rigged hero GLB or animation library yet.
-- The current controller includes input, stamina, jump, crouch, camera orbit and a movement resolver. These behaviours must be preserved while replacing only the visual body.
-- Character 01A adds the animation component system only. It does not claim that a hero model, rig, animation clip, parkour or crew feature has been implemented.
+- `src/game.js` registers PlayCanvas animation, loads Ara and wires the connected simulation systems.
+- `src/asset-loader.js` loads the playable rig and city assets.
+- `src/third-person-controller.js` owns player input, animation state, hit reaction, ragdoll handoff and recovery.
+- `src/player-physics.js` owns the player's Ammo/Bullet capsule, world colliders and ragdoll lifecycle.
+- `src/character-ragdoll.js` defines the 11-body articulated rig, joint limits, mass distribution, velocity transfer and per-body CCD.
+- `src/character-recovery.js` contains pose blending, face-up/face-down classification, recovery yaw and per-bone motion estimation.
+- `src/two-bone-ik.js` and `src/asset-loader.js` support live Ara leg IK and foot-normal alignment.
+- `scripts/character-ragdoll-stress-smoke.mjs` exercises eight horizontal impact directions, airborne rising/falling impacts, vertical up/down knockback, wall and corner barriers, hinge limits and five-step/slope recovery.
+- `scripts/gidi-world-smoke.mjs` checks streamed city cells, LOD/collider lifecycle, connector walking and the sedan's physical gateway crossing.
 
 ## Deferred work / explicit dependencies
 
-Character 01B cannot be completed until an original hero mesh and rig are produced and added to the repository. The project currently has no approved hero model source asset. Do not substitute an unrelated downloaded character or silently change the approved appearance. If the mesh/rig is not ready when the runtime foundation closes, keep 01B as its own open stage and proceed only with asset-independent documentation or test scaffolding.
+The first playable rig is present, but the final original protagonist and complete wardrobe/attachment contract may still be produced as a later project-owned asset stage. The 60-clip target, artist-authored hit/get-up clips, selective self-collision evaluation, stair locomotion IK, more varied high-speed/contact-point impacts, and Android-device profiling remain explicit dependencies. Do not interpret deterministic browser tests as proof of visual quality or performance on every Android device.
