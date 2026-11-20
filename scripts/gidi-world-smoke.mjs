@@ -86,13 +86,17 @@ try {
     throw new Error('Gateway road did not provide an asphalt collision/raycast surface: ' + JSON.stringify(gatewayProbe));
   }
 
-  // Ara walks from the existing street onto the new connector under normal keyboard input.
+  // Ara walks from the existing street onto the new connector. Drive the
+  // controller's same normalized input state directly so the smoke is not
+  // dependent on synthetic keyboard focus in headless mobile Chromium.
   await page.evaluate(() => window.__NAIJA_GAME__.debugSetPlayerForSmoke([0, 0, -86.8], 0));
-  await page.locator('#application').click({ position: { x: 422, y: 194 } });
-  await page.keyboard.down('w');
-  await page.waitForTimeout(4500);
-  await page.keyboard.up('w');
-  const gatewayWalk = await page.evaluate(() => window.__NAIJA_GAME__.getPlayerState());
+  const gatewayWalkTrace = await page.evaluate(() => {
+    window.__NAIJA_GAME__.debugSetPlayerInputForSmoke(0, -1, false);
+    const trace = window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(210, 1 / 60);
+    window.__NAIJA_GAME__.debugSetPlayerInputForSmoke(0, 0, false);
+    return trace;
+  });
+  const gatewayWalk = gatewayWalkTrace.player;
   if (gatewayWalk.position[2] >= -87.0 || !gatewayWalk.grounded || gatewayWalk.position[1] > 1.2 || gatewayWalk.footPlacementHits < 10) {
     throw new Error('Ara did not walk onto the connector while staying grounded: ' + JSON.stringify(gatewayWalk));
   }

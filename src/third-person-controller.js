@@ -375,14 +375,15 @@ export function createThirdPersonController(app, camera, canvas, {
     const result = vitals.applyDamage(amount, options);
     if (!result.applied) return result;
     const p = player.getPosition();
-    const direction = Array.isArray(options.direction) ? options.direction : [0, 0, 0];
-    const directionLength = Math.hypot(direction[0] || 0, direction[2] || 0) || 1;
+    const rawDirection = Array.isArray(options.direction) ? options.direction : [0, 0, 0];
+    const direction = [0, 1, 2].map(index => Number.isFinite(Number(rawDirection[index])) ? Number(rawDirection[index]) : 0);
+    const directionLength = Math.hypot(direction[0], direction[1], direction[2]);
     const impulse = Math.max(0, Math.min(3.5, Number(options.knockback ?? 0.8) || 0));
-    const impactVelocity = [
-      (direction[0] || 0) / directionLength * impulse,
-      0,
-      (direction[2] || 0) / directionLength * impulse
-    ];
+    // Knockback is a 3D velocity change: preserve vertical hits as well as
+    // horizontal ones. A zero direction intentionally produces no impulse.
+    const impactVelocity = directionLength > 1e-5
+      ? direction.map(value => value / directionLength * impulse)
+      : [0, 0, 0];
     resetFootLock();
     if (!result.downed) {
       // Ordinary hit reactions keep the impact on the kinematic player body.
@@ -1173,6 +1174,24 @@ export function createThirdPersonController(app, camera, canvas, {
     return setPosition(position, yaw);
   }
 
+  function setMotionForSmoke(position, initialVelocity = [0, 0, 0], yaw = 0) {
+    if (!setPosition(position, yaw) || !Array.isArray(initialVelocity) || initialVelocity.length < 3) return false;
+    const motion = initialVelocity.slice(0, 3).map(value => Number.isFinite(Number(value)) ? Number(value) : 0);
+    velocity.set(motion[0], motion[1], motion[2]);
+    grounded = false;
+    coyote = 0;
+    physics?.teleport?.(position, motion);
+    return true;
+  }
+
+  function setInputForSmoke(x = 0, y = 0, sprint = false) {
+    if (!Number.isFinite(Number(x)) || !Number.isFinite(Number(y))) return false;
+    input.x = pc.math.clamp(Number(x), -1, 1);
+    input.y = pc.math.clamp(Number(y), -1, 1);
+    input.sprint = Boolean(sprint);
+    return true;
+  }
+
   const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration,groundY:recoverySequence.groundY,groundNormal:recoverySequence.groundNormal,supportSamples:recoverySequence.supportSamples,supportSurface:recoverySequence.supportSurface}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
@@ -1197,6 +1216,8 @@ export function createThirdPersonController(app, camera, canvas, {
     resetCameraAfterVehicle,
     performTraversal,
     setPositionForSmoke,
+    setMotionForSmoke,
+    setInputForSmoke,
     queueJumpForSmoke,
     getClipDuration: name => {
       const resolved = resolveHeroClip(name);

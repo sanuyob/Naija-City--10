@@ -147,18 +147,150 @@ try {
     });
   }
 
+  const airborneResults = [];
+  const airborneCases = [
+    {
+      name: 'airborne-rising-upward-knockback',
+      position: [28, 0, 18],
+      velocity: [0, 4.0, 0],
+      direction: [0, 1, 0],
+      knockback: 1.8,
+      minVerticalSpeed: 1.5
+    },
+    {
+      name: 'airborne-falling-downward-knockback',
+      position: [32, 4.2, 18],
+      velocity: [0, -3.0, 0],
+      direction: [0, -1, 0],
+      knockback: 2.0,
+      maxVerticalSpeed: -3.0
+    }
+  ];
+
+  for (const item of airborneCases) {
+    const setup = await page.evaluate(({ position, velocity }) =>
+      window.__NAIJA_GAME__.debugSetPlayerMotionForSmoke(position, velocity, 0), item
+    );
+    assert(setup, `${item.name}: failed to establish airborne motion`);
+    await advance(page, 6);
+    const airborne = await page.evaluate(() => window.__NAIJA_GAME__.getPlayerState());
+    assert(!airborne.grounded, `${item.name}: character was not airborne before the hit`);
+    assert(item.name.includes('rising') ? airborne.verticalVelocity > 0.5 : airborne.verticalVelocity < -1.0,
+      `${item.name}: wrong pre-impact vertical state: ${airborne.verticalVelocity}`);
+
+    const impact = await page.evaluate(({ direction, knockback }) => {
+      const damage = window.__NAIJA_GAME__.debugApplyPlayerDamageForSmoke(100, { knockback, direction });
+      return { damage, ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll };
+    }, item);
+    assert(impact.damage?.downed && impact.ragdoll.active, `${item.name}: ragdoll did not start`);
+    const verticalSpeed = impact.ragdoll.rootLinearVelocity?.[1];
+    assert(Number.isFinite(verticalSpeed), `${item.name}: missing vertical ragdoll velocity`);
+    assert(item.minVerticalSpeed !== undefined ? verticalSpeed > item.minVerticalSpeed : verticalSpeed < item.maxVerticalSpeed,
+      `${item.name}: vertical knockback was not transferred (vy ${verticalSpeed})`);
+    const outcome = await settleAndRecover(page, item.name);
+    airborneResults.push({
+      scenario: item.name,
+      preImpactVerticalSpeed: Number(airborne.verticalVelocity.toFixed(3)),
+      ragdollVerticalSpeed: Number(verticalSpeed.toFixed(3)),
+      finalMaxBodySpeed: Number(outcome.resting.maxBodySpeed.toFixed(3)),
+      recovered: outcome.recovered.player.controlEnabled
+    });
+  }
+
+  const collisionResults = [];
+  const collisionCases = [
+    {
+      name: 'side-impact-into-wall',
+      owner: 'character-stress-wall',
+      start: [35, 0, 30],
+      direction: [1, 0, 0],
+      wallPlane: 35.70,
+      colliders: [
+        { id: 'stress-solid-wall', position: [35.78, 1.35, 30], halfExtents: [0.08, 1.35, 2.5], surface: 'concrete' }
+      ],
+      assertBlocked: root => root[0] > 35.05 && root[0] < 35.95
+    },
+    {
+      name: 'diagonal-impact-into-corner',
+      owner: 'character-stress-corner',
+      start: [38, 0, 35],
+      direction: [Math.SQRT1_2, 0, Math.SQRT1_2],
+      colliders: [
+        { id: 'stress-corner-east-wall', position: [38.78, 1.35, 35], halfExtents: [0.08, 1.35, 2.5], surface: 'concrete' },
+        { id: 'stress-corner-north-wall', position: [38, 1.35, 35.78], halfExtents: [2.5, 1.35, 0.08], surface: 'concrete' }
+      ],
+      assertBlocked: root => root[0] > 38.05 && root[0] < 39.03 && root[2] > 35.05 && root[2] < 36.03
+    }
+  ];
+
+  for (const item of collisionCases) {
+    const created = await page.evaluate(({ owner, colliders }) =>
+      window.__NAIJA_GAME__.debugAddCharacterTerrainForSmoke(owner, colliders), { owner: item.owner, colliders: item.colliders }
+    );
+    assert(created === item.colliders.length, `${item.name}: wall/corner collision geometry was not created`);
+    await page.evaluate(start => {
+      window.__NAIJA_GAME__.debugSetPlayerForSmoke(start, 0);
+      window.__NAIJA_PLAY_HERO_ANIMATION__?.('Idle', 1);
+    }, item.start);
+    await advance(page, 5);
+    const preflight = await page.evaluate(({ from, to }) =>
+      window.__NAIJA_GAME__.debugRaycastForSmoke(from, to), {
+        from: [item.start[0] + 0.3, 1.05, item.start[2] + 0.3],
+        to: [item.start[0] + 1.0, 1.05, item.start[2] + 1.0]
+      }
+    );
+    assert(preflight && /stress-(solid-wall|corner)/.test(preflight.id),
+      `${item.name}: collision wall was not queryable: ${JSON.stringify(preflight)}`);
+
+    const impact = await page.evaluate(direction => {
+      const damage = window.__NAIJA_GAME__.debugApplyPlayerDamageForSmoke(100, { knockback: 3.5, direction });
+      return { damage, ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll };
+    }, item.direction);
+    assert(impact.damage?.downed && impact.ragdoll.active, `${item.name}: ragdoll did not start`);
+    const projected = impact.ragdoll.rootLinearVelocity[0] * item.direction[0] +
+      impact.ragdoll.rootLinearVelocity[2] * item.direction[2];
+    assert(projected > 2.0, `${item.name}: impact did not reach the barrier with enough momentum (${projected})`);
+    const outcome = await settleAndRecover(page, item.name);
+    assert(item.assertBlocked(outcome.resting.rootPosition),
+      `${item.name}: ragdoll crossed the collision boundary: ${JSON.stringify(outcome.resting.rootPosition)}`);
+    const positions = outcome.resting.bodyPositions || {};
+    const bodyCenters = Object.values(positions);
+    assert(Object.keys(positions).length === 11 && bodyCenters.every(finiteVector),
+      `${item.name}: per-body collision diagnostics were incomplete`);
+    const maxBodyX = Math.max(...bodyCenters.map(position => position[0]));
+    const maxBodyZ = Math.max(...bodyCenters.map(position => position[2]));
+    if (item.name === 'side-impact-into-wall') {
+      assert(maxBodyX < 35.95, `${item.name}: an articulated body crossed the wall plane (max X ${maxBodyX})`);
+    } else {
+      assert(maxBodyX < 39.03 && maxBodyZ < 36.03,
+        `${item.name}: an articulated body crossed the corner planes (max X/Z ${maxBodyX}/${maxBodyZ})`);
+    }
+    collisionResults.push({
+      scenario: item.name,
+      impactSpeedTowardBarrier: Number(projected.toFixed(3)),
+      restingRoot: outcome.resting.rootPosition.map(value => Number(value.toFixed(3))),
+      finalMaxBodySpeed: Number(outcome.resting.maxBodySpeed.toFixed(3)),
+      bodyCount: Object.keys(positions).length,
+      recovered: outcome.recovered.player.controlEnabled
+    });
+    await page.evaluate(owner => window.__NAIJA_GAME__.debugRemoveCharacterTerrainForSmoke(owner), item.owner);
+  }
+
   const terrainResults = [];
   const terrainCases = [
     {
-      name: 'three-step-staircase',
+      name: 'five-step-staircase-and-landing',
       owner: 'character-stress-stairs',
-      start: [11.7, 0.56, 0],
+      start: [32.85, 0.90, 10],
       colliders: [
-        { id: 'stress-lower-step', position: [10.8, 0.14, 0], halfExtents: [0.45, 0.14, 2.5], surface: 'concrete' },
-        { id: 'stress-middle-step', position: [11.7, 0.28, 0], halfExtents: [0.45, 0.28, 2.5], surface: 'concrete' },
-        { id: 'stress-upper-step', position: [12.6, 0.42, 0], halfExtents: [0.45, 0.42, 2.5], surface: 'concrete' }
+        { id: 'stress-stair-01', position: [30.00, 0.09, 10], halfExtents: [0.34, 0.09, 1.2], surface: 'concrete' },
+        { id: 'stress-stair-02', position: [30.65, 0.18, 10], halfExtents: [0.34, 0.18, 1.2], surface: 'concrete' },
+        { id: 'stress-stair-03', position: [31.30, 0.27, 10], halfExtents: [0.34, 0.27, 1.2], surface: 'concrete' },
+        { id: 'stress-stair-04', position: [31.95, 0.36, 10], halfExtents: [0.34, 0.36, 1.2], surface: 'concrete' },
+        { id: 'stress-stair-05', position: [32.60, 0.45, 10], halfExtents: [0.34, 0.45, 1.2], surface: 'concrete' },
+        { id: 'stress-stair-top-landing', position: [33.15, 0.45, 10], halfExtents: [0.58, 0.45, 1.2], surface: 'concrete' }
       ],
-      minGroundY: 0.56,
+      minGroundY: 0.90,
       minNormalY: 0.90
     },
     {
@@ -221,6 +353,8 @@ try {
     pass: true,
     physicsBudget: { bodyCount: 11, constraintCount: 10, totalMassKg: 72 },
     impactDirections: directionResults,
+    airborneImpacts: airborneResults,
+    wallAndCornerCollisions: collisionResults,
     recoveryTerrain: terrainResults,
     browserErrors: errors
   }, null, 2));

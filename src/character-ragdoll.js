@@ -85,7 +85,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
   let lastPose = animatedPose;
 
   const getPoint = node => readNode(node)?.position || null;
-  const makeNodeBody = (name, boneKey, shape, mass, center, bodyRotation, bonePose) => {
+  const makeNodeBody = (name, boneKey, shape, mass, center, bodyRotation, bonePose, ccdRadius = 0.06) => {
     if (!bonePose) throw new Error('Missing live bone pose for ragdoll body: ' + boneKey);
     const shapeHandle = own(shape);
     const bodyTransform = transform(center, bodyRotation);
@@ -96,7 +96,10 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const body = own(new Ammo.btRigidBody(info));
     body.setFriction(0.82);
     body.setRestitution(0.015);
-    body.setDamping(0.07, 0.82);
+    body.setDamping(0.07, 0.88);
+    // CCD activates only when a fast-moving body crosses the configured per-step threshold.
+    body.setCcdMotionThreshold?.(0.18);
+    body.setCcdSweptSphereRadius?.(Math.max(0.025, Math.min(0.11, ccdRadius * 0.65)));
     body.setActivationState(4);
     body.setUserIndex(2300 + segments.length);
     const sampledMotion = boneVelocities?.[boneKey] || {};
@@ -167,7 +170,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const bodyRotation = quatFromUp(delta);
     const center = scale(add(start, end), 0.5);
     const cylinderHeight = Math.max(0.035, span - radius * 2);
-    return makeNodeBody(name, boneKey, new Ammo.btCapsuleShape(radius, cylinderHeight), mass, center, bodyRotation, pose);
+    return makeNodeBody(name, boneKey, new Ammo.btCapsuleShape(radius, cylinderHeight), mass, center, bodyRotation, pose, radius);
   };
 
   const ballJoint = (name, bodyA, bodyB, anchor, limits) => {
@@ -222,14 +225,14 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const pelvis = makeNodeBody(
       'pelvis', 'hips',
       new Ammo.btBoxShape(vector([0.145, 0.095, 0.115])),
-      15, hipsPose.position, hipsPose.rotation, hipsPose
+      15, hipsPose.position, hipsPose.rotation, hipsPose, 0.095
     );
     // The torso proxy must span pelvis-to-upper-spine; using Spine2-to-Neck
     // leaves most of the chest unsupported and puts the spine joint at the wrong end.
     const chest = capsuleBody('chest', 'spine2', 'spine2', 0.145, 19, 'hips');
     const headPose = readNode(bones.head);
     const headCenter = add(headPose.position, rotate(headPose.rotation, [0, 0.065, 0]));
-    const head = makeNodeBody('head', 'head', new Ammo.btSphereShape(0.115), 5.5, headCenter, headPose.rotation, headPose);
+    const head = makeNodeBody('head', 'head', new Ammo.btSphereShape(0.115), 5.5, headCenter, headPose.rotation, headPose, 0.115);
 
     const leftUpperArm = capsuleBody('left-upper-arm', 'leftUpperArm', 'leftForeArm', 0.062, 2.4);
     const leftForeArm = capsuleBody('left-forearm', 'leftForeArm', 'leftHand', 0.052, 1.4);
@@ -243,13 +246,13 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     ballJoint('spine', pelvis, chest, getPoint(bones.hips), [0.50, 0.42, 0.36]);
     ballJoint('neck', chest, head, getPoint(bones.neck), [0.38, 0.34, 0.28]);
     ballJoint('left-shoulder', chest, leftUpperArm, getPoint(bones.leftUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.22, 2.42);
+    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.27, 2.42);
     ballJoint('right-shoulder', chest, rightUpperArm, getPoint(bones.rightUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.22, 2.42);
+    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.27, 2.42);
     ballJoint('left-hip', pelvis, leftThigh, getPoint(bones.leftThigh), [1.00, 0.85, 0.72]);
-    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.22, 2.50);
+    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.27, 2.50);
     ballJoint('right-hip', pelvis, rightThigh, getPoint(bones.rightThigh), [1.00, 0.85, 0.72]);
-    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.22, 2.50);
+    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.27, 2.50);
 
 
   } catch (error) {
@@ -338,6 +341,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
       const hingeLimitViolations = jointConfigurations.filter(record => record.type === 'hinge' && Number.isFinite(record.angle) &&
         (record.angle < record.limits[0] - 0.03 || record.angle > record.limits[1] + 0.03)).map(record => record.name);
       const bodyMasses = Object.fromEntries(segments.map(record => [record.name, record.mass]));
+      const bodyPositions = Object.fromEntries(segments.map(record => [record.name, readBodyTransform(record).position]));
       const rootVelocity = pelvisRecord?.body.getLinearVelocity?.();
       return {
         active: !disposed,
@@ -352,6 +356,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
         rootLinearVelocity: rootVelocity ? [rootVelocity.x(), rootVelocity.y(), rootVelocity.z()] : null,
         totalMass: segments.reduce((sum, record) => sum + record.mass, 0),
         bodyMasses,
+        bodyPositions,
         jointConfigurations,
         hingeLimitViolations,
         rootPosition: root?.position || null,

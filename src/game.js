@@ -627,6 +627,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.debugGetGidiStateForSmoke=()=>gidiStreamer.getState();
     gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
     gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
+    gameApi.debugSetPlayerMotionForSmoke=(position,velocity,yaw=0)=>playerController.setMotionForSmoke(position,velocity,yaw);
+    gameApi.debugSetPlayerInputForSmoke=(x=0,y=0,sprint=false)=>playerController.setInputForSmoke(x,y,sprint);
     gameApi.debugSetControlEnabledForSmoke=value=>playerController.setControlEnabled(value);
     gameApi.debugSetCrouchedForSmoke=value=>playerController.setCrouched(value);
     gameApi.debugApplyPlayerDamageForSmoke=(amount=25,options={})=>playerController.applyDamage(amount,{source:'smoke-impact',...options});
