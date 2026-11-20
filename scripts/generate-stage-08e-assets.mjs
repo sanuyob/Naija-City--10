@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
@@ -213,6 +213,44 @@ for(const item of placements) {
   await writeFile(join(outDir,filename),bytes);
   models.push({...item,district:(item.position[0]<0?'west':'east')+'-'+(item.position[2]<0?'north':'south'),url:'/assets/buildings/'+filename,bytes:bytes.length,lodDistances:[75,145],collision:'COLLISION_PROXY'});
 }
-const manifest={stage:'08E',format:'glTF 2.0 binary',units:'meters',frontAxis:'-X',textureEncoding:'embedded PNG; Basis/KTX2 compression is a remaining optimization task',lods:['LOD0','LOD1','LOD2'],streaming:{loadRadius:150,unloadRadius:210,maxConcurrentLoads:2},sharedMaterials:materialNames,models};
+// Curated authored architecture overrides are applied after procedural generation.
+ // Keep their source GLBs alongside the generated building set so every future build
+ // reproduces the same selected placements instead of replacing them with blockouts.
+const authoredOverrides=[
+  {
+    id:'expansion-shop-38',
+    filename:'gidi-yaba-mixeduse-upgrade-01.glb',
+    name:'Yaba Two-Storey Mixed-Use Electronics & Services Building',
+    authoring:'GIDI Yaba Architecture Upgrade 01',
+    materialEncoding:'24 embedded KTX2 Basis maps: UASTC normal/roughness, ETC1S base colour, full mip chains; 2K plaster/concrete and 1K finish maps',
+    materialResolution:{hero:2048,trim:1024},
+    textureCompression:'KHR_texture_basisu',
+    textureMipmaps:true,
+    normalEncoding:'OpenGL tangent-space normal maps with MikkTSpace tangents',
+    sourceMaterials:['ambientCG PaintedPlaster017 (CC0-1.0)','ambientCG Concrete034 (CC0-1.0)','ambientCG CorrugatedSteel009 (CC0-1.0)'],
+    materialFamilies:['weathered painted plaster','cast concrete','painted steel','roof membrane','sign enamel','terracotta coating','tinted shop glass','weathered polyethylene water tank']
+  }
+];
+for(const override of authoredOverrides){
+  const model=models.find(item=>item.id===override.id);
+  if(!model) throw new Error('Missing curated Stage 08E placement: '+override.id);
+  const assetDirectory=join(root,'public/assets/curated-buildings');
+  const assetPath=join(assetDirectory,override.filename);
+  const assetBytes=await readFile(assetPath).catch(error=>{throw new Error('Missing authored architecture asset '+assetPath+': '+error.message);});
+  Object.assign(model,{
+    url:'/assets/curated-buildings/'+override.filename,
+    bytes:assetBytes.length,
+    name:override.name,
+    authoring:override.authoring,
+    materialEncoding:override.materialEncoding,
+    materialResolution:override.materialResolution,
+    textureCompression:override.textureCompression,
+    textureMipmaps:override.textureMipmaps,
+    normalEncoding:override.normalEncoding,
+    sourceMaterials:override.sourceMaterials,
+    materialFamilies:override.materialFamilies
+  });
+}
+const manifest={stage:'08E',format:'glTF 2.0 binary',units:'meters',frontAxis:'-X',textureEncoding:'Curated Yaba replacements use the shared KTX2 Basis surface library; the remaining procedural residential assets retain their existing embedded PNG maps',lods:['LOD0','LOD1','LOD2'],streaming:{loadRadius:150,unloadRadius:210,maxConcurrentLoads:2},sharedMaterials:materialNames,models};
 await writeFile(join(root,'public/assets/stage-08e-manifest.json'),JSON.stringify(manifest,null,2)+'\n');
 console.log('Stage 08E asset generation complete:',models.length,'individual GLB buildings;',models.reduce((n,m)=>n+m.bytes,0),'bytes total.');
