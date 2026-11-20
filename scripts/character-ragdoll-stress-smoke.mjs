@@ -331,7 +331,12 @@ try {
     }));
     const outcome = await settleAndRecover(page, terrain.name);
     const placement = outcome.recovery;
-    assert(Number.isFinite(placement.recoveryGroundY) && placement.recoveryGroundY >= terrain.minGroundY,
+    // Bullet ray hits return Float32 world coordinates. Allow one centimetre
+    // for representation error while still requiring the selected stair/landing
+    // to be the expected support level (not the lower floor).
+    const groundHeightTolerance = 0.01;
+    assert(Number.isFinite(placement.recoveryGroundY) &&
+      placement.recoveryGroundY >= terrain.minGroundY - groundHeightTolerance,
       `${terrain.name}: recovery did not use the elevated surface: ${JSON.stringify(placement)}`);
     assert(finiteVector(placement.recoveryGroundNormal) && placement.recoveryGroundNormal[1] >= terrain.minNormalY,
       `${terrain.name}: recovery did not retain the walkable support normal: ${JSON.stringify(placement)}`);
