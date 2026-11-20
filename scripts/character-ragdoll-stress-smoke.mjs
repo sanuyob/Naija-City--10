@@ -29,7 +29,7 @@ async function settleAndRecover(page, label) {
   assert(Number.isFinite(resting.maxBodySpeed) && resting.maxBodySpeed < 3,
     `${label}: physics did not settle cleanly (speed ${resting.maxBodySpeed})`);
   assert(Number.isFinite(resting.originalSolverIterations) &&
-    Number.isFinite(resting.solverIterations) && resting.solverIterations >= 16 &&
+    Number.isFinite(resting.solverIterations) && resting.solverIterations >= 24 &&
     resting.solverIterations >= resting.originalSolverIterations,
     `${label}: temporary ragdoll solver iteration budget was not raised: ${JSON.stringify({ original: resting.originalSolverIterations, current: resting.solverIterations })}`);
   assert((resting.hingeLimitViolations || []).length === 0,

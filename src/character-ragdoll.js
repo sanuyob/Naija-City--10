@@ -90,8 +90,8 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
   const solverInfo = world.getSolverInfo?.() || null;
   const originalSolverIterations = Number(solverInfo?.get_m_numIterations?.() ?? solverInfo?.m_numIterations);
   const ragdollSolverIterations = Number.isFinite(originalSolverIterations)
-    ? Math.max(originalSolverIterations, 16)
-    : 16;
+    ? Math.max(originalSolverIterations, 24)
+    : 24;
   let solverIterationsRaised = false;
   if (solverInfo && typeof solverInfo.set_m_numIterations === 'function' && ragdollSolverIterations !== originalSolverIterations) {
     solverInfo.set_m_numIterations(ragdollSolverIterations);
@@ -209,11 +209,11 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const axisA = vector(normalize(rotate(invA, axisWorld)));
     const axisB = vector(normalize(rotate(invB, axisWorld)));
     const joint = own(new Ammo.btHingeConstraint(bodyA.body, bodyB.body, pivotA, pivotB, axisA, axisB, true));
-    // Bullet's hinge angular limit uses softness as the free fraction of
-    // the angular range before the limit is progressively enforced. Start
-    // enforcing a little earlier and use a firmer positional correction so
-    // high-energy falls do not leave elbows/knees resting beyond their stops.
-    const softness = 0.82, biasFactor = 0.45, relaxationFactor = 1.0;
+    // Bullet's hinge angular limit uses softness to decide how early the
+    // limit begins resisting angular velocity. Start braking well before the
+    // hard stop and use the upper end of the recommended bias range so
+    // high-energy impacts do not leave elbow/knee joints beyond their limits.
+    const softness = 0.65, biasFactor = 0.50, relaxationFactor = 1.0;
     joint.setLimit(low, high, softness, biasFactor, relaxationFactor);
     world.addConstraint(joint, true);
     constraints.push(joint);
