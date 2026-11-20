@@ -481,6 +481,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       crouchHeight,
       crouched: capsuleHeight < 1.8,
       worldColliderCount: Math.max(0, colliderBodies.filter(Boolean).length - colliders.slice(0, 8).length),
+      solverIterations: Number(world.getSolverInfo?.()?.get_m_numIterations?.() ?? world.getSolverInfo?.()?.m_numIterations) || null,
       gravity: activeGravity, groundY
     })
   };

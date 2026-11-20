@@ -83,6 +83,20 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
   let handoffElapsed = 0;
   const handoffSeconds = Math.max(0.04, Math.min(0.5, Number(handoffDuration) || 0.16));
   let lastPose = animatedPose;
+  // More solver iterations improve the convergence of this articulated,
+  // high-impulse constraint stack. Raise the count only for the lifetime of
+  // the player ragdoll; restore the normal world budget on disposal so the
+  // everyday capsule/static-world simulation retains its mobile cost.
+  const solverInfo = world.getSolverInfo?.() || null;
+  const originalSolverIterations = Number(solverInfo?.get_m_numIterations?.() ?? solverInfo?.m_numIterations);
+  const ragdollSolverIterations = Number.isFinite(originalSolverIterations)
+    ? Math.max(originalSolverIterations, 16)
+    : 16;
+  let solverIterationsRaised = false;
+  if (solverInfo && typeof solverInfo.set_m_numIterations === 'function' && ragdollSolverIterations !== originalSolverIterations) {
+    solverInfo.set_m_numIterations(ragdollSolverIterations);
+    solverIterationsRaised = true;
+  }
 
   const getPoint = node => readNode(node)?.position || null;
   const makeNodeBody = (name, boneKey, shape, mass, center, bodyRotation, bonePose, ccdRadius = 0.06) => {
@@ -195,7 +209,11 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const axisA = vector(normalize(rotate(invA, axisWorld)));
     const axisB = vector(normalize(rotate(invB, axisWorld)));
     const joint = own(new Ammo.btHingeConstraint(bodyA.body, bodyB.body, pivotA, pivotB, axisA, axisB, true));
-    const softness = 0.9, biasFactor = 0.3, relaxationFactor = 1.0;
+    // Bullet's hinge angular limit uses softness as the free fraction of
+    // the angular range before the limit is progressively enforced. Start
+    // enforcing a little earlier and use a firmer positional correction so
+    // high-energy falls do not leave elbows/knees resting beyond their stops.
+    const softness = 0.82, biasFactor = 0.45, relaxationFactor = 1.0;
     joint.setLimit(low, high, softness, biasFactor, relaxationFactor);
     world.addConstraint(joint, true);
     constraints.push(joint);
@@ -246,13 +264,13 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     ballJoint('spine', pelvis, chest, getPoint(bones.hips), [0.50, 0.42, 0.36]);
     ballJoint('neck', chest, head, getPoint(bones.neck), [0.38, 0.34, 0.28]);
     ballJoint('left-shoulder', chest, leftUpperArm, getPoint(bones.leftUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.27, 2.42);
+    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.40, 2.50);
     ballJoint('right-shoulder', chest, rightUpperArm, getPoint(bones.rightUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.27, 2.42);
+    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.40, 2.50);
     ballJoint('left-hip', pelvis, leftThigh, getPoint(bones.leftThigh), [1.00, 0.85, 0.72]);
-    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.27, 2.50);
+    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.40, 2.58);
     ballJoint('right-hip', pelvis, rightThigh, getPoint(bones.rightThigh), [1.00, 0.85, 0.72]);
-    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.27, 2.50);
+    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.40, 2.58);
 
 
   } catch (error) {
@@ -303,6 +321,10 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     for (const record of segments) {
       try { world.removeRigidBody(record.body); } catch {}
     }
+    if (solverIterationsRaised) {
+      try { solverInfo.set_m_numIterations(originalSolverIterations); } catch {}
+      solverIterationsRaised = false;
+    }
     for (let i = resources.length - 1; i >= 0; i--) {
       try { Ammo.destroy(resources[i]); } catch {}
     }
@@ -351,6 +373,8 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
         phase: getHandoffWeight() < 1 ? 'handoff-blend' : 'ragdoll',
         handoffWeight: getHandoffWeight(),
         handoffDuration: handoffSeconds,
+        solverIterations: Number(solverInfo?.get_m_numIterations?.() ?? solverInfo?.m_numIterations) || null,
+        originalSolverIterations: Number.isFinite(originalSolverIterations) ? originalSolverIterations : null,
         maxBodySpeed,
         maxAngularSpeed,
         rootLinearVelocity: rootVelocity ? [rootVelocity.x(), rootVelocity.y(), rootVelocity.z()] : null,

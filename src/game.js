@@ -640,6 +640,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.debugGetHeroRagdollPoseForSmoke=()=>heroCharacter?.getRagdollPose?.()||null;
     gameApi.debugGetRagdollStateForSmoke=()=>playerController.getRagdollState?.()||null;
     gameApi.debugGetRecoveryStateForSmoke=()=>playerController.getRecoveryState?.()||{active:false};
+    gameApi.debugProbeCharacterRecoverySupportForSmoke=(x,y,z,yaw=0)=>playerController.probeRecoverySupportForSmoke?.(x,y,z,yaw)||null;
     gameApi.debugAddCharacterTerrainForSmoke=(owner,colliders)=>playerPhysics.addStaticColliders(colliders,owner);
     gameApi.debugRemoveCharacterTerrainForSmoke=owner=>playerPhysics.removeStaticColliders(owner);
     gameApi.debugRaycastForSmoke=(from,to)=>playerPhysics.raycast(from,to);

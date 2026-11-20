@@ -141,11 +141,12 @@ try {
 
  // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ const traversalCountBefore=await page.evaluate(()=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted||0);
  const traversalStarted=await page.evaluate(()=>window.__NAIJA_TRAVERSE__?.()===true);
  if(!traversalStarted)throw new Error('Hero 01 could not start contextual step-up traversal');
- await page.waitForFunction(()=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted===1,null,{timeout:3000});
+ await page.waitForFunction(before=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted>before,traversalCountBefore,{timeout:3000});
  const traversalAdvance=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(48));
- if(!traversalAdvance||traversalAdvance.player.traversing||traversalAdvance.traversal.traversalsStarted!==1)throw new Error('Traversal did not complete its bounded movement sequence: '+JSON.stringify(traversalAdvance));
+ if(!traversalAdvance||traversalAdvance.player.traversing||traversalAdvance.traversal.traversalsStarted!==traversalCountBefore+1)throw new Error('Traversal did not complete its bounded movement sequence: '+JSON.stringify({before:traversalCountBefore,result:traversalAdvance}));
 
  // Validate the actual bundled Ara player rig; Hero 01 remains a separate NPC.
  const initialPlayerRig=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());

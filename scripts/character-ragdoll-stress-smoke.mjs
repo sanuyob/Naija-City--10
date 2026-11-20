@@ -28,6 +28,10 @@ async function settleAndRecover(page, label) {
   assert(finiteVector(resting.rootPosition), `${label}: invalid resting root position`);
   assert(Number.isFinite(resting.maxBodySpeed) && resting.maxBodySpeed < 3,
     `${label}: physics did not settle cleanly (speed ${resting.maxBodySpeed})`);
+  assert(Number.isFinite(resting.originalSolverIterations) &&
+    Number.isFinite(resting.solverIterations) && resting.solverIterations >= 16 &&
+    resting.solverIterations >= resting.originalSolverIterations,
+    `${label}: temporary ragdoll solver iteration budget was not raised: ${JSON.stringify({ original: resting.originalSolverIterations, current: resting.solverIterations })}`);
   assert((resting.hingeLimitViolations || []).length === 0,
     `${label}: hinge-limit violation(s): ${JSON.stringify((resting.jointConfigurations || []).filter(joint => resting.hingeLimitViolations.includes(joint.name)))}`);
   const hinges = (resting.jointConfigurations || []).filter(joint => joint.type === 'hinge');
@@ -43,11 +47,15 @@ async function settleAndRecover(page, label) {
     ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll,
     player: window.__NAIJA_GAME__.getPlayerState(),
     recovery: window.__NAIJA_GAME__.debugGetRecoveryStateForSmoke(),
+    physics: window.__NAIJA_GAME__.getPhysicsState().player,
     floor: window.__NAIJA_GAME__.debugRaycastForSmoke([55, 10, 400], [55, -10, 400])
   }));
   assert(!recovered.ragdoll.active, `${label}: ragdoll remained active after recovery`);
   assert(recovered.player.controlEnabled && recovered.player.state === 'ready',
     `${label}: player controls/state were not restored: ${JSON.stringify(recovered.player)}`);
+  assert(Number.isFinite(recovered.physics.solverIterations) &&
+    recovered.physics.solverIterations === resting.originalSolverIterations,
+    `${label}: Bullet solver iteration budget was not restored after ragdoll removal: ${JSON.stringify({ expected: resting.originalSolverIterations, physics: recovered.physics })}`);
   assert(!recovered.recovery.active, `${label}: recovery state machine did not finish`);
   assert(recovered.floor?.normal?.[1] > 0.9,
     `${label}: Bullet world raycasts failed after capsule restoration`);
@@ -164,6 +172,14 @@ try {
       direction: [0, -1, 0],
       knockback: 2.0,
       maxVerticalSpeed: -3.0
+    },
+    {
+      name: 'airborne-horizontal-side-impact',
+      position: [40, 3.8, 18],
+      velocity: [2.0, 0, 0],
+      direction: [1, 0, 0],
+      knockback: 1.8,
+      minHorizontalSpeed: 2.4
     }
   ];
 
@@ -185,13 +201,26 @@ try {
     assert(impact.damage?.downed && impact.ragdoll.active, `${item.name}: ragdoll did not start`);
     const verticalSpeed = impact.ragdoll.rootLinearVelocity?.[1];
     assert(Number.isFinite(verticalSpeed), `${item.name}: missing vertical ragdoll velocity`);
-    assert(item.minVerticalSpeed !== undefined ? verticalSpeed > item.minVerticalSpeed : verticalSpeed < item.maxVerticalSpeed,
-      `${item.name}: vertical knockback was not transferred (vy ${verticalSpeed})`);
+    if (Number.isFinite(item.minVerticalSpeed)) {
+      assert(verticalSpeed > item.minVerticalSpeed,
+        `${item.name}: upward knockback was not transferred (vy ${verticalSpeed})`);
+    }
+    if (Number.isFinite(item.maxVerticalSpeed)) {
+      assert(verticalSpeed < item.maxVerticalSpeed,
+        `${item.name}: downward knockback was not transferred (vy ${verticalSpeed})`);
+    }
+    const horizontalSpeed = Math.hypot(impact.ragdoll.rootLinearVelocity?.[0] || 0, impact.ragdoll.rootLinearVelocity?.[2] || 0);
+    if (Number.isFinite(item.minHorizontalSpeed)) {
+      assert(horizontalSpeed > item.minHorizontalSpeed,
+        `${item.name}: horizontal airborne knockback was not transferred (speed ${horizontalSpeed})`);
+    }
     const outcome = await settleAndRecover(page, item.name);
     airborneResults.push({
       scenario: item.name,
       preImpactVerticalSpeed: Number(airborne.verticalVelocity.toFixed(3)),
+      preImpactHorizontalSpeed: Number((airborne.horizontalSpeed || 0).toFixed(3)),
       ragdollVerticalSpeed: Number(verticalSpeed.toFixed(3)),
+      ragdollHorizontalSpeed: Number(horizontalSpeed.toFixed(3)),
       finalMaxBodySpeed: Number(outcome.resting.maxBodySpeed.toFixed(3)),
       recovered: outcome.recovered.player.controlEnabled
     });
@@ -276,6 +305,31 @@ try {
     await page.evaluate(owner => window.__NAIJA_GAME__.debugRemoveCharacterTerrainForSmoke(owner), item.owner);
   }
 
+  const mixedSupportOwner = 'character-stress-mixed-support';
+  const mixedSupportColliders = [
+    { id: 'stress-mixed-support-lower-deck', position: [95, 0.36, 56], halfExtents: [0.45, 0.36, 0.45], surface: 'concrete' },
+    { id: 'stress-mixed-support-raised-left', position: [94.84, 0.90, 56], halfExtents: [0.055, 0.90, 0.12], surface: 'metal' },
+    { id: 'stress-mixed-support-raised-right', position: [95.16, 0.90, 56], halfExtents: [0.055, 0.90, 0.12], surface: 'metal' },
+    { id: 'stress-mixed-support-raised-front', position: [95, 0.90, 56.18], halfExtents: [0.12, 0.90, 0.055], surface: 'metal' },
+    { id: 'stress-mixed-support-raised-back', position: [95, 0.90, 55.82], halfExtents: [0.12, 0.90, 0.055], surface: 'metal' }
+  ];
+  const mixedCreated = await page.evaluate(({ owner, colliders }) =>
+    window.__NAIJA_GAME__.debugAddCharacterTerrainForSmoke(owner, colliders),
+    { owner: mixedSupportOwner, colliders: mixedSupportColliders }
+  );
+  assert(mixedCreated === 5, 'mixed-height landing: failed to create all five support surfaces');
+  const mixedSupport = await page.evaluate(() =>
+    window.__NAIJA_GAME__.debugProbeCharacterRecoverySupportForSmoke(95, 1.8, 56, 0)
+  );
+  assert(mixedSupport?.sampleCount === 5, `mixed-height landing: expected five support samples: ${JSON.stringify(mixedSupport)}`);
+  assert(Math.abs(mixedSupport.centerGroundY - 0.72) < 0.02,
+    `mixed-height landing: center ray did not find the lower deck: ${JSON.stringify(mixedSupport)}`);
+  assert(Math.abs(mixedSupport.groundY - 1.8) < 0.02 && mixedSupport.supportHeightRange > 1.0,
+    `mixed-height landing: support cluster did not select the four raised treads: ${JSON.stringify(mixedSupport)}`);
+  assert(mixedSupport.surface === 'metal' && Math.abs(mixedSupport.normal[0]) < 0.02 && mixedSupport.normal[1] > 0.99,
+    `mixed-height landing: selected normal/surface did not match the median support cluster: ${JSON.stringify(mixedSupport)}`);
+  await page.evaluate(owner => window.__NAIJA_GAME__.debugRemoveCharacterTerrainForSmoke(owner), mixedSupportOwner);
+
   const terrainResults = [];
   const terrainCases = [
     {
@@ -291,6 +345,24 @@ try {
         { id: 'stress-stair-top-landing', position: [33.15, 0.45, 10], halfExtents: [0.58, 0.45, 1.2], surface: 'concrete' }
       ],
       minGroundY: 0.90,
+      minNormalY: 0.90
+    },
+    {
+      name: 'l-turn-staircase-with-intermediate-landing',
+      owner: 'character-stress-l-turn',
+      start: [57.85, 2.58, 52.90],
+      colliders: [
+        { id: 'stress-lower-flight-step-01', position: [55.00, 0.12, 50.00], halfExtents: [0.36, 0.12, 1.0], surface: 'concrete' },
+        { id: 'stress-lower-flight-step-02', position: [55.72, 0.27, 50.00], halfExtents: [0.36, 0.27, 1.0], surface: 'concrete' },
+        { id: 'stress-lower-flight-step-03', position: [56.44, 0.45, 50.00], halfExtents: [0.36, 0.45, 1.0], surface: 'concrete' },
+        { id: 'stress-lower-flight-step-04', position: [57.16, 0.66, 50.00], halfExtents: [0.36, 0.66, 1.0], surface: 'concrete' },
+        { id: 'stress-l-turn-landing', position: [57.85, 0.66, 50.00], halfExtents: [0.72, 0.66, 0.68], surface: 'concrete' },
+        { id: 'stress-upper-flight-step-01', position: [57.85, 0.84, 50.72], halfExtents: [1.0, 0.84, 0.36], surface: 'concrete' },
+        { id: 'stress-upper-flight-step-02', position: [57.85, 1.05, 51.44], halfExtents: [1.0, 1.05, 0.36], surface: 'concrete' },
+        { id: 'stress-upper-flight-step-03', position: [57.85, 1.29, 52.16], halfExtents: [1.0, 1.29, 0.36], surface: 'concrete' },
+        { id: 'stress-l-turn-top-landing', position: [57.85, 1.29, 52.90], halfExtents: [1.0, 1.29, 0.72], surface: 'concrete' }
+      ],
+      minGroundY: 2.58,
       minNormalY: 0.90
     },
     {
@@ -348,6 +420,10 @@ try {
       supportNormal: placement.recoveryGroundNormal.map(value => Number(value.toFixed(3))),
       supportSamples: placement.recoverySupportSamples,
       surface: placement.recoverySurface,
+      supportHeightRange: Number((placement.recoverySupportHeightRange || 0).toFixed(3)),
+      supportMinY: Number((placement.recoverySupportMinY ?? placement.recoveryGroundY).toFixed(3)),
+      supportMaxY: Number((placement.recoverySupportMaxY ?? placement.recoveryGroundY).toFixed(3)),
+      centerGroundY: Number((placement.recoveryCenterGroundY ?? placement.recoveryGroundY).toFixed(3)),
       recovered: outcome.recovered.player.controlEnabled
     });
     await page.evaluate(owner => window.__NAIJA_GAME__.debugRemoveCharacterTerrainForSmoke(owner), terrain.owner);
@@ -360,6 +436,14 @@ try {
     impactDirections: directionResults,
     airborneImpacts: airborneResults,
     wallAndCornerCollisions: collisionResults,
+    mixedHeightSupport: {
+      sampleCount: mixedSupport.sampleCount,
+      selectedGroundY: Number(mixedSupport.groundY.toFixed(3)),
+      centerGroundY: Number(mixedSupport.centerGroundY.toFixed(3)),
+      supportHeightRange: Number(mixedSupport.supportHeightRange.toFixed(3)),
+      selectedSurface: mixedSupport.surface,
+      selectedNormal: mixedSupport.normal.map(value => Number(value.toFixed(3)))
+    },
     recoveryTerrain: terrainResults,
     browserErrors: errors
   }, null, 2));
