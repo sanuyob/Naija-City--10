@@ -27,7 +27,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const gravityVector = vector(0, -gravity, 0);
   world.setGravity(gravityVector);
 
-  function addStaticBox(position, halfExtents, friction = 0.82, rotationY = 0) {
+  function addStaticBox(position, halfExtents, friction = 0.82, rotationY = 0, rotationX = 0, rotationZ = 0) {
     const allocationStart = owned.length;
     const shape = own(new Ammo.btBoxShape(vector(
       Math.max(0.04, halfExtents[0]),
@@ -38,8 +38,20 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     start.setIdentity();
     start.setOrigin(vector(position[0], position[1], position[2]));
     const yaw = (Number(rotationY) || 0) * Math.PI / 180;
-    if (Math.abs(yaw) > 1e-5 && typeof Ammo.btQuaternion === 'function') {
-      const rotation = own(new Ammo.btQuaternion(0, Math.sin(yaw / 2), 0, Math.cos(yaw / 2)));
+    const pitch = (Number(rotationX) || 0) * Math.PI / 180;
+    const roll = (Number(rotationZ) || 0) * Math.PI / 180;
+    if ((Math.abs(yaw) + Math.abs(pitch) + Math.abs(roll)) > 1e-5 && typeof Ammo.btQuaternion === 'function') {
+      const qx = [Math.sin(pitch/2), 0, 0, Math.cos(pitch/2)];
+      const qy = [0, Math.sin(yaw/2), 0, Math.cos(yaw/2)];
+      const qz = [0, 0, Math.sin(roll/2), Math.cos(roll/2)];
+      const multiply = (a,b) => [
+        a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],
+        a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],
+        a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],
+        a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]
+      ];
+      const q = multiply(multiply(qy,qx),qz);
+      const rotation = own(new Ammo.btQuaternion(q[0],q[1],q[2],q[3]));
       start.setRotation(rotation);
     }
     const motion = own(new Ammo.btDefaultMotionState(start));
@@ -60,7 +72,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   const colliderDescriptors = [];
   const colliderOwners = new Map();
   for (const item of colliders) {
-    let position, halfExtents, rotationY = Number(item?.rotationY) || 0;
+    let position, halfExtents, rotationY = Number(item?.rotationY) || 0, rotationX = Number(item?.rotationX) || 0, rotationZ = Number(item?.rotationZ) || 0;
     if (Array.isArray(item?.position) && Array.isArray(item?.halfExtents)) {
       position = item.position;
       halfExtents = item.halfExtents;
@@ -73,12 +85,14 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       position = [p.x, p.y, p.z];
       halfExtents = [Math.abs(size.x) / 2, Math.abs(size.y) / 2, Math.abs(size.z) / 2];
       rotationY = rotation?.y || 0;
+      rotationX = rotation?.x || 0;
+      rotationZ = rotation?.z || 0;
     }
-    const descriptor = { position: position.slice(), halfExtents: halfExtents.slice(), rotationY, id: item?.id || item?.name || item?.entity?.name || 'world-proxy' };
+    const descriptor = { position: position.slice(), halfExtents: halfExtents.slice(), rotationY, rotationX, rotationZ, id: item?.id || item?.name || item?.entity?.name || 'world-proxy' };
     descriptor.surface = item?.surface || (/grass|park|planter/i.test(descriptor.id) ? 'grass' :
       /metal|rail|ladder|pipe|ac-/i.test(descriptor.id) ? 'metal' :
       /road|asphalt/i.test(descriptor.id) ? 'asphalt' : 'concrete');
-    const staticRecord = addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY);
+    const staticRecord = addStaticBox(descriptor.position, descriptor.halfExtents, 0.82, descriptor.rotationY, descriptor.rotationX, descriptor.rotationZ);
     staticRecord.body.setUserIndex?.(1000 + surfaceDescriptors.length);
     colliderDescriptors.push(descriptor);
     surfaceDescriptors.push(descriptor);
@@ -288,15 +302,17 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       if (!Array.isArray(position) || !Array.isArray(halfExtents) || position.length < 3 || halfExtents.length < 3) continue;
       if (![...position, ...halfExtents].every(Number.isFinite)) continue;
       const rotationY = Number(item.rotationY) || 0;
+      const rotationX = Number(item.rotationX) || 0;
+      const rotationZ = Number(item.rotationZ) || 0;
       const descriptor = {
         id: item.id || `${ownerId}:proxy:${indices.length}`,
         kind: item.kind || 'world',
         position: position.slice(0, 3),
         halfExtents: halfExtents.slice(0, 3).map(value => Math.max(0.04, Math.abs(value))),
-        rotationY,
+        rotationY, rotationX, rotationZ,
         surface: item.surface || 'concrete'
       };
-      const record = addStaticBox(descriptor.position, descriptor.halfExtents, descriptor.surface === 'asphalt' ? 1.0 : 0.82, rotationY);
+      const record = addStaticBox(descriptor.position, descriptor.halfExtents, descriptor.surface === 'asphalt' ? 1.0 : 0.82, rotationY, rotationX, rotationZ);
       record.ownerId = ownerId;
       record.body.setUserIndex?.(1000 + surfaceDescriptors.length);
       const index = colliderBodies.length;
@@ -324,14 +340,21 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       const item = items[localIndex];
       if (!record || !descriptor || !Array.isArray(item?.position) || item.position.length < 3 || !item.position.every(Number.isFinite)) continue;
       const yaw = Number(item.rotationY) || 0;
+      const pitch = Number(item.rotationX) || 0;
+      const roll = Number(item.rotationZ) || 0;
       descriptor.position = item.position.slice(0, 3);
       descriptor.rotationY = yaw;
+      descriptor.rotationX = pitch;
+      descriptor.rotationZ = roll;
       descriptor.surface = item.surface || descriptor.surface;
       colliderSyncTransform.setIdentity();
       colliderSyncOrigin.setValue(...descriptor.position);
       colliderSyncTransform.setOrigin(colliderSyncOrigin);
-      const halfYaw = yaw * Math.PI / 360;
-      colliderSyncRotation.setValue(0, Math.sin(halfYaw), 0, Math.cos(halfYaw));
+      const hx = pitch * Math.PI / 360, hy = yaw * Math.PI / 360, hz = roll * Math.PI / 360;
+      const qx=[Math.sin(hx),0,0,Math.cos(hx)], qy=[0,Math.sin(hy),0,Math.cos(hy)], qz=[0,0,Math.sin(hz),Math.cos(hz)];
+      const multiply=(a,b)=>[a[3]*b[0]+a[0]*b[3]+a[1]*b[2]-a[2]*b[1],a[3]*b[1]-a[0]*b[2]+a[1]*b[3]+a[2]*b[0],a[3]*b[2]+a[0]*b[1]-a[1]*b[0]+a[2]*b[3],a[3]*b[3]-a[0]*b[0]-a[1]*b[1]-a[2]*b[2]];
+      const q=multiply(multiply(qy,qx),qz);
+      colliderSyncRotation.setValue(q[0],q[1],q[2],q[3]);
       colliderSyncTransform.setRotation(colliderSyncRotation);
       record.body.setWorldTransform(colliderSyncTransform);
       record.body.getMotionState?.()?.setWorldTransform?.(colliderSyncTransform);
@@ -382,7 +405,9 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     try {
       const ragdoll = createCharacterRagdoll({
         Ammo, world, rig,
-        initialVelocity: Array.isArray(options.velocity) ? options.velocity : [0, 0, 0]
+        initialVelocity: Array.isArray(options.velocity) ? options.velocity : [0, 0, 0],
+        boneVelocities: options.boneVelocities || {},
+        handoffDuration: options.handoffDuration ?? 0.16
       });
       setPlayerEnabled(false);
       activeRagdoll = ragdoll;
@@ -399,6 +424,10 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
 
   function getRagdollState() {
     return activeRagdoll?.getState?.() || { active: false, bodyCount: 0, constraintCount: 0, stepCount: 0 };
+  }
+
+  function getRagdollPose() {
+    return activeRagdoll?.getPose?.() || null;
   }
 
   function stopRagdoll({ enablePlayer = true } = {}) {
@@ -437,7 +466,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
   }
 
   return {
-    step, teleport, setColliderEnabled, addStaticColliders, updateStaticColliders, setStaticColliderEnabled, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, startRagdoll, stepRagdoll, stopRagdoll, getRagdollState, cleanup,
+    step, teleport, setColliderEnabled, addStaticColliders, updateStaticColliders, setStaticColliderEnabled, removeStaticColliders, setGravity, setCrouched, canFitCapsule, raycast, setPlayerEnabled, startRagdoll, stepRagdoll, stopRagdoll, getRagdollState, getRagdollPose, cleanup,
     getState: () => ({
       mode: 'ammo-bullet-capsule', playerBodyEnabled, ragdoll: getRagdollState(),
       steps, collisions,

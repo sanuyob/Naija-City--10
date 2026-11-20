@@ -76,36 +76,67 @@ try {
   const started = await page.evaluate(() => ({
     ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll,
     physics: window.__NAIJA_GAME__.getPhysicsState().player,
-    player: window.__NAIJA_GAME__.getPlayerState()
+    player: window.__NAIJA_GAME__.getPlayerState(),
+    animations: window.__NAIJA_GAME__.heroAnimations
   }));
   assert(damage?.downed, 'Lethal damage did not enter the downed state');
   assert(started.ragdoll.active && started.ragdoll.bodyCount === 11 && started.ragdoll.constraintCount === 10,
     `Ragdoll did not create the expected articulated body: ${JSON.stringify(started.ragdoll)}`);
   assert(started.physics.playerBodyEnabled === false, 'Player capsule was not disabled during ragdoll');
   assert(started.player.controlEnabled === false, 'Player controls were not disabled during ragdoll');
+  assert(started.animations.includes('Ara_GetUp_FaceUp') && started.animations.includes('Ara_GetUp_FaceDown'),
+    'Both generated front/back get-up clips must be bound to Ara skeleton');
 
-  await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(180, 1 / 60));
+  const handoffRun = await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(3, 1 / 60));
+  const partialHandoff = handoffRun.ragdollTrace.find(item => item.handoffWeight > 0 && item.handoffWeight < 1);
+  const handoff = await page.evaluate(() => window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll);
+  assert(partialHandoff || handoff.handoffWeight === 1,
+    `Ragdoll handoff blend did not produce an in-between state or complete safely: ${JSON.stringify({partialHandoff,handoff})}`);
+  await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(177, 1 / 60));
   const resting = await page.evaluate(() => ({
     ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll,
     physics: window.__NAIJA_GAME__.getPhysicsState().player
   }));
   assert(resting.ragdoll.active && resting.ragdoll.stepCount >= 180,
     'Ragdoll did not advance through the physics simulation');
+  assert(resting.ragdoll.handoffWeight === 1 && resting.ragdoll.phase === 'ragdoll',
+    'Ragdoll handoff did not finish blending to physics ownership');
+  assert(resting.ragdoll.maxBodySpeed < 12,
+    `Ragdoll body velocity became unstable: ${resting.ragdoll.maxBodySpeed}`);
   assert(Number.isFinite(resting.ragdoll.rootPosition?.[1]) &&
     resting.ragdoll.rootPosition[1] >= -0.05 && resting.ragdoll.rootPosition[1] < 0.4,
     `Ragdoll failed to settle on the city floor: ${JSON.stringify(resting.ragdoll.rootPosition)}`);
 
   const recovery = await page.evaluate(() => window.__NAIJA_GAME__.debugRecoverPlayerForSmoke());
+  const recoveryStarted = await page.evaluate(() => ({
+    ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll,
+    physics: window.__NAIJA_GAME__.getPhysicsState().player,
+    player: window.__NAIJA_GAME__.getPlayerState(),
+    recovery: window.__NAIJA_GAME__.debugGetRecoveryStateForSmoke(),
+    animation: window.__NAIJA_GAME__.getHeroAnimationState()
+  }));
+  assert(recovery?.applied, 'Recovery was rejected');
+  assert(recoveryStarted.ragdoll.active === false, 'Ragdoll bodies were not removed during recovery');
+  assert(recoveryStarted.physics.playerBodyEnabled === true, 'Player capsule was not restored');
+  assert(recoveryStarted.player.controlEnabled === false && recoveryStarted.player.downed === false,
+    'Player controls should remain locked during the get-up sequence');
+  assert(recoveryStarted.recovery.active && recoveryStarted.recovery.clip.startsWith('Ara_GetUp_'),
+    `A front/back get-up animation was not selected: ${JSON.stringify(recoveryStarted.recovery)}`);
+  await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(110, 1 / 60));
   const recovered = await page.evaluate(() => ({
     ragdoll: window.__NAIJA_GAME__.getCharacterSimulationState().ragdoll,
     physics: window.__NAIJA_GAME__.getPhysicsState().player,
-    player: window.__NAIJA_GAME__.getPlayerState()
+    player: window.__NAIJA_GAME__.getPlayerState(),
+    recovery: window.__NAIJA_GAME__.debugGetRecoveryStateForSmoke()
   }));
-  assert(recovery?.applied, 'Recovery was rejected');
-  assert(recovered.ragdoll.active === false, 'Ragdoll bodies were not removed during recovery');
-  assert(recovered.physics.playerBodyEnabled === true, 'Player capsule was not restored');
+  assert(recovered.ragdoll.active === false, 'Ragdoll unexpectedly restarted during recovery');
+  assert(recovered.physics.playerBodyEnabled === true, 'Player capsule was not retained after recovery');
   assert(recovered.player.controlEnabled === true && recovered.player.downed === false,
-    'Player controls/vitals were not restored after recovery');
+    'Player controls/vitals were not restored after the get-up animation');
+  assert(recovered.recovery.active === false, 'Get-up state machine did not finish');
+
+  const terrain = await page.evaluate(() => window.__NAIJA_GAME__.debugRunUnevenTerrainIKForSmoke());
+  assert(terrain.pass, `Uneven-terrain foot IK failed: ${JSON.stringify(terrain)}`);
   assert(errors.length === 0, `Browser runtime errors: ${errors.join(' | ')}`);
 
   console.log(JSON.stringify({
@@ -122,10 +153,15 @@ try {
       constraintCount: resting.ragdoll.constraintCount,
       simulationSteps: resting.ragdoll.stepCount,
       restingPelvisHeight: Number(resting.ragdoll.rootPosition[1].toFixed(4)),
-      playerCapsuleDisabledDuringFall: !started.physics.playerBodyEnabled
+      playerCapsuleDisabledDuringFall: !started.physics.playerBodyEnabled,
+      handoffBlendWeight: partialHandoff?.handoffWeight ?? handoff.handoffWeight,
+      maxBodySpeedMps: Number(resting.ragdoll.maxBodySpeed.toFixed(3))
     },
     recovery: {
       applied: recovery.applied,
+      variant: recoveryStarted.recovery.variant,
+      clip: recoveryStarted.recovery.clip,
+      proceduralGetUp: recovery.proceduralGetUp,
       ragdollRemoved: !recovered.ragdoll.active,
       playerCapsuleRestored: recovered.physics.playerBodyEnabled,
       controlsRestored: recovered.player.controlEnabled,
@@ -133,6 +169,7 @@ try {
       stamina: recovered.player.stamina,
       state: recovered.player.state
     },
+    terrainIK: terrain,
     browserErrors: errors
   }, null, 2));
 } finally {

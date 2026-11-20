@@ -99,7 +99,7 @@ try {
   }
   const recovery = await page.evaluate(() => window.__NAIJA_GAME__.debugRecoverPlayerForSmoke({ health: 45, stamina: 20 }));
   if (!recovery.applied || recovery.health !== 45 || recovery.stamina !== 20) throw new Error(`Recovery did not restore vitals: ${JSON.stringify(recovery)}`);
-  await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(72, 1 / 60));
+  await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(96, 1 / 60));
   const recovered = await page.evaluate(() => window.__NAIJA_GAME__.getPlayerState());
   if (recovered.health !== 45 || recovered.stamina < 20 || recovered.stamina > 45 || recovered.state !== 'ready' || !recovered.controlEnabled) {
     throw new Error(`Recovery did not finish cleanly: ${JSON.stringify(recovered)}`);

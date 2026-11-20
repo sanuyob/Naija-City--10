@@ -2,6 +2,8 @@ import * as pc from 'playcanvas';
 import { getAraGaitStance } from './ara-gait-contact.js';
 import { createCharacterVitals } from './character-vitals.js';
 import { createFacialAnimation } from './facial-animation.js';
+import { makeFootPlantTarget } from './two-bone-ik.js';
+import { classifyRecoverySide, deriveRecoveryYaw, estimateBoneVelocities, smoothStep01 } from './character-recovery.js';
 
 /**
  * Lightweight third-person controller for the Stage 06 mobile prototype.
@@ -68,6 +70,11 @@ export function createThirdPersonController(app, camera, canvas, {
   let ragdollActive = false;
   let ragdollRootOffset = [0, 0.94, 0];
   let lastRagdollState = null;
+  let lastAnimationPoseSample = null;
+  let animationPoseSampleClock = 0;
+  let lastAnimationPoseSampleClock = 0;
+  let animationBoneVelocities = {};
+  let recoverySequence = null;
   let traversalMotion = null;
   let jumpBuffer = 0;
   let coyote = 0;
@@ -101,14 +108,18 @@ export function createThirdPersonController(app, camera, canvas, {
       const candidates=[
         {kind:'toe',point:limbs[side+'SoleToe']},
         {kind:'heel',point:limbs[side+'SoleHeel']}
-      ].filter(item=>Array.isArray(item.point)&&item.point.length===3&&item.point.every(Number.isFinite));
+      ].filter(item=>Array.isArray(item.point)&&item.point.length===3&&item.point.every(Number.isFinite)&&Math.abs(item.point[1]-baseY)<.18)
+        .map(item=>({ ...item, hit: physics?.raycast?.([item.point[0],item.point[1]+.42,item.point[2]],[item.point[0],item.point[1]-.48,item.point[2]]) }))
+        .filter(item=>item.hit&&Array.isArray(item.hit.normal)&&item.hit.normal[1]>.45&&Math.abs(item.point[1]-item.hit.point[1])<.34);
+      // Preserve the original contact selection priority (closest to the
+      // controller's support height); the raycast only adds true surface data.
       candidates.sort((a,b)=>Math.abs(a.point[1]-baseY)-Math.abs(b.point[1]-baseY));
       const contact=candidates[0];
-      if(!contact||Math.abs(contact.point[1]-baseY)>.085){state.active=false;state.kind=null;state.anchor=null;continue;}
+      if(!contact){state.active=false;state.kind=null;state.anchor=null;continue;}
       if(!state.active||state.kind!==contact.kind){state.anchor=contact.point.slice();state.kind=contact.kind;state.active=true;}
       const dx=state.anchor[0]-contact.point[0];
       const dz=state.anchor[2]-contact.point[2];
-      corrections.push({side,x:dx,z:dz,clearance:Math.abs(contact.point[1]-baseY),kind:contact.kind,contact:contact.point});
+      corrections.push({side,x:dx,z:dz,clearance:Math.abs(contact.point[1]-contact.hit.point[1]),kind:contact.kind,contact:contact.point,hit:contact.hit});
     }
     if(!corrections.length){footLockState.lastCorrection=[0,0,0];footLockState.lastSupportSide=null;return {active:false,correction:[0,0,0]};}
     corrections.sort((a,b)=>a.clearance-b.clearance);
@@ -138,14 +149,15 @@ export function createThirdPersonController(app, camera, canvas, {
       const marker=correctedLimbs[markerName];
       const ankle=correctedLimbs[item.side+'Ankle']||correctedLimbs[item.side+'Foot'];
       if(!Array.isArray(marker)||!Array.isArray(ankle)||!marker.every(Number.isFinite)||!ankle.every(Number.isFinite))continue;
-      const verticalCorrection=baseY-marker[1];
-      // Do not perturb a clean flat-ground gait just to exercise IK. Trigger
-      // the joint solve when the sole actually needs a meaningful height
-      // adjustment (e.g. uneven ground/step contact) and the horizontal foot
-      // lock is already stable.
-      if(Math.abs(verticalCorrection)<.045||Math.hypot(item.x,item.z)>.02)continue;
-      const target=[ankle[0],ankle[1]+verticalCorrection,ankle[2]];
-      const result=activeHeroCharacter.applyLimbIK?.(item.side,target,.72);
+      const calibratedSoleOffset=ankle[1]-marker[1];
+      const targetInfo=makeFootPlantTarget(ankle,item.hit,{maxVerticalOffset:.48,soleOffset:calibratedSoleOffset});
+      if(!targetInfo)continue;
+      const verticalCorrection=targetInfo.position[1]-ankle[1];
+      const normalTilt=Math.hypot(targetInfo.normal[0],targetInfo.normal[2]);
+      // Flat level-ground gait stays on its calibrated sole lock. Real height
+      // offsets and non-flat support normals invoke the two-bone chain solve.
+      if((Math.abs(verticalCorrection)<.08&&normalTilt<.06)||Math.hypot(item.x,item.z)>.02)continue;
+      const result=activeHeroCharacter.applyLimbIK?.(item.side,targetInfo.position,.72,targetInfo.normal);
       if(result?.applied){
         ikApplied++;
         lastIKError=result.error;
@@ -274,6 +286,45 @@ export function createThirdPersonController(app, camera, canvas, {
     return facialAnimation.setViseme(name, weight);
   }
 
+  function sampleAnimationMotion(step) {
+    if (!activeHeroCharacter?.getRagdollPose || activeHeroCharacter.characterId !== 'ara-female' || ragdollActive || recoverySequence) return;
+    animationPoseSampleClock += Math.max(0, Number(step) || 0);
+    if (animationPoseSampleClock - lastAnimationPoseSampleClock < 0.05) return;
+    const pose = activeHeroCharacter.getRagdollPose();
+    if (!pose || !Object.keys(pose).length) return;
+    if (lastAnimationPoseSample) {
+      const elapsed = animationPoseSampleClock - lastAnimationPoseSampleClock;
+      animationBoneVelocities = estimateBoneVelocities(lastAnimationPoseSample, pose, elapsed, [velocity.x, velocity.y, velocity.z]);
+    }
+    lastAnimationPoseSample = pose;
+    lastAnimationPoseSampleClock = animationPoseSampleClock;
+  }
+
+  function updateRecoverySequence(step) {
+    if (!recoverySequence) return false;
+    recoverySequence.elapsed += step;
+    if (recoverySequence.phase === 'handoff' && recoverySequence.elapsed <= recoverySequence.blendDuration) {
+      const targetPose = activeHeroCharacter?.getRagdollPose?.();
+      const weight = smoothStep01(recoverySequence.elapsed / recoverySequence.blendDuration);
+      if (targetPose) activeHeroCharacter?.applyBlendedRagdollPose?.(recoverySequence.sourcePose, targetPose, weight);
+    }
+    if (recoverySequence.phase === 'handoff' && recoverySequence.elapsed >= recoverySequence.blendDuration) {
+      recoverySequence.phase = 'get-up';
+    }
+    if (recoverySequence.phase === 'get-up' && recoverySequence.elapsed >= recoverySequence.clipDuration) {
+      transitionHeroClip(heroDefaults.idle, 0.22);
+      recoverySequence.phase = 'settle';
+      recoverySequence.elapsed = 0;
+    } else if (recoverySequence.phase === 'settle' && recoverySequence.elapsed >= 0.24) {
+      recoverySequence = null;
+      recoveryTimer = 0;
+      vitals.finishRecovery();
+      setControlEnabled(true);
+      return true;
+    }
+    return false;
+  }
+
   function startCharacterRagdoll() {
     const rigPose = activeHeroCharacter?.getRagdollPose?.();
     const hipPosition = rigPose?.hips?.position;
@@ -286,11 +337,15 @@ export function createThirdPersonController(app, camera, canvas, {
       ];
     }
     const result = physics?.startRagdoll?.(activeHeroCharacter, {
-      velocity: [velocity.x, velocity.y, velocity.z]
+      velocity: [velocity.x, velocity.y, velocity.z],
+      boneVelocities: animationBoneVelocities,
+      handoffDuration: 0.16
     });
     if (result?.active) {
       ragdollActive = true;
       lastRagdollState = result;
+      lastAnimationPoseSample = null;
+      animationBoneVelocities = {};
       if (heroVisual?.anim) heroVisual.anim.playing = false;
       resetFootLock();
     }
@@ -353,8 +408,12 @@ export function createThirdPersonController(app, camera, canvas, {
     if (!result.applied) return result;
     let recoveryPosition = player.getPosition();
     let recoveryYaw = facingYaw;
+    let recoveryPose = null;
+    let recoveryVariant = 'face-up';
     if (ragdollActive) {
       const state = physics?.getRagdollState?.() || lastRagdollState || {};
+      recoveryPose = physics?.getRagdollPose?.() || activeHeroCharacter?.getRagdollPose?.() || null;
+      recoveryVariant = classifyRecoverySide(recoveryPose);
       const pelvis = state.rootPosition;
       if (Array.isArray(pelvis) && pelvis.length === 3) {
         const x = pelvis[0] - ragdollRootOffset[0];
@@ -362,12 +421,8 @@ export function createThirdPersonController(app, camera, canvas, {
         const ground = physics?.raycast?.([x, pelvis[1] + 1.8, z], [x, pelvis[1] - 3.0, z]);
         const groundY = Number.isFinite(ground?.point?.[1]) ? ground.point[1] : (Number(physics?.getState?.().groundY) || 0);
         recoveryPosition = new pc.Vec3(x, groundY, z);
-        if (Array.isArray(state.rootRotation)) {
-          const q = new pc.Quat(state.rootRotation[0], state.rootRotation[1], state.rootRotation[2], state.rootRotation[3]);
-          const forward = q.transformVector(new pc.Vec3(0, 0, -1), new pc.Vec3());
-          if (Math.hypot(forward.x, forward.z) > 0.15) recoveryYaw = Math.atan2(-forward.x, -forward.z) * 180 / Math.PI;
-        }
       }
+      recoveryYaw = deriveRecoveryYaw(recoveryPose, recoveryYaw);
       physics?.stopRagdoll?.({ enablePlayer: false });
       ragdollActive = false;
       lastRagdollState = null;
@@ -375,9 +430,33 @@ export function createThirdPersonController(app, camera, canvas, {
       player.setEulerAngles(0, recoveryYaw, 0);
       physics?.teleport?.([recoveryPosition.x, recoveryPosition.y, recoveryPosition.z], [0, 0, 0]);
       physics?.setPlayerEnabled?.(true);
+      velocity.set(0, 0, 0);
+      smoothedMoveSpeed = 0;
+      grounded = true;
+      resetFootLock();
       if (heroVisual?.anim) {
         heroVisual.anim.enabled = true;
         heroVisual.anim.playing = true;
+      }
+      const recoveryClip = recoveryVariant === 'face-down' ? 'Ara_GetUp_FaceDown' : 'Ara_GetUp_FaceUp';
+      const selectedClip = availableHeroClips.has(recoveryClip)
+        ? recoveryClip
+        : (availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle);
+      const clipDuration = heroClipDurations[selectedClip] || (selectedClip.startsWith('Ara_GetUp_') ? 1.16 : 0.85);
+      transitionHeroClip(selectedClip, 0.06);
+      recoverySequence = recoveryPose ? {
+        variant: recoveryVariant,
+        clip: selectedClip,
+        phase: 'handoff',
+        sourcePose: recoveryPose,
+        elapsed: 0,
+        blendDuration: 0.18,
+        clipDuration: Math.max(0.3, clipDuration)
+      } : null;
+      if (recoverySequence) {
+        recoveryTimer = 0;
+        setControlEnabled(false);
+        return { ...result, recoveryVariant, recoveryClip: selectedClip, proceduralGetUp: selectedClip.startsWith('Ara_GetUp_'), recoveryInProgress: true };
       }
     }
     velocity.set(0, 0, 0);
@@ -389,7 +468,7 @@ export function createThirdPersonController(app, camera, canvas, {
     actionTimer = 0;
     actionClip = '';
     transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.32);
-    return result;
+    return { ...result, recoveryVariant, recoveryInProgress: true };
   }
 
   function performTraversal(name,destination,options={}) {
@@ -585,9 +664,9 @@ export function createThirdPersonController(app, camera, canvas, {
   function update(dt) {
     const step = Math.min(dt, 0.05);
     facialAnimation.update(step);
-    if (!controlEnabled) {
+    if (recoverySequence) {
+      updateRecoverySequence(step);
       vitals.update(step, { active: false });
-      if (ragdollActive) updateRagdoll(step);
       return;
     }
     if (recoveryTimer > 0) {
@@ -596,7 +675,15 @@ export function createThirdPersonController(app, camera, canvas, {
         vitals.finishRecovery();
         transitionHeroClip(heroDefaults.idle, 0.18);
       }
+      vitals.update(step, { active: false });
+      return;
     }
+    if (!controlEnabled) {
+      vitals.update(step, { active: false });
+      if (ragdollActive) updateRagdoll(step);
+      return;
+    }
+    sampleAnimationMotion(step);
     // Preserve the authored kinematic path on its completion frame too. The
     // traversal state is cleared before the final position is applied.
     const scriptedKinematicFrame = traversalMotion?.kinematic === true;
@@ -1046,7 +1133,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return setPosition(position, yaw);
   }
 
-  const getState=()=>({position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
+  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy, applyGroundedFootLock, resetFootLock,
@@ -1060,6 +1147,7 @@ export function createThirdPersonController(app, camera, canvas, {
     recoverFromDowned,
     getVitalsState: vitals.getState,
     getRagdollState: () => ragdollActive ? (physics?.getRagdollState?.() || lastRagdollState) : { active: false, bodyCount: 0, constraintCount: 0 },
+    getRecoveryState: () => recoverySequence ? { active:true, variant:recoverySequence.variant, clip:recoverySequence.clip, phase:recoverySequence.phase, elapsed:recoverySequence.elapsed, duration:recoverySequence.clipDuration } : { active:false },
     getFacialAnimationState: facialAnimation.getState,
     setCrouched,
     setControlEnabled,
@@ -1101,6 +1189,7 @@ export function createThirdPersonController(app, camera, canvas, {
       faceMorphCount: activeHeroCharacter?.morphNames?.length ?? 0,
       facialAnimation: facialAnimation.getState(),
       vitals: vitals.getState(),
+      recovery: recoverySequence ? { active:true, variant:recoverySequence.variant, clip:recoverySequence.clip, phase:recoverySequence.phase } : { active:false },
       playable: !!heroVisual?.anim?.playable
     }),
     getRigSnapshot:()=>activeHeroCharacter?.getRigSnapshot?.()||{skinnedMeshCount:0,weightedVertexCount:0,weightedClothingMeshCount:0,boneCount:0,bones:[]},

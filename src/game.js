@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { makeFootPlantTarget } from './two-bone-ik.js';
 import { MeshoptDecoder } from 'meshoptimizer/decoder';
 import { createGidiWorldStreamer } from './gidi-world-streamer.js';
 import { createThirdPersonController } from './third-person-controller.js';
@@ -619,7 +620,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const profileExport=document.getElementById('profile-export');
   perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
   profileExport?.addEventListener('click',()=>stage08FProfiler.download());
-  const gameApi={ready:true,stage:10,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),getInteractionState:()=>interactionSystem?.getState?.()||null,getCharacterSimulationState:()=>({vitals:playerController.getVitalsState?.(),facial:playerController.getFacialAnimationState?.(),footLock:playerController.getFootLockState?.(),ragdoll:playerController.getRagdollState?.(),pedestrians:pedestrianSystem.getState(),interactions:interactionSystem?.getState?.()}),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroLimbPositions:()=>heroCharacter?.getLimbPositions?.()||null,getHeroSoleMarkerInfo:()=>heroCharacter?.getSoleMarkerInfo?.()||null,getHeroFootLockState:()=>playerController.getFootLockState?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getGidiState:()=>gidiStreamer.getState(),
+  const gameApi={ready:true,stage:10,hudStage:7,mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'third-person open-world action RPG',cameraMode:'orbit-follow',thirdPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),getInteractionState:()=>interactionSystem?.getState?.()||null,getCharacterSimulationState:()=>({vitals:playerController.getVitalsState?.(),facial:playerController.getFacialAnimationState?.(),footLock:playerController.getFootLockState?.(),ragdoll:playerController.getRagdollState?.(),recovery:playerController.getRecoveryState?.(),pedestrians:pedestrianSystem.getState(),interactions:interactionSystem?.getState?.()}),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroLimbPositions:()=>heroCharacter?.getLimbPositions?.()||null,getHeroSoleMarkerInfo:()=>heroCharacter?.getSoleMarkerInfo?.()||null,getHeroFootLockState:()=>playerController.getFootLockState?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getGidiState:()=>gidiStreamer.getState(),
     surfacePatches:surfacePatches.map(patch=>({id:patch.id,surface:patch.surface,position:patch.position.slice(),halfExtents:patch.halfExtents.slice()})),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,getTrafficPositions:()=>traffic.map(item=>({name:item.entity.name,position:item.entity.getPosition().toArray()})),trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(import.meta.env.DEV && new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugLoadGidiForSmoke=async(position=[100,0,-450])=>{playerController.setPositionForSmoke(position,0);await gidiStreamer.update(position,1);return gidiStreamer.getState();};
@@ -636,18 +637,53 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.debugApplyHeroLimbIKForSmoke=(side,target,weight=1)=>heroCharacter?.applyLimbIK?.(side,target,weight)||null;
     gameApi.debugGetHeroRagdollPoseForSmoke=()=>heroCharacter?.getRagdollPose?.()||null;
     gameApi.debugGetRagdollStateForSmoke=()=>playerController.getRagdollState?.()||null;
+    gameApi.debugGetRecoveryStateForSmoke=()=>playerController.getRecoveryState?.()||{active:false};
+    gameApi.debugRunUnevenTerrainIKForSmoke=()=>{
+      const originalState=playerController.getState(),original=originalState.position.slice(),originalYaw=originalState.facingYaw;
+      playerController.setPositionForSmoke([0,0,0],0);
+      window.__NAIJA_PLAY_HERO_ANIMATION__?.('Idle',1.0);
+      const animationSystem=app.systems?.anim;
+      for(let i=0;i<5;i++)animationSystem?.onAnimationUpdate?.(1/60);
+      const feet=heroCharacter?.getLimbPositions?.()||{};
+      const left=feet.leftAnkle||feet.leftFoot,right=feet.rightAnkle||feet.rightFoot;
+      if(!left||!right)return {pass:false,error:'Ara ankle bones unavailable'};
+      const owner='smoke-uneven-terrain';
+      const colliders=[
+        {id:'smoke-left-incline',position:[left[0],left[1]-.12,left[2]],halfExtents:[.12,.08,.44],rotationZ:14,surface:'concrete'},
+        {id:'smoke-right-step',position:[right[0],right[1]-.005,right[2]],halfExtents:[.12,.11,.44],rotationZ:-8,surface:'concrete'}
+      ];
+      const created=playerPhysics.addStaticColliders(colliders,owner);
+      const results={};
+      for(const side of ['left','right']){
+        const ankle=(side==='left'?left:right).slice();
+        const hit=playerPhysics.raycast([ankle[0],ankle[1]+.65,ankle[2]],[ankle[0],ankle[1]-.65,ankle[2]]);
+        const marker=(feet[side+'SoleHeel']||feet[side+'SoleToe']||ankle);
+        const target=makeFootPlantTarget(ankle,hit,{maxVerticalOffset:.48,soleOffset:ankle[1]-marker[1]});
+        const ik=target?heroCharacter?.applyLimbIK?.(side,target.position,1,target.normal):null;
+        const actual=(heroCharacter?.getLimbPositions?.()||{})[side+'Ankle'];
+        const normal=heroCharacter?.getFootSoleNormal?.(side)||null;
+        const error=actual&&target?Math.hypot(actual[0]-target.position[0],actual[1]-target.position[1],actual[2]-target.position[2]):Infinity;
+        results[side]={hit:!!hit,surface:hit?.surface||null,groundNormal:hit?.normal||null,target:target?.position||null,ikApplied:!!ik?.applied,reachable:!!ik?.reachable,endEffectorError:error,footNormal:normal,normalAlignment:normal&&hit?.normal?normal[0]*hit.normal[0]+normal[1]*hit.normal[1]+normal[2]*hit.normal[2]:null};
+      }
+      playerPhysics.removeStaticColliders(owner);
+      playerController.setPositionForSmoke(original,originalYaw);
+      const pass=['left','right'].every(side=>results[side].hit&&results[side].ikApplied&&results[side].reachable&&results[side].endEffectorError<.025&&results[side].normalAlignment>.94);
+      return {pass,created,results};
+    };
     gameApi.debugAdvanceCharacterSimulationForSmoke=(frames=60,dt=1/60)=>{
       const limit=Math.max(1,Math.min(600,Math.floor(Number(frames)||60)));
       const step=Math.max(1/120,Math.min(1/30,Number(dt)||1/60));
-      const animationSystem=app.systems?.anim;
+      const animationSystem=app.systems?.anim,ragdollTrace=[];
       for(let i=0;i<limit;i++){
-        playerController.update(step);
         animationSystem?.onAnimationUpdate?.(step);
+        playerController.update(step);
         playerController.applyGroundedFootLock?.();
         vfxSystem.update(step);
+        const ragdoll=playerController.getRagdollState?.();
+        if(ragdoll?.active)ragdollTrace.push({frame:i,stepCount:ragdoll.stepCount,phase:ragdoll.phase,handoffWeight:ragdoll.handoffWeight});
       }
       app.render?.();
-      return {frames:limit,dt:step,player:playerController.getState(),animation:playerController.getAnimationState(),facial:playerController.getFacialAnimationState?.()||null};
+      return {frames:limit,dt:step,player:playerController.getState(),animation:playerController.getAnimationState(),ragdollTrace,facial:playerController.getFacialAnimationState?.()||null};
     };
     gameApi.debugEnterVehicleForSmoke=()=>vehicleSystem?.debugEnter?.()||false;
     gameApi.debugExitVehicleForSmoke=()=>vehicleSystem?.debugExit?.()||false;

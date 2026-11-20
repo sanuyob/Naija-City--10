@@ -1,6 +1,7 @@
 import * as pc from 'playcanvas';
 import { loadSavedPlayerCharacter } from './player-character-store.js';
 import { solveTwoBoneIK } from './two-bone-ik.js';
+import { interpolateCharacterPose } from './character-recovery.js';
 
 const base = import.meta.env.BASE_URL || '/';
 const resolveAssetUrl = value => new URL(String(value).replace(/^\//, ''), new URL(base, window.location.origin)).href;
@@ -164,6 +165,99 @@ function createAraTraversalTracks(root) {
       rightThigh:[[42,0,0],[30,0,0],[14,0,0],[5,0,0],[0,0,0]],
       leftKnee:[[32,0,0],[24,0,0],[10,0,0],[2,0,0],[0,0,0]],
       rightKnee:[[46,0,0],[32,0,0],[14,0,0],[3,0,0],[0,0,0]]
+    })
+  ];
+}
+
+
+// Ara's source GLB does not contain dedicated prone get-up clips. These two
+// compact, rig-bound tracks provide distinct front/back recovery movements
+// without replacing the original authored locomotion or traversal clips.
+function createAraGetUpTracks(root) {
+  const bones = new Map();
+  for (const render of root.findComponents('render')) {
+    for (const meshInstance of render.meshInstances || []) {
+      for (const bone of meshInstance.skinInstance?.bones || []) {
+        if (bone?.name) bones.set(bone.name.toLowerCase().replace(/[^a-z0-9]/g, ''), bone);
+      }
+    }
+  }
+  const pick = (...names) => {
+    for (const name of names) {
+      const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+      for (const [candidate, bone] of bones) if (candidate === key || candidate.endsWith(key)) return bone;
+    }
+    return null;
+  };
+  const roles = {
+    hips: pick('Hips','Pelvis'), spine: pick('Spine2','Chest','Spine'), head: pick('Head'),
+    leftUpperArm: pick('LeftArm','UpperArm_L'), rightUpperArm: pick('RightArm','UpperArm_R'),
+    leftForeArm: pick('LeftForeArm','LowerArm_L'), rightForeArm: pick('RightForeArm','LowerArm_R'),
+    leftThigh: pick('LeftUpLeg','Thigh_L'), rightThigh: pick('RightUpLeg','Thigh_R'),
+    leftKnee: pick('LeftLeg','Shin_L'), rightKnee: pick('RightLeg','Shin_R')
+  };
+  const pathFor = node => {
+    const path=[]; let current=node;
+    while(current&&current!==root){path.unshift(current.name);current=current.parent;}
+    return current===root&&path.length?path:null;
+  };
+  const times=[0,.16,.38,.62,.82,1];
+  const duration=1.16;
+  const makeTrack=(name,pose)=>{
+    const input=new pc.AnimData(1,new Float32Array(times.map(t=>t*duration)));
+    const outputs=[],curves=[];
+    const addRotation=(bone,frames)=>{
+      if(!bone||!frames)return;
+      const path=pathFor(bone);if(!path)return;
+      const base=bone.getLocalRotation().clone(),data=[];
+      for(const angles of frames){
+        const delta=new pc.Quat().setFromEulerAngles(angles[0],angles[1],angles[2]);
+        const q=base.clone().mul(delta);data.push(q.x,q.y,q.z,q.w);
+      }
+      const index=outputs.length;outputs.push(new pc.AnimData(4,new Float32Array(data)));
+      curves.push(new pc.AnimCurve([{entityPath:path,component:'graph',propertyPath:['localRotation']}],0,index,pc.INTERPOLATION_LINEAR));
+    };
+    const addHipsPosition=(bone,frames)=>{
+      if(!bone||!frames)return;
+      const path=pathFor(bone);if(!path)return;
+      const base=bone.getLocalPosition(),data=[];
+      for(const offset of frames)data.push(base.x+offset[0],base.y+offset[1],base.z+offset[2]);
+      const index=outputs.length;outputs.push(new pc.AnimData(3,new Float32Array(data)));
+      curves.push(new pc.AnimCurve([{entityPath:path,component:'graph',propertyPath:['localPosition']}],0,index,pc.INTERPOLATION_LINEAR));
+    };
+    addHipsPosition(roles.hips,pose.hips);
+    for(const key of ['spine','head','leftUpperArm','rightUpperArm','leftForeArm','rightForeArm','leftThigh','rightThigh','leftKnee','rightKnee'])
+      addRotation(roles[key],pose[key]);
+    if(!curves.length)throw new Error('Ara get-up animation could not bind to the character skeleton: '+name);
+    return new pc.AnimTrack(name,duration,[input],outputs,curves);
+  };
+  const frames=(a,b,c,d,e,f)=>[a,b,c,d,e,f];
+  return [
+    makeTrack('Ara_GetUp_FaceUp',{
+      hips:frames([0,-.20,0],[0,-.17,0],[0,-.12,.025],[0,-.065,.02],[0,-.02,0],[0,0,0]),
+      spine:frames([-22,0,0],[-16,0,0],[-9,0,0],[-3,0,0],[0,0,0],[0,0,0]),
+      head:frames([8,0,0],[6,0,0],[3,0,0],[1,0,0],[0,0,0],[0,0,0]),
+      leftUpperArm:frames([0,0,-18],[8,0,-25],[20,0,-30],[12,0,-18],[3,0,-6],[0,0,0]),
+      rightUpperArm:frames([0,0,18],[8,0,25],[20,0,30],[12,0,18],[3,0,6],[0,0,0]),
+      leftForeArm:frames([0,0,-12],[0,0,-48],[0,0,-68],[0,0,-42],[0,0,-10],[0,0,0]),
+      rightForeArm:frames([0,0,12],[0,0,48],[0,0,68],[0,0,42],[0,0,10],[0,0,0]),
+      leftThigh:frames([12,0,0],[30,0,0],[58,0,0],[42,0,0],[14,0,0],[0,0,0]),
+      rightThigh:frames([12,0,0],[30,0,0],[58,0,0],[42,0,0],[14,0,0],[0,0,0]),
+      leftKnee:frames([5,0,0],[55,0,0],[96,0,0],[78,0,0],[30,0,0],[0,0,0]),
+      rightKnee:frames([5,0,0],[55,0,0],[96,0,0],[78,0,0],[30,0,0],[0,0,0])
+    }),
+    makeTrack('Ara_GetUp_FaceDown',{
+      hips:frames([0,-.19,0],[0,-.15,-.025],[0,-.10,-.015],[0,-.05,0],[0,-.015,0],[0,0,0]),
+      spine:frames([18,0,0],[13,0,0],[7,0,0],[2,0,0],[0,0,0],[0,0,0]),
+      head:frames([-6,0,0],[-4,0,0],[-2,0,0],[0,0,0],[0,0,0],[0,0,0]),
+      leftUpperArm:frames([0,0,-12],[18,0,-18],[28,0,-24],[18,0,-16],[4,0,-6],[0,0,0]),
+      rightUpperArm:frames([0,0,12],[18,0,18],[28,0,24],[18,0,16],[4,0,6],[0,0,0]),
+      leftForeArm:frames([0,0,-8],[0,0,-36],[0,0,-58],[0,0,-38],[0,0,-8],[0,0,0]),
+      rightForeArm:frames([0,0,8],[0,0,36],[0,0,58],[0,0,38],[0,0,8],[0,0,0]),
+      leftThigh:frames([-5,0,0],[18,0,0],[48,0,0],[36,0,0],[12,0,0],[0,0,0]),
+      rightThigh:frames([-5,0,0],[18,0,0],[48,0,0],[36,0,0],[12,0,0],[0,0,0]),
+      leftKnee:frames([0,0,0],[46,0,0],[88,0,0],[72,0,0],[26,0,0],[0,0,0]),
+      rightKnee:frames([0,0,0],[46,0,0],[88,0,0],[72,0,0],[26,0,0],[0,0,0])
     })
   ];
 }
@@ -368,12 +462,14 @@ export async function loadHeroCharacter(app, {
     }
     if (!clipNames.length) throw new Error('The character GLB has no playable animation clips.');
     if (characterId === 'ara-female') {
-      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk', 'Ara_DoorOpen', 'Ara_EnterVehicle', 'Ara_ExitVehicle');
+      clipNames.push('Ara_Crouch', 'Ara_CrouchWalk', 'Ara_DoorOpen', 'Ara_EnterVehicle', 'Ara_ExitVehicle', 'Ara_GetUp_FaceUp', 'Ara_GetUp_FaceDown');
       clipDurations.Ara_Crouch = .96;
       clipDurations.Ara_CrouchWalk = .96;
       clipDurations.Ara_DoorOpen = .56;
       clipDurations.Ara_EnterVehicle = .78;
       clipDurations.Ara_ExitVehicle = .72;
+      clipDurations.Ara_GetUp_FaceUp = 1.16;
+      clipDurations.Ara_GetUp_FaceDown = 1.16;
     }
 
     const findClip = patterns => clipNames.find(name => patterns.some(pattern => pattern.test(name)));
@@ -410,7 +506,7 @@ export async function loadHeroCharacter(app, {
       instanceRoot.addComponent('anim', { activate: true });
       if (!instanceRoot.anim) throw new Error('PlayCanvas did not create animation component for ' + instanceName);
       if (characterId === 'ara-female') {
-        const customTracks = [...createAraCrouchTracks(instanceRoot), ...createAraTraversalTracks(instanceRoot)];
+        const customTracks = [...createAraCrouchTracks(instanceRoot), ...createAraTraversalTracks(instanceRoot), ...createAraGetUpTracks(instanceRoot)];
         const tracks = new Map();
         for (const animation of animationAssets) {
           const track = animation?.resource || animation;
@@ -610,15 +706,15 @@ export async function loadHeroCharacter(app, {
     // back to Ara's thigh and shin nodes. This runs from the controller after
     // PlayCanvas has evaluated the current animation pose.
     const legChains = {
-      left: { upper: leftUpperLeg, lower: leftLowerLeg, end: leftAnkleBone || leftFootBone },
-      right: { upper: rightUpperLeg, lower: rightLowerLeg, end: rightAnkleBone || rightFootBone }
+      left: { upper: leftUpperLeg, lower: leftLowerLeg, end: leftAnkleBone || leftFootBone, soleLocalNormal: null },
+      right: { upper: rightUpperLeg, lower: rightLowerLeg, end: rightAnkleBone || rightFootBone, soleLocalNormal: null }
     };
     const readPoint = node => {
       const p = node?.getPosition?.();
       return p ? [p.x, p.y, p.z] : null;
     };
     const vectorBetween = (from, to) => new pc.Vec3(to[0]-from[0], to[1]-from[1], to[2]-from[2]);
-    const applyLimbIK = (side, targetWorld, weight = 1) => {
+    const applyLimbIK = (side, targetWorld, weight = 1, surfaceNormal = null) => {
       const chain = legChains[side];
       const blend = Math.max(0, Math.min(1, Number(weight)));
       if (!chain?.upper || !chain?.lower || !chain?.end ||
@@ -649,11 +745,43 @@ export async function loadHeroCharacter(app, {
       const lowerTargetRotation = new pc.Quat().mul2(lowerDelta, lowerStartRotation);
       chain.lower.setRotation(new pc.Quat().slerp(lowerStartRotation, lowerTargetRotation, blend));
       root.syncHierarchy?.();
+
+      // Keep the sole aligned to the measured support plane. The source rig's
+      // foot bones do not share one guaranteed local up axis, so determine the
+      // most vertical local basis once and retain it for this leg.
+      if (Array.isArray(surfaceNormal) && surfaceNormal.length === 3 && surfaceNormal.every(Number.isFinite)) {
+        const normal = new pc.Vec3(surfaceNormal[0], surfaceNormal[1], surfaceNormal[2]);
+        if (normal.length() > 1e-4) {
+          normal.normalize();
+          const footStartRotation = chain.end.getRotation().clone();
+          if (!chain.soleLocalNormal) {
+            const axes = [new pc.Vec3(1,0,0), new pc.Vec3(0,1,0), new pc.Vec3(0,0,1)];
+            let best = axes[1], bestWorld = footStartRotation.transformVector(best.clone(), new pc.Vec3());
+            for (const axis of axes) {
+              const worldAxis = footStartRotation.transformVector(axis.clone(), new pc.Vec3());
+              if (Math.abs(worldAxis.y) > Math.abs(bestWorld.y)) { best = axis; bestWorld = worldAxis; }
+            }
+            chain.soleLocalNormal = best.clone().scale(bestWorld.y < 0 ? -1 : 1);
+          }
+          const currentNormal = footStartRotation.transformVector(chain.soleLocalNormal.clone(), new pc.Vec3()).normalize();
+          const footDelta = new pc.Quat().setFromDirections(currentNormal, normal);
+          const footTargetRotation = new pc.Quat().mul2(footDelta, footStartRotation);
+          chain.end.setRotation(new pc.Quat().slerp(footStartRotation, footTargetRotation, blend));
+          root.syncHierarchy?.();
+        }
+      }
       const actual = readPoint(chain.end);
       const error = actual ? Math.hypot(actual[0]-targetWorld[0], actual[1]-targetWorld[1], actual[2]-targetWorld[2]) : Infinity;
       return { applied: true, reachable: solved.reachable, error, target: targetWorld.slice(), actual, upperLength, lowerLength };
     };
 
+    const getFootSoleNormal = side => {
+      const chain = legChains[side];
+      if (!chain?.end || !chain.soleLocalNormal) return null;
+      root.syncHierarchy?.();
+      const normal = chain.end.getRotation().transformVector(chain.soleLocalNormal.clone(), new pc.Vec3()).normalize();
+      return [normal.x, normal.y, normal.z];
+    };
     const ragdollBoneNodes = () => ({
       hips: hipsBone, spine2: findBone('Spine2'), neck: findBone('Neck'), head: findBone('Head'),
       leftUpperArm, leftForeArm, leftHand: leftHandBone,
@@ -670,6 +798,10 @@ export async function loadHeroCharacter(app, {
         pose[key] = { position: [p.x, p.y, p.z], rotation: [q.x, q.y, q.z, q.w] };
       }
       return pose;
+    };
+    const applyBlendedRagdollPose = (fromPose, toPose, weight) => {
+      const blended = interpolateCharacterPose(fromPose, toPose, weight);
+      return blended ? applyRagdollPose(blended) : false;
     };
     const applyRagdollPose = pose => {
       if (!pose || typeof pose !== 'object') return false;
@@ -725,7 +857,7 @@ export async function loadHeroCharacter(app, {
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount, visualGroundOffset,
       morphNames: Array.from(morphNames).sort(),
       setFaceExpression, getRigSnapshot, getVisualBounds, getFootPositions, getLimbPositions, getSoleMarkerInfo, applyHipsWorldOffset, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
-      setProceduralPose, applyLimbIK, getRagdollPose, getRagdollBones: ragdollBoneNodes, applyRagdollPose, hasAnimation: name => clipNames.includes(name),
+      setProceduralPose, applyLimbIK, getFootSoleNormal, getRagdollPose, getRagdollBones: ragdollBoneNodes, applyRagdollPose, applyBlendedRagdollPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };
   } catch (error) {
