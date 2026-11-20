@@ -3,6 +3,7 @@ name: Naija City playable preview
 on:
   push:
     branches:
+      - main
       - feature/naija-city-drive-stage-01
       - feature/naija-city-stage-05-rpg-foundation
       - feature/naija-city-stage-06-third-person
