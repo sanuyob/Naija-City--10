@@ -427,8 +427,29 @@ export function createThirdPersonController(app, camera, canvas, {
     if (!hits.length) return null;
     const heights = hits.map(hit => hit.point[1]).sort((a, b) => a - b);
     const groundY = heights[Math.floor(heights.length / 2)];
-    const centerHit = hits.find(hit => hit.center) || hits.reduce((best, hit) => !best || Math.abs(hit.point[1] - groundY) < Math.abs(best.point[1] - groundY) ? hit : best, null);
-    return { groundY, normal: centerHit.normal.slice(), surface: centerHit.surface, id: centerHit.id, sampleCount: hits.length };
+    const centerHit = hits.find(hit => hit.center) || null;
+    // Keep the reported normal/surface tied to the same height cluster that
+    // selected the recovery position. At a stair edge, the center ray can hit
+    // a different tread from the median of the surrounding support samples.
+    const supportHit = hits.reduce((best, hit) => {
+      if (!best) return hit;
+      const distance = Math.abs(hit.point[1] - groundY);
+      const bestDistance = Math.abs(best.point[1] - groundY);
+      if (distance < bestDistance - 1e-4) return hit;
+      if (Math.abs(distance - bestDistance) <= 1e-4 && hit.center) return hit;
+      return best;
+    }, null);
+    return {
+      groundY,
+      normal: supportHit.normal.slice(),
+      surface: supportHit.surface,
+      id: supportHit.id,
+      sampleCount: hits.length,
+      supportMinY: heights[0],
+      supportMaxY: heights[heights.length - 1],
+      supportHeightRange: heights[heights.length - 1] - heights[0],
+      centerGroundY: centerHit ? centerHit.point[1] : null
+    };
   }
 
   function recoverFromDowned(options = {}) {
@@ -485,12 +506,16 @@ export function createThirdPersonController(app, camera, canvas, {
         groundY: recoveryPosition.y,
         groundNormal: recoverySupport?.normal || [0, 1, 0],
         supportSamples: recoverySupport?.sampleCount || 0,
-        supportSurface: recoverySupport?.surface || 'fallback'
+        supportSurface: recoverySupport?.surface || 'fallback',
+        supportHeightRange: recoverySupport?.supportHeightRange ?? 0,
+        supportMinY: recoverySupport?.supportMinY ?? recoveryPosition.y,
+        supportMaxY: recoverySupport?.supportMaxY ?? recoveryPosition.y,
+        centerGroundY: recoverySupport?.centerGroundY ?? null
       } : null;
       if (recoverySequence) {
         recoveryTimer = 0;
         setControlEnabled(false);
-        return { ...result, recoveryVariant, recoveryClip: selectedClip, proceduralGetUp: selectedClip.startsWith('Ara_GetUp_'), recoveryInProgress: true, recoveryGroundY: recoveryPosition.y, recoveryGroundNormal: recoverySupport?.normal || [0, 1, 0], recoverySupportSamples: recoverySupport?.sampleCount || 0, recoverySurface: recoverySupport?.surface || 'fallback' };
+        return { ...result, recoveryVariant, recoveryClip: selectedClip, proceduralGetUp: selectedClip.startsWith('Ara_GetUp_'), recoveryInProgress: true, recoveryGroundY: recoveryPosition.y, recoveryGroundNormal: recoverySupport?.normal || [0, 1, 0], recoverySupportSamples: recoverySupport?.sampleCount || 0, recoverySurface: recoverySupport?.surface || 'fallback', recoverySupportHeightRange: recoverySupport?.supportHeightRange ?? 0, recoverySupportMinY: recoverySupport?.supportMinY ?? recoveryPosition.y, recoverySupportMaxY: recoverySupport?.supportMaxY ?? recoveryPosition.y, recoveryCenterGroundY: recoverySupport?.centerGroundY ?? null };
       }
     }
     velocity.set(0, 0, 0);
@@ -1192,7 +1217,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return true;
   }
 
-  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration,groundY:recoverySequence.groundY,groundNormal:recoverySequence.groundNormal,supportSamples:recoverySequence.supportSamples,supportSurface:recoverySequence.supportSurface}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
+  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration,groundY:recoverySequence.groundY,groundNormal:recoverySequence.groundNormal,supportSamples:recoverySequence.supportSamples,supportSurface:recoverySequence.supportSurface,supportHeightRange:recoverySequence.supportHeightRange,supportMinY:recoverySequence.supportMinY,supportMaxY:recoverySequence.supportMaxY,centerGroundY:recoverySequence.centerGroundY}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy, applyGroundedFootLock, resetFootLock,
@@ -1207,6 +1232,7 @@ export function createThirdPersonController(app, camera, canvas, {
     getVitalsState: vitals.getState,
     getRagdollState: () => ragdollActive ? (physics?.getRagdollState?.() || lastRagdollState) : { active: false, bodyCount: 0, constraintCount: 0 },
     getRecoveryState: () => recoverySequence ? { active:true, variant:recoverySequence.variant, clip:recoverySequence.clip, phase:recoverySequence.phase, elapsed:recoverySequence.elapsed, duration:recoverySequence.clipDuration } : { active:false },
+    probeRecoverySupportForSmoke: (x, pelvisY, z, yaw = facingYaw) => probeRecoverySupport(x, pelvisY, z, yaw),
     getFacialAnimationState: facialAnimation.getState,
     setCrouched,
     setControlEnabled,
