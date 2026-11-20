@@ -208,7 +208,11 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     body.setLinearVelocity(scratchVelocity);
     body.clearForces();
     body.activate(true);
-    world.updateSingleAabb(body);
+    // During a ragdoll, the player capsule is deliberately removed from the
+    // Bullet world. Updating its AABB while it has no broadphase proxy corrupts
+    // subsequent world queries. setPlayerEnabled(true) performs this update
+    // after it re-adds the capsule.
+    if (playerBodyEnabled) world.updateSingleAabb(body);
   }
 
   function step(actor, desired = [0, 0, 0], dt = 1 / 60) {
@@ -407,6 +411,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
         Ammo, world, rig,
         initialVelocity: Array.isArray(options.velocity) ? options.velocity : [0, 0, 0],
         boneVelocities: options.boneVelocities || {},
+        impactVelocity: Array.isArray(options.impactVelocity) ? options.impactVelocity : [0, 0, 0],
         handoffDuration: options.handoffDuration ?? 0.16
       });
       setPlayerEnabled(false);

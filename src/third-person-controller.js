@@ -325,7 +325,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return false;
   }
 
-  function startCharacterRagdoll() {
+  function startCharacterRagdoll({ impactVelocity = [0, 0, 0] } = {}) {
     const rigPose = activeHeroCharacter?.getRagdollPose?.();
     const hipPosition = rigPose?.hips?.position;
     const playerPosition = player.getPosition();
@@ -339,6 +339,7 @@ export function createThirdPersonController(app, camera, canvas, {
     const result = physics?.startRagdoll?.(activeHeroCharacter, {
       velocity: [velocity.x, velocity.y, velocity.z],
       boneVelocities: animationBoneVelocities,
+      impactVelocity,
       handoffDuration: 0.16
     });
     if (result?.active) {
@@ -377,8 +378,13 @@ export function createThirdPersonController(app, camera, canvas, {
     const direction = Array.isArray(options.direction) ? options.direction : [0, 0, 0];
     const directionLength = Math.hypot(direction[0] || 0, direction[2] || 0) || 1;
     const impulse = Math.max(0, Math.min(3.5, Number(options.knockback ?? 0.8) || 0));
-    velocity.x += (direction[0] || 0) / directionLength * impulse;
-    velocity.z += (direction[2] || 0) / directionLength * impulse;
+    const impactVelocity = [
+      (direction[0] || 0) / directionLength * impulse,
+      0,
+      (direction[2] || 0) / directionLength * impulse
+    ];
+    velocity.x += impactVelocity[0];
+    velocity.z += impactVelocity[2];
     if (physics?.teleport) physics.teleport([p.x, p.y, p.z], [velocity.x, velocity.y, velocity.z]);
     resetFootLock();
     if (!result.downed) {
@@ -389,7 +395,7 @@ export function createThirdPersonController(app, camera, canvas, {
       actionTimer = 0;
       actionClip = '';
       setControlEnabled(false);
-      const ragdoll = startCharacterRagdoll();
+      const ragdoll = startCharacterRagdoll({ impactVelocity });
       if (!ragdoll.active) {
         // Keep the previous non-physics downed fallback on unsupported rigs.
         transitionHeroClip(availableHeroClips.has('Ara_Crouch') ? 'Ara_Crouch' : heroDefaults.idle, 0.08);
@@ -403,12 +409,31 @@ export function createThirdPersonController(app, camera, canvas, {
     return vitals.heal(amount, options);
   }
 
+  function probeRecoverySupport(x, pelvisY, z, yawDegrees) {
+    const yaw = (Number(yawDegrees) || 0) * Math.PI / 180;
+    const forward = [Math.sin(yaw), Math.cos(yaw)];
+    const right = [Math.cos(yaw), -Math.sin(yaw)];
+    const offsets = [[0, 0], [right[0] * 0.16, right[1] * 0.16], [-right[0] * 0.16, -right[1] * 0.16], [forward[0] * 0.18, forward[1] * 0.18], [-forward[0] * 0.18, -forward[1] * 0.18]];
+    const hits = offsets.map(([dx, dz]) => {
+      const px = x + dx, pz = z + dz;
+      const hit = physics?.raycast?.([px, pelvisY + 1.8, pz], [px, pelvisY - 3.2, pz]);
+      if (!hit || !Number.isFinite(hit.point?.[1]) || !Array.isArray(hit.normal) || hit.normal[1] < 0.62) return null;
+      return { point: hit.point, normal: hit.normal, surface: hit.surface, id: hit.id, center: Math.abs(dx) + Math.abs(dz) < 1e-5 };
+    }).filter(Boolean);
+    if (!hits.length) return null;
+    const heights = hits.map(hit => hit.point[1]).sort((a, b) => a - b);
+    const groundY = heights[Math.floor(heights.length / 2)];
+    const centerHit = hits.find(hit => hit.center) || hits.reduce((best, hit) => !best || Math.abs(hit.point[1] - groundY) < Math.abs(best.point[1] - groundY) ? hit : best, null);
+    return { groundY, normal: centerHit.normal.slice(), surface: centerHit.surface, id: centerHit.id, sampleCount: hits.length };
+  }
+
   function recoverFromDowned(options = {}) {
     const result = vitals.recover(options);
     if (!result.applied) return result;
     let recoveryPosition = player.getPosition();
     let recoveryYaw = facingYaw;
     let recoveryPose = null;
+    let recoverySupport = null;
     let recoveryVariant = 'face-up';
     if (ragdollActive) {
       const state = physics?.getRagdollState?.() || lastRagdollState || {};
@@ -418,9 +443,10 @@ export function createThirdPersonController(app, camera, canvas, {
       if (Array.isArray(pelvis) && pelvis.length === 3) {
         const x = pelvis[0] - ragdollRootOffset[0];
         const z = pelvis[2] - ragdollRootOffset[2];
-        const ground = physics?.raycast?.([x, pelvis[1] + 1.8, z], [x, pelvis[1] - 3.0, z]);
-        const groundY = Number.isFinite(ground?.point?.[1]) ? ground.point[1] : (Number(physics?.getState?.().groundY) || 0);
+        const support = probeRecoverySupport(x, pelvis[1], z, recoveryYaw);
+        const groundY = Number.isFinite(support?.groundY) ? support.groundY : (Number(physics?.getState?.().groundY) || 0);
         recoveryPosition = new pc.Vec3(x, groundY, z);
+        recoverySupport = support;
       }
       recoveryYaw = deriveRecoveryYaw(recoveryPose, recoveryYaw);
       physics?.stopRagdoll?.({ enablePlayer: false });
@@ -451,12 +477,16 @@ export function createThirdPersonController(app, camera, canvas, {
         sourcePose: recoveryPose,
         elapsed: 0,
         blendDuration: 0.18,
-        clipDuration: Math.max(0.3, clipDuration)
+        clipDuration: Math.max(0.3, clipDuration),
+        groundY: recoveryPosition.y,
+        groundNormal: recoverySupport?.normal || [0, 1, 0],
+        supportSamples: recoverySupport?.sampleCount || 0,
+        supportSurface: recoverySupport?.surface || 'fallback'
       } : null;
       if (recoverySequence) {
         recoveryTimer = 0;
         setControlEnabled(false);
-        return { ...result, recoveryVariant, recoveryClip: selectedClip, proceduralGetUp: selectedClip.startsWith('Ara_GetUp_'), recoveryInProgress: true };
+        return { ...result, recoveryVariant, recoveryClip: selectedClip, proceduralGetUp: selectedClip.startsWith('Ara_GetUp_'), recoveryInProgress: true, recoveryGroundY: recoveryPosition.y, recoveryGroundNormal: recoverySupport?.normal || [0, 1, 0], recoverySupportSamples: recoverySupport?.sampleCount || 0, recoverySurface: recoverySupport?.surface || 'fallback' };
       }
     }
     velocity.set(0, 0, 0);
@@ -803,7 +833,7 @@ export function createThirdPersonController(app, camera, canvas, {
         const finishLadderBody=(position)=>{
           physics?.setGravity?.(traversalMotion.restoreGravity);
           if(traversalMotion.mode==='ladder'&&traversalMotion.playerBodyWasEnabled){
-            physics?.setPlayerEnabled?.(true);
+            if (options.enablePhysicsBody !== false) physics?.setPlayerEnabled?.(true);
             physics?.teleport?.(position,[0,0,0]);
           }
         };
@@ -1073,6 +1103,13 @@ export function createThirdPersonController(app, camera, canvas, {
     facingYaw = ((Number(yaw) || 0) + 540) % 360 - 180;
     player.setEulerAngles(0, facingYaw, 0);
     velocity.set(0, 0, 0);
+    // Teleports invalidate world-space pose deltas. Clearing these samples
+    // prevents the next animation tick from mistaking the teleport for bone
+    // momentum and injecting an extreme velocity into the Bullet ragdoll.
+    lastAnimationPoseSample = null;
+    animationBoneVelocities = {};
+    animationPoseSampleClock = 0;
+    lastAnimationPoseSampleClock = 0;
     smoothedMoveSpeed = 0;
     smoothedTurnInput = 0;
     grounded = true;
@@ -1133,7 +1170,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return setPosition(position, yaw);
   }
 
-  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
+  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration,groundY:recoverySequence.groundY,groundNormal:recoverySequence.groundNormal,supportSamples:recoverySequence.supportSamples,supportSurface:recoverySequence.supportSurface}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy, applyGroundedFootLock, resetFootLock,

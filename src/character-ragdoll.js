@@ -51,7 +51,7 @@ const readNode = node => {
  * It intentionally uses only the main articulated body chains (not fingers).
  * All constraint pivots are calculated from the live animated pose.
  */
-export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0, 0, 0], boneVelocities = {}, handoffDuration = 0.16 } = {}) {
+export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0, 0, 0], impactVelocity = [0, 0, 0], boneVelocities = {}, handoffDuration = 0.16 } = {}) {
   if (!Ammo || !world || !rig?.getRagdollBones || !rig?.applyRagdollPose) {
     throw new TypeError('Ragdoll needs Ammo, the player Bullet world and an Ara rig adapter');
   }
@@ -77,6 +77,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
   const bodies = new Map();
   const segments = [];
   const constraints = [];
+  const jointRecords = [];
   let disposed = false;
   let stepCount = 0;
   let handoffElapsed = 0;
@@ -100,9 +101,44 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     body.setUserIndex(2300 + segments.length);
     const sampledMotion = boneVelocities?.[boneKey] || {};
     const angularVelocity = Array.isArray(sampledMotion.angular) ? sampledMotion.angular.map(v => Number(v) || 0) : [0, 0, 0];
-    const boneLinear = Array.isArray(sampledMotion.linear) ? sampledMotion.linear.map(v => Number(v) || 0) : initialVelocity.map(v => Number(v) || 0);
+    const hasSampledLinear = Array.isArray(sampledMotion.linear);
+    const boneLinear = hasSampledLinear ? sampledMotion.linear.map(v => Number(v) || 0) : initialVelocity.map(v => Number(v) || 0);
     const centerOffset = sub(center, bonePose.position);
-    const centerVelocity = add(boneLinear, cross(angularVelocity, centerOffset));
+    const impact = hasSampledLinear && Array.isArray(impactVelocity)
+      ? impactVelocity.map(v => Number(v) || 0) : [0, 0, 0];
+    // A stale/fast animation sample may point opposite to the actual hit. Keep
+    // the pelvis's inherited component bounded against the requested impact so
+    // the physical handoff cannot reverse the knockback direction. Other body
+    // segments retain their sampled pose momentum for a natural fall response.
+    if (boneKey === 'hips') {
+      const impactSpeed = length(impact);
+      if (impactSpeed > 1e-4) {
+        const impactDirection = scale(impact, 1 / impactSpeed);
+        const inheritedAlongImpact = boneLinear[0] * impactDirection[0] + boneLinear[1] * impactDirection[1] + boneLinear[2] * impactDirection[2];
+        const minimumInheritedAlongImpact = -impactSpeed * 0.25;
+        if (inheritedAlongImpact < minimumInheritedAlongImpact) {
+          const correction = minimumInheritedAlongImpact - inheritedAlongImpact;
+          boneLinear[0] += impactDirection[0] * correction;
+          boneLinear[1] += impactDirection[1] * correction;
+          boneLinear[2] += impactDirection[2] * correction;
+        }
+      }
+    }
+    const centerVelocity = add(add(boneLinear, cross(angularVelocity, centerOffset)), impact);
+    if (boneKey === 'hips') {
+      const impactSpeed = length(impact);
+      if (impactSpeed > 1e-4) {
+        const impactDirection = scale(impact, 1 / impactSpeed);
+        const projectedVelocity = centerVelocity[0] * impactDirection[0] + centerVelocity[1] * impactDirection[1] + centerVelocity[2] * impactDirection[2];
+        const minimumProjectedVelocity = impactSpeed * 0.75;
+        if (projectedVelocity < minimumProjectedVelocity) {
+          const correction = minimumProjectedVelocity - projectedVelocity;
+          centerVelocity[0] += impactDirection[0] * correction;
+          centerVelocity[1] += impactDirection[1] * correction;
+          centerVelocity[2] += impactDirection[2] * correction;
+        }
+      }
+    }
     const maxSpeed = length(centerVelocity);
     if (maxSpeed > 9) centerVelocity.splice(0, 3, ...scale(centerVelocity, 9 / maxSpeed));
     body.setLinearVelocity(vector(centerVelocity));
@@ -112,7 +148,7 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const inverse = quatInverse(bodyRotation);
     const offsetPosition = rotate(inverse, sub(bonePose.position, center));
     const offsetRotation = quatNormalize(quatMultiply(inverse, bonePose.rotation));
-    const record = { name, boneKey, node: bones[boneKey], body, center: center.slice(), bodyRotation: bodyRotation.slice(), offsetPosition, offsetRotation };
+    const record = { name, boneKey, node: bones[boneKey], body, mass, center: center.slice(), bodyRotation: bodyRotation.slice(), offsetPosition, offsetRotation };
     bodies.set(name, record);
     segments.push(record);
     return record;
@@ -138,9 +174,11 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const frameA = transform(localA, qA);
     const frameB = transform(localB, qB);
     const joint = own(new Ammo.btConeTwistConstraint(bodyA.body, bodyB.body, frameA, frameB));
-    joint.setLimit(limits[0], limits[1], limits[2]);
+    const softness = 0.84, biasFactor = 0.28, relaxationFactor = 1.0;
+    joint.setLimit(limits[0], limits[1], limits[2], softness, biasFactor, relaxationFactor);
     world.addConstraint(joint, true);
     constraints.push(joint);
+    jointRecords.push({ name, type: 'cone-twist', limits: limits.slice(), softness, biasFactor, relaxationFactor, joint });
     return joint;
   };
 
@@ -151,9 +189,11 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const axisA = vector(normalize(rotate(invA, axisWorld)));
     const axisB = vector(normalize(rotate(invB, axisWorld)));
     const joint = own(new Ammo.btHingeConstraint(bodyA.body, bodyB.body, pivotA, pivotB, axisA, axisB, true));
-    joint.setLimit(low, high, 0.9, 0.3, 1);
+    const softness = 0.9, biasFactor = 0.3, relaxationFactor = 1.0;
+    joint.setLimit(low, high, softness, biasFactor, relaxationFactor);
     world.addConstraint(joint, true);
     constraints.push(joint);
+    jointRecords.push({ name, type: 'hinge', limits: [low, high], softness, biasFactor, relaxationFactor, joint });
     return joint;
   };
 
@@ -179,34 +219,34 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     const pelvis = makeNodeBody(
       'pelvis', 'hips',
       new Ammo.btBoxShape(vector([0.145, 0.095, 0.115])),
-      8.5, hipsPose.position, hipsPose.rotation, hipsPose
+      13.5, hipsPose.position, hipsPose.rotation, hipsPose
     );
     // The torso proxy must span pelvis-to-upper-spine; using Spine2-to-Neck
     // leaves most of the chest unsupported and puts the spine joint at the wrong end.
-    const chest = capsuleBody('chest', 'spine2', 'spine2', 0.145, 12.5, 'hips');
+    const chest = capsuleBody('chest', 'spine2', 'spine2', 0.145, 20.5, 'hips');
     const headPose = readNode(bones.head);
     const headCenter = add(headPose.position, rotate(headPose.rotation, [0, 0.065, 0]));
-    const head = makeNodeBody('head', 'head', new Ammo.btSphereShape(0.115), 4, headCenter, headPose.rotation, headPose);
+    const head = makeNodeBody('head', 'head', new Ammo.btSphereShape(0.115), 5.5, headCenter, headPose.rotation, headPose);
 
-    const leftUpperArm = capsuleBody('left-upper-arm', 'leftUpperArm', 'leftForeArm', 0.062, 1.8);
-    const leftForeArm = capsuleBody('left-forearm', 'leftForeArm', 'leftHand', 0.052, 1.2);
-    const rightUpperArm = capsuleBody('right-upper-arm', 'rightUpperArm', 'rightForeArm', 0.062, 1.8);
-    const rightForeArm = capsuleBody('right-forearm', 'rightForeArm', 'rightHand', 0.052, 1.2);
-    const leftThigh = capsuleBody('left-thigh', 'leftThigh', 'leftShin', 0.088, 4.7);
-    const leftShin = capsuleBody('left-shin', 'leftShin', 'leftFoot', 0.068, 3.3);
-    const rightThigh = capsuleBody('right-thigh', 'rightThigh', 'rightShin', 0.088, 4.7);
-    const rightShin = capsuleBody('right-shin', 'rightShin', 'rightFoot', 0.068, 3.3);
+    const leftUpperArm = capsuleBody('left-upper-arm', 'leftUpperArm', 'leftForeArm', 0.062, 2.4);
+    const leftForeArm = capsuleBody('left-forearm', 'leftForeArm', 'leftHand', 0.052, 1.4);
+    const rightUpperArm = capsuleBody('right-upper-arm', 'rightUpperArm', 'rightForeArm', 0.062, 2.4);
+    const rightForeArm = capsuleBody('right-forearm', 'rightForeArm', 'rightHand', 0.052, 1.4);
+    const leftThigh = capsuleBody('left-thigh', 'leftThigh', 'leftShin', 0.088, 8.1);
+    const leftShin = capsuleBody('left-shin', 'leftShin', 'leftFoot', 0.068, 4.35);
+    const rightThigh = capsuleBody('right-thigh', 'rightThigh', 'rightShin', 0.088, 8.1);
+    const rightShin = capsuleBody('right-shin', 'rightShin', 'rightFoot', 0.068, 4.35);
 
-    ballJoint('spine', pelvis, chest, getPoint(bones.hips), [0.55, 0.48, 0.42]);
-    ballJoint('neck', chest, head, getPoint(bones.neck), [0.45, 0.4, 0.35]);
-    ballJoint('left-shoulder', chest, leftUpperArm, getPoint(bones.leftUpperArm), [1.05, 0.9, 0.75]);
-    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.12, 2.25);
-    ballJoint('right-shoulder', chest, rightUpperArm, getPoint(bones.rightUpperArm), [1.05, 0.9, 0.75]);
-    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.12, 2.25);
-    ballJoint('left-hip', pelvis, leftThigh, getPoint(bones.leftThigh), [0.9, 0.75, 0.65]);
-    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.12, 2.38);
-    ballJoint('right-hip', pelvis, rightThigh, getPoint(bones.rightThigh), [0.9, 0.75, 0.65]);
-    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.12, 2.38);
+    ballJoint('spine', pelvis, chest, getPoint(bones.hips), [0.50, 0.42, 0.36]);
+    ballJoint('neck', chest, head, getPoint(bones.neck), [0.38, 0.34, 0.28]);
+    ballJoint('left-shoulder', chest, leftUpperArm, getPoint(bones.leftUpperArm), [1.45, 1.25, 0.90]);
+    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.12, 2.42);
+    ballJoint('right-shoulder', chest, rightUpperArm, getPoint(bones.rightUpperArm), [1.45, 1.25, 0.90]);
+    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.12, 2.42);
+    ballJoint('left-hip', pelvis, leftThigh, getPoint(bones.leftThigh), [1.00, 0.85, 0.72]);
+    hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.12, 2.50);
+    ballJoint('right-hip', pelvis, rightThigh, getPoint(bones.rightThigh), [1.00, 0.85, 0.72]);
+    hingeJoint('right-knee', rightThigh, rightShin, getPoint(bones.rightShin), getHingeAxis('rightThigh','rightShin','rightFoot', readNode(bones.rightThigh).rotation), -0.12, 2.50);
 
 
   } catch (error) {
@@ -279,11 +319,23 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     getState() {
       const pelvisRecord = bodies.get('pelvis');
       const root = pelvisRecord ? readBodyTransform(pelvisRecord) : null;
-      let maxBodySpeed = 0;
+      let maxBodySpeed = 0, maxAngularSpeed = 0;
       for (const record of segments) {
         const velocity = record.body.getLinearVelocity?.();
+        const angular = record.body.getAngularVelocity?.();
         if (velocity) maxBodySpeed = Math.max(maxBodySpeed, Math.hypot(velocity.x(), velocity.y(), velocity.z()));
+        if (angular) maxAngularSpeed = Math.max(maxAngularSpeed, Math.hypot(angular.x(), angular.y(), angular.z()));
       }
+      const jointConfigurations = jointRecords.map(record => {
+        let angle = null, appliedImpulse = null;
+        try { if (record.type === 'hinge' && typeof record.joint.getHingeAngle === 'function') angle = record.joint.getHingeAngle(); } catch {}
+        try { if (typeof record.joint.getAppliedImpulse === 'function') appliedImpulse = record.joint.getAppliedImpulse(); } catch {}
+        return { name: record.name, type: record.type, limits: record.limits.slice(), softness: record.softness, biasFactor: record.biasFactor, relaxationFactor: record.relaxationFactor, angle, appliedImpulse };
+      });
+      const hingeLimitViolations = jointConfigurations.filter(record => record.type === 'hinge' && Number.isFinite(record.angle) &&
+        (record.angle < record.limits[0] - 0.03 || record.angle > record.limits[1] + 0.03)).map(record => record.name);
+      const bodyMasses = Object.fromEntries(segments.map(record => [record.name, record.mass]));
+      const rootVelocity = pelvisRecord?.body.getLinearVelocity?.();
       return {
         active: !disposed,
         bodyCount: segments.length,
@@ -293,6 +345,12 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
         handoffWeight: getHandoffWeight(),
         handoffDuration: handoffSeconds,
         maxBodySpeed,
+        maxAngularSpeed,
+        rootLinearVelocity: rootVelocity ? [rootVelocity.x(), rootVelocity.y(), rootVelocity.z()] : null,
+        totalMass: segments.reduce((sum, record) => sum + record.mass, 0),
+        bodyMasses,
+        jointConfigurations,
+        hingeLimitViolations,
         rootPosition: root?.position || null,
         rootRotation: root?.rotation || null,
         bodyNames: segments.map(item => item.name)
