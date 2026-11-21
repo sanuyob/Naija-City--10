@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { mkdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
@@ -49,6 +50,8 @@ try {
   ];
 
   const report = [];
+  const visualAuditDir = '/tmp/naija-city-visual-audit/gidi-districts';
+  mkdirSync(visualAuditDir, { recursive: true });
   for (const point of points) {
     const result = await page.evaluate(async ({ x, z }) => {
       const g = window.__NAIJA_GAME__;
@@ -81,6 +84,14 @@ try {
     assert.ok(result.driven.wheelContacts >= 3, `${point.name}: vehicle lost wheel contact while driving: ${JSON.stringify(result)}`);
     assert.ok(result.driven.speedKmh > 5, `${point.name}: vehicle did not accelerate: ${JSON.stringify(result)}`);
     assert.ok(result.deltaMetres > 1, `${point.name}: vehicle did not move along the road: ${JSON.stringify(result)}`);
+    await page.evaluate(({ x, z, roadY }) => {
+      const g = window.__NAIJA_GAME__;
+      g.debugSetVehiclePositionForSmoke([1000, 12, 1000], 0);
+      g.debugSetCameraForSmoke([x + 46, roadY + 28, z + 54], [x, roadY + 1.5, z]);
+    }, { ...point, roadY: result.hit.point[1] });
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: `${visualAuditDir}/${point.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png` });
+    await page.evaluate(() => { window.__NAIJA_RPG_PAUSED__ = false; });
     report.push({ name: point.name, district: point.district, surface: result.hit.surface, roadHeight: Number(result.hit.point[1].toFixed(3)), wheelContacts: result.driven.wheelContacts, speedKmh: result.driven.speedKmh, distanceMetres: Number(result.deltaMetres.toFixed(2)), loadedCells: result.streamed.loadedCells });
   }
   assert.deepEqual(errors, [], `Browser errors: ${errors.join('; ')}`);

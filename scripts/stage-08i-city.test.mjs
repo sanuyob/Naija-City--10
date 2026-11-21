@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { createStage08ICityDistrictExpansion } from '../src/stage-08i-ikeja-city-expansion.js';
+import { createStage08GIkejaStreetLife } from '../src/stage-08g-ikeja-street-life.js';
 
 let nextGuid = 0;
 const entities = [];
@@ -70,9 +71,9 @@ const mainRoad = district.roads.find(road => road.name === 'collector-east');
 const crossRoad = district.roads.find(road => road.name === 'cross-310');
 assert.ok(mainRoad && crossRoad, 'collector and cross-street network must exist');
 assert.ok(Math.abs(mainRoad.position[0]) < 60, 'collector should sit inside the expanded neighbourhood bounds');
-assert.equal(mainRoad.dimensions[0], 9.5, 'collector roads should be widened to 9.5m');
-assert.equal(crossRoad.dimensions[2], 9.5, 'cross streets should be widened to 9.5m');
-assert.deepEqual(district.roadNetwork.roadWidthsMetres, { collector: 9.5, outerResidential: 9, crossStreet: 9.5 });
+assert.equal(mainRoad.dimensions[0], 11, 'collector roads should be widened to 11m');
+assert.equal(crossRoad.dimensions[2], 11, 'cross streets should be widened to 11m');
+assert.deepEqual(district.roadNetwork.roadWidthsMetres, { collector: 11, outerResidential: 10, crossStreet: 11 });
 assert.ok(district.groundColliders.some(item => item.id === 'stage08i-road-outer-residential-west'));
 assert.ok(district.groundColliders.some(item => item.id === 'stage08i-road-cross-438'));
 assert.equal(district.treesRemoved, 2);
@@ -84,9 +85,9 @@ assert.equal(district.mainAvenueWayfindingMovedToVerge, true);
 const roadCorridors = [
   { name: 'Ikeja approach', minX: -7, maxX: 7, minZ: 164, maxZ: 246 },
   { name: 'Ikeja commercial avenue', minX: -9, maxX: 9, minZ: 235, maxZ: 385 },
-  ...[-45,45].map(x => ({ name: 'collector ' + x, minX: x-4.75, maxX: x+4.75, minZ: 190, maxZ: 450 })),
-  ...[-83,83].map(x => ({ name: 'residential ' + x, minX: x-4.5, maxX: x+4.5, minZ: 195, maxZ: 445 })),
-  ...[246,310,374,438].map(z => ({ name: 'cross street ' + z, minX: -95, maxX: 95, minZ: z-4.75, maxZ: z+4.75 }))
+  ...[-45,45].map(x => ({ name: 'collector ' + x, minX: x-5.5, maxX: x+5.5, minZ: 190, maxZ: 450 })),
+  ...[-83,83].map(x => ({ name: 'residential ' + x, minX: x-5, maxX: x+5, minZ: 195, maxZ: 445 })),
+  ...[246,310,374,438].map(z => ({ name: 'cross street ' + z, minX: -95, maxX: 95, minZ: z-5.5, maxZ: z+5.5 }))
 ];
 const laneIntrusions = [];
 for (const proxy of district.collisionProxies) {
@@ -104,6 +105,45 @@ for (const proxy of district.collisionProxies) {
 assert.deepEqual(laneIntrusions, [], 'solid Ikeja objects must stay clear of all widened road corridors: ' + JSON.stringify(laneIntrusions));
 assert.ok(crossRoad.dimensions[0] >= 180, 'cross street should reach both outer access streets');
 assert.ok(entities.every(entity => entity.name.startsWith('stage08i-')), 'new entities must be stage-tagged by name');
+
+// Audit the inherited commercial corridor too: shop shells, POS kiosk, stalls,
+// poles and streetlights must remain outside the 14m approach and 18m avenue.
+const commercialEntities = [];
+const commercialApp = {
+  batcher: { addGroup(name, dynamic, maxAabbSize) { return { id: 82, name }; } },
+  root: { findByTag() { return commercialEntities; } }
+};
+const commercialBox = (name, position, scale, mat) => {
+  const entity = {
+    name, position, scale, mat, render: {},
+    tags: { add() {} },
+    setEulerAngles(...angles) { this.rotation = angles; },
+    getPosition() { return { x: this.position[0], y: this.position[1], z: this.position[2] }; },
+    getLocalScale() { return { x: this.scale[0], y: this.scale[1], z: this.scale[2] }; },
+    getEulerAngles() { return { x: this.rotation?.[0] || 0, y: this.rotation?.[1] || 0, z: this.rotation?.[2] || 0 }; },
+    getGuid() { return 'g-' + (++nextGuid); }
+  };
+  commercialEntities.push(entity);
+  return entity;
+};
+const commercial = createStage08GIkejaStreetLife({ app: commercialApp, box: commercialBox, material });
+const commercialCorridors = [
+  { name: 'Ikeja 14m approach', minX: -7, maxX: 7, minZ: 164, maxZ: 246 },
+  { name: 'Ikeja 18m avenue', minX: -9, maxX: 9, minZ: 235, maxZ: 385 }
+];
+const commercialIntrusions = [];
+for (const proxy of commercial.collisionProxies) {
+  const [x,,z] = proxy.position, [hx,,hz] = proxy.halfExtents;
+  const yaw = (Number(proxy.rotationY) || 0) * Math.PI / 180;
+  const halfX = Math.abs(Math.cos(yaw))*hx + Math.abs(Math.sin(yaw))*hz;
+  const halfZ = Math.abs(Math.sin(yaw))*hx + Math.abs(Math.cos(yaw))*hz;
+  for (const road of commercialCorridors) {
+    if (x+halfX > road.minX+0.05 && x-halfX < road.maxX-0.05 && z+halfZ > road.minZ+0.05 && z-halfZ < road.maxZ-0.05) {
+      commercialIntrusions.push({ prop: proxy.id, road: road.name });
+    }
+  }
+}
+assert.deepEqual(commercialIntrusions, [], 'Ikeja commercial props/walls must stay outside both widened roads: ' + JSON.stringify(commercialIntrusions));
 console.log(JSON.stringify({
   stage: district.stage,
   roads: district.roads.length,
@@ -116,5 +156,7 @@ console.log(JSON.stringify({
   collisionProxies: district.collisionProxies.length,
   groundColliders: district.groundColliders.length,
   staticBatching: district.staticBatching,
-  overlapAudit: 'passed'
+  overlapAudit: 'passed',
+  inheritedCommercialCorridorProxies: commercial.collisionProxies.length,
+  commercialLaneClearanceAudit: 'passed'
 }, null, 2));

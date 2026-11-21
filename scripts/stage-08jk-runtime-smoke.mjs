@@ -45,16 +45,25 @@ try {
       stage08JTextureMapCounts: Object.fromEntries(Object.entries(pbr).map(([family, maps]) => [family, maps.length])),
       batches: g.getStaticBatchState?.(),
       diagnostics: window.__NAIJA_RENDER_DIAGNOSTICS__,
+      visualSettings: g.getVisualSettings?.(),
+      deviceProfile: g.getStage08FProfile?.(),
       firstSpawn: {
         player: g.getPlayerState(),
-        ground: g.getGroundProbe?.([0, 2, -40], [0, -2, -40]),
+        ground: g.getGroundProbe?.([-6.1, 2, -40], [-6.1, -2, -40]),
         camera: g.getCameraPosition?.()
       }
     };
   });
-  assert.ok(Math.abs(local.firstSpawn.player.position[0]) < 0.1 && Math.abs(local.firstSpawn.player.position[2] + 40) < 0.1, 'first spawn should be on the audited Yaba street marker');
+  assert.ok(Math.abs(local.firstSpawn.player.position[0] + 6.1) < 0.1 && Math.abs(local.firstSpawn.player.position[1] - 0.12) < 0.1 && Math.abs(local.firstSpawn.player.position[2] + 40) < 0.1, 'first spawn should be on the west Yaba pedestrian sidewalk');
   assert.equal(local.firstSpawn.player.grounded, true);
-  assert.equal(local.firstSpawn.ground?.surface, 'asphalt');
+  assert.equal(local.firstSpawn.ground?.surface, 'concrete');
+  assert.equal(local.firstSpawn.ground?.id, 'yaba-concrete-sidewalk-west');
+  assert.equal(local.visualSettings?.toneMapping, 'ACES2');
+  assert.ok(Math.abs(local.visualSettings?.exposure - 0.88) < 0.001);
+  assert.deepEqual(local.visualSettings?.ambientLight?.slice(0, 3), [0.24, 0.26, 0.28]);
+  assert.ok(local.deviceProfile?.sampleCount > 0, 'Stage 08F device profiler should collect frame samples');
+  assert.ok(local.deviceProfile?.rendering?.averageDrawCalls > 0, 'Stage 08F should report average draw calls');
+  assert.ok(local.deviceProfile?.city?.trafficActors > 0, 'Stage 08F should report traffic actors');
   assert.ok(local.firstSpawn.camera?.every(Number.isFinite));
   assert.equal(local.stage08J?.stage, '08J');
   assert.equal(local.stage08J?.connector?.lengthMetres, 79);
@@ -114,6 +123,8 @@ try {
       generatedBatches: local.batches?.stage08K?.batches
     },
     firstSpawn: local.firstSpawn,
+    visualSettings: local.visualSettings,
+    deviceProfile: { sampleCount: local.deviceProfile.sampleCount, sampledDurationMs: local.deviceProfile.sampledDurationMs, averageDrawCalls: local.deviceProfile.rendering.averageDrawCalls, peakDrawCalls: local.deviceProfile.rendering.peakDrawCalls, averageGpuResourceMiB: local.deviceProfile.rendering.averageGpuResourceMiB },
     playerWorldColliders: local.playerPhysics.worldColliderCount,
     connectorGroundContact: local.connectorProbe.point,
     utilityCabinetCollision: local.utilityBoxProbe.point,

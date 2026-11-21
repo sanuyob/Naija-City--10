@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { mkdirSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
@@ -29,17 +30,20 @@ try {
     return {
       position: player.position,
       grounded: player.grounded,
-      ground: g.getGroundProbe([0, 2, -40], [0, -2, -40]),
-      camera: g.getCameraPosition()
+      ground: g.getGroundProbe([-6.1, 2, -40], [-6.1, -2, -40]),
+      spawn: g.firstSpawnPosition,
+      camera: g.getCameraPosition(),
+      visualSettings: g.getVisualSettings()
     };
   });
-  assert.ok(Math.abs(firstSpawn.position[0]) < 0.1 && Math.abs(firstSpawn.position[2] + 40) < 0.1,
-    `Ara should start at the audited Yaba street marker: ${JSON.stringify(firstSpawn)}`);
+  assert.ok(Math.abs(firstSpawn.position[0] + 6.1) < 0.1 && Math.abs(firstSpawn.position[1] - 0.12) < 0.1 && Math.abs(firstSpawn.position[2] + 40) < 0.1,
+    `Ara should start on the Yaba west pedestrian footpath: ${JSON.stringify(firstSpawn)}`);
   assert.equal(firstSpawn.grounded, true, 'Ara should be grounded at first spawn');
-  assert.equal(firstSpawn.ground?.surface, 'asphalt', 'first spawn should be on the road surface');
+  assert.equal(firstSpawn.ground?.surface, 'concrete', 'first spawn should be on the pedestrian sidewalk, not the carriageway');
+  assert.equal(firstSpawn.ground?.id, 'yaba-concrete-sidewalk-west', 'first spawn should use the matching sidewalk support collider');
   assert.ok(firstSpawn.camera?.every(Number.isFinite), 'first-person-follow camera should be initialized');
   const points = [
-    { name: 'Yaba main road / first-spawn divider', x: 0, z: -40, yaw: 0, expected: 'asphalt' },
+    { name: 'Yaba main road / first-spawn frontage', x: 0, z: -40, yaw: 0, expected: 'asphalt' },
     { name: 'Yaba-Ikeja connector', x: 0, z: 207, yaw: 0, expected: 'asphalt' },
     { name: 'Ikeja approach', x: 0, z: 220, yaw: 0, expected: 'asphalt' },
     { name: 'Ikeja commercial avenue', x: 0, z: 310, yaw: 0, expected: 'asphalt' },
@@ -47,10 +51,12 @@ try {
     { name: 'Ikeja east collector', x: 45, z: 320, yaw: 0, expected: 'asphalt' },
     { name: 'Ikeja west residential access', x: -83, z: 320, yaw: 0, expected: 'asphalt', id: 'stage08i-road-outer-residential-west' },
     { name: 'Ikeja east residential access', x: 83, z: 320, yaw: 0, expected: 'asphalt', id: 'stage08i-road-outer-residential-east' },
-    { name: 'Ikeja west cross-street extension', x: -80, z: 246, yaw: 90, expected: 'asphalt', id: 'stage08i-road-cross-246' },
-    { name: 'Ikeja east cross-street extension', x: 80, z: 438, yaw: 90, expected: 'asphalt', id: 'stage08i-road-cross-438' }
+    { name: 'Ikeja west cross-street extension', x: -80, z: 246, yaw: 90, expected: 'asphalt', id: ['stage08i-road-cross-246', 'stage08i-road-outer-residential-west'] },
+    { name: 'Ikeja east cross-street extension', x: 80, z: 438, yaw: 90, expected: 'asphalt', id: ['stage08i-road-cross-438', 'stage08i-road-outer-residential-east'] }
   ];
   const report = [];
+  const visualAuditDir = '/tmp/naija-city-visual-audit/yaba-ikeja';
+  mkdirSync(visualAuditDir, { recursive: true });
   for (const point of points) {
     const result = await page.evaluate(({ x, z, yaw }) => {
       const g = window.__NAIJA_GAME__;
@@ -78,11 +84,20 @@ try {
       };
     }, point);
     assert.equal(result.hit?.surface, point.expected, `${point.name}: wrong ground surface: ${JSON.stringify(result)}`);
-    if (point.id) assert.equal(result.hit?.id, point.id, `${point.name}: expected dedicated asphalt collider`);
+    if (point.id) assert.ok((Array.isArray(point.id) ? point.id : [point.id]).includes(result.hit?.id), `${point.name}: expected an adjoining asphalt collider, got ${result.hit?.id}`);
     assert.equal(result.entered, true, `${point.name}: vehicle entry failed`);
     assert.ok(result.settledWheelContacts >= 3, `${point.name}: wheels not grounded before driving`);
     assert.ok(result.wheelContacts >= 3, `${point.name}: wheel contact lost while driving`);
     assert.ok(result.speedKmh > 5, `${point.name}: no forward movement`);
+    await page.evaluate(({ x, z, yaw }) => {
+      window.__NAIJA_RPG_PAUSED__ = true;
+      const g = window.__NAIJA_GAME__;
+      g.debugSetVehiclePositionForSmoke([1000, 12, 1000], 0);
+      g.debugSetCameraForSmoke([x + 32, 18, z + 38], [x, 0, z]);
+    }, point);
+    await page.waitForTimeout(180);
+    await page.screenshot({ path: `${visualAuditDir}/${point.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png` });
+    await page.evaluate(() => { window.__NAIJA_RPG_PAUSED__ = false; });
     report.push({ name: point.name, surface: result.hit.surface, collider: result.hit.id, wheelContacts: result.wheelContacts, speedKmh: result.speedKmh });
   }
   const initialTraffic = await page.evaluate(() => window.__NAIJA_GAME__.getTrafficPositions());

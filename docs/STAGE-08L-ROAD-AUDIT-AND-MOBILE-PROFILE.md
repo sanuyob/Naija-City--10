@@ -1,5 +1,7 @@
 # Stage 08L — Road audit, street clearance and low-memory profile
 
+> Stage 08M supersedes the lighting values, Ikeja local-road widths and first-spawn placement described here. See `STAGE-08M-LIGHTING-ROAD-WIDENING-AND-VISUAL-AUDIT.md` for the latest audited state. The draw-call and real-Android limitations below remain relevant.
+
 ## Scope
 
 This pass improves the connected Yaba–Ikeja route and audits representative GIDI district roads, bridge approaches and junctions. It does not claim the remaining city districts are fully built. Residential/commercial building completion, interiors, interactive local activities, and a complete signal-aware traffic system remain separate content phases.

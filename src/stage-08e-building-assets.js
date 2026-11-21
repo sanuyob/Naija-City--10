@@ -19,6 +19,7 @@ export function createStage08EBuildings({app}) {
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
   const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,96);
+  state.batchGroupId=batchGroup?.id??null;
   let tick=0,activeLoads=0;
   const maxConcurrent=2;
 
