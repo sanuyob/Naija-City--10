@@ -66,7 +66,7 @@ Automated Chromium success does not equal an Itel A90 physical test. A real-devi
 
 - Procedural maps are authored approximations, not photogrammetry or scans of actual Ikeja surfaces.
 - Some props remain simple low-poly meshes even after material improvement.
-- Four pedestrians and three parked vehicles remain static environment props; no crowd AI or live traffic is added.
+- Four pedestrian silhouettes remain static footpath props. Stage 08M removed the parked danfo, keke and sedan that obstructed the widened carriageway; two moving traffic vehicles use the existing simple kinematic loop. This does not claim crowd AI or advanced traffic/junction AI.
 - Glass is a restrained translucent material approximation; there is no ray-traced reflection.
 - Stage 08F Computer Village hero placement remains a separate outstanding geography correction and is not fixed by 08H.
 - Do not merge the stacked PR or claim phone-tested until the user reviews the preview on the physical device.
