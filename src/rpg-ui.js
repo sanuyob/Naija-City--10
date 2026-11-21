@@ -1,4 +1,5 @@
 import './rpg-ui.css';
+import { mountWorldMapUI } from './world-map-ui.js';
 
 const views = {
   inventory: ['FIELD KIT', 'Inventory', '<div class="tiles"><article><b>01</b><strong>Supplies</strong><small>No items collected</small></article><article><b>02</b><strong>Key items</strong><small>No key items yet</small></article><article><b>03</b><strong>Resources</strong><small>0 collected</small></article><article><b>04</b><strong>Quick slots</strong><small>Tap a slot to select it</small></article></div>'],
@@ -36,7 +37,7 @@ export function mountRPGInterface() {
     <section class="minimap" aria-label="Minimap">
       <div>LOCAL AREA <b id="local-area-label">YABA</b></div>
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
-      <small class="compass">N　·　NE　·　E　·　SE</small>
+      <small class="compass">N　·　NE　·　E　·　SE</small><small class="gps-readout" id="hud-gps-label">NO GPS DESTINATION</small>
     </section>
     <div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
     <div class="touch" aria-label="Mobile game controls">
@@ -86,6 +87,7 @@ export function mountRPGInterface() {
   let activeDistrict = 'YABA';
   let activeRegion = 'LAGOS';
   let economyState = { cash:5000, inventory:{} };
+  const worldMapUI = mountWorldMapUI(root);
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
@@ -109,6 +111,8 @@ export function mountRPGInterface() {
   };
   const open = name => {
     if (characterRequired && name !== 'character') name = 'character';
+    if (name === 'map') { paused=true; window.__NAIJA_RPG_PAUSED__=true; panel.hidden=true; pause.hidden=true; worldMapUI.open(); return; }
+    worldMapUI.close();
     if (name === 'pause') {
       paused = true;
       window.__NAIJA_RPG_PAUSED__ = true;
@@ -157,6 +161,8 @@ export function mountRPGInterface() {
       showToast(accepted ? (command + ' · ' + roleId) : 'Companion command not available.');
       return;
     }
+    if (event.target.closest('[data-map-close]')) { worldMapUI.close(); paused=false; return; }
+    if (event.target.closest('.minimap')) { paused=true; window.__NAIJA_RPG_PAUSED__=true; worldMapUI.open(); return; }
     const target = event.target.closest('[data-open]');
     if (target) { open(target.dataset.open); return; }
     if (event.target.closest('[data-close]') || event.target.closest('[data-resume]')) { close(); return; }
@@ -279,6 +285,7 @@ export function mountRPGInterface() {
     stage: 7, ready: true, panels: Object.keys(views), setVitals, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, setEconomy, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
+    setWorldMapData:worldMapUI.setData, setWorldMapPlayerPosition:worldMapUI.setPlayerPosition, getWorldMapState:worldMapUI.getState,
     isPlayerCharacterRequired: () => characterRequired
   };
 }

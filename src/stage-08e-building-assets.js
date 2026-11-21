@@ -15,7 +15,7 @@ function hideLegacyBuildings(app) {
 }
 
 export function createStage08EBuildings({app}) {
-  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'shared Yaba KTX2 Basis library; residential PNG assets retained',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
+  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],buildings:[],textureEncoding:'shared Yaba KTX2 Basis library; residential PNG assets retained',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
   const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,128);
@@ -82,6 +82,7 @@ export function createStage08EBuildings({app}) {
     if(manifest.stage!=='08E'||!Array.isArray(manifest.models)) throw new Error('Invalid Stage 08E asset manifest');
     entries.push(...manifest.models);
     state.expectedBuildings=entries.length;
+    state.buildings=entries.map(item=>({id:item.id,name:item.name,kind:item.kind,position:item.position.slice(),size:item.size?.slice()||null,rotationY:Number(item.rotationY)||0,district:item.district,enterable:false,hero:Boolean(item.hero)}));
     state.textureEncoding=manifest.textureEncoding||state.textureEncoding;
     return state;
   }

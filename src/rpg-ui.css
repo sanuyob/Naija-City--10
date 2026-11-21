@@ -246,3 +246,72 @@
 .wallet-row>small{margin-left:auto;color:#c6d0c8;font-size:7px}
 .inventory-wallet{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding:10px 12px;border:1px solid rgba(215,184,120,.25);border-radius:9px;background:rgba(215,184,120,.08)}
 .inventory-wallet>span{color:var(--hud-muted);font-size:8px;letter-spacing:.12em}.inventory-wallet>b{color:var(--hud-accent);font-size:15px}
+
+/* Stage 11 — city identity, enterability and the full-screen world atlas. */
+.minimap{cursor:pointer;pointer-events:auto}
+.minimap:hover{border-color:rgba(215,184,120,.55)}
+.world-map-overlay{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;gap:12px;padding:calc(14px + var(--safe-top,0px)) calc(16px + var(--safe-right,0px)) calc(12px + var(--safe-bottom,0px)) calc(16px + var(--safe-left,0px));background:radial-gradient(ellipse at 50% 30%,#1b3028 0%,#0a1411 68%,#050a08 100%);color:#edf1e9;text-shadow:none;pointer-events:auto}
+.world-map-overlay[hidden]{display:none}
+.world-map-header{display:flex;align-items:center;justify-content:space-between;flex:none}
+.world-map-header small{color:#d7b878;font:700 8px/1.2 ui-monospace,monospace;letter-spacing:.2em}
+.world-map-header h2{margin:3px 0 0;font:500 clamp(22px,3vw,34px)/1 Georgia,serif;letter-spacing:.1em}
+.world-map-header>button{width:44px;height:44px;border:1px solid #ffffff35;border-radius:10px;background:#ffffff0b;color:#fff;font-size:27px}
+.world-map-toolbar{display:flex;align-items:end;justify-content:space-between;gap:12px;flex:none}
+.world-map-toolbar>label{display:grid;gap:5px;min-width:180px;color:#cdbb91;font:700 7px ui-monospace,monospace;letter-spacing:.12em}
+.world-map-toolbar input{width:min(260px,30vw);min-height:38px;padding:8px 11px;border:1px solid #ffffff2c;border-radius:8px;background:#06100de8;color:#f1f3ed;font:12px Arial,sans-serif;letter-spacing:0}
+.world-map-filters{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}
+.world-map-filters button,.world-map-info button{min-height:34px;padding:0 10px;border:1px solid #ffffff27;border-radius:7px;background:#ffffff0a;color:#dbe3da;font:700 8px Arial,sans-serif;letter-spacing:.08em}
+.world-map-filters button.active{border-color:#d7b878;background:#d7b87820;color:#f1d7a4}
+.world-map-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(190px,250px);gap:12px;flex:1;min-height:0}
+.world-map-frame{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;border:1px solid #d7b8784a;border-radius:12px;background:#101d1a;box-shadow:0 12px 40px #0005}
+#city-world-map{display:block;width:auto;height:100%;max-width:100%;aspect-ratio:1100/760;object-fit:fill;touch-action:none;cursor:grab}
+#city-world-map:active{cursor:grabbing}
+.world-map-zoom{position:absolute;right:10px;bottom:10px;display:grid;gap:5px}
+.world-map-zoom button{width:36px;height:36px;border:1px solid #ffffff36;border-radius:8px;background:#07110fe8;color:#f1e5c9;font-size:19px}
+.world-map-north{position:absolute;left:12px;top:10px;color:#e8ddc1;font:700 10px ui-monospace,monospace;text-shadow:0 1px 5px #000}
+.world-map-info{display:flex;flex-direction:column;gap:10px;min-height:0;padding:14px;border:1px solid #ffffff22;border-radius:12px;background:linear-gradient(150deg,#182821,#0b1511)}
+.world-map-info>small{color:#d7b878;font:700 8px ui-monospace,monospace;letter-spacing:.12em}
+.world-map-info h3{margin:0;font:500 22px/1.12 Georgia,serif}
+.world-map-info p{margin:0;color:#b6c4ba;font-size:11px;line-height:1.5}
+.world-map-status{padding:7px 9px;border:1px solid #c8a96855;border-radius:6px;color:#e2c88f;font:700 8px ui-monospace,monospace;letter-spacing:.08em}
+.world-map-status.is-enterable{border-color:#79bd9a88;color:#a8e2c1;background:#2a67431b}
+.world-map-info button{min-height:42px;margin-top:2px;border-color:#d7b8788a;background:#b9985c;color:#101712}
+.world-map-info button:disabled{opacity:.38;cursor:not-allowed}
+.world-map-distance{color:#d7c9a7;font:700 9px ui-monospace,monospace;letter-spacing:.05em}
+.world-map-legend{display:grid;gap:9px;margin-top:auto;padding-top:12px;border-top:1px solid #ffffff20}
+.world-map-legend>b{margin-bottom:2px;color:#d7b878;font:700 8px ui-monospace,monospace;letter-spacing:.14em}
+.world-map-legend span{display:flex;align-items:center;gap:8px;color:#c5d0c7;font-size:9px}
+.world-map-legend i{width:10px;height:10px;display:inline-block;border-radius:50%;background:#8bc9b1}
+.world-map-legend .legend-enterable{border:2px solid #eaffef;background:#8bc9b1}
+.world-map-legend .legend-exterior{border:1px solid #18231e;background:#aeb9ae}
+.world-map-legend .legend-player{width:0;height:0;border-right:6px solid transparent;border-bottom:12px solid #f7f6ed;border-left:6px solid transparent;border-radius:0;background:transparent}
+.world-map-legend .legend-waypoint{border:2px solid #ffc76d;background:transparent}
+.world-map-footer{display:flex;justify-content:space-between;gap:10px;flex:none;color:#d7b878;font:700 7px ui-monospace,monospace;letter-spacing:.1em}
+.world-map-footer span{color:#94a69a}
+.world-signage-layer{position:fixed;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.world-signage{position:fixed;display:flex;align-items:center;gap:7px;max-width:190px;padding:5px 9px 5px 6px;border:1px solid #d7b8789a;border-radius:5px;background:linear-gradient(100deg,#091510f2,#0b1714dc);box-shadow:0 4px 18px #0008;white-space:nowrap;pointer-events:none;will-change:transform}
+.world-signage[hidden]{display:none}
+.world-signage-symbol{display:grid;place-items:center;flex:none;width:22px;height:22px;border:1px solid #d7b87875;border-radius:4px;color:#e7c98f;font:700 12px Arial,sans-serif}
+.world-signage-copy{display:grid;gap:2px;min-width:0}
+.world-signage-copy b{overflow:hidden;color:#f0eee4;font:700 8px Arial,sans-serif;letter-spacing:.08em;text-overflow:ellipsis}
+.world-signage-copy small{color:#a8d9b7;font:700 6px ui-monospace,monospace;letter-spacing:.08em}
+.world-signage>i{width:6px;height:6px;margin-left:auto;border-radius:50%;background:#80d5a1;box-shadow:0 0 8px #80d5a1}
+@media(max-width:760px){
+ .world-map-overlay{gap:8px;padding:calc(8px + var(--safe-top,0px)) calc(8px + var(--safe-right,0px)) calc(8px + var(--safe-bottom,0px)) calc(8px + var(--safe-left,0px))}
+ .world-map-header h2{font-size:22px}.world-map-header>button{width:38px;height:38px}
+ .world-map-toolbar{align-items:stretch;flex-direction:column;gap:7px}.world-map-toolbar>label{display:flex;align-items:center;justify-content:space-between}.world-map-toolbar input{width:70%;min-height:32px}
+ .world-map-filters{justify-content:flex-start;gap:4px}.world-map-filters button{min-height:29px;padding:0 7px;font-size:7px}
+ .world-map-layout{grid-template-columns:minmax(0,1fr) 150px;gap:7px}
+ .world-map-info{padding:9px;gap:7px}.world-map-info h3{font-size:17px}.world-map-info p{font-size:9px}.world-map-info button{min-height:38px;padding:0 6px;font-size:7px}.world-map-distance{font-size:8px}.world-map-legend span{font-size:8px;gap:6px}
+ .world-map-footer{font-size:6px}
+}
+@media(max-height:520px){
+ .world-map-header h2{font-size:20px}.world-map-header>button{width:34px;height:34px}
+ .world-map-toolbar input{min-height:28px}.world-map-filters button{min-height:26px}
+ .world-map-info{gap:5px;padding:8px}.world-map-info h3{font-size:15px}.world-map-info p{font-size:8px}.world-map-legend{gap:5px;padding-top:7px}
+ .world-map-info button{min-height:32px}.world-map-footer{font-size:5px}
+}
+
+.gps-readout{display:block;overflow:hidden;margin-top:4px;color:#f0d49a;font:700 6px/1.25 ui-monospace,monospace;letter-spacing:.03em;text-overflow:ellipsis;white-space:nowrap}
+#hud-interaction-prompt{position:fixed;left:50%;bottom:calc(142px + var(--safe-bottom,0px));transform:translateX(-50%);z-index:8;max-width:min(280px,65vw);padding:7px 11px;border:1px solid #d8b77999;border-radius:7px;background:#07110fee;color:#f1d5a0;text-align:center;font:700 9px/1.3 ui-monospace,monospace;letter-spacing:.06em;box-shadow:0 4px 18px #0008}
+@media (orientation:landscape) and (max-height:560px){#hud-interaction-prompt{bottom:calc(112px + var(--safe-bottom,0px))}}
