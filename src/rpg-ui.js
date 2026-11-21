@@ -3,7 +3,7 @@ import './rpg-ui.css';
 const views = {
   inventory: ['FIELD KIT', 'Inventory', '<div class="tiles"><article><b>01</b><strong>Supplies</strong><small>No items collected</small></article><article><b>02</b><strong>Key items</strong><small>No key items yet</small></article><article><b>03</b><strong>Resources</strong><small>0 collected</small></article><article><b>04</b><strong>Quick slots</strong><small>Tap a slot to select it</small></article></div>'],
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
-  map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
+  map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted" id="map-active-district">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
   character: ['PLAYER PROFILE', 'Player', '<div class="profile"><b>AF</b><div><strong>ARA 3D FEMALE</strong><p>Main playable character</p><small>THE_FEMALE_EXECUTIVE · ARA 3D GEN</small></div></div><div class="mission character-import-card"><small>ONLY PLAYABLE CHARACTER</small><b>ARA 3D FEMALE · MAIN PLAYER</b><p>Ara is the only playable character. Hero 01 is a city NPC. The ready-made Female Executive character is bundled from Ara 3D Gen with a game rig and locomotion/parkour animations.</p><p id="player-character-status" role="status">Ara 3D Gen Female Executive · loading built-in character asset…</p></div><div class="stat">Player role <b>MAIN</b></div><div class="stat">Character slot <b>01</b></div>'],
   settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><div class="setting">Vehicle controls <button data-setting="vehicle-controls" data-mode="two-handed" aria-pressed="true">TWO-HANDED</button></div><p class="muted">Two-Handed uses left/right steering and separate accelerator/brake buttons. One-Handed uses the movement stick for steering and forward/reverse.</p>'],
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
@@ -23,7 +23,7 @@ export function mountRPGInterface() {
     </section>
     <header class="topbar">
       <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small data-genre="third-person open-world action RPG">THIRD-PERSON OPEN-WORLD ACTION RPG</small></div></div>
-      <div class="district"><small>CURRENT DISTRICT</small><b>YABA · LAGOS</b></div>
+      <div class="district"><small>CURRENT DISTRICT</small><b id="current-district-label">YABA · LAGOS</b></div>
       <button class="menu" data-open="pause" aria-label="Pause game">Ⅱ<small>PAUSE</small></button>
     </header>
     <section class="status" aria-label="Player status">
@@ -33,7 +33,7 @@ export function mountRPGInterface() {
       <small class="player-state" id="hud-player-state">STATUS · READY</small><small class="interaction-prompt" id="hud-interaction-prompt" hidden></small>
     </section>
     <section class="minimap" aria-label="Minimap">
-      <div>LOCAL AREA <b>YABA</b></div>
+      <div>LOCAL AREA <b id="local-area-label">YABA</b></div>
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
       <small class="compass">N　·　NE　·　E　·　SE</small>
     </section>
@@ -82,6 +82,8 @@ export function mountRPGInterface() {
   let paused = false;
   let characterRequired = false;
   let vehicleControlsMode = 'two-handed';
+  let activeDistrict = 'YABA';
+  let activeRegion = 'LAGOS';
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
@@ -205,6 +207,16 @@ export function mountRPGInterface() {
     const label = state.downed ? 'DOWNED' : state.state === 'recovering' ? 'RECOVERING' : state.crouched ? 'CROUCHED' : state.running ? 'SPRINTING' : state.moving ? 'MOVING' : 'READY';
     root.querySelector('#hud-player-state').textContent = 'STATUS · ' + label;
   }
+  function setDistrictLabel(district='YABA', region='LAGOS') {
+    const nextDistrict = String(district || 'YABA').toUpperCase();
+    const nextRegion = String(region || 'LAGOS').toUpperCase();
+    if (activeDistrict === nextDistrict && activeRegion === nextRegion) return;
+    activeDistrict = nextDistrict; activeRegion = nextRegion;
+    root.querySelector('#current-district-label').textContent = nextDistrict + ' · ' + nextRegion;
+    root.querySelector('#local-area-label').textContent = nextDistrict;
+    const mapLabel = root.querySelector('#map-active-district');
+    if (mapLabel) mapLabel.textContent = nextDistrict + ' DISTRICT · ' + nextRegion;
+  }
   function setWorldActivity() { /* Compatibility hook; no centre-screen population banner. */ }
   function setInteractionPrompt(info) {
     const prompt = root.querySelector('#hud-interaction-prompt');
@@ -242,7 +254,7 @@ export function mountRPGInterface() {
     if (fuel) fuel.textContent = 'FUEL ' + Math.round(state.fuelPercent ?? 100) + '%';
   }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setWorldActivity, setInteractionPrompt, setVehicleMode, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     isPlayerCharacterRequired: () => characterRequired

@@ -167,7 +167,7 @@ assert.match(realism,/commercialBuildingsDetailed/);
 assert.match(realism,/residentialBuildingsDetailed/);
 assert.match(realism,/textureResolution/);
 
-assert.match(street,/app\.batcher\?\.addGroup\('stage08c-static-street-infrastructure', false, 72\)/,'Stage 08C static street assets must use a bounded static batch group');
+assert.match(street,/app\.batcher\?\.addGroup\('stage08c-static-street-infrastructure', false, 128\)/,'Stage 08C static street assets must use a bounded static batch group');
 assert.match(street,/entity\.render\.batchGroupId = batchGroup\.id/,'Stage 08C detail meshes must join the static batch group');
 for(const feature of ['stage08c-main-road-kerb','stage08c-main-drain-cover','stage08c-distributor-kerb','stage08c-speed-table-marking','stage08c-utility-pole','stage08c-overhead-service-wire','stage08c-streetlight-pole','stage08c-road-sign-board','stage08c-park-bench-seat','stage08c-bus-shelter-roof','stage08c-roadside-stall-canopy']) assert.ok(street.includes(feature),`Missing Stage 08C street feature: ${feature}`);
 assert.match(street,/dynamicActorsAdded: 0/,'Stage 08C must remain static with no new animated actors');
@@ -239,7 +239,7 @@ assert.doesNotMatch(rpg,/player-character-form|player-character-file|importPlaye
 assert.match(controller,/pc\.math\.clamp\(body\.position\[0\],-120,4200\)/,'Player physics solver must include the expanded GIDI world width');
 assert.match(controller,/pc\.math\.clamp\(body\.position\[2\],-3900,480\)/,'Player physics solver must include the expanded GIDI world length');
 assert.match(game,/knownBounds:\{min:\[-120,-9,-3900\],max:\[4200,269,480\]\}/,'Runtime diagnostics must report both connected world regions');
-assert.match(game,/farClip:1100/,'Camera far clip must cover visible GIDI roads and landscape');
+assert.match(game,/farClip:lowMemoryDevice\?650:850/,'Camera far clip must adapt to low-memory devices while retaining the larger GIDI landscape range on stronger devices');
 assert.match(game,/createGidiWorldStreamer/,'GIDI cells must be loaded through the runtime world streamer');
 assert.match(game,/gidi-gateway-road-/,'A physical road gateway must link the existing city to GIDI');
 assert.match(game,/gidiStreamer\.update\(worldActorState\.position,step\)/,'GIDI cells must stream from Ara or the occupied vehicle position');
@@ -410,7 +410,7 @@ assert.match(stage08g,/parkedVehicles:0/,'Static parked vehicles must not obstru
 assert.match(stage08g,/laneObstructionsRemoved/,'Stage 08G must declare the removed lane-blocking parked vehicles.');
 assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
 
-assert.match(game,/farClip:1100/,'Camera range must include the GIDI landscape extension');
+assert.match(game,/farClip:lowMemoryDevice\?650:850/,'Camera range must adapt to device tier while retaining the GIDI landscape extension');
 assert.match(game,/knownBounds:\{min:\[-120,-9,-3900\],max:\[4200,269,480\]\}/,'Runtime diagnostics must include both the Ikeja and GIDI world bounds');
 for(const feature of ['vendorStalls:stalls.length','parkedVehicles:0','staticPedestrianSilhouettes:people.length','laneObstructionsRemoved','litterHotspots:4','openDrainageRuns:2','liveNpcAI:false','liveTrafficSimulation:false','stage:\'08G\'','district:\'Ikeja\'']) assert.ok(stage08g.includes(feature),`Missing Stage 08G feature contract: ${feature}`);
 assert.match(game,/createStage08FDeviceProfiler/,'Stage 08F device profiler must be mounted in the live scene');

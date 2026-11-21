@@ -35,7 +35,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
   };
 
   // Keep batches static and spatially bounded so distant blocks can be culled.
-  const batchGroup = app.batcher?.addGroup('stage08i-ikeja-neighbourhood-static', false, 128);
+  const batchGroup = app.batcher?.addGroup('stage08i-ikeja-neighbourhood-static', false, 192);
   const collisionProxies = [];
   const groundColliders = [];
   const roads = [];
@@ -102,22 +102,22 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
   // Two collector streets and two outer access streets create a true block
   // network around the existing north-south Ikeja commercial avenue.
   for (const x of [-45, 45]) {
-    road('collector-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [11, 0.16, 260]);
+    road('collector-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [12, 0.16, 260]);
     for (const side of [-1, 1]) {
-      detail('collector-sidewalk', [x + side * 6.35, 0.015, 320], [1.35, 0.19, 260], mats.concrete);
-      detail('collector-kerb', [x + side * 5.68, 0.14, 320], [0.2, 0.28, 260], mats.curb);
-      detail('collector-gutter', [x + side * 7.42, 0.015, 320], [0.26, 0.08, 260], mats.drain);
+      detail('collector-sidewalk', [x + side * 6.85, 0.015, 320], [1.35, 0.19, 260], mats.concrete);
+      detail('collector-kerb', [x + side * 6.18, 0.14, 320], [0.2, 0.28, 260], mats.curb);
+      detail('collector-gutter', [x + side * 7.95, 0.015, 320], [0.26, 0.08, 260], mats.drain);
       for (let z = 215; z <= 430; z += 27) {
-        detail('collector-drain-cover', [x + side * 7.42, 0.105, z], [0.58, 0.08, 1.4], mats.galvanized);
+        detail('collector-drain-cover', [x + side * 7.95, 0.105, z], [0.58, 0.08, 1.4], mats.galvanized);
         drainCovers++;
       }
     }
   }
   for (const x of [-83, 83]) {
-    road('outer-residential-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [10, 0.16, 250]);
+    road('outer-residential-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [11, 0.16, 250]);
     for (const side of [-1, 1]) {
-      detail('outer-road-footpath', [x + side * 5.9, 0.015, 320], [1.15, 0.18, 250], mats.concrete);
-      detail('outer-road-kerb', [x + side * 5.12, 0.13, 320], [0.18, 0.26, 250], mats.curb);
+      detail('outer-road-footpath', [x + side * 6.4, 0.015, 320], [1.15, 0.18, 250], mats.concrete);
+      detail('outer-road-kerb', [x + side * 5.62, 0.13, 320], [0.18, 0.26, 250], mats.curb);
     }
   }
 
@@ -125,13 +125,13 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
   // both residential streets. These intersections are the new network spine.
   const crossStreetZ = [246, 310, 374, 438];
   for (const z of crossStreetZ) {
-    road('cross-' + z, [0, -0.08, z], [190, 0.16, 11], 'east-west');
+    road('cross-' + z, [0, -0.08, z], [190, 0.16, 12], 'east-west');
     for (const side of [-1, 1]) {
-      detail('cross-street-footpath', [0, 0.015, z + side * 6.35], [190, 0.18, 1.2], mats.concrete);
-      detail('cross-street-kerb', [0, 0.13, z + side * 5.68], [190, 0.26, 0.18], mats.curb);
-      detail('cross-street-gutter', [0, 0.015, z + side * 7.35], [190, 0.08, 0.24], mats.drain);
+      detail('cross-street-footpath', [0, 0.015, z + side * 6.85], [190, 0.18, 1.2], mats.concrete);
+      detail('cross-street-kerb', [0, 0.13, z + side * 6.18], [190, 0.26, 0.18], mats.curb);
+      detail('cross-street-gutter', [0, 0.015, z + side * 7.95], [190, 0.08, 0.24], mats.drain);
       for (let x = -76; x <= 76; x += 25) {
-        detail('cross-street-drain-cover', [x, 0.105, z + side * 7.35], [1.35, 0.08, 0.55], mats.galvanized);
+        detail('cross-street-drain-cover', [x, 0.105, z + side * 7.95], [1.35, 0.08, 0.55], mats.galvanized);
         drainCovers++;
       }
     }
@@ -238,7 +238,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
 
   // Utility poles and non-dynamic streetlights follow the new residential grid.
   for (const x of [-91, -53, 53, 91]) {
-    for (const z of [220, 276, 332, 388, 444]) {
+    for (const z of [220, 276, 332, 388, 450]) {
       detail('utility-pole', [x, 4.1, z], [0.22, 8.2, 0.22], mats.roof, null, true);
       detail('utility-crossarm', [x, 7.45, z], [1.4, 0.15, 0.16], mats.galvanized);
       for (const offset of [-0.43, 0, 0.43]) detail('utility-insulator', [x + offset, 7.64, z], [0.12, 0.22, 0.12], mats.white);
@@ -293,7 +293,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
       principalJunctions: junctions,
       connectedToExistingIkejaCorridor: true,
       approachRoadInheritedFromStage08G: true,
-      roadWidthsMetres: { collector: 11, outerResidential: 10, crossStreet: 11 }
+      roadWidthsMetres: { collector: 12, outerResidential: 11, crossStreet: 12 }
     },
     treesRemoved: 2,
     overheadMarketGateRemoved: true,
@@ -315,7 +315,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
     liveNpcAdded: false,
     features: [
       'continuous ground cover and physics support around the Ikeja extension',
-      'widened 11m collectors, 10m residential access roads and 11m cross streets',
+      'widened 12m collectors, 11m residential access roads and 12m cross streets',
       'sixteen-plus connected road junction approaches and crossings',
       'residential compounds with doors, security grilles and rooftop tanks',
       'mixed-use commercial frontage',

@@ -32,6 +32,7 @@ try {
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready === true, null, { timeout: 120000 });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.playerCharacterReady === true, null, { timeout: 60000 });
 
+  await page.waitForTimeout(3000);
   const local = await page.evaluate(() => {
     const g = window.__NAIJA_GAME__;
     const pbr = g.stage08J?.pbrMaterials || {};
@@ -59,8 +60,9 @@ try {
   assert.equal(local.firstSpawn.ground?.surface, 'concrete');
   assert.equal(local.firstSpawn.ground?.id, 'yaba-concrete-sidewalk-west');
   assert.equal(local.visualSettings?.toneMapping, 'ACES2');
-  assert.ok(Math.abs(local.visualSettings?.exposure - 0.88) < 0.001);
-  assert.deepEqual(local.visualSettings?.ambientLight?.slice(0, 3), [0.24, 0.26, 0.28]);
+  assert.ok(Math.abs(local.visualSettings?.exposure - 0.82) < 0.001);
+  assert.deepEqual(local.visualSettings?.ambientLight?.slice(0, 3), [0.18, 0.2, 0.23]);
+  assert.ok(Math.abs(local.visualSettings?.directionalIntensity - 0.68) < 0.001);
   assert.ok(local.deviceProfile?.sampleCount > 0, 'Stage 08F device profiler should collect frame samples');
   assert.ok(local.deviceProfile?.rendering?.averageDrawCalls > 0, 'Stage 08F should report average draw calls');
   assert.ok(local.deviceProfile?.city?.trafficActors > 0, 'Stage 08F should report traffic actors');
@@ -123,8 +125,9 @@ try {
       generatedBatches: local.batches?.stage08K?.batches
     },
     firstSpawn: local.firstSpawn,
+    batchGroups: local.batches,
     visualSettings: local.visualSettings,
-    deviceProfile: { sampleCount: local.deviceProfile.sampleCount, sampledDurationMs: local.deviceProfile.sampledDurationMs, averageDrawCalls: local.deviceProfile.rendering.averageDrawCalls, peakDrawCalls: local.deviceProfile.rendering.peakDrawCalls, averageGpuResourceMiB: local.deviceProfile.rendering.averageGpuResourceMiB },
+    deviceProfile: { sampleCount: local.deviceProfile.sampleCount, sampledDurationMs: local.deviceProfile.sampledDurationMs, frame: local.deviceProfile.frame, averageDrawCalls: local.deviceProfile.rendering.averageDrawCalls, peakDrawCalls: local.deviceProfile.rendering.peakDrawCalls, averageGpuResourceMiB: local.deviceProfile.rendering.averageGpuResourceMiB, peakGpuResourceMiB: local.deviceProfile.rendering.peakGpuResourceMiB, averageCpuUpdateMs: local.deviceProfile.rendering.averageCpuUpdateMs, averageCpuRenderMs: local.deviceProfile.rendering.averageCpuRenderMs, meshInstances: local.diagnostics?.scene?.meshInstances },
     playerWorldColliders: local.playerPhysics.worldColliderCount,
     connectorGroundContact: local.connectorProbe.point,
     utilityCabinetCollision: local.utilityBoxProbe.point,

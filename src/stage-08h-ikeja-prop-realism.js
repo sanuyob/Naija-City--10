@@ -174,7 +174,7 @@ function tintedVariant(source, name, tint, glossFactor = 1) {
 }
 
 export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
-  const group = app.batcher?.addGroup('stage08h-ikeja-realistic-prop-details', false, 128);
+  const group = app.batcher?.addGroup('stage08h-ikeja-realistic-prop-details', false, 160);
   const mapCache = new Map();
   const map = (type, size, seed, color) => {
     const key = type + ':' + seed;
@@ -564,6 +564,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     materialAssignmentCounts,
     unrenderedTaggedProps,
     staticBatching:Boolean(group),
+    batchGroupId:group?.id??null,
     sourceAttribution:'Original procedural maps generated in project; no third-party image textures.',
     limitations:[
       'Surface maps are procedural, not scans of the actual street materials.',

@@ -21,7 +21,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     wood: material([0.36, 0.23, 0.13]),
     roof: material([0.28, 0.29, 0.27])
   };
-  const batchGroup = app.batcher?.addGroup('stage08c-static-street-infrastructure', false, 72);
+  const batchGroup = app.batcher?.addGroup('stage08c-static-street-infrastructure', false, 128);
   let detailMeshes = 0;
   const detail = (name, position, scale, mat, rotation = null) => {
     const entity = box(name, position, scale, mat);

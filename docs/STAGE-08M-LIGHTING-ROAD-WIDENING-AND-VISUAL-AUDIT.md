@@ -2,44 +2,50 @@
 
 ## Changes
 
-- Switched the world camera from linear tonemapping to PlayCanvas ACES2 and set scene exposure to 0.88.
-- Reduced neutral ambient illumination to RGB 0.24/0.26/0.28, lowered the warm daylight directional key to 0.76, and shifted the clear colour to a deeper blue. The intent is to retain readable daylight while preventing concrete, terrain and imported PBR surfaces from clipping toward white.
-- Widened Ikeja neighbourhood collectors from 9.5 m to 11 m, cross streets from 9.5 m to 11 m, and outer residential access roads from 9 m to 10 m. Sidewalks, kerbs, drains and covers were moved outward to match.
-- Moved the two market stalls nearest the z=310 cross street, streetlights beside the collectors/residential roads, and the residential wayfinding post off the widened carriageway envelopes.
-- Retained the earlier removal of the two blocky Ikeja pocket-park trees, the overhead market gate frame/signboard and parked vehicles that had occupied the main road. The park now uses benches and bins rather than the removed trees.
-- Added automated clearance coverage for all 84 Stage 08I solid proxies and all 37 Stage 08G commercial-corridor proxies against the widened road envelopes. No solid proxy overlaps the audited carriageways.
-- Moved first spawn from the moving carriageway centreline to the west Yaba pedestrian footpath at `[-6.1, 0.12, -40]`. The sidewalk's Bullet support patch now matches its visible 12cm top and reports a concrete ground hit.
-- Added a visual-settings snapshot and screenshot capture to the repeatable route audits. Each of the 10 Yaba/Ikeja points and 14 GIDI district/bridge/junction points gets a camera screenshot after the vehicle is moved out of frame; the simulation is paused only for each capture so the inspection camera stays put, then resumed for the next drive test.
+- Kept ACES2 tone mapping and reduced the washed-out look on imported GIDI terrain and concrete: ambient RGB is now 0.18/0.20/0.23, scene exposure 0.82, warm daylight key intensity 0.68, key colour 1.00/0.82/0.66, and the camera clear colour is a deeper blue.
+- Low-memory devices now use a 650m camera far clip, 105m GIDI full-detail radius, 220m medium-detail radius, 620m visual-unload radius, and one new GIDI cell load per update. Higher-memory devices retain the larger 850m/160m/360m/900m profile.
+- Widened Ikeja collectors from 11m to 12m, cross streets from 11m to 12m, and outer residential access roads from 10m to 11m. Footpaths, kerbs, gutters and drain covers were shifted out with the kerb line.
+- Moved the four utility poles that intruded into the southern cross street at z=438; their line now sits farther south at z=450.
+- Retained earlier removals of the two blocky Ikeja pocket-park trees, the old overhead market gate frame/signboard, and parked vehicles that occupied the carriageway. The earlier road-clearance pass also moved the main-avenue wayfinding marker and stalls away from the widened carriageway.
+- First spawn remains on the west Yaba pedestrian footpath at `[-6.1, 0.12, -40]`, with a matching Bullet support patch that reports a concrete sidewalk hit.
+- The HUD district and local-area labels now update from the player's world position across Yaba, Ikeja, Eko CBD, Victoria Island, Ikoyi, Lekki and Ekiti Highlands.
+- The screenshot audits freeze the inspection camera, verify its intended position, and label the capture with the audited district. The driving simulation is resumed between captures.
 
-## Widths after this pass
+## Carriageway widths
 
-| Section | Carriageway width |
+| Section | Width |
 |---|---:|
-| Yaba–Ikeja connector | 14 m |
-| Ikeja commercial avenue | 18 m |
-| Ikeja approach | 14 m |
-| Ikeja collectors | 11 m |
-| Ikeja cross streets | 11 m |
-| Ikeja outer residential access | 10 m |
+| Yaba–Ikeja connector | 14m |
+| Ikeja commercial avenue | 18m |
+| Ikeja approach | 14m |
+| Ikeja collectors | 12m |
+| Ikeja cross streets | 12m |
+| Ikeja outer residential access | 11m |
 
-These are carriageway widths, not the full road reserve including footpaths, kerbs and drainage.
+These are carriageway widths, not total road-reserve widths including footpaths, kerbs and drainage.
 
-## Audit results
+## Road and visual audits
 
-- Yaba/Ikeja: 10/10 physical drive points passed; first spawn is grounded on the west pedestrian sidewalk at `[-6.1, 0.12, -40]`, and the first ground probe reports the concrete sidewalk surface. The moving traffic actors advanced during the test.
-- Ikeja clearance: 84 Stage 08I collision proxies and 37 Stage 08G commercial proxies passed the widened-road overlap checks. No solid building, vendor or street-furniture proxy intrudes into the tested carriageways.
-- GIDI: 3,049/3,049 road collider tiles passed the surface/geometry checks and form one connected component. 14/14 drive points passed across Yaba, Eko CBD, Victoria Island, Ikoyi, Lekki and Ekiti Highlands, including the four bridge approaches and named junctions. Each vehicle retained four wheel contacts and moved under throttle. No browser errors or vertex-alignment warnings were recorded.
-- Visual capture: the audits saved 24 route screenshots (10 Yaba/Ikeja and 14 GIDI) under `/tmp/naija-city-visual-audit/` in the cloud sandbox. These are repeatable camera captures at representative audited points, not a claim that every metre of every road was manually inspected.
-- Rendering settings verified at runtime: ACES2 tone mapping, scene exposure 0.88, ambient RGB 0.24/0.26/0.28, warm directional key intensity 0.76. The runtime smoke test also confirms these values through the game diagnostics API.
+- Yaba/Ikeja: 10/10 physical driving points passed, covering the first-spawn frontage, main road, connector, Ikeja approach, commercial avenue, both collectors, both outer residential accesses and two cross-street extensions. All tests found asphalt, maintained four wheel contacts and moved under throttle. The first-spawn probe confirmed Ara is grounded on the west concrete sidewalk.
+- Ikeja clearance: all 84 Stage 08I solid proxies and all 37 Stage 08G commercial-corridor proxies passed the strict widened-road overlap checks. The check caught and led to relocation of the four utility poles at the z=438 approach.
+- GIDI road network: 3,049/3,049 road collider tiles across 42 manifest cells passed finite-geometry/asphalt checks; they form one connected component with 5,483 adjacency pairs and no isolated tiles.
+- GIDI driving: 14/14 physical driving points passed across Yaba, Eko CBD, Victoria Island, Ikoyi, Lekki and Ekiti Highlands, including the four bridge approaches and principal district junctions. Each test retained four wheel contacts and moved under throttle. No browser errors or vertex-alignment warnings were recorded.
+- Visual capture: 24 screenshots were saved in the cloud sandbox under `/tmp/naija-city-visual-audit/` (10 Yaba/Ikeja and 14 GIDI). These are representative route/junction camera captures, not a manual inspection of every metre of every road.
 
-## Performance and Android limitation
+## Draw calls and cloud-browser profile
 
-The 960×540 DPR-1 cloud-browser diagnostic around the GIDI cells recorded 129 draw calls, 316,022 primitives, and about 305.6 MiB of engine-tracked GPU resources. A separate early runtime smoke snapshot at 844×390, while 10 cells were loaded, recorded 363 draw calls, 4,953 scene mesh instances and about 308.6 MiB tracked GPU resources; it was captured during the startup/streaming window and is not directly comparable with the warmed diagnostic. Both are Chromium/ANGLE/SwiftShader on a Linux cloud host; the roughly 2.2 FPS result from the former is not a phone performance estimate. Treat these as build diagnostics, not Android acceptance. The GIDI offline join/meshopt pass reduced total imported GIDI primitives from 5,432 to 1,144 (78.9%), but the total city scene still has a high geometry/resource footprint.
+The existing GIDI offline asset pipeline remains the main structural geometry reduction: it joins compatible static geometry by material and meshopt-compresses the resulting assets. Across the processed 85 GIDI infrastructure/full/LOD assets, the primitive count had already fallen from 5,432 to 1,144 (78.9% fewer source primitives). The project retains spatially bounded static batches for local city props and uses lower-detail/shorter-distance streaming on low-memory devices. Streamed cells are deliberately not passed through PlayCanvas runtime BatchManager because a prior experiment hid late-streamed render components.
 
-No physical Android device was connected to the sandbox, and ADB is not installed in this environment. Therefore, real Itel A90 profiling has not been performed. The Stage 08F profiler was upgraded to retain up to 18,000 frame samples (five minutes at 60 Hz) and export average/p50/p95/worst frame time, average/peak draw calls, average/peak tracked GPU resources, CPU update/render times, JS heap where available, GIDI cell/streaming counters, static batch state, vehicle state and traffic count. Open the PERF panel on the actual phone, start a 3–5 minute drive from Yaba through Ikeja and into GIDI, then export the profile JSON. Device acceptance still requires checking sustained frame time, p95, draw calls, memory growth, thermal throttling, touch latency and streaming hitches on the real Itel A90; the cloud sandbox cannot perform that physical-device step.
+The latest short cloud-browser smoke profile (Chromium + ANGLE/SwiftShader, 480×270, DPR 1) reported 266.3 average draw calls, 270 peak draw calls, about 317.6MiB average tracked GPU resources (318.9MiB peak), and 5,001 scene mesh instances. The sample covered only 14 frames and about 3.0 seconds; its software-renderer frame-time readings (316.7ms average, 2,016.6ms p95/worst, roughly 3.2 average FPS) are highly noisy and are not a phone-performance estimate. Peak draw calls were seven lower than the preceding comparable smoke capture, but this is a small cloud-side change, not proof of a major device speed-up.
 
-## Remaining content
+PlayCanvas references used: [optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), [static batching](https://developer.playcanvas.com/user-manual/graphics/advanced-rendering/batching/), and [runtime device-pixel-ratio guidance](https://developer.playcanvas.com/user-manual/optimization/runtime-devicepixelratio/). Batch group bounds are kept local to avoid combining distant city geometry into unnecessarily large culling bounds.
 
-This pass improves roads, clearance and lighting; it does not complete every district's remaining building set, enterable interiors, full signal-aware traffic AI, pedestrian/vendor simulation or local activities. Those require separate district content passes and should not be represented as complete yet.
+## Physical Android profiling — not yet performed
 
-No additional external models were required for this lighting/road-clearance pass. Existing registered CC0 Poly Haven and ambientCG assets remain in use; no unlicensed assets were introduced.
+No Android device was connected to the cloud sandbox, ADB is unavailable there, and no USB device interface is exposed. Real Itel A90 profiling has therefore **not** been performed. The in-game Stage 08F profiler and PERF panel remain available for on-device export. A device acceptance pass still needs a 3–5 minute drive across Yaba, Ikeja and the GIDI districts, then comparison of sustained/p95 frame time, draw calls, tracked GPU resources, memory growth, streaming hitches, thermal throttling and touch latency on the physical phone.
+
+## Remaining district-content work
+
+This pass improves lighting, road widths, clearance, first-spawn placement, district labels and representative driving/screenshot coverage. It does **not** finish all remaining district buildings, enterable interiors, complete collision-aware/signal-aware traffic AI, or the full set of local activities and pedestrian/vendor behaviours. Those are still separate district-content phases; they are not being marked complete here.
+
+No new external model downloads were necessary for this road-and-lighting pass. The existing registered CC0 Poly Haven props and ambientCG road/concrete/paving materials remain in use, and no unlicensed assets were introduced.

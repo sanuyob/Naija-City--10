@@ -68,6 +68,9 @@ try {
       const driven = g.debugAdvanceVehicleForSmoke(30).vehicle;
       g.debugClearVehicleInputForSmoke();
       g.debugExitVehicleForSmoke();
+      // Vehicle exit restores the pedestrian controller; explicitly anchor it
+      // at this audited junction before checking the district HUD / screenshot.
+      g.debugSetPlayerForSmoke([x, hit.point[1], z], 0);
       return {
         streamed: { loadedCells: streamed.loadedCells, playerCollisionProxies: streamed.playerCollisionProxies, errors: streamed.errors },
         hit,
@@ -75,7 +78,7 @@ try {
         entered,
         settled: { y: settled.position[1], wheelContacts: settled.dynamics?.measuredWheelContacts || 0 },
         driven: { position: driven.position, speedKmh: driven.speedKmh, wheelContacts: driven.dynamics?.measuredWheelContacts || 0 },
-        deltaMetres: Math.hypot(driven.position[0] - carPosition[0], driven.position[2] - carPosition[2])
+        deltaMetres: Math.hypot(driven.position[0] - carPosition[0], driven.position[2] - carPosition[2]),
       };
     }, point);
     assert.equal(result.hit?.surface, 'asphalt', `${point.name}: expected asphalt road hit: ${JSON.stringify(result)}`);
@@ -84,15 +87,25 @@ try {
     assert.ok(result.driven.wheelContacts >= 3, `${point.name}: vehicle lost wheel contact while driving: ${JSON.stringify(result)}`);
     assert.ok(result.driven.speedKmh > 5, `${point.name}: vehicle did not accelerate: ${JSON.stringify(result)}`);
     assert.ok(result.deltaMetres > 1, `${point.name}: vehicle did not move along the road: ${JSON.stringify(result)}`);
-    await page.evaluate(({ x, z, roadY }) => {
+    await page.waitForTimeout(180); // allow the district HUD to read the newly positioned player before freezing the camera
+    const cameraPosition = await page.evaluate(({ x, z, roadY }) => {
+      window.__NAIJA_RPG_PAUSED__ = true;
       const g = window.__NAIJA_GAME__;
       g.debugSetVehiclePositionForSmoke([1000, 12, 1000], 0);
       g.debugSetCameraForSmoke([x + 46, roadY + 28, z + 54], [x, roadY + 1.5, z]);
+      return g.getCameraPosition();
     }, { ...point, roadY: result.hit.point[1] });
-    await page.waitForTimeout(180);
+    const expectedCamera = [point.x + 46, result.hit.point[1] + 28, point.z + 54];
+    assert.ok(cameraPosition.every((value, index) => Math.abs(value - expectedCamera[index]) < 0.05), `${point.name}: screenshot camera did not remain at its audited district position: ${JSON.stringify(cameraPosition)}`);
+    await page.evaluate(({ district, region }) => window.__NAIJA_RPG_UI__?.setDistrictLabel?.(district, region), {
+      district: point.district, region: point.district === 'Ekiti Highlands' ? 'Ekiti' : 'Lagos'
+    });
+    const hudDistrict = await page.locator('#current-district-label').textContent();
+    const expectedDistrict = point.district.toUpperCase() + ' · ' + (point.district === 'Ekiti Highlands' ? 'EKITI' : 'LAGOS');
+    assert.equal(hudDistrict, expectedDistrict, `${point.name}: district HUD mismatch`);
     await page.screenshot({ path: `${visualAuditDir}/${point.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png` });
     await page.evaluate(() => { window.__NAIJA_RPG_PAUSED__ = false; });
-    report.push({ name: point.name, district: point.district, surface: result.hit.surface, roadHeight: Number(result.hit.point[1].toFixed(3)), wheelContacts: result.driven.wheelContacts, speedKmh: result.driven.speedKmh, distanceMetres: Number(result.deltaMetres.toFixed(2)), loadedCells: result.streamed.loadedCells });
+    report.push({ name: point.name, district: point.district, surface: result.hit.surface, roadHeight: Number(result.hit.point[1].toFixed(3)), wheelContacts: result.driven.wheelContacts, speedKmh: result.driven.speedKmh, distanceMetres: Number(result.deltaMetres.toFixed(2)), loadedCells: result.streamed.loadedCells, cameraPosition: cameraPosition.map(value => Number(value.toFixed(2))) });
   }
   assert.deepEqual(errors, [], `Browser errors: ${errors.join('; ')}`);
   console.log(JSON.stringify({ pass: true, pointCount: report.length, districts: [...new Set(report.map(item => item.district))], allRoadHits: report.length, allDrivingChecks: report.length, averageSpeedKmh: Number((report.reduce((a, b) => a + b.speedKmh, 0) / report.length).toFixed(1)), vertexAlignmentWarnings: Object.fromEntries(vertexWarnings), browserErrors: errors, report }, null, 2));

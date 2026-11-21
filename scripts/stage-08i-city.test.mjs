@@ -8,7 +8,7 @@ const app = {
   batcher: {
     addGroup(name, dynamic, maxAabbSize) {
       assert.equal(dynamic, false, 'city geometry must remain static');
-      assert.equal(maxAabbSize, 128, 'batch bounds should remain spatially limited');
+      assert.equal(maxAabbSize, 192, 'Ikeja batch bounds should remain spatially limited');
       return { id: 81, name };
     }
   }
@@ -71,9 +71,11 @@ const mainRoad = district.roads.find(road => road.name === 'collector-east');
 const crossRoad = district.roads.find(road => road.name === 'cross-310');
 assert.ok(mainRoad && crossRoad, 'collector and cross-street network must exist');
 assert.ok(Math.abs(mainRoad.position[0]) < 60, 'collector should sit inside the expanded neighbourhood bounds');
-assert.equal(mainRoad.dimensions[0], 11, 'collector roads should be widened to 11m');
-assert.equal(crossRoad.dimensions[2], 11, 'cross streets should be widened to 11m');
-assert.deepEqual(district.roadNetwork.roadWidthsMetres, { collector: 11, outerResidential: 10, crossStreet: 11 });
+assert.equal(mainRoad.dimensions[0], 12, 'collector roads should be widened to 12m');
+assert.equal(crossRoad.dimensions[2], 12, 'cross streets should be widened to 12m');
+assert.deepEqual(district.roadNetwork.roadWidthsMetres, { collector: 12, outerResidential: 11, crossStreet: 12 });
+const outerRoad = district.roads.find(road => road.name === 'outer-residential-west');
+assert.equal(outerRoad.dimensions[0], 11, 'outer residential roads should be widened to 11m');
 assert.ok(district.groundColliders.some(item => item.id === 'stage08i-road-outer-residential-west'));
 assert.ok(district.groundColliders.some(item => item.id === 'stage08i-road-cross-438'));
 assert.equal(district.treesRemoved, 2);
@@ -85,9 +87,9 @@ assert.equal(district.mainAvenueWayfindingMovedToVerge, true);
 const roadCorridors = [
   { name: 'Ikeja approach', minX: -7, maxX: 7, minZ: 164, maxZ: 246 },
   { name: 'Ikeja commercial avenue', minX: -9, maxX: 9, minZ: 235, maxZ: 385 },
-  ...[-45,45].map(x => ({ name: 'collector ' + x, minX: x-5.5, maxX: x+5.5, minZ: 190, maxZ: 450 })),
-  ...[-83,83].map(x => ({ name: 'residential ' + x, minX: x-5, maxX: x+5, minZ: 195, maxZ: 445 })),
-  ...[246,310,374,438].map(z => ({ name: 'cross street ' + z, minX: -95, maxX: 95, minZ: z-5.5, maxZ: z+5.5 }))
+  ...[-45,45].map(x => ({ name: 'collector ' + x, minX: x-6, maxX: x+6, minZ: 190, maxZ: 450 })),
+  ...[-83,83].map(x => ({ name: 'residential ' + x, minX: x-5.5, maxX: x+5.5, minZ: 195, maxZ: 445 })),
+  ...[246,310,374,438].map(z => ({ name: 'cross street ' + z, minX: -95, maxX: 95, minZ: z-6, maxZ: z+6 }))
 ];
 const laneIntrusions = [];
 for (const proxy of district.collisionProxies) {

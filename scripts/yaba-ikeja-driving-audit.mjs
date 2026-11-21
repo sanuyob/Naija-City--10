@@ -89,16 +89,19 @@ try {
     assert.ok(result.settledWheelContacts >= 3, `${point.name}: wheels not grounded before driving`);
     assert.ok(result.wheelContacts >= 3, `${point.name}: wheel contact lost while driving`);
     assert.ok(result.speedKmh > 5, `${point.name}: no forward movement`);
-    await page.evaluate(({ x, z, yaw }) => {
+    const cameraPosition = await page.evaluate(({ x, z }) => {
       window.__NAIJA_RPG_PAUSED__ = true;
       const g = window.__NAIJA_GAME__;
       g.debugSetVehiclePositionForSmoke([1000, 12, 1000], 0);
       g.debugSetCameraForSmoke([x + 32, 18, z + 38], [x, 0, z]);
+      return g.getCameraPosition();
     }, point);
+    const expectedCamera = [point.x + 32, 18, point.z + 38];
+    assert.ok(cameraPosition.every((value, index) => Math.abs(value - expectedCamera[index]) < 0.05), `${point.name}: visual-audit camera position drifted: ${JSON.stringify(cameraPosition)}`);
     await page.waitForTimeout(180);
     await page.screenshot({ path: `${visualAuditDir}/${point.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png` });
     await page.evaluate(() => { window.__NAIJA_RPG_PAUSED__ = false; });
-    report.push({ name: point.name, surface: result.hit.surface, collider: result.hit.id, wheelContacts: result.wheelContacts, speedKmh: result.speedKmh });
+    report.push({ name: point.name, surface: result.hit.surface, collider: result.hit.id, wheelContacts: result.wheelContacts, speedKmh: result.speedKmh, cameraPosition: cameraPosition.map(value => Number(value.toFixed(2))) });
   }
   const initialTraffic = await page.evaluate(() => window.__NAIJA_GAME__.getTrafficPositions());
   await page.waitForTimeout(1200);
