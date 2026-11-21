@@ -66,7 +66,7 @@ try {
     const currentReach = distance(hip, ankle);
     const minReach = Math.abs(upperLength-lowerLength) + 0.02;
     const maxReach = upperLength + lowerLength - 0.02;
-    const targetReach = Math.max(minReach, Math.min(maxReach, currentReach - 0.035));
+    const targetReach = Math.max(minReach, Math.min(maxReach, currentReach - 0.015));
     const direction = ankle.map((value, index) => (value-hip[index]) / Math.max(currentReach, 1e-6));
     const target = hip.map((value, index) => value + direction[index] * targetReach);
     const result = game.debugApplyHeroLimbIKForSmoke('left', target, 0.95);
