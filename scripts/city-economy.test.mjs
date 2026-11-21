@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import { createCityEconomy } from '../src/city-economy.js';
+
+const values=new Map();
+const storage={getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};
+const economy=createCityEconomy({storage});
+assert.equal(economy.getState().cash,5000);
+const purchase=economy.purchase('print-pack',650);
+assert.equal(purchase.success,true);
+assert.equal(economy.getState().cash,4350);
+assert.equal(economy.getState().inventory['print-pack'],1);
+const reward=economy.awardActivity('eko-parcel-depot',500);
+assert.equal(reward.success,true);
+assert.equal(economy.getState().cash,4850);
+assert.equal(economy.awardActivity('eko-parcel-depot',500).success,false,'activity rewards must be one-time');
+economy.setActivityProgress('eko-parcel-depot',{pickups:[true,true,true],completed:true});
+const restored=createCityEconomy({storage});
+assert.equal(restored.getState().cash,4850);
+assert.equal(restored.getState().inventory['print-pack'],1);
+assert.equal(restored.getActivityProgress('eko-parcel-depot').rewardClaimed,true);
+assert.deepEqual(restored.getActivityProgress('eko-parcel-depot').pickups,[true,true,true]);
+assert.equal(restored.awardActivity('eko-parcel-depot',500).success,false);
+console.log(JSON.stringify({pass:true,wallet:restored.getState().cash,purchases:restored.getState().purchases,activityRewardClaimed:true,persistentStorage:restored.getState().persistence.available},null,2));

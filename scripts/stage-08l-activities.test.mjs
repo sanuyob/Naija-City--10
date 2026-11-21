@@ -1,13 +1,16 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createStage08LGidiDistrictActivities } from '../src/stage-08l-gidi-district-activities.js';
+import { createCityEconomy } from '../src/city-economy.js';
 
 const manifest=JSON.parse(fs.readFileSync('public/assets/gidi/manifest.json','utf8'));
 const entities=[];
 let nextGroupId=1;const app={root:{addChild(){}},batcher:{addGroup(name,transparent,maxAabb){return{id:nextGroupId++,name,transparent,maxAabb};}}};
 const box=(name,position,scale,mat)=>{const entity={name,position,scale,tags:{add(){}},getGuid:()=>String(entities.length)};entities.push(entity);return entity;};
 const material=(colour)=>({colour});
-const stage=createStage08LGidiDistrictActivities({app,box,material});
+const savedValues=new Map();
+const economy=createCityEconomy({storage:{getItem:key=>savedValues.get(key)??null,setItem:(key,value)=>savedValues.set(key,value)}});
+const stage=createStage08LGidiDistrictActivities({app,box,material,economy});
 assert.equal(stage.stage,'08L');
 assert.equal(stage.enterableInteriors,5);
 assert.equal(stage.activityCount,5);
@@ -45,7 +48,7 @@ const fakeInteraction={
   register(target){targets.set(target.id,target);return()=>targets.delete(target.id);},
   setEnabled(id,enabled){const target=targets.get(id);if(target)target.enabled=enabled;return !!target;}
 };
-stage.registerInteractions(fakeInteraction);
+stage.registerInteractions(fakeInteraction,{economy});
 for(const hub of stage.hubs){
   for(const pickup of hub.pickups){
     const target=targets.get(pickup.id);
@@ -59,4 +62,10 @@ for(const hub of stage.hubs){
   assert.ok(completed.message.startsWith('ACTIVITY COMPLETE'));
   assert.equal(hub.completed,true);
 }
-console.log(JSON.stringify({pass:true,stage:stage.stage,interiors:stage.enterableInteriors,activities:stage.activityCount,pickups:stage.pickupCount,collisionProxies:stage.collisionProxies.length,detailMeshes:stage.detailMeshes},null,2));
+assert.equal(economy.getState().cash,7500,'five completed activities should award ₦500 each');
+assert.equal(economy.getState().activities['eko-parcel-depot'].rewardClaimed,true);
+const restoredEconomy=createCityEconomy({storage:{getItem:key=>savedValues.get(key)??null,setItem:(key,value)=>savedValues.set(key,value)}});
+const restoredStage=createStage08LGidiDistrictActivities({app,box,material,economy:restoredEconomy});
+assert.equal(restoredStage.getState().completedActivities,5,'completed activities should survive a reload');
+assert.equal(restoredStage.hubs.every(hub=>hub.pickups.every(item=>item.collected)),true,'pickup progress should survive a reload');
+console.log(JSON.stringify({pass:true,stage:stage.stage,interiors:stage.enterableInteriors,activities:stage.activityCount,pickups:stage.pickupCount,persistentRewards:restoredEconomy.getState().cash,completedAfterReload:restoredStage.getState().completedActivities,collisionProxies:stage.collisionProxies.length,detailMeshes:stage.detailMeshes},null,2));

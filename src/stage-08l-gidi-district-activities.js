@@ -8,7 +8,7 @@ const HUBS = [
   { id:'ekiti-produce-shed', district:'Ekiti Highlands', x:3420, z:-540, ground:-3.9698225368, title:'Ekiti Produce Shed', activity:'Farm Produce Run', item:'produce basket', colours:[[.18,.34,.18],[.68,.43,.18]], message:'Collect three produce baskets and take them to the cooperative counter.' }
 ];
 
-export function createStage08LGidiDistrictActivities({ app, box, material }) {
+export function createStage08LGidiDistrictActivities({ app, box, material, economy = null }) {
   if (!app || !box || !material) throw new Error('Stage 08L requires app, box and material helpers.');
   const collisionProxies=[];
   const hubs=[];
@@ -91,7 +91,9 @@ export function createStage08LGidiDistrictActivities({ app, box, material }) {
       add(def,'activity-item-label-'+(index+1),[p[0],p[1]+.34,p[2]],[.42,.06,.42],shared.white);
       return {id:def.id+'-pickup-'+(index+1),name:def.item+' '+(index+1),position:[p[0],y,p[2]],collected:false};
     });
-    const activity={id:def.id,district:def.district,title:def.title,name:def.activity,item:def.item,message:def.message,center:[x,y,z],position:[x+2.55,y,z],pickups,completed:false,started:false};
+    const saved=economy?.getActivityProgress?.(def.id);
+    if(saved?.pickups?.length===pickups.length)pickups.forEach((pickup,index)=>{pickup.collected=Boolean(saved.pickups[index]);});
+    const activity={id:def.id,district:def.district,title:def.title,name:def.activity,item:def.item,message:def.message,center:[x,y,z],position:[x+2.55,y,z],pickups,completed:Boolean(saved?.completed),started:pickups.some(p=>p.collected),reward:500};
     hubs.push(activity);
   }
   function registerInteractions(interactionSystem){
@@ -107,6 +109,7 @@ export function createStage08LGidiDistrictActivities({ app, box, material }) {
             pickup.collected=true;activity.started=true;
             interactionSystem.setEnabled(pickup.id,false);
             const count=activity.pickups.filter(item=>item.collected).length;
+            economy?.setActivityProgress?.(activity.id,{pickups:activity.pickups.map(item=>item.collected),completed:activity.completed});
             return {message:activity.name+' · '+count+'/3 '+activity.item+'s collected.'};
           }
         }));
@@ -118,7 +121,10 @@ export function createStage08LGidiDistrictActivities({ app, box, material }) {
           if(count<3)return {message:activity.message+' Progress: '+count+'/3.'};
           if(activity.completed)return {message:activity.name+' already completed. Explore the district for another activity.'};
           activity.completed=true;
-          return {message:'ACTIVITY COMPLETE · '+activity.name+'. '+activity.district+' thanks you for helping out.'};
+          const reward=economy?.awardActivity?.(activity.id,activity.reward);
+          if(economy?.getState)globalThis.window?.__NAIJA_RPG_UI__?.setEconomy?.(economy.getState());
+          economy?.setActivityProgress?.(activity.id,{pickups:activity.pickups.map(item=>item.collected),completed:true});
+          return {message:'ACTIVITY COMPLETE · '+activity.name+'. '+(reward?.success?reward.message:'Reward already claimed or unavailable.')};
         }
       }));
     }
@@ -128,6 +134,6 @@ export function createStage08LGidiDistrictActivities({ app, box, material }) {
     stage:'08L',districts:hubs.map(h=>h.district),hubs,collisionProxies,detailMeshes,batchGroupIds:batchGroups,enterableInteriors:hubs.length,
     activityCount:hubs.length,batchGroups:batchGroups.length,pickupCount:hubs.reduce((n,h)=>n+h.pickups.length,0),
     registerInteractions,
-    getState:()=>({stage:'08L',districts:hubs.map(h=>h.district),enterableInteriors:hubs.length,activityCount:hubs.length,pickupCount:hubs.reduce((n,h)=>n+h.pickups.length,0),completedActivities:hubs.filter(h=>h.completed).length,activities:hubs.map(h=>({id:h.id,district:h.district,title:h.title,name:h.name,position:h.position.slice(),center:h.center.slice(),pickups:h.pickups.map(p=>({id:p.id,position:p.position.slice(),collected:p.collected})),started:h.started,collected:h.pickups.filter(p=>p.collected).length,total:3,completed:h.completed}))})
+    getState:()=>({stage:'08L',districts:hubs.map(h=>h.district),enterableInteriors:hubs.length,activityCount:hubs.length,pickupCount:hubs.reduce((n,h)=>n+h.pickups.length,0),completedActivities:hubs.filter(h=>h.completed).length,rewardsClaimed:hubs.filter(h=>economy?.getActivityProgress?.(h.id)?.rewardClaimed).length,wallet:economy?.getState?.().cash??null,activities:hubs.map(h=>({id:h.id,district:h.district,title:h.title,name:h.name,position:h.position.slice(),center:h.center.slice(),pickups:h.pickups.map(p=>({id:p.id,position:p.position.slice(),collected:p.collected})),started:h.started,collected:h.pickups.filter(p=>p.collected).length,total:3,completed:h.completed}))})
   };
 }

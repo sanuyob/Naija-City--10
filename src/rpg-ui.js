@@ -28,6 +28,7 @@ export function mountRPGInterface() {
     </header>
     <section class="status" aria-label="Player status">
       <div class="player-status"><b>LVL 01</b><span>ARA FEMALE · MAIN PLAYER</span><small>100 XP TO NEXT LEVEL</small></div>
+      <div class="wallet-row"><span>WALLET</span><b id="hud-wallet-value">₦5,000</b><small id="hud-inventory-count">BAG · 0</small></div>
       <label>HEALTH <b id="hud-health-value">100</b><i class="meter"><i id="hud-health-fill" style="width:100%"></i></i></label>
       <label>STAMINA <b id="hud-stamina-value">100</b><i class="meter stamina"><i id="hud-stamina-fill" style="width:100%"></i></i></label>
       <small class="player-state" id="hud-player-state">STATUS · READY</small><small class="interaction-prompt" id="hud-interaction-prompt" hidden></small>
@@ -84,6 +85,7 @@ export function mountRPGInterface() {
   let vehicleControlsMode = 'two-handed';
   let activeDistrict = 'YABA';
   let activeRegion = 'LAGOS';
+  let economyState = { cash:5000, inventory:{} };
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
@@ -118,7 +120,7 @@ export function mountRPGInterface() {
     if (!view) return;
     root.querySelector('#panel-kicker').textContent = view[0];
     root.querySelector('#panel-title').textContent = view[1];
-    root.querySelector('#panel-content').innerHTML = view[2];
+    root.querySelector('#panel-content').innerHTML = name === 'inventory' ? renderInventory() : view[2];
     panel.hidden = false;
     pause.hidden = true;
   };
@@ -191,6 +193,26 @@ export function mountRPGInterface() {
     }
   });
 
+  const escapeMarkup = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function renderInventory() {
+    const items = Object.entries(economyState.inventory || {}).filter(([, count]) => Number(count) > 0);
+    const rows = items.length
+      ? items.map(([id, count], index) => `<article><b>${String(index + 1).padStart(2, '0')}</b><strong>${escapeMarkup(id.replaceAll('-', ' '))}</strong><small>QUANTITY · ${Math.floor(Number(count) || 0)}</small></article>`).join('')
+      : '<article><b>01</b><strong>Supplies</strong><small>No purchased goods yet</small></article>';
+    return `<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦${Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG')}</b></div><div class="tiles">${rows}</div>`;
+  }
+  function setEconomy(state = {}) {
+    economyState = {
+      cash: Number.isFinite(state.cash) ? Math.max(0, state.cash) : economyState.cash,
+      inventory: state.inventory && typeof state.inventory === 'object' ? { ...state.inventory } : economyState.inventory
+    };
+    const cash = root.querySelector('#hud-wallet-value');
+    if (cash) cash.textContent = '₦' + Math.floor(economyState.cash).toLocaleString('en-NG');
+    const count = root.querySelector('#hud-inventory-count');
+    if (count) count.textContent = 'BAG · ' + Object.values(economyState.inventory).reduce((sum, value) => sum + Math.max(0, Math.floor(Number(value) || 0)), 0);
+    if (!panel.hidden && root.querySelector('#panel-title')?.textContent === 'Inventory') root.querySelector('#panel-content').innerHTML = renderInventory();
+    return { cash: economyState.cash, inventory: { ...economyState.inventory } };
+  }
   function showToast(message) {
     toast.textContent = message;
     toast.classList.add('visible');
@@ -254,7 +276,7 @@ export function mountRPGInterface() {
     if (fuel) fuel.textContent = 'FUEL ' + Math.round(state.fuelPercent ?? 100) + '%';
   }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, setEconomy, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     isPlayerCharacterRequired: () => characterRequired

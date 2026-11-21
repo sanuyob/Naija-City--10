@@ -38,7 +38,7 @@ try{
       if(!completed.success||!completed.result?.message?.startsWith('ACTIVITY COMPLETE'))throw new Error(hub.district+' activity completion failed: '+JSON.stringify(completed));
       out.push({district:hub.district,activity:hub.activity,pickups:hub.pickups.length,completed:true,groundSurface:ground.surface,rearWallCollision:wall.id,doorwayClear:!doorway?.id?.includes('front-wall'),loadedCells:loaded.loadedCells});
     }
-    return {activities:g.getStage08LState(),report:out,interactions:g.getInteractionState(),cameraTargets:g.stage08L.hubs.map(h=>({district:h.district,center:h.center,position:h.position}))};
+    return {activities:g.getStage08LState(),economy:g.getCityEconomyState(),hudWallet:document.querySelector('#hud-wallet-value')?.textContent,report:out,interactions:g.getInteractionState(),cameraTargets:g.stage08L.hubs.map(h=>({district:h.district,center:h.center,position:h.position}))};
   });
   for(const target of report.cameraTargets){
     await page.waitForTimeout(3200); // let the completion toast from the previous test expire
@@ -54,6 +54,8 @@ try{
     await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
   }
   assert.equal(report.activities.completedActivities,5);
+  assert.equal(report.economy.cash,7500,'five activity rewards should persist in the wallet');
+  assert.equal(report.hudWallet,'₦7,500','HUD wallet should update after activity completion');
   for(const hub of report.activities.activities)assert.equal(hub.completed,true);
   assert.equal(report.interactions.interactions>=20,true);
   assert.deepEqual(errors,[],'browser errors: '+errors.join('; '));
