@@ -197,3 +197,20 @@ Regenerate the GIDI assets from the original source file with `GIDI_SOURCE=/path
 - This is a connected static-world expansion, not a surveyed complete Ikeja replica. Live vendor interactions, crowd behaviour, traffic routing, enterable interiors and real Android performance acceptance remain open.
 
 Detailed stage notes: [Stage 08I Ikeja Neighbourhood Expansion](docs/STAGE-08I-IKEJA-NEIGHBOURHOOD-EXPANSION.md).
+
+## Stage 08J — Yaba–Ikeja arterial and street finish
+- Added a continuous 79m, 11m-wide street segment from the Yaba avenue to the Stage 08I Ikeja cross street. The segment overlaps the existing road slabs by 1m at both ends, with two sidewalks, kerbs, lane/edge markings, storm drains and 12 grate covers.
+- Finished this local Yaba/Ikeja seam with utility poles, streetlights, wayfinding, two roadside stalls, produce crates, benches and waste points.
+- Downloaded two CC0 Poly Haven props (Utility Box 01 and WetFloorSign 01) and imported them as local-material GLBs. Both models are loaded and collision-tested in the runtime smoke.
+- Downloaded three CC0 ambientCG PBR families (Road 008 B, Concrete 044 D and Paving Stones 152). Original 1K source maps are retained; the runtime loads 512px colour, OpenGL normal and inverted-roughness/gloss maps.
+- Added 22 local collision proxies. The connector and imported props join player, pedestrian navigation and vehicle collision systems.
+
+## Stage 08K — GIDI districts, bridges and junctions
+- Retained the existing 42-cell GIDI road network. A topology check found the 3,049 road collision rectangles in the analysis formed one connected component; this stage adds streetscape and approach treatments without duplicating macro road slabs.
+- Added safety/wayfinding treatments to all four existing named bridges (Yaba Spine, Eko Canal, Canal Link and Lekki Connector), plus five major primary-road junctions with zebra crossings, stop lines, tactile pads and drain inlets.
+- Added local streetlights and wayfinding for Yaba Spine/Market Loop/Tech Hub Link/South Connector, Eko CBD, Victoria Island, Ikoyi Waterfront, Lekki and the Ekiti Highlands approach.
+- Added Ikoyi waterfront seating, bins, paving/drain detail and Lekki/Ekiti approach reflectors. Stage08K currently adds 496 detail meshes and 145 collision proxies under bounded static batching.
+
+Detailed implementation and asset provenance: [Stage 08J](docs/STAGE-08J-YABA-IKEJA-CONNECTION.md), [Stage 08K](docs/STAGE-08K-GIDI-DISTRICTS-BRIDGES-JUNCTIONS.md), [asset register](docs/CITY-ASSET-REGISTER.md).
+
+Verification: `npm run test:city:jk`, `npm run test:city:jk:runtime`, `npm run test:gidi`, `npm run verify`, and `npm run build`. Browser tests are not a replacement for the required Android playthrough and FPS/memory profiling.
