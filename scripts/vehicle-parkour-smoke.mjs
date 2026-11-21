@@ -165,20 +165,29 @@ try {
     throw new Error('The brake/reverse arrow must deliver strong, stable forward deceleration: ' + JSON.stringify({beforeBrake:accelerated.speedKmh,braked,brakeDecelerationMps2}));
   }
 
-  // Reset to the known clear test lane, then verify both steering directions.
+  // Test each steering direction independently from the same clear lane.
+  // A long right turn can carry the sedan to the road edge; testing left from
+  // that position would measure a roadside collision, not left-button input.
   await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,8],180));
-  const steeringStart = await holdButton('#drive-accelerate',90);
-  const turned = await holdButton('#drive-right',36);
-  const turnDegrees = Math.abs(((turned.yaw - steeringStart.yaw + 540) % 360) - 180);
-  const turnSeconds = Math.max(.001,turned.physicsTimeSeconds-steeringStart.physicsTimeSeconds);
-  const turnRateDegreesPerSecond = turnDegrees/turnSeconds;
-  if (turnRateDegreesPerSecond < 42 || turned.dynamics.uprightTiltDegrees>4.5 || Math.abs(turned.dynamics.pitchDegrees)>4.5) {
-    throw new Error('The right steering button must respond decisively without tumbling the car: ' + JSON.stringify({turnDegrees,turnRateDegreesPerSecond,turned}));
+  const steeringStartRight = await holdButton('#drive-accelerate',30);
+  const turnedRight = await holdButton('#drive-right',18);
+  const rightTurnDelta = ((turnedRight.yaw - steeringStartRight.yaw + 540) % 360) - 180;
+  const rightTurnSeconds = Math.max(.001,turnedRight.physicsTimeSeconds-steeringStartRight.physicsTimeSeconds);
+  const rightTurnRateDegreesPerSecond = Math.abs(rightTurnDelta)/rightTurnSeconds;
+  if (rightTurnDelta > -25 || rightTurnRateDegreesPerSecond < 42 ||
+      turnedRight.dynamics.uprightTiltDegrees>4.5 || Math.abs(turnedRight.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The right steering button must produce a decisive right turn without tumbling the car: ' + JSON.stringify({rightTurnDelta,rightTurnRateDegreesPerSecond,turnedRight}));
   }
+
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,8],180));
+  const steeringStartLeft = await holdButton('#drive-accelerate',30);
   const turnedLeft = await holdButton('#drive-left',18);
-  const leftTurnDegrees = Math.abs(((turnedLeft.yaw - turned.yaw + 540) % 360) - 180);
-  if (leftTurnDegrees < 8 || turnedLeft.dynamics.uprightTiltDegrees>4.5 || Math.abs(turnedLeft.dynamics.pitchDegrees)>4.5) {
-    throw new Error('The left steering button must produce a responsive turn in the opposite direction: ' + JSON.stringify({turned,turnedLeft,leftTurnDegrees}));
+  const leftTurnDelta = ((turnedLeft.yaw - steeringStartLeft.yaw + 540) % 360) - 180;
+  const leftTurnSeconds = Math.max(.001,turnedLeft.physicsTimeSeconds-steeringStartLeft.physicsTimeSeconds);
+  const leftTurnRateDegreesPerSecond = Math.abs(leftTurnDelta)/leftTurnSeconds;
+  if (leftTurnDelta < 25 || leftTurnRateDegreesPerSecond < 42 ||
+      turnedLeft.dynamics.uprightTiltDegrees>4.5 || Math.abs(turnedLeft.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The left steering button must produce a decisive left turn without tumbling the car: ' + JSON.stringify({leftTurnDelta,leftTurnRateDegreesPerSecond,turnedLeft}));
   }
 
   const exited = await page.evaluate(() => window.__NAIJA_GAME__.debugExitVehicleForSmoke());
@@ -351,9 +360,10 @@ try {
       topTestSpeedKmh: accelerated.speedKmh,
       brakedSpeedKmh: braked.speedKmh,
       brakeDecelerationMps2: Number(brakeDecelerationMps2.toFixed(2)),
-      steeringTurnDegrees: turnDegrees,
-      steeringRateDegreesPerSecond: Number(turnRateDegreesPerSecond.toFixed(1)),
-      oppositeSteeringTurnDegrees: Number(leftTurnDegrees.toFixed(1)),
+      rightSteeringTurnDegrees: Number(Math.abs(rightTurnDelta).toFixed(1)),
+      rightSteeringRateDegreesPerSecond: Number(rightTurnRateDegreesPerSecond.toFixed(1)),
+      leftSteeringTurnDegrees: Number(leftTurnDelta.toFixed(1)),
+      leftSteeringRateDegreesPerSecond: Number(leftTurnRateDegreesPerSecond.toFixed(1)),
       exitCameraDistance: onFoot.cameraDistance
     },
     carCollision,

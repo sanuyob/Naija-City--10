@@ -53,12 +53,24 @@ try {
   // Interactable registry and touch interact action.
   await page.evaluate(() => window.__NAIJA_GAME__.debugSetPlayerForSmoke([-3.9, 0, -17], 0));
   const nearest = await page.evaluate(() => window.__NAIJA_GAME__.getInteractionState());
-  await page.waitForFunction(() => {
-    const prompt = document.querySelector('#hud-interaction-prompt');
-    return prompt && !prompt.hidden && prompt.textContent.includes('STREET KIOSK');
-  }, null, { timeout: 4_000 });
   if (nearest.nearest?.id !== 'yaba-street-kiosk' || !nearest.nearest.available) {
     throw new Error(`Nearby kiosk was not presented as interactable: ${JSON.stringify(nearest.nearest)}`);
+  }
+  try {
+    await page.waitForFunction(() => {
+      const prompt = document.querySelector('#hud-interaction-prompt');
+      return prompt && !prompt.hidden && prompt.textContent.includes('STREET KIOSK');
+    }, null, { timeout: 12_000 });
+  } catch (error) {
+    const diagnostic = await page.evaluate(() => {
+      const prompt = document.querySelector('#hud-interaction-prompt');
+      return {
+        player: window.__NAIJA_GAME__?.getPlayerState?.(),
+        interaction: window.__NAIJA_GAME__?.getInteractionState?.(),
+        prompt: { hidden: prompt?.hidden ?? null, text: prompt?.textContent ?? null }
+      };
+    });
+    throw new Error(`Nearby kiosk interaction was available, but its HUD prompt did not render: ${JSON.stringify({ diagnostic, waitError: error.message })}`);
   }
   await page.evaluate(() => window.__NAIJA_INTERACT__());
   const kioskInteraction = await page.evaluate(() => window.__NAIJA_GAME__.getInteractionState());
