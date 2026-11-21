@@ -186,3 +186,14 @@ The generator emits 3,872 low-cost collision proxies across the region: road/bri
 Regenerate the GIDI assets from the original source file with `GIDI_SOURCE=/path/to/GIDI_R106_BUILDING_WORLD.glb npm run assets:gidi`. The generated `public/assets/gidi/` output is committed so normal builds do not need the source file or a Blender installation. `npm run test:gidi` launches Chromium and checks infrastructure loading, full/medium LOD, the distant-building cutoff, collision activation/removal, cell unload/reload, the gateway asphalt raycast, Ara walking contact and sedan driving into the GIDI gateway.
 
 **Validation note:** GIDI's own Revision 106 metadata marks geography approval and some bridge/shoreline visual checks as pending. The connector and Yaba road junction are runtime-tested, but the other authored internal bridges and every shoreline still need visual review and a physical Android playthrough. Browser tests are not a substitute for real-device FPS, memory, battery, touch and audio measurements.
+
+## Stage 08I — connected Ikeja neighbourhood expansion
+- Extended the existing Stage 08G/08H commercial corridor with two collector roads, two outer residential streets and four cross streets, forming 20 intersections (12 principal junctions at the avenue and collector roads).
+- Added nine low-rise residential compounds, four mixed-use commercial blocks and a six-stall neighbourhood market.
+- Added a transport/community hall landmark and forecourt, pocket park, local wayfinding, utility poles, static streetlights, footpaths, kerbs, open storm drains and spaced grates.
+- Added raised crossing approaches, tactile pads, zebra crossings, stop lines and selected asphalt repair patches.
+- Uses a dedicated static PlayCanvas batch group with bounded 96m batches, shared material families and simplified collision proxies; the new outer ground strips are included in player and vehicle physics.
+- The Stage 08I geometry and collision metadata are exposed through `window.__NAIJA_GAME__.stage08I`; the standalone runtime smoke probes outer-road ground support and residential-shell collision. Run `npm run test:city` for the geometry audit and `npm run test:city:runtime` for the Playwright runtime test.
+- This is a connected static-world expansion, not a surveyed complete Ikeja replica. Live vendor interactions, crowd behaviour, traffic routing, enterable interiors and real Android performance acceptance remain open.
+
+Detailed stage notes: [Stage 08I Ikeja Neighbourhood Expansion](docs/STAGE-08I-IKEJA-NEIGHBOURHOOD-EXPANSION.md).
