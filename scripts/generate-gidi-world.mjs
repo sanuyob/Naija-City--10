@@ -560,6 +560,7 @@ const manifest = {
   version: 1,
   source: 'GIDI_R106_BATCH02_BUILDING_FACADE_PILOT.glb',
   sourceRevision: 'Revision 106',
+  sourceProject: { name: 'GIDI 02 REBUILD', projectId: '5d0b57d1-197f-4532-bb0f-4ca703c3224a', revision: 106, sceneSequence: 2 },
   coordinateSystem: 'glTF Y-up; source X east and source north maps to negative Z',
   worldYOffset: -0.3,
   cellSize: CELL_SIZE,
@@ -596,6 +597,7 @@ const manifest = {
 };
 await fs.writeFile(path.join(OUT, 'manifest.json'), JSON.stringify(manifest));
 await fs.writeFile(path.join(OUT, 'build-report.json'), JSON.stringify({
+  sourceProject: manifest.sourceProject,
   stats: manifest.stats,
   infrastructureNodeCount: infraRoots.length,
   cells: manifestCells.map(c => ({ id: c.id, nodes: c.nodeCount, colliders: c.colliderCount, geometry: c.geometry }))

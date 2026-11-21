@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { isPlayerInteriorReplacementCollider } from './gidi-authored-interiors.js';
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -58,6 +59,7 @@ export function createGidiWorldStreamer({
 
   const records = new Map();
   const inFlight = new Map();
+  const namedEntityOverrides = new Map();
   const errors = [];
   // GIDI imports use offline-joined static geometry and stay in the normal
   // render path. Runtime BatchManager groups hid streamed GLTF components,
@@ -177,7 +179,11 @@ export function createGidiWorldStreamer({
     const proxies = (record.cell.colliders || []).map(proxy => ({
       ...proxy, position: [proxy.position[0], proxy.position[1] + yOffset, proxy.position[2]]
     }));
-    const playerCount = playerPhysics?.addStaticColliders?.(proxies, ownerId) || 0;
+    // Large generated footprint boxes remain for vehicles, but would seal the
+    // authored door openings for the player. The interior module replaces
+    // these few player blockers with source-derived wall/floor boxes.
+    const playerProxies = proxies.filter(proxy => !isPlayerInteriorReplacementCollider(proxy));
+    const playerCount = playerPhysics?.addStaticColliders?.(playerProxies, ownerId) || 0;
     const vehicleCount = vehicleSystem?.addStaticColliders?.(proxies, ownerId) || 0;
     record.collisionAdded = true;
     record.playerColliderCount = playerCount;
@@ -194,6 +200,42 @@ export function createGidiWorldStreamer({
     record.collisionAdded = false;
     record.playerColliderCount = 0;
     record.vehicleColliderCount = 0;
+  }
+
+  function applyNamedEntityOverrides(root) {
+    if (!root || namedEntityOverrides.size === 0) return 0;
+    let applied = 0;
+    const stack = [root];
+    while (stack.length) {
+      const entity = stack.pop();
+      const enabled = namedEntityOverrides.get(entity.name);
+      if (enabled !== undefined) { entity.enabled = enabled; applied++; }
+      for (const child of entity.children || []) stack.push(child);
+    }
+    return applied;
+  }
+
+  function setNamedEntityEnabled(name, enabled) {
+    if (!name) return 0;
+    const value = Boolean(enabled);
+    namedEntityOverrides.set(String(name), value);
+    let changed = 0;
+    for (const record of records.values()) changed += applyNamedEntityOverrides(record.visual);
+    return changed;
+  }
+
+  function getNamedEntityState(name) {
+    const matches = [];
+    for (const record of records.values()) {
+      if (!record.visual) continue;
+      const stack = [record.visual];
+      while (stack.length) {
+        const entity = stack.pop();
+        if (entity.name === name) matches.push({ cellId: record.cell.id, enabled: entity.enabled, renderEnabled: entity.render?.enabled ?? null });
+        for (const child of entity.children || []) stack.push(child);
+      }
+    }
+    return { name, override: namedEntityOverrides.get(name) ?? null, matches };
   }
 
   function destroyVisual(record) {
@@ -230,6 +272,7 @@ export function createGidiWorldStreamer({
         record.streamedRenderComponents = prepareStaticRenderEntity(entity, null);
         app.root.addChild(entity);
         record.visual = entity;
+        applyNamedEntityOverrides(entity);
         record.visualAsset = asset;
         record.visualMode = mode;
         totalCellLoads++;
@@ -374,6 +417,7 @@ export function createGidiWorldStreamer({
       totalColliderAdds,
       totalColliderRemoves,
       inFlightLoads: [...records.values()].filter(record => Boolean(record.visualPromise)).length,
+      namedEntityOverrides: Object.fromEntries(namedEntityOverrides),
       errors: errors.slice(-8)
     };
   }
@@ -396,6 +440,8 @@ export function createGidiWorldStreamer({
   return {
     start: ensureInfrastructure,
     update,
+    setNamedEntityEnabled,
+    getNamedEntityState,
     getState,
     destroy
   };
