@@ -1,0 +1,873 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 648,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 432,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 324,
+      "normalized": false,
+      "byteOffset": 1296,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 216,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 5208,
+      "normalized": false,
+      "byteOffset": 1944,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 3472,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 6,
+      "normalized": false,
+      "byteOffset": 12360,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 4,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 4
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 8208,
+      "normalized": false,
+      "byteOffset": 12372,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 5472,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 5
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1422,
+      "normalized": false,
+      "byteOffset": 28788,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_warm_light_architectural_concrete_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 948,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 6
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 432,
+      "max": [
+        32767,
+        4736,
+        8209
+      ],
+      "min": [
+        -32767,
+        -4736,
+        -8209
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 7
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5123,
+      "count": 432,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 8
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 216,
+      "max": [
+        32767,
+        1052,
+        4680
+      ],
+      "min": [
+        -32767,
+        -1052,
+        -4680
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 9
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5123,
+      "count": 216,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 10
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 3472,
+      "max": [
+        9101,
+        32767,
+        11473
+      ],
+      "min": [
+        -9101,
+        -32767,
+        -11473
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 11
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 4,
+      "max": [
+        32767,
+        3616,
+        0
+      ],
+      "min": [
+        -32767,
+        -3616,
+        0
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 12
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 5472,
+      "max": [
+        10837,
+        32767,
+        8357
+      ],
+      "min": [
+        -10837,
+        -32767,
+        -8357
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 13
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_warm_light_architectural_concrete_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 948,
+      "max": [
+        32767,
+        25819,
+        10501
+      ],
+      "min": [
+        -32767,
+        -25819,
+        -10501
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 14
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 31632,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 5294,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 15816
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 31632,
+      "byteLength": 1728,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 437,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 432
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 33360,
+      "byteLength": 864,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 440,
+          "byteLength": 240,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 216
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 34224,
+      "byteLength": 13888,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 680,
+          "byteLength": 558,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 3472
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 48112,
+      "byteLength": 16,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1240,
+          "byteLength": 37,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 4
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 48128,
+      "byteLength": 21888,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1280,
+          "byteLength": 732,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 5472
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 70016,
+      "byteLength": 3792,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2012,
+          "byteLength": 462,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 948
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 73808,
+      "byteLength": 3456,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2476,
+          "byteLength": 1643,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 432
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 77264,
+      "byteLength": 1728,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 4120,
+          "byteLength": 1360,
+          "mode": "ATTRIBUTES",
+          "byteStride": 4,
+          "count": 432
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 78992,
+      "byteLength": 1728,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 5480,
+          "byteLength": 870,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 216
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 80720,
+      "byteLength": 864,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 6352,
+          "byteLength": 764,
+          "mode": "ATTRIBUTES",
+          "byteStride": 4,
+          "count": 216
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 81584,
+      "byteLength": 27776,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 7116,
+          "byteLength": 11930,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 3472
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 109360,
+      "byteLength": 32,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 19048,
+          "byteLength": 61,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 4
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 109392,
+      "byteLength": 43776,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 19112,
+          "byteLength": 18492,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 5472
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 153168,
+      "byteLength": 7584,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37604,
+          "byteLength": 3711,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 948
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "textures": [
+    {
+      "source": 1,
+      "sampler": 0
+    },
+    {
+      "source": 0,
+      "sampler": 0
+    },
+    {
+      "source": 3,
+      "sampler": 0
+    },
+    {
+      "source": 2,
+      "sampler": 0
+    }
+  ],
+  "images": [
+    {
+      "name": "GIDI_PREMIUM_FACADE_COMPOSITE_MetallicRoughness_512",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-20.png"
+    },
+    {
+      "name": "GIDI_PREMIUM_FACADE_COMPOSITE_BaseColor_1024",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-18.png"
+    },
+    {
+      "name": "GIDI_PAINTED_METAL_ALUMINIUM_MetallicRoughness_512",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-17.png"
+    },
+    {
+      "name": "GIDI_PAINTED_METAL_ALUMINIUM_BaseColor_1024",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-15.png"
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_3_-5_lod1_1.bin",
+      "byteLength": 5296
+    },
+    {
+      "uri": "cell_3_-5_lod1_2.bin",
+      "byteLength": 41316
+    },
+    {
+      "byteLength": 160752,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "GIDI_PBR_PREMIUM_FACADE_COMPOSITE",
+      "extras": {
+        "gidiMaterialFamily": "PREMIUM_FACADE_COMPOSITE",
+        "source": "GIDI_MASTER_PBR_LIBRARY.json",
+        "stage": "04"
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    },
+    {
+      "name": "GIDI_PBR_PAINTED_METAL_ALUMINIUM",
+      "extras": {
+        "gidiMaterialFamily": "PAINTED_METAL_ALUMINIUM",
+        "source": "GIDI_MASTER_PBR_LIBRARY.json",
+        "stage": "04"
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 3
+        }
+      }
+    },
+    {
+      "name": "EKO | deep Atlantic blue glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.03500000014901161,
+          0.12999999523162842,
+          0.2199999988079071,
+          1
+        ],
+        "roughnessFactor": 0.1899999976158142,
+        "metallicFactor": 0.47999998927116394
+      }
+    },
+    {
+      "name": "EKO | retail storefront glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.014999999664723873,
+          0.07000000029802322,
+          0.10000000149011612,
+          1
+        ],
+        "roughnessFactor": 0.18000000715255737,
+        "metallicFactor": 0.3499999940395355
+      }
+    },
+    {
+      "name": "EKO | smoked bronze glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.18000000715255737,
+          0.15000000596046448,
+          0.11999999731779099,
+          1
+        ],
+        "roughnessFactor": 0.23999999463558197,
+        "metallicFactor": 0.3499999940395355
+      }
+    },
+    {
+      "name": "EKO | warm light architectural concrete",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6200000047683716,
+          0.6499999761581421,
+          0.6399999856948853,
+          1
+        ],
+        "roughnessFactor": 0.47999998927116394,
+        "metallicFactor": 0.07999999821186066
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Cube.193",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 12,
+            "TEXCOORD_0": 13
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "Cube.204",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 3,
+            "POSITION": 14,
+            "TEXCOORD_0": 15
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 2
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass__3_-5",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 16
+          },
+          "mode": 4,
+          "material": 2,
+          "indices": 4
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass__3_-5",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 17
+          },
+          "mode": 4,
+          "material": 3,
+          "indices": 6
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass__3_-5",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 18
+          },
+          "mode": 4,
+          "material": 4,
+          "indices": 8
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_warm_light_architectural_concrete__3_-5",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 11,
+            "POSITION": 19
+          },
+          "mode": 4,
+          "material": 5,
+          "indices": 10
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "EKO_CROWN_MASS_EKO_010",
+      "extras": {
+        "hf_id": "c9c037bafe6f449eb491d0e07b510d4a"
+      },
+      "translation": [
+        1652.908740429834,
+        148.05114656590646,
+        -2024.5395827240916
+      ],
+      "scale": [
+        80.57987044873943,
+        80.57987044873943,
+        80.57987044873943
+      ],
+      "mesh": 0
+    },
+    {
+      "name": "EKO_EXISTING_TOWER_ENTRY_CANOPY_MASS_EKO_015",
+      "extras": {
+        "hf_id": "a0693b3579c04ac59845f078f988fbb6"
+      },
+      "translation": [
+        1582.6854248046875,
+        4.300000190734863,
+        -2015.98193359375
+      ],
+      "scale": [
+        7,
+        7,
+        7
+      ],
+      "mesh": 1
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass",
+      "extras": {
+        "hf_id": "e6f7ba6ecabe4ed7a8e6662172914c8c"
+      },
+      "translation": [
+        1723.5789184570312,
+        64.04999923706055,
+        -2022.3832397460938
+      ],
+      "scale": [
+        62.79999923706055,
+        62.79999923706055,
+        62.79999923706055
+      ],
+      "mesh": 2
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass",
+      "extras": {
+        "hf_id": "e3060c0efd3e489ebd5119379adb359c"
+      },
+      "translation": [
+        1582.6854248046875,
+        2.300000011920929,
+        -2016.781982421875
+      ],
+      "scale": [
+        15.40869140625,
+        15.40869140625,
+        15.40869140625
+      ],
+      "mesh": 3
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass",
+      "extras": {
+        "hf_id": "6329639a908b4a2f8a44e8f97fbb0fb0"
+      },
+      "translation": [
+        1582.6854248046875,
+        74.30000305175781,
+        -2035.45068359375
+      ],
+      "scale": [
+        73.05000305175781,
+        73.05000305175781,
+        73.05000305175781
+      ],
+      "mesh": 4
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_warm_light_architectural_concrete",
+      "extras": {
+        "hf_id": "9201f2ac10eb47bbaae6d7ab7d5ef68c"
+      },
+      "translation": [
+        1649.7737426757812,
+        75.83999788761139,
+        -2024.833740234375
+      ],
+      "scale": [
+        91.24432373046875,
+        91.24432373046875,
+        91.24432373046875
+      ],
+      "mesh": 5
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

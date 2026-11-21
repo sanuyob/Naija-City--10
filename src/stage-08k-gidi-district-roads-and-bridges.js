@@ -4,7 +4,7 @@
 // This stage therefore adds verified approach safety, junction markings,
 // drainage and district wayfinding instead of laying duplicate road slabs.
 export function createStage08KGidiDistrictRoadsAndBridges({ app, box, material }) {
-  const group = app.batcher?.addGroup('stage08k-gidi-district-road-details', false, 96);
+  const group = app.batcher?.addGroup('stage08k-gidi-district-road-details', false, 256);
   const mats = {
     asphalt: material([0.13, 0.14, 0.145]),
     concrete: material([0.46, 0.45, 0.41]),

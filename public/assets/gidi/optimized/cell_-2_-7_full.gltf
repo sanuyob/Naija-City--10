@@ -1,0 +1,192 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 72,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 48,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 48,
+      "max": [
+        32767,
+        2152,
+        300
+      ],
+      "min": [
+        -32767,
+        -2152,
+        -300
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 144,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 41,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 144,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 75,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 336,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 76,
+          "byteLength": 224,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 48
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_-2_-7_full_1.bin",
+      "byteLength": 44
+    },
+    {
+      "uri": "cell_-2_-7_full_2.bin",
+      "byteLength": 300
+    },
+    {
+      "byteLength": 720,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "MAT_EKITI_COMPOUND_WALL",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5799999833106995,
+          0.5299999713897705,
+          0.4300000071525574,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "COMPOUND_EAST_WALL_E_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 2
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "COMPOUND_EAST_WALL_E",
+      "extras": {
+        "hf_id": "3ee5a83a7c164623bbf877ba9e8272ff"
+      },
+      "translation": [
+        -777.000521446722,
+        2.6125984340906143,
+        -3104.0003127722684
+      ],
+      "rotation": [
+        0,
+        0.7071068286895689,
+        0,
+        0.7071067336835231
+      ],
+      "scale": [
+        12.00000149309708,
+        11.99999988079071,
+        12.00000149309708
+      ],
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

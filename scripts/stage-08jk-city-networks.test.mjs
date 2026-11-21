@@ -43,7 +43,7 @@ assert.equal(stage08J.stage, '08J');
 assert.equal(stage08J.connector.startZ, 168);
 assert.equal(stage08J.connector.endZ, 247);
 assert.equal(stage08J.connector.lengthMetres, 79);
-assert.equal(stage08J.connector.roadWidthMetres, 11);
+assert.equal(stage08J.connector.roadWidthMetres, 14);
 assert.equal(stage08J.connector.physicalJoinOverlapMetres, 1);
 assert.equal(stage08J.junction.ikejaCrossStreetZ, 246);
 assert.equal(stage08J.junction.inheritedFromStage08I, true);

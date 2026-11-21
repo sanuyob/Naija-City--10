@@ -1,0 +1,243 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 6288,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_VICTORIA_ISLAND_CBD_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 4192,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "name": "GIDI_VICTORIA_ISLAND_CBD_V2_MESH_TEXCOORD_0",
+      "type": "VEC2",
+      "componentType": 5126,
+      "count": 4192,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "name": "GIDI_VICTORIA_ISLAND_CBD_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 4192,
+      "max": [
+        32767,
+        5584,
+        27195
+      ],
+      "min": [
+        -32767,
+        -5584,
+        -27195
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 1,
+      "byteOffset": 0,
+      "byteLength": 12576,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 2113,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 6288
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 12576,
+      "byteLength": 16768,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 2116,
+          "byteLength": 3786,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 4192
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 29344,
+      "byteLength": 33536,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 5904,
+          "byteLength": 16306,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 4192
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 62880,
+      "byteLength": 33536,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 22212,
+          "byteLength": 13182,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 4192
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "textures": [
+    {
+      "source": 1,
+      "sampler": 0
+    },
+    {
+      "source": 0,
+      "sampler": 0
+    }
+  ],
+  "images": [
+    {
+      "name": "GIDI_PREMIUM_FACADE_COMPOSITE_MetallicRoughness_512",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-20.png"
+    },
+    {
+      "name": "GIDI_PREMIUM_FACADE_COMPOSITE_BaseColor_1024",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-18.png"
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_2_-5_lod1.bin",
+      "byteLength": 35396
+    },
+    {
+      "byteLength": 96416,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "GIDI_PBR_PREMIUM_FACADE_COMPOSITE",
+      "extras": {
+        "gidiMaterialFamily": "PREMIUM_FACADE_COMPOSITE",
+        "source": "GIDI_MASTER_PBR_LIBRARY.json",
+        "stage": "04"
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "GIDI_VICTORIA_ISLAND_CBD_V2_MESH__2_-5",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "TEXCOORD_0": 2,
+            "POSITION": 3
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "GIDI_VICTORIA_ISLAND_CBD_V2_MESH",
+      "extras": {
+        "hf_id": "a94a849d31454e26914f6bedf04ed700"
+      },
+      "translation": [
+        1100.5400085449219,
+        15.484999768435955,
+        -2090.75
+      ],
+      "scale": [
+        89.45999145507812,
+        89.45999145507812,
+        89.45999145507812
+      ],
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

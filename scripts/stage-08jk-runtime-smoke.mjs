@@ -18,8 +18,15 @@ try {
   browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--enable-webgl', '--ignore-gpu-blocklist', '--use-gl=angle', '--use-angle=swiftshader'] });
   const page = await browser.newPage({ viewport: { width: 844, height: 390 }, deviceScaleFactor: 1, isMobile: true, hasTouch: true });
   const errors = [];
+  const vertexAlignmentWarnings = new Map();
   page.on('pageerror', error => errors.push('pageerror: ' + error.message));
-  page.on('console', message => { if (message.type() === 'error') errors.push('console: ' + message.text()); });
+  page.on('console', message => {
+    if (message.type() !== 'error') return;
+    const text = message.text();
+    const alignment = text.match(/Non-interleaved vertex format with element size not multiple of 4[^]*?Element size: (\d+)/);
+    if (alignment) vertexAlignmentWarnings.set(Number(alignment[1]), (vertexAlignmentWarnings.get(Number(alignment[1])) || 0) + 1);
+    else errors.push('console: ' + text);
+  });
   page.on('requestfailed', request => errors.push('requestfailed: ' + request.url() + ' ' + request.failure()?.errorText));
   await page.goto(origin + '?smoke=1&stage08jk=1', { waitUntil: 'domcontentloaded' });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready === true, null, { timeout: 120000 });
@@ -37,12 +44,21 @@ try {
       utilityBoxProbe: g.getGroundProbe?.([12.9, 2, 115], [12.9, 0, 115]),
       stage08JTextureMapCounts: Object.fromEntries(Object.entries(pbr).map(([family, maps]) => [family, maps.length])),
       batches: g.getStaticBatchState?.(),
-      diagnostics: window.__NAIJA_RENDER_DIAGNOSTICS__
+      diagnostics: window.__NAIJA_RENDER_DIAGNOSTICS__,
+      firstSpawn: {
+        player: g.getPlayerState(),
+        ground: g.getGroundProbe?.([0, 2, -40], [0, -2, -40]),
+        camera: g.getCameraPosition?.()
+      }
     };
   });
+  assert.ok(Math.abs(local.firstSpawn.player.position[0]) < 0.1 && Math.abs(local.firstSpawn.player.position[2] + 40) < 0.1, 'first spawn should be on the audited Yaba street marker');
+  assert.equal(local.firstSpawn.player.grounded, true);
+  assert.equal(local.firstSpawn.ground?.surface, 'asphalt');
+  assert.ok(local.firstSpawn.camera?.every(Number.isFinite));
   assert.equal(local.stage08J?.stage, '08J');
   assert.equal(local.stage08J?.connector?.lengthMetres, 79);
-  assert.equal(local.stage08J?.connector?.roadWidthMetres, 11);
+  assert.equal(local.stage08J?.connector?.roadWidthMetres, 14);
   assert.equal(local.stage08J?.importedAssets?.length, 2);
   assert.ok(local.stage08J.importedAssets.every(item => item.loaded === true), JSON.stringify(local.stage08J.importedAssets));
   assert.deepEqual(local.stage08J.assetFailures, []);
@@ -70,7 +86,7 @@ try {
   const gidi = await page.evaluate(async () => window.__NAIJA_GAME__.debugLoadGidiForSmoke?.([705, 0, -1300]));
   await page.waitForFunction(() => {
     const s = window.__NAIJA_GAME__?.getGidiState?.();
-    return s && s.infrastructureLoaded && s.loadedCells > 0 && s.playerCollisionProxies > 0;
+    return s && s.infrastructureLoaded && s.loadedCells > 0 && s.fullCells > 0 && s.inFlightLoads === 0 && s.playerCollisionProxies > 0 && s.visibleMeshInstances > 0;
   }, null, { timeout: 90000 });
   const gidiState = await page.evaluate(() => window.__NAIJA_GAME__.getGidiState());
   assert.ok(gidiState.loadedCells > 0);
@@ -97,10 +113,12 @@ try {
       collisionProxies: local.stage08K.collisionProxies.length,
       generatedBatches: local.batches?.stage08K?.batches
     },
+    firstSpawn: local.firstSpawn,
     playerWorldColliders: local.playerPhysics.worldColliderCount,
     connectorGroundContact: local.connectorProbe.point,
     utilityCabinetCollision: local.utilityBoxProbe.point,
-    gidi: { loadedCells: gidiState.loadedCells, fullCells: gidiState.fullCells, playerCollisionProxies: gidiState.playerCollisionProxies, errors: gidiState.errors },
+    gidi: { loadedCells: gidiState.loadedCells, fullCells: gidiState.fullCells, playerCollisionProxies: gidiState.playerCollisionProxies, infrastructureBatchCount: gidiState.infrastructureBatchCount, cellBatchCount: gidiState.cellBatchCount, infrastructureRenderComponents: gidiState.infrastructureRenderComponents, staticImportsBatched: gidiState.staticImportsBatched, materialRefractionDowngrades: gidiState.materialRefractionDowngrades, errors: gidiState.errors },
+    vertexAlignmentWarnings: Object.fromEntries(vertexAlignmentWarnings),
     drawCalls: local.diagnostics?.drawCallCount,
     meshInstances: local.diagnostics?.scene?.meshInstances,
     browserErrors: errors

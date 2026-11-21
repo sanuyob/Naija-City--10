@@ -46,7 +46,7 @@ function pbrMaterial(label, maps, colour, gloss = 0.12, tiling = [1, 1]) {
 
 /** Stage 08J: join the Yaba avenue to Ikeja and finish the local roadside set. */
 export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, material }) {
-  const group = app.batcher?.addGroup('stage08j-yaba-ikeja-static-streets', false, 80);
+  const group = app.batcher?.addGroup('stage08j-yaba-ikeja-static-streets', false, 128);
   const collisionProxies = [];
   const textureFailures = [];
   const assetFailures = [];
@@ -142,16 +142,16 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
   // A single continuous 77m connector bridges the existing Yaba avenue and
   // the Stage 08I Ikeja cross street. Its ends overlap the existing road slabs
   // by 1.0m so the join remains sealed under vehicle and character movement.
-  const connectorRoad = detail('continuous-yaba-ikeja-arterial', [0, -0.062, 207.5], [11, 0.16, 79], pbr.asphalt);
+  const connectorRoad = detail('continuous-yaba-ikeja-arterial', [0, -0.062, 207.5], [14, 0.16, 79], pbr.asphalt);
   connectorRoad.tags.add('stage08j-drivable-road');
   connectorMeshes++;
-  detail('connector-sidewalk-west', [-6.1, 0.02, 207.5], [1.2, 0.20, 79], pbr.paving); connectorMeshes++;
-  detail('connector-sidewalk-east', [6.1, 0.02, 207.5], [1.2, 0.20, 79], pbr.paving); connectorMeshes++;
+  detail('connector-sidewalk-west', [-7.95, 0.02, 207.5], [1.2, 0.20, 79], pbr.paving); connectorMeshes++;
+  detail('connector-sidewalk-east', [7.95, 0.02, 207.5], [1.2, 0.20, 79], pbr.paving); connectorMeshes++;
   for (const side of [-1, 1]) {
-    detail('connector-kerb', [side * 5.62, 0.13, 207.5], [0.22, 0.26, 79], pbr.concrete);
-    detail('connector-storm-drain', [side * 6.78, 0.018, 207.5], [0.24, 0.08, 79], fallback.drain);
+    detail('connector-kerb', [side * 7.12, 0.13, 207.5], [0.22, 0.26, 79], pbr.concrete);
+    detail('connector-storm-drain', [side * 9.12, 0.018, 207.5], [0.24, 0.08, 79], fallback.drain);
     for (let z = 176; z <= 238; z += 12) {
-      detail('connector-drain-grate', [side * 6.78, 0.11, z], [0.62, 0.08, 1.25], fallback.galvanized);
+      detail('connector-drain-grate', [side * 9.12, 0.11, z], [0.62, 0.08, 1.25], fallback.galvanized);
       roadDrainCovers++;
     }
   }
@@ -160,21 +160,21 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
   }
   for (const side of [-1, 1]) {
     for (let z = 174; z <= 235; z += 24) {
-      detail('connector-edge-line', [side * 4.9, 0.025, z], [0.10, 0.018, 8.0], fallback.white);
+      detail('connector-edge-line', [side * 6.65, 0.025, z], [0.10, 0.018, 8.0], fallback.white);
     }
   }
 
   // A raised neighbourhood crossing and stop control at the Ikeja end.
   // Stage 08I already supplies the main cross-street geometry at z=246.
-  detail('ikeja-approach-speed-table', [0, 0.035, 238.5], [11.8, 0.10, 1.4], fallback.asphalt);
+  detail('ikeja-approach-speed-table', [0, 0.035, 238.5], [14.8, 0.10, 1.4], fallback.asphalt);
   for (let i = -4; i <= 4; i++) detail('ikeja-approach-speed-table-mark', [i * 1.2, 0.095, 238.5], [0.55, 0.025, 1.0], fallback.yellow);
-  detail('ikeja-approach-stop-line', [0, 0.04, 241.5], [10.8, 0.035, 0.24], fallback.white);
+  detail('ikeja-approach-stop-line', [0, 0.04, 241.5], [13.5, 0.035, 0.24], fallback.white);
   // Stage 08I already supplies the zebra crossing and tactile pads at z=251.3.
   // Keep that single treatment and tie the connector's stop line into it.
 
   // Street-level Yaba details finish the north/south seam without blocking
-  // the 11m carriageway or the 1.2m footpath strips.
-  for (const x of [-7.6, 7.6]) {
+  // the widened 14m carriageway or the 1.2m footpath strips.
+  for (const x of [-9.8, 9.8]) {
     for (const z of [184, 218]) {
       detail('connector-utility-pole', [x, 4.1, z], [0.22, 8.2, 0.22], fallback.roof, null, true);
       detail('connector-utility-crossarm', [x, 7.35, z], [1.45, 0.14, 0.16], fallback.galvanized);
@@ -263,7 +263,7 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
   return {
     stage: '08J',
     district: 'Yaba–Ikeja arterial and street finish',
-    connector: { startZ: 168, endZ: 247, lengthMetres: 79, roadWidthMetres: 11, sidewalks: 2, physicalJoinOverlapMetres: 1 },
+    connector: { startZ: 168, endZ: 247, lengthMetres: 79, roadWidthMetres: 14, sidewalks: 2, physicalJoinOverlapMetres: 1 },
     junction: { ikejaCrossStreetZ: 246, speedTable: true, stopLine: true, zebraCrossingStripes: 9, tactilePads: 2, inheritedFromStage08I: true },
     streetProps,
     importedAssets,

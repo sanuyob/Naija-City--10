@@ -396,7 +396,7 @@ assert.match(stage08i,/outerResidentialRoads: 2/,'Stage 08I must add two outer r
 assert.match(stage08i,/crossStreets: crossStreetZ\.length/,'Stage 08I must add four connecting cross streets');
 assert.match(stage08i,/connectedJunctions: crossStreetZ\.length \* 5/,'Stage 08I must count all twenty intersections in the connected road grid');
 for(const feature of ['residential-house-shell','mixed-use-commercial-shell','market-stall-counter','transport-hall-main-shell','open-storm-drain','residential-rooftop-water-tank','zebra-crossing-stripe']) assert.ok(stage08i.includes(feature),`Missing Stage 08I district feature: ${feature}`);
-for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','vehicle-front-bumper','jerrycan-cap','jerrycan-handle-grip','wheelbarrow-handle','handcart-upright-frame','blue-market-crate','yellow-poly-jerrycan','green-pos-kiosk','red-vendor-canvas','matte-silhouette-skin','ochre-shop-plaster']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
+for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','jerrycan-cap','jerrycan-handle-grip','wheelbarrow-handle','handcart-upright-frame','blue-market-crate','yellow-poly-jerrycan','green-pos-kiosk','red-vendor-canvas','matte-silhouette-skin','ochre-shop-plaster']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
 assert.match(stage08h,/textureResolutions:\{asphalt:512,otherFamilies:256\}/,'Stage 08H texture resolution contract must remain mobile-conscious');
 assert.match(stage08h,/texturedMaterialFamilies:10/,'Stage 08H must report ten textured material families, including the drain-silt variant.');
 assert.match(stage08h,/textureMapSets:mapCache\.size/,'Stage 08H must expose its actual generated map-set count.');
@@ -406,12 +406,13 @@ assert.match(stage08h,/glass\.blendType = pc\.BLEND_NORMAL/,'Shop and vehicle gl
 assert.match(stage08h,/glass\.opacity = 0\.56/,'Smoked glass must remain translucent rather than opaque.');
 assert.match(stage08h,/glass\.depthWrite = false/,'Translucent glass must not occlude objects behind it in the depth buffer.');
 assert.match(stage08h,/detail\('chair-leg',[^\n]*seatMat\)/,'Plastic chair supports must use moulded-plastic material.');
-assert.ok(stage08h.includes("if (/parked-.*-(body|roof)$/.test(name))"),'Vehicle roofs and bodies must share the same paint assignment.');
+assert.match(stage08g,/parkedVehicles:0/,'Static parked vehicles must not obstruct the widened Ikeja avenue.');
+assert.match(stage08g,/laneObstructionsRemoved/,'Stage 08G must declare the removed lane-blocking parked vehicles.');
 assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
 
 assert.match(game,/farClip:1100/,'Camera range must include the GIDI landscape extension');
 assert.match(game,/knownBounds:\{min:\[-120,-9,-3900\],max:\[4200,269,480\]\}/,'Runtime diagnostics must include both the Ikeja and GIDI world bounds');
-for(const feature of ['vendorStalls:stalls.length','parkedVehicles:3','staticPedestrianSilhouettes:people.length','litterHotspots:4','openDrainageRuns:2','liveNpcAI:false','liveTrafficSimulation:false','stage:\'08G\'','district:\'Ikeja\'']) assert.ok(stage08g.includes(feature),`Missing Stage 08G feature contract: ${feature}`);
+for(const feature of ['vendorStalls:stalls.length','parkedVehicles:0','staticPedestrianSilhouettes:people.length','laneObstructionsRemoved','litterHotspots:4','openDrainageRuns:2','liveNpcAI:false','liveTrafficSimulation:false','stage:\'08G\'','district:\'Ikeja\'']) assert.ok(stage08g.includes(feature),`Missing Stage 08G feature contract: ${feature}`);
 assert.match(game,/createStage08FDeviceProfiler/,'Stage 08F device profiler must be mounted in the live scene');
 assert.match(game,/getStage08FProfile/,'Stage 08F profile snapshot must be exposed at runtime');
 assert.match(stage08fProfiler,/p95Ms/,'Stage 08F must report p95 frame time');

@@ -1154,6 +1154,14 @@ export function createThirdPersonController(app, camera, canvas, {
     return true;
   }
 
+  function setCameraViewYaw(degrees = 0) {
+    const value = Number(degrees);
+    if (!Number.isFinite(value)) return false;
+    cameraYaw = value * Math.PI / 180;
+    manualCameraHold = 0.85;
+    return cameraYaw;
+  }
+
   function getControlInput() {
     const keyX = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0);
     const keyY = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
@@ -1240,6 +1248,7 @@ export function createThirdPersonController(app, camera, canvas, {
     setPosition,
     getControlInput,
     resetCameraAfterVehicle,
+    setCameraViewYaw,
     performTraversal,
     setPositionForSmoke,
     setMotionForSmoke,

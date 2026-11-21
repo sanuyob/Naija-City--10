@@ -1,0 +1,190 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 144,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 96,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 96,
+      "max": [
+        32767,
+        4900,
+        23594
+      ],
+      "min": [
+        -32767,
+        -4900,
+        -23594
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 288,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 65,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 144
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 288,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 119,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 96
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 672,
+      "byteLength": 768,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 120,
+          "byteLength": 435,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 96
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_7_-4_lod1_1.bin",
+      "byteLength": 68
+    },
+    {
+      "uri": "cell_7_-4_lod1_2.bin",
+      "byteLength": 556
+    },
+    {
+      "byteLength": 1440,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "MAT_MASS_TRANSITION_MIXED_USE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.36000001430511475,
+          0.3799999952316284,
+          0.36000001430511475,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "MASS_SHARED_001_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 2
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "MASS_SHARED_001",
+      "extras": {
+        "GIDI_BLOCKOUT_ASSET": true,
+        "GIDI_HEIGHT_M": 41.69,
+        "GIDI_DISTRICT": "TRANSITION",
+        "GIDI_FOOTPRINT_M_JSON": "[38.57, 39.31]",
+        "hf_id": "a4a8e3e1917542668973baab5bd114ff"
+      },
+      "translation": [
+        3724.682002945019,
+        29.069892353776357,
+        -1740.908386688262
+      ],
+      "scale": [
+        193.20748417612245,
+        193.20748417612245,
+        193.20748417612245
+      ],
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}
