@@ -77,10 +77,22 @@ try {
   });
   const yabaImage=await capture('yaba-daylight');
   const yabaAudit=await getAudit();
+  const measureFarClipSweep=async()=>{
+    const results=[];
+    for(const distance of [650,500,420,350]){
+      await page.evaluate(value=>window.__NAIJA_GAME__?.debugSetCameraFarClipForSmoke?.(value),distance);
+      await page.waitForTimeout(300);
+      results.push(await page.evaluate(()=>({farClip:window.__NAIJA_RENDER_DIAGNOSTICS__?.camera?.farClip??null,drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount??null,meshInstances:window.__NAIJA_RENDER_DIAGNOSTICS__?.scene?.meshInstances??null,frameTime:window.__NAIJA_RENDER_DIAGNOSTICS__?.frameTime??null})));
+    }
+    await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetCameraFarClipForSmoke?.(650));
+    await page.waitForTimeout(250);
+    return results;
+  };
+  const yabaFarClipSweep=await measureFarClipSweep();
   await writeFile(new URL('yaba-daylight-audit.json',reviewDir),JSON.stringify({
     capture:'Yaba spawn after Stage 08E hero building was loaded',
     viewport:{width:844,height:390},image:yabaImage,boot,heroLoad,
-    audit:yabaAudit,jsErrors:errors,consoleErrors
+    audit:yabaAudit,farClipSweep:yabaFarClipSweep,jsErrors:errors,consoleErrors
   },null,2));
 
   // Capture the actual Ikeja buildings with the existing documented QA camera pose.
@@ -90,9 +102,10 @@ try {
   await page.waitForTimeout(250);
   const ikejaImage=await capture('ikeja-daylight');
   const ikejaAudit=await getAudit();
+  const ikejaFarClipSweep=await measureFarClipSweep();
   await writeFile(new URL('ikeja-daylight-audit.json',reviewDir),JSON.stringify({
     capture:'Ikeja district camera view',viewport:{width:844,height:390},
-    image:ikejaImage,audit:ikejaAudit,jsErrors:errors,consoleErrors
+    image:ikejaImage,audit:ikejaAudit,farClipSweep:ikejaFarClipSweep,jsErrors:errors,consoleErrors
   },null,2));
 
   if(errors.length)throw new Error('Browser JavaScript errors: '+errors.join(' | '));
@@ -100,6 +113,7 @@ try {
     boot,heroLoad,yabaImage,ikejaImage,
     yabaLighting:yabaAudit.lightingAudit,ikejaLighting:ikejaAudit.lightingAudit,
     yabaStaticBatchState:yabaAudit.staticBatchState,ikejaStaticBatchState:ikejaAudit.staticBatchState,
+    yabaFarClipSweep,ikejaFarClipSweep,
     yabaVisuals:yabaAudit.visualSettings,ikejaVisuals:ikejaAudit.visualSettings,
     yabaRender:yabaAudit.renderDiagnostics,ikejaRender:ikejaAudit.renderDiagnostics,
     consoleErrors,jsErrors:errors
