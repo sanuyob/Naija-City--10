@@ -213,7 +213,7 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
         shadowUpdateMode: 'on-demand-every-2-seconds',
         shadowUpdates,
         clouds: { enabled: true, drawCalls: 1, puffCount: cloudData.puffCount, triangles: cloudData.triangleCount },
-        fog: { enabled: false, deferredUntilDrawCallOptimization },
+        fog: { enabled: false, deferredUntilDrawCallOptimization: true },
         skySimulation: 'disabled',
         environmentBake: 'disabled'
       };
