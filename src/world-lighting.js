@@ -20,7 +20,7 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   sun.light.shadowIntensity = 0.62;
 
   // Neutral sky fill keeps shaded facades readable without washing out sunlight.
-  const ambient = new Color(0.38, 0.40, 0.43);
+  const ambient = new Color(0.50, 0.52, 0.56);
   app.scene.ambientLight = ambient;
   app.scene.exposure = 1.0;
   camera.camera.clearColor = new Color(0.46, 0.65, 0.84);
