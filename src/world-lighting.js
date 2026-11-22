@@ -1,46 +1,56 @@
 import { Color } from 'playcanvas';
 
 /**
- * Mobile-first daylight foundation.
+ * Phase 1 lighting baseline for Naija City.
  *
- * This stage deliberately contains no post-processing, sky shader, cloud
- * renderer, environment-atlas bake, or per-frame lighting animation.
- * Add those only after the direct-lighting baseline passes visual and
- * device-performance checks.
+ * Keep this deliberately simple: one fixed directional sun, modest ambient
+ * fill, and one nearby shadow map. Sky animation, clouds, fog, environment
+ * baking and post effects are intentionally deferred until this baseline is
+ * visually approved and profiled on target mobile hardware.
  */
-export function createWorldLighting({ app, sun, lowMemoryDevice = false }) {
-  // One directional sun. A single cascade avoids multiplying shadow renders.
+export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false }) {
+  // Stable daytime sun: no per-frame rotation or atmospheric simulation.
+  sun.setEulerAngles(48, 28, 0);
+  sun.light.color = new Color(1.0, 0.93, 0.82);
+  sun.light.intensity = 1.35;
+
+  // One directional shadow map. Keep the default PCF 3x3 filter; avoid PCF 5x5,
+  // PCSS, extra cascades and additional shadow-casting lights on mobile.
   sun.light.castShadows = true;
   sun.light.shadowResolution = lowMemoryDevice ? 512 : 1024;
-  sun.light.shadowDistance = lowMemoryDevice ? 48 : 72;
+  sun.light.shadowDistance = lowMemoryDevice ? 42 : 68;
   sun.light.numCascades = 1;
+  sun.light.shadowIntensity = 0.78;
 
-  // Lift shaded building faces without flattening the direct sunlight.
-  app.scene.ambientLight = new Color(0.28, 0.30, 0.33);
+  // Neutral daylight fill lifts shaded building faces without flattening
+  // material contrast. Exposure remains at the neutral baseline.
+  app.scene.ambientLight = new Color(0.31, 0.32, 0.34);
   app.scene.exposure = 1.0;
 
-  // The sun entity's orientation and color are authored in game.js.
-  // No frame effects or environment lighting are created in this phase.
-  const getState = () => ({
-    enabled: true,
-    phase: 'daylight-foundation',
-    dynamicSky: false,
-    clouds: false,
-    fog: false,
-    timeOfDay: 'static-daylight',
-    shadows: sun.light.castShadows,
-    shadowType: 'PCF-default',
-    shadowResolution: sun.light.shadowResolution,
-    shadowDistance: sun.light.shadowDistance,
-    shadowCascades: sun.light.numCascades,
-    postProcessing: false,
-    environmentAtlas: false
-  });
+  // A simple clear-color sky only. No sky shader, clouds, fog or post effect.
+  camera.camera.clearColor = new Color(0.46, 0.65, 0.84);
 
   return {
-    // Reserved for the later day/night stage. Intentionally no per-frame work.
-    update() {},
-    getState,
-    destroy() {}
+    update() {
+      // Intentionally empty: lighting is static in this first tuning pass.
+    },
+    getState() {
+      return {
+        enabled: true,
+        mode: 'static-daylight-baseline',
+        sunIntensity: sun.light.intensity,
+        ambientLight: [0.31, 0.32, 0.34],
+        exposure: app.scene.exposure,
+        shadows: sun.light.castShadows,
+        shadowResolution: sun.light.shadowResolution,
+        shadowDistance: sun.light.shadowDistance,
+        shadowCascades: sun.light.numCascades,
+        shadowIntensity: sun.light.shadowIntensity,
+        atmosphericEffects: false
+      };
+    },
+    destroy() {
+      // No post effects or auxiliary GPU resources are allocated.
+    }
   };
 }
