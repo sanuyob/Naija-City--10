@@ -49,30 +49,29 @@ function makeCloudMesh(device) {
 }
 
 const DAY_PROFILE = [
-  { h: 0, intensity: 0.015, sun: [0.34, 0.40, 0.62], ambient: [0.13, 0.15, 0.23], sky: [0.035, 0.055, 0.13], cloud: [0.30, 0.35, 0.48], cloudOpacity: 0.25 },
-  { h: 5, intensity: 0.015, sun: [0.38, 0.42, 0.62], ambient: [0.13, 0.15, 0.23], sky: [0.045, 0.065, 0.15], cloud: [0.32, 0.37, 0.50], cloudOpacity: 0.25 },
-  { h: 6, intensity: 0.18, sun: [1.00, 0.48, 0.25], ambient: [0.22, 0.20, 0.23], sky: [0.78, 0.38, 0.25], cloud: [0.70, 0.55, 0.52], cloudOpacity: 0.55 },
-  { h: 7, intensity: 0.72, sun: [1.00, 0.72, 0.50], ambient: [0.35, 0.34, 0.38], sky: [0.55, 0.68, 0.82], cloud: [0.84, 0.84, 0.85], cloudOpacity: 0.68 },
-  { h: 9.25, intensity: 1.35, sun: [1.00, 0.96, 0.90], ambient: [0.50, 0.52, 0.56], sky: [0.46, 0.65, 0.84], cloud: [0.92, 0.95, 0.99], cloudOpacity: 0.72 },
-  { h: 12, intensity: 1.42, sun: [1.00, 0.98, 0.94], ambient: [0.49, 0.52, 0.57], sky: [0.39, 0.61, 0.85], cloud: [0.94, 0.96, 1.00], cloudOpacity: 0.72 },
-  { h: 16, intensity: 1.12, sun: [1.00, 0.84, 0.68], ambient: [0.43, 0.45, 0.50], sky: [0.72, 0.64, 0.53], cloud: [0.91, 0.88, 0.84], cloudOpacity: 0.68 },
-  { h: 18, intensity: 0.48, sun: [1.00, 0.52, 0.29], ambient: [0.30, 0.26, 0.28], sky: [0.91, 0.47, 0.29], cloud: [0.76, 0.55, 0.48], cloudOpacity: 0.58 },
-  { h: 19, intensity: 0.08, sun: [0.62, 0.43, 0.42], ambient: [0.17, 0.17, 0.24], sky: [0.15, 0.16, 0.28], cloud: [0.42, 0.43, 0.56], cloudOpacity: 0.38 },
-  { h: 20, intensity: 0.015, sun: [0.34, 0.40, 0.62], ambient: [0.13, 0.15, 0.23], sky: [0.035, 0.055, 0.13], cloud: [0.30, 0.35, 0.48], cloudOpacity: 0.25 },
-  { h: 24, intensity: 0.015, sun: [0.34, 0.40, 0.62], ambient: [0.13, 0.15, 0.23], sky: [0.035, 0.055, 0.13], cloud: [0.30, 0.35, 0.48], cloudOpacity: 0.25 }
+  [0,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.30,0.35,0.48,0.25],
+  [6,0.18,1.00,0.48,0.25,0.22,0.20,0.23,0.78,0.38,0.25,0.70,0.55,0.52,0.55],
+  [9.25,1.35,1.00,0.96,0.90,0.50,0.52,0.56,0.46,0.65,0.84,0.92,0.95,0.99,0.72],
+  [12,1.42,1.00,0.98,0.94,0.49,0.52,0.57,0.39,0.61,0.85,0.94,0.96,1.00,0.72],
+  [18,0.48,1.00,0.52,0.29,0.30,0.26,0.28,0.91,0.47,0.29,0.76,0.55,0.48,0.58],
+  [20,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.30,0.35,0.48,0.25],
+  [24,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.30,0.35,0.48,0.25]
 ];
 
 function sampleProfile(hours) {
   const h = ((hours % 24) + 24) % 24;
-  let nextIndex = DAY_PROFILE.findIndex(point => point.h >= h);
-  if (nextIndex <= 0) nextIndex = 1;
-  const a = DAY_PROFILE[nextIndex - 1], b = DAY_PROFILE[nextIndex];
-  const t = Math.max(0, Math.min(1, (h - a.h) / (b.h - a.h)));
-  const mix = key => a[key].map((value, index) => value + (b[key][index] - value) * t);
+  let i = 1;
+  while (i < DAY_PROFILE.length - 1 && DAY_PROFILE[i][0] < h) i++;
+  const a = DAY_PROFILE[i - 1], b = DAY_PROFILE[i];
+  const t = Math.max(0, Math.min(1, (h - a[0]) / (b[0] - a[0])));
+  const v = n => a[n] + (b[n] - a[n]) * t;
   return {
-    intensity: a.intensity + (b.intensity - a.intensity) * t,
-    sun: mix('sun'), ambient: mix('ambient'), sky: mix('sky'), cloud: mix('cloud'),
-    cloudOpacity: a.cloudOpacity + (b.cloudOpacity - a.cloudOpacity) * t
+    intensity: v(1),
+    sun: [v(2), v(3), v(4)],
+    ambient: [v(5), v(6), v(7)],
+    sky: [v(8), v(9), v(10)],
+    cloud: [v(11), v(12), v(13)],
+    cloudOpacity: v(14)
   };
 }
 
