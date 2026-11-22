@@ -137,7 +137,7 @@ try {
  const daylightAudit=await page.evaluate(()=>{
   const game=window.__NAIJA_GAME__,diag=window.__NAIJA_RENDER_DIAGNOSTICS__||{};
   return {capture:'Yaba spawn after nearby building load',viewport:{width:innerWidth,height:innerHeight},
-   visualSettings:game?.getVisualSettings?.()||null,lightingAudit:game?.getLightingAudit?.()||null,
+   visualSettings:game?.getVisualSettings?.()||null,lightingAudit:game?.getLightingAudit?.()||null,staticBatchState:game?.getStaticBatchState?.()||null,
    renderDiagnostics:{drawCallCount:diag.drawCallCount??null,primitiveCount:diag.primitiveCount??null,
     meshInstances:diag.scene?.meshInstances??null,frameTime:diag.frameTime??null,camera:diag.camera??null},
    stage08E:game?.getStage08EState?.()||null,playerPosition:game?.getPlayerState?.().position||null};
@@ -298,11 +298,11 @@ try {
   window.__NAIJA_GAME__.debugSetCameraForSmoke([0,10,382],[0,1.5,310]);
  });
  await page.waitForTimeout(160);
- const ikejaScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ const ikejaScreenshot=await page.locator('#application').screenshot({animations:'disabled'});\n const ikejaRenderAudit=await page.evaluate(()=>({diag:window.__NAIJA_RENDER_DIAGNOSTICS__||null,staticBatchState:window.__NAIJA_GAME__?.getStaticBatchState?.()||null,profile:window.__NAIJA_GAME__?.getStage08FProfile?.()||null}));\n await writeFile(new URL('ikeja-render-audit.json',reviewDir),JSON.stringify(ikejaRenderAudit,null,2));
  await writeFile(new URL('ikeja-daylight-full.png',reviewDir),ikejaScreenshot);
  const ikejaPreview=makeReviewPreview(ikejaScreenshot);
  await writeFile(new URL('ikeja-daylight-preview.png',reviewDir),ikejaPreview);
- console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_BEGIN');
+ console.log('IKEJA_RENDER_AUDIT '+JSON.stringify(ikejaRenderAudit));\n console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_BEGIN');
  console.log(ikejaPreview.toString('base64'));
  console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_END');
  const ikejaVisual=await page.evaluate(async encoded=>{
