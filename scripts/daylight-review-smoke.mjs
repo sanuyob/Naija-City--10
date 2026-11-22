@@ -64,6 +64,7 @@ try {
       visualSettings:game?.getVisualSettings?.()||null,
       lightingAudit:game?.getLightingAudit?.()||null,
       staticBatchState:game?.getStaticBatchState?.()||null,
+      unbatchedComponentAudit:game?.getUnbatchedComponentAudit?.()||null,
       renderBreakdown:game?.getRenderBreakdown?.()||null,
       renderDiagnostics:{
         drawCallCount:diag.drawCallCount??null,primitiveCount:diag.primitiveCount??null,
