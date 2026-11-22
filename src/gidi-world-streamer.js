@@ -55,7 +55,8 @@ export function createGidiWorldStreamer({
   updateInterval = 0.22,
   maxLoadsPerUpdate = 2,
   activationPoint = [100, 0, -445],
-  activationRadius = 220
+  activationRadius = 220,
+  applyShadowPolicy = () => {}
 } = {}) {
   if (!app) throw new Error('GIDI streamer requires a PlayCanvas application.');
 
@@ -121,6 +122,7 @@ export function createGidiWorldStreamer({
       }
       if (group) component.batchGroupId = group.id;
     }
+    applyShadowPolicy(entity);
     return components.length;
   }
 
