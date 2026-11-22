@@ -80,6 +80,11 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   const ambient = new pc.Color(0.50, 0.52, 0.56);
   app.scene.ambientLight = ambient;
   app.scene.exposure = 1.0;
+  // One scene-wide linear fog pass: no extra geometry, lights or post-processing.
+  app.scene.fog.type = pc.FOG_LINEAR;
+  app.scene.fog.start = lowMemoryDevice ? 235 : 285;
+  app.scene.fog.end = lowMemoryDevice ? 610 : 790;
+  app.scene.fog.color = new pc.Color(0.46, 0.65, 0.84);
   camera.camera.clearColor = new pc.Color(0.46, 0.65, 0.84);
 
   const cloudData = makeCloudMesh(app.graphicsDevice);
@@ -186,7 +191,15 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
     sun.light.color = new pc.Color(...profile.sun);
     app.scene.ambientLight = new pc.Color(...profile.ambient);
     camera.camera.clearColor = new pc.Color(...profile.sky);
-    cloudMaterial.opacity = gameHours < 6 || gameHours > 19 ? 0.25 : 0.72;
+    // Match fog to the sky so distant buildings fade naturally into the horizon.
+    app.scene.fog.color = new pc.Color(...profile.sky);
+    const night = gameHours >= 19 || gameHours < 6;
+    app.scene.fog.start = night ? (lowMemoryDevice ? 165 : 205) : (lowMemoryDevice ? 235 : 285);
+    app.scene.fog.end = night ? (lowMemoryDevice ? 500 : 650) : (lowMemoryDevice ? 610 : 790);
+    // The existing directional light becomes a soft cool moonlight at night;
+    // it remains the only directional light and never casts night shadows.
+    sun.light.castShadows = !night && gameHours >= 6.15 && gameHours <= 18.6;
+    cloudMaterial.opacity = night ? 0.18 : 0.72;
     cloudMaterial.update();
   }
 
@@ -256,8 +269,9 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
         shadowIntensity: sun.light.shadowIntensity,
         shadowUpdateMode: 'on-demand-every-2-seconds',
         shadowPolicy: { ...shadowPolicy },
-        clouds: { enabled: true, drawCalls: 1, puffCount: cloudData.puffCount, triangles: cloudData.triangleCount },
-        fog: { enabled: false, deferredUntilDrawCallOptimization: true },
+        clouds: { enabled: true, drawCalls: 1, puffCount: cloudData.puffCount, triangles: cloudData.triangleCount, nightOpacity: 0.18 },
+        fog: { enabled: true, type: 'linear', start: app.scene.fog.start, end: app.scene.fog.end, color: app.scene.fog.color.toArray(), sceneWide: true, extraDrawCalls: 0 },
+        nightLighting: { enabled: true, method: 'cool low-intensity directional moonlight + blue ambient fill', extraLights: 0, night: gameHours >= 19 || gameHours < 6 },
         skySimulation: 'disabled',
         environmentBake: 'disabled'
       };
