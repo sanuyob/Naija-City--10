@@ -9,7 +9,7 @@ function makeCloudMesh(device) {
       const offset = (j - 1) * 27, cx = nx * radius + tx * offset, cz = nz * radius + tz * offset;
       const cy = j === 1 ? 0 : (j === 0 ? 4 : -3), rx = j === 1 ? 54 : 40, ry = j === 1 ? 15 : 12;
       const base = positions.length / 3;
-      positions.push(cx, 0, cz); normals.push(-nx, 0, -nz);
+      positions.push(cx, cy, cz); normals.push(-nx, 0, -nz);
       for (let s = 0; s < segments; s++) {
         const a = s * Math.PI * 2 / segments, ca = Math.cos(a), sa = Math.sin(a);
         positions.push(cx + tx * ca * rx, cy + sa * ry, cz + tz * ca * rx);
