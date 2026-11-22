@@ -33,7 +33,6 @@ const DAY_PROFILE = [
   [12,1.42,1.00,0.98,0.94,0.49,0.52,0.57,0.39,0.61,0.85,0.72],
   [18,0.48,1.00,0.52,0.29,0.30,0.26,0.28,0.91,0.47,0.29,0.58],
   [20,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.25],
-  [24,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.25]
 ];
 
 function sampleProfile(hours) {
@@ -179,7 +178,6 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   let gameHours = 9.25;
   let profileAccumulator = 0;
   let shadowAccumulator = 0;
-  let shadowUpdates = 0;
   let lastSunElevation = 42;
 
   function applyProfile() {
@@ -188,7 +186,7 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
     sun.light.color = new pc.Color(...profile.sun);
     app.scene.ambientLight = new pc.Color(...profile.ambient);
     camera.camera.clearColor = new pc.Color(...profile.sky);
-    cloudMaterial.opacity = profile.cloudOpacity;
+    cloudMaterial.opacity = gameHours < 6 || gameHours > 19 ? 0.25 : 0.72;
     cloudMaterial.update();
   }
 
@@ -200,7 +198,6 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
     const daylight = gameHours >= 6.15 && gameHours <= 18.6;
     sun.light.castShadows = daylight;
     sun.light.shadowUpdateMode = daylight ? pc.SHADOWUPDATE_THISFRAME : pc.SHADOWUPDATE_NONE;
-    if (daylight) shadowUpdates++;
   }
 
   function setTimeHours(hours) {
@@ -247,7 +244,6 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
         mode: 'low-cost-day-night-cycle',
         timeHours: Number(gameHours.toFixed(3)),
         timeLabel: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
-        dayLengthMinutes: 24,
         sunIntensity: Number(sun.light.intensity.toFixed(3)),
         sunColor: sun.light.color.toArray(),
         ambientLight: app.scene.ambientLight.toArray(),
@@ -259,7 +255,6 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
         shadowCascades: sun.light.numCascades,
         shadowIntensity: sun.light.shadowIntensity,
         shadowUpdateMode: 'on-demand-every-2-seconds',
-        shadowUpdates,
         shadowPolicy: { ...shadowPolicy },
         clouds: { enabled: true, drawCalls: 1, puffCount: cloudData.puffCount, triangles: cloudData.triangleCount },
         fog: { enabled: false, deferredUntilDrawCallOptimization: true },
