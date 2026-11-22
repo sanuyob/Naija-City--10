@@ -206,7 +206,7 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
     applySunAndShadow();
     shadowAccumulator = 0;
     profileAccumulator = 0;
-    return getState();
+    return Number(gameHours.toFixed(3));
   }
 
   applyProfile();
