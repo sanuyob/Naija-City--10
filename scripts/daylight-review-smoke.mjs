@@ -62,7 +62,7 @@ try {
     const game=window.__NAIJA_GAME__,diag=window.__NAIJA_RENDER_DIAGNOSTICS__||{};
     return {
       visualSettings:game?.getVisualSettings?.()||null,
-      lightingAudit:game?.getLightingAudit?.()||null,
+      lightingAudit:game?.getLightingAudit?.()||null,\n      staticBatchState:game?.getStaticBatchState?.()||null,
       renderDiagnostics:{
         drawCallCount:diag.drawCallCount??null,primitiveCount:diag.primitiveCount??null,
         meshInstances:diag.scene?.meshInstances??null,frameTime:diag.frameTime??null,
@@ -97,7 +97,7 @@ try {
   if(errors.length)throw new Error('Browser JavaScript errors: '+errors.join(' | '));
   console.log('DAYLIGHT_REVIEW_RESULT '+JSON.stringify({
     boot,heroLoad,yabaImage,ikejaImage,
-    yabaLighting:yabaAudit.lightingAudit,ikejaLighting:ikejaAudit.lightingAudit,
+    yabaLighting:yabaAudit.lightingAudit,ikejaLighting:ikejaAudit.lightingAudit,\n    yabaStaticBatchState:yabaAudit.staticBatchState,ikejaStaticBatchState:ikejaAudit.staticBatchState,
     yabaVisuals:yabaAudit.visualSettings,ikejaVisuals:ikejaAudit.visualSettings,
     yabaRender:yabaAudit.renderDiagnostics,ikejaRender:ikejaAudit.renderDiagnostics,
     consoleErrors,jsErrors:errors
