@@ -1,51 +1,29 @@
 import * as pc from 'playcanvas';
 
 function makeCloudMesh(device) {
-  const positions = [], normals = [], indices = [];
-  const segments = 8, rings = 4;
-  const puffs = [];
-
+  const positions = [], normals = [], indices = [], segments = 10;
   for (let i = 0; i < 10; i++) {
-    const angle = (i / 10) * Math.PI * 2;
-    const radius = 390 + (i % 3) * 35;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    puffs.push([x, 0, z, 54, 15, 36]);
-    puffs.push([x + Math.cos(angle + 0.9) * 34, 2, z + Math.sin(angle + 0.9) * 34, 39, 12, 29]);
-    puffs.push([x + Math.cos(angle - 0.8) * 31, -1, z + Math.sin(angle - 0.8) * 31, 42, 13, 30]);
-  }
-
-  for (const [cx, cy, cz, rx, ry, rz] of puffs) {
-    const base = positions.length / 3;
-    for (let ring = 0; ring <= rings; ring++) {
-      const phi = (ring / rings) * Math.PI;
-      const sinPhi = Math.sin(phi), cosPhi = Math.cos(phi);
-      for (let segment = 0; segment <= segments; segment++) {
-        const theta = (segment / segments) * Math.PI * 2;
-        const ux = Math.cos(theta) * sinPhi;
-        const uy = cosPhi;
-        const uz = Math.sin(theta) * sinPhi;
-        positions.push(cx + ux * rx, cy + uy * ry, cz + uz * rz);
-        const nx = ux / rx, ny = uy / ry, nz = uz / rz;
-        const length = Math.hypot(nx, ny, nz) || 1;
-        normals.push(nx / length, ny / length, nz / length);
+    const angle = i * Math.PI * 0.2, radius = 390 + (i % 3) * 35;
+    const nx = Math.cos(angle), nz = Math.sin(angle), tx = -nz, tz = nx;
+    for (let j = 0; j < 3; j++) {
+      const offset = (j - 1) * 27, cx = nx * radius + tx * offset, cz = nz * radius + tz * offset;
+      const cy = j === 1 ? 0 : (j === 0 ? 4 : -3), rx = j === 1 ? 54 : 40, ry = j === 1 ? 15 : 12;
+      const base = positions.length / 3;
+      positions.push(cx, 0, cz); normals.push(-nx, 0, -nz);
+      for (let s = 0; s < segments; s++) {
+        const a = s * Math.PI * 2 / segments, ca = Math.cos(a), sa = Math.sin(a);
+        positions.push(cx + tx * ca * rx, cy + sa * ry, cz + tz * ca * rx);
+        normals.push(-nx, 0, -nz);
       }
-    }
-    for (let ring = 0; ring < rings; ring++) {
-      for (let segment = 0; segment < segments; segment++) {
-        const a = base + ring * (segments + 1) + segment;
-        const b = a + segments + 1;
-        indices.push(a, b, a + 1, b, b + 1, a + 1);
-      }
+      for (let s = 0; s < segments; s++) indices.push(base, base + 1 + s, base + 1 + ((s + 1) % segments));
     }
   }
-
   const mesh = new pc.Mesh(device);
   mesh.setPositions(new Float32Array(positions));
   mesh.setNormals(new Float32Array(normals));
   mesh.setIndices(new Uint16Array(indices));
   mesh.update();
-  return { mesh, puffCount: puffs.length, triangleCount: indices.length / 3 };
+  return { mesh, puffCount: 30, triangleCount: indices.length / 3 };
 }
 
 const DAY_PROFILE = [
