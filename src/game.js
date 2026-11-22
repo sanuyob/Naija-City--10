@@ -283,7 +283,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       ? 'Ara 3D Gen Female Executive · main player ready'
       : 'Ara 3D Female failed to load · Hero 01 remains an NPC';
   }
-  const stage08E=createStage08EBuildings({app,lowMemoryDevice,lowDataMode});
+  const stage08E=createStage08EBuildings({app,lowMemoryDevice,lowDataMode,applyShadowPolicy:worldLighting.applyToEntity});
   await stage08E.initialize();
   window.__NAIJA_RPG_UI__?.updateLoading?.({percent:61,label:'Preparing the nearby Yaba district…'});
   const startupBuildingRadiusMetres=(lowDataMode||lowMemoryDevice)?20:35;
@@ -586,7 +586,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     collisionUnloadRadius: lowMemoryDevice ? 360 : 460,
     updateInterval: lowDataMode ? 0.55 : (lowMemoryDevice ? 0.32 : 0.22),
     maxLoadsPerUpdate: lowDataMode || lowMemoryDevice ? 1 : 2,
-    activationRadius: lowDataMode ? 115 : 220
+    activationRadius: lowDataMode ? 115 : 220,
+    applyShadowPolicy:worldLighting.applyToEntity
   });
   const gidiAuthoredInteriors=createGidiAuthoredInteriors({
     playerPhysics,gidiStreamer,getPlayerState:()=>playerController.getState(),
@@ -993,6 +994,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
 
   window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_SET_HERO_FACE__;delete window.__NAIJA_TRAVERSE__;delete window.__NAIJA_COMPANION_COMMAND__;delete window.__NAIJA_VEHICLE_ENTER__;delete window.__NAIJA_VEHICLE_EXIT__;worldLighting.destroy();gidiStreamer.destroy();stage08N.destroy();vehicleSystem?.destroy?.();companionSystem.destroy();pedestrianSystem.destroy();playerPhysics.cleanup?.();vfxSystem.destroy();audioSystem.destroy();delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
+  // Apply the initial 4.8k-component shadow classification once while the loading screen is active.
+  worldLighting.applyInitialShadowPolicy();
   app.start();
   window.__NAIJA_RPG_UI__?.finishLoading?.();
   statusLabel.textContent='Ready — Stage 09 parkour, city life and physics';
