@@ -16,7 +16,7 @@ try{
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.playerCharacterReady===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:30000});
  const state=await page.evaluate(()=>{const g=window.__NAIJA_GAME__;return {ready:g.ready,playerCharacterReady:g.playerCharacterReady,characterSource:g.characterSource,characterGeometry:g.characterGeometry,characterLoadError:g.characterLoadError,animations:g.heroAnimations,defaults:g.heroDefaultClips,rig:g.getHeroRigSnapshot?.(),mainCharacterId:g.mainCharacterId,mainCharacterName:g.mainCharacterName,hero01Role:g.hero01Role,heroNpc:g.getHeroNpcState?.(),traversal:g.getTraversalState?.(),physics:g.getPhysicsState?.(),vfx:g.getVfxState?.(),audio:g.getAudioState?.(),drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount,canvas:{w:document.querySelector('#application')?.width,h:document.querySelector('#application')?.height},gate:document.querySelector('#rpg-interface')?.classList.contains('character-required'),picker:!!document.querySelector('#player-character-file'),panel:document.querySelector('#panel-content')?.innerText,status:document.querySelector('#status')?.textContent,assetStatus:document.querySelector('#asset-status')?.textContent,
-  startupPreload:g.startupPreload,characterForwardCorrection:g.characterForwardCorrection,
+  startupPreload:g.startupPreload,dataOptimization:g.dataOptimization,gidi:g.getGidiState?.(),characterForwardCorrection:g.characterForwardCorrection,
   objective:!!document.querySelector('.objective'),parkourButton:!!document.querySelector('#parkour-button'),
   loadingHidden:document.querySelector('#city-loading')?.hidden,
   cameraActualDistance:g.getPlayerState?.().cameraActualDistance,
@@ -31,7 +31,11 @@ try{
  if(!state.playerCharacterReady||state.characterSource!=='ara-3d-gen-female-preset'||state.characterGeometry!=='rigged-glb')throw Error('Ara GLB not active: '+JSON.stringify(state));
  if(!['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].every(name=>state.animations.includes(name)))throw Error('Ara ladder traversal clips were not bound to her real skeleton: '+JSON.stringify(state.animations));
  if(Math.abs(state.characterForwardCorrection-180)>.01)throw Error('Ara forward-facing correction failed: '+JSON.stringify(state.characterForwardCorrection));
- if(state.startupPreload?.total!==48||state.startupPreload?.loaded!==48||state.startupPreload?.failed!==0||!state.startupPreload?.ready||!state.loadingHidden)throw Error('Yaba building preload was incomplete before play: '+JSON.stringify({preload:state.startupPreload,loadingHidden:state.loadingHidden}));
+ const smallStartup=Boolean(state.dataOptimization?.lowMemoryDevice||state.dataOptimization?.lowDataMode);
+ const expectedStartupBuildings=smallStartup?8:14,expectedStartupBytes=smallStartup?1.5:2.5;
+ if(state.startupPreload?.total!==expectedStartupBuildings||state.startupPreload?.loaded!==expectedStartupBuildings||state.startupPreload?.bytes>expectedStartupBytes*1024*1024||state.startupPreload?.failed!==0||!state.startupPreload?.ready||!state.loadingHidden)throw Error('Nearby Yaba startup preload exceeded its device-adaptive '+expectedStartupBuildings+'-building/'+expectedStartupBytes+' MiB budget or did not finish: '+JSON.stringify({preload:state.startupPreload,loadingHidden:state.loadingHidden}));
+ if(state.dataOptimization?.startupBuildingRadiusMetres!==(smallStartup?20:35)||state.dataOptimization?.startupBuildings!==expectedStartupBuildings||state.dataOptimization?.startupBuildingBytes>expectedStartupBytes*1024*1024||!state.dataOptimization?.hero01NpcDeferred||!state.dataOptimization?.gidiInfrastructureDeferred)throw Error('Mobile first-play download budgets are not active: '+JSON.stringify(state.dataOptimization));
+ if(state.gidi?.infrastructureLoaded||state.gidi?.totalCells!==0)throw Error('Distant GIDI infrastructure should not be downloaded at Yaba startup: '+JSON.stringify(state.gidi));
  if(state.objective||state.parkourButton)throw Error('Obstructive objective HUD or duplicate parkour button remains in active controls');
  if(!(state.cameraActualDistance>0&&state.cameraActualDistance<4.6))throw Error('Third-person camera did not initialize at the closer chase distance: '+state.cameraActualDistance);
  if(JSON.stringify(state.surfaceProbes)!==JSON.stringify({asphalt:'asphalt',concrete:'concrete',grass:'grass',wet:'wet'}))throw Error('Surface raycasts failed: '+JSON.stringify(state.surfaceProbes));
@@ -199,9 +203,9 @@ try{
  if(!normalJump?.player||normalJump.player.grounded||normalJump.player.position[1]<.25)throw Error('Jump touch action did not fall back to an ordinary jump away from obstacles: '+JSON.stringify(normalJump));
  if(state.gate||state.picker)throw Error('Player import gate or old FBX picker remains visible');
  if(state.mainCharacterId!=='ara-female'||state.hero01Role!=='city-npc')throw Error('Character roles changed: '+JSON.stringify(state));
- await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroNpcState?.()?.moved===true,null,{timeout:20000});
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroNpcState?.()?.moved===true,null,{timeout:30000});
  const npc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
- if(npc?.isPlayer!==false||npc?.rigged!==true)throw Error('Hero 01 NPC role broken: '+JSON.stringify(npc));
+ if(npc?.isPlayer!==false||!npc?.moved||(npc?.rigged!==true&&!state.dataOptimization?.hero01NpcSkipped))throw Error('Hero 01 NPC role or low-memory fallback broken: '+JSON.stringify({npc,optimization:state.dataOptimization}));
  const audio=await page.evaluate(()=>window.__NAIJA_GAME__?.getAudioState?.());
  if(!audio?.unlocked||audio.state!=='running'||audio.played?.jump<1||audio.played?.landing<1||audio.played?.parkour<1)throw Error('Jump, landing and parkour sounds did not unlock or fire from real gameplay actions: '+JSON.stringify(audio));
  const screenshot=await page.locator('#application').screenshot({animations:'disabled'});

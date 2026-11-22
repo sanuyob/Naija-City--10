@@ -252,5 +252,5 @@ for(const override of authoredOverrides){
   });
 }
 const manifest={stage:'08E',format:'glTF 2.0 binary',units:'meters',frontAxis:'-X',textureEncoding:'Curated Yaba replacements use the shared KTX2 Basis surface library; the remaining procedural residential assets retain their existing embedded PNG maps',lods:['LOD0','LOD1','LOD2'],streaming:{loadRadius:150,unloadRadius:210,maxConcurrentLoads:2},sharedMaterials:materialNames,models};
-await writeFile(join(root,'public/assets/stage-08e-manifest.json'),JSON.stringify(manifest,null,2)+'\n');
+await writeFile(join(root,'public/assets/stage-08e-manifest.json'),JSON.stringify(manifest)+'\n');
 console.log('Stage 08E asset generation complete:',models.length,'individual GLB buildings;',models.reduce((n,m)=>n+m.bytes,0),'bytes total.');

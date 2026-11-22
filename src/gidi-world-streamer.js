@@ -53,7 +53,9 @@ export function createGidiWorldStreamer({
   collisionLoadRadius = 220,
   collisionUnloadRadius = 460,
   updateInterval = 0.22,
-  maxLoadsPerUpdate = 2
+  maxLoadsPerUpdate = 2,
+  activationPoint = [100, 0, -445],
+  activationRadius = 220
 } = {}) {
   if (!app) throw new Error('GIDI streamer requires a PlayCanvas application.');
 
@@ -310,6 +312,13 @@ export function createGidiWorldStreamer({
     const x = Number(position?.[0]) || 0;
     const z = Number(position?.[2]) || 0;
     const current = [x, 0, z];
+    // Do not download the distant GIDI infrastructure during a Yaba-only
+    // session. It activates when the player reaches the western gateway.
+    if (!infrastructureEntity && activationPoint &&
+        Math.hypot(x - activationPoint[0], z - activationPoint[2]) > activationRadius) {
+      lastPosition = null;
+      return;
+    }
     if (lastPosition && Math.hypot(current[0] - lastPosition[0], current[2] - lastPosition[2]) < 8) {
       // Still refresh mode changes and asynchronous loads, but avoid rebuilding the desired set every frame.
       for (const record of records.values()) {

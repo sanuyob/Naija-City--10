@@ -6,13 +6,22 @@ const views = {
   quests: ['JOURNAL', 'Missions', '<div class="mission"><small>MAIN STORY</small><b>A CITY WAKES</b><p>Explore the neighbourhood and learn your way around the city.</p><em>OBJECTIVE · Reach the marked location</em></div><div class="mission"><small>SIDE ACTIVITY</small><b>LOCAL CONNECTIONS</b><p>Meet people and discover places of interest.</p><em>AVAILABLE LATER</em></div>'],
   map: ['CITY NAVIGATION', 'District map', '<div class="map-large"><i></i><b>YOU</b><strong>◆</strong></div><p class="muted" id="map-active-district">YABA DISTRICT · MAP DATA PROTOTYPE</p>'],
   character: ['PLAYER PROFILE', 'Player', '<div class="profile"><b>AF</b><div><strong>ARA 3D FEMALE</strong><p>Main playable character</p><small>THE_FEMALE_EXECUTIVE · ARA 3D GEN</small></div></div><div class="mission character-import-card"><small>ONLY PLAYABLE CHARACTER</small><b>ARA 3D FEMALE · MAIN PLAYER</b><p>Ara is the only playable character. Hero 01 is a city NPC. The ready-made Female Executive character is bundled from Ara 3D Gen with a game rig and locomotion/parkour animations.</p><p id="player-character-status" role="status">Ara 3D Gen Female Executive · loading built-in character asset…</p></div><div class="stat">Player role <b>MAIN</b></div><div class="stat">Character slot <b>01</b></div>'],
-  settings: ['SYSTEM', 'Settings', '<div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><div class="setting">Vehicle controls <button data-setting="vehicle-controls" data-mode="two-handed" aria-pressed="true">TWO-HANDED</button></div><p class="muted">Two-Handed uses left/right steering and separate accelerator/brake buttons. One-Handed uses the movement stick for steering and forward/reverse.</p>'],
+  settings: ['SYSTEM', 'Settings', '<div class="setting">Data Saver <button data-setting="data-saver" aria-pressed="false">OFF</button></div><p class="muted">Loads nearby buildings first, slows background downloads and skips optional character downloads. Applies the next time you launch the game.</p><div class="setting">HUD visibility <button data-setting="hud" aria-pressed="true">ON</button></div><div class="setting">Reduced motion <button data-setting="motion" aria-pressed="false">OFF</button></div><div class="setting">Large touch controls <button data-setting="touch" aria-pressed="true">ON</button></div><div class="setting">Vehicle controls <button data-setting="vehicle-controls" data-mode="two-handed" aria-pressed="true">TWO-HANDED</button></div><p class="muted">Two-Handed uses left/right steering and separate accelerator/brake buttons. One-Handed uses the movement stick for steering and forward/reverse.</p>'],
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
 
 export function mountRPGInterface() {
   const root = document.getElementById('rpg-interface');
   if (!root) throw new Error('Missing RPG interface root');
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+  const networkSuggestsDataSaver = Boolean(connection?.saveData) || /^(slow-2g|2g)$/i.test(connection?.effectiveType || '') || (Number(connection?.downlink) > 0 && Number(connection.downlink) < 1.2);
+  let savedDataSaverPreference = null;
+  try {
+    const stored = localStorage.getItem('naijaCityDataSaver');
+    if (stored === 'true' || stored === 'false') savedDataSaverPreference = stored === 'true';
+  } catch {}
+  let dataSaverEnabled = savedDataSaverPreference ?? networkSuggestsDataSaver;
+  window.__NAIJA_DATA_SAVER__ = { enabled: dataSaverEnabled, explicit: savedDataSaverPreference !== null };
   root.innerHTML = `
     <section class="city-loading" id="city-loading" role="status" aria-live="polite">
       <div class="loading-mark">N</div>
@@ -98,15 +107,16 @@ export function mountRPGInterface() {
     root.querySelector('#city-loading-fill').style.width=percent+'%';
     root.querySelector('#city-loading-label').textContent=progress?.label||'Preparing streets, buildings and characters…';
     const total=Number(progress?.total)||0,completed=Number(progress?.completed)||0;
+    const loadedMiB=Number(progress?.bytes)>0?(Number(progress.bytes)/1048576).toFixed(1)+' MiB':'';
     root.querySelector('#city-loading-count').textContent=total
-      ? completed+' / '+total+' BUILDINGS READY'
-      : 'Loading environment assets';
+      ? completed+' / '+total+' NEARBY BUILDINGS READY'+(loadedMiB?' · '+loadedMiB:'')
+      : 'Loading essential game assets';
   };
   const finishLoading = () => {
     if(!loadingScreen)return;
     loadingScreen.classList.add('complete');
-    root.querySelector('#city-loading-label').textContent='Your city is ready';
-    root.querySelector('#city-loading-count').textContent='ENTERING YABA';
+    root.querySelector('#city-loading-label').textContent='Your starting area is ready';
+    root.querySelector('#city-loading-count').textContent='ENTER YABA · THE REST STREAMS AS YOU EXPLORE';
     loadingScreen.hidden=true;
   };
   const open = name => {
@@ -125,6 +135,10 @@ export function mountRPGInterface() {
     root.querySelector('#panel-kicker').textContent = view[0];
     root.querySelector('#panel-title').textContent = view[1];
     root.querySelector('#panel-content').innerHTML = name === 'inventory' ? renderInventory() : view[2];
+    if (name === 'settings') {
+      const dataSaverButton = root.querySelector('[data-setting=\"data-saver\"]');
+      if (dataSaverButton) { dataSaverButton.setAttribute('aria-pressed', String(dataSaverEnabled)); dataSaverButton.textContent = dataSaverEnabled ? 'ON' : 'OFF'; }
+    }
     panel.hidden = false;
     pause.hidden = true;
   };
@@ -192,6 +206,20 @@ export function mountRPGInterface() {
       return;
     }
   });
+  // Handle Data Saver in the capture phase so this persistent system setting
+  // is applied even when another interface layer intercepts menu bubbling.
+  document.addEventListener('click', event => {
+    const setting = event.target.closest('[data-setting]');
+    if (setting?.dataset.setting !== 'data-saver') return;
+    event.preventDefault();
+    event.stopPropagation();
+    dataSaverEnabled = setting.getAttribute('aria-pressed') !== 'true';
+    window.__NAIJA_DATA_SAVER__ = { enabled: dataSaverEnabled, explicit: true };
+    setting.setAttribute('aria-pressed', String(dataSaverEnabled));
+    setting.textContent = dataSaverEnabled ? 'ON' : 'OFF';
+    try { localStorage.setItem('naijaCityDataSaver', String(dataSaverEnabled)); } catch {}
+    showToast(dataSaverEnabled ? 'Data Saver ON · applies next launch' : 'Data Saver OFF · applies next launch');
+  }, true);
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
       if (!pause.hidden || !panel.hidden) close();

@@ -22,6 +22,9 @@ try{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('requestfailed',r=>errors.push(r.url()+': '+r.failure()?.errorText));
   await page.goto(origin+'?smoke=1&gidi-authored-interiors=1',{waitUntil:'domcontentloaded'});
   await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:120000});
+  const initialGidi=await page.evaluate(()=>window.__NAIJA_GAME__.getGidiState());
+  assert.equal(initialGidi.infrastructureLoaded,false,'GIDI infrastructure must stay unloaded while the player starts in Yaba');
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugLoadGidiForSmoke([100,0,-445]));
   await page.waitForFunction(()=>window.__NAIJA_GAME__?.getGidiState?.()?.infrastructureLoaded===true,null,{timeout:60000});
   const reports=[];
   for(const space of spaces){

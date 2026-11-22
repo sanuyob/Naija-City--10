@@ -18,6 +18,7 @@ try {
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:15000});
+ await page.waitForFunction(()=>{const g=window.__NAIJA_GAME__;return g?.ready&&(g.dataOptimization?.hero01NpcSkipped||g.getHeroNpcState?.()?.rigged===true);},null,{timeout:30000});
  const state=await page.evaluate(()=>{
   const game=window.__NAIJA_GAME__;
   const scalarFields=source=>Object.fromEntries(Object.entries(source||{}).filter(([,value])=>value===null||['string','number','boolean'].includes(typeof value)));
@@ -30,6 +31,7 @@ try {
    araFilePickerPresent:!!document.querySelector('#player-character-file'),
    game:game?{
     stage:game.stage,
+    dataOptimization:game.dataOptimization||null,
     playerPosition:game.getPlayerState?.().position||game.firstSpawnPosition||null,
     worldCollision:game.worldCollision||null,
     stage08A:scalarFields(game.stage08A),
@@ -70,7 +72,8 @@ try {
  if(state.game?.stage08G?.stage!=='08G'||state.game?.stage08G?.district!=='Ikeja'||state.game?.stage08G?.roadLengthMetres!==150||state.game?.stage08G?.vendorStalls!==4||state.game?.stage08G?.parkedVehicles!==0||state.game?.stage08G?.laneObstructionsRemoved?.length!==3||state.game?.stage08G?.districtTraffic?.vehicles!==2||state.game?.stage08G?.staticPedestrianSilhouettes!==4||state.game?.stage08G?.litterHotspots!==4||state.game?.stage08G?.liveNpcAI!==false||state.game?.stage08G?.liveTrafficSimulation!==false)throw new Error('Stage 08G Ikeja street-life prototype metadata is incomplete: '+JSON.stringify(state.game?.stage08G));
  if(state.game?.stage08H?.stage!=='08H'||state.game?.stage08H?.district!=='Ikeja'||state.game?.stage08H?.texturedProps<50||state.game?.stage08H?.wearDistribution?.clean<1||state.game?.stage08H?.wearDistribution?.used<1||state.game?.stage08H?.wearDistribution?.weathered<1||state.game?.stage08H?.materialFamilyCount!==11||state.game?.stage08H?.texturedMaterialFamilies!==10||state.game?.stage08H?.textureMapSets!==10||state.game?.stage08H?.generatedTextureCount!==30||state.game?.stage08H?.unrenderedTaggedProps!==0||state.game?.stage08H?.addedDetailMeshes<20||state.game?.stage08H?.staticBatching!==true||!Object.keys(state.game.stage08H.materialAssignmentCounts||{}).some(name=>name.includes('asphalt'))||!Object.keys(state.game.stage08H.materialAssignmentCounts||{}).some(name=>name.includes('plaster'))||Object.values(state.game.stage08H.materialAssignmentCounts||{}).reduce((sum,count)=>sum+count,0)!==state.game.stage08H.texturedProps)throw new Error('Stage 08H Ikeja prop realism/material audit is incomplete: '+JSON.stringify(state.game?.stage08H));
  if(state.game?.stage08I?.stage!=='08I'||state.game?.stage08I?.district!=='Ikeja'||state.game?.stage08I?.residentialBuildings!==9||state.game?.stage08I?.commercialBuildings!==4||state.game?.stage08I?.marketStalls!==6||state.game?.stage08I?.roadNetwork?.collectorRoads!==2||state.game?.stage08I?.roadNetwork?.outerResidentialRoads!==2||state.game?.stage08I?.roadNetwork?.crossStreets!==4||state.game?.stage08I?.roadNetwork?.connectedJunctions!==20||state.game?.stage08I?.roadNetwork?.connectedToExistingIkejaCorridor!==true||state.game?.stage08I?.roadNetwork?.principalJunctions!==12||state.game?.stage08I?.groundColliders?.filter(collider=>collider.surface==='grass').length!==3||state.game?.stage08I?.groundColliders?.filter(collider=>collider.surface==='asphalt').length!==8||state.game?.stage08I?.collisionProxyCount<20||state.game?.stage08I?.staticBatching!==true||state.game?.worldCollision?.ikejaDistrictProxies<20||state.game?.worldCollision?.ikejaGroundColliders!==3)throw new Error('Stage 08I Ikeja district expansion is incomplete: '+JSON.stringify(state.game?.stage08I));
- if(state.game?.stage08J?.stage!=='08J'||state.game?.stage08J?.connector?.lengthMetres!==79||state.game?.stage08J?.connector?.startZ!==168||state.game?.stage08J?.connector?.endZ!==247||state.game?.stage08J?.junction?.ikejaCrossStreetZ!==246||state.game?.stage08J?.importedAssets?.length!==2||state.game?.stage08J?.importedAssets?.some(item=>item.loaded!==true)||state.game?.stage08J?.assetFailures?.length!==0||state.game?.stage08J?.textureFailures?.length!==0||state.game?.stage08J?.pbrRuntimeResolution!==512||Object.values(state.game?.stage08J?.pbrMaterials||{}).some(names=>names.length!==3)||state.game?.stage08J?.collisionProxyCount<15||state.game?.worldCollision?.yabaIkejaStreetProxies<15)throw new Error('Stage 08J Yaba–Ikeja connection, downloaded assets or 512px PBR materials failed: '+JSON.stringify(state.game?.stage08J));
+ const skipOptionalStreetAssets=state.game?.dataOptimization?.optionalStreetDownloadsSkipped===true;
+ if(state.game?.stage08J?.stage!=='08J'||state.game?.stage08J?.connector?.lengthMetres!==79||state.game?.stage08J?.connector?.startZ!==168||state.game?.stage08J?.connector?.endZ!==247||state.game?.stage08J?.junction?.ikejaCrossStreetZ!==246||state.game?.stage08J?.importedAssets?.length!==2||(!skipOptionalStreetAssets&&state.game?.stage08J?.importedAssets?.some(item=>item.loaded!==true))||(skipOptionalStreetAssets&&state.game?.stage08J?.importedAssets?.some(item=>!item.skipped))||state.game?.stage08J?.assetFailures?.length!==0||state.game?.stage08J?.textureFailures?.length!==0||state.game?.stage08J?.pbrRuntimeResolution!==(skipOptionalStreetAssets?'procedural-fallback':512)||(!skipOptionalStreetAssets&&Object.values(state.game?.stage08J?.pbrMaterials||{}).some(names=>names.length!==3))||state.game?.stage08J?.collisionProxyCount<15||state.game?.worldCollision?.yabaIkejaStreetProxies<15)throw new Error('Stage 08J Yaba–Ikeja connection or device-adaptive street assets failed: '+JSON.stringify(state.game?.stage08J));
  if(state.game?.stage08K?.stage!=='08K'||state.game?.stage08K?.existingNetworkPreserved!==true||state.game?.stage08K?.roadsDuplicated!==0||state.game?.stage08K?.bridgeTreatments?.length!==4||state.game?.stage08K?.junctions?.length!==5||state.game?.stage08K?.districtCoverage?.length!==6||state.game?.stage08K?.districtSigns?.length!==9||state.game?.stage08K?.collisionProxyCount<50||state.game?.worldCollision?.gidiRoadDetailProxies<50)throw new Error('Stage 08K GIDI district bridge/junction treatment incomplete: '+JSON.stringify(state.game?.stage08K));
  if(state.game?.stage!==10||state.game?.stage08A?.stage!=='08A'||state.game?.stage08A?.parallelRoads!==2||state.game?.stage08A?.crossStreets!==3||state.game?.stage08A?.commercialBuildings!==8||state.game?.stage08A?.residentialBuildings!==8)throw new Error('Stage 08A expansion metadata is incomplete: '+JSON.stringify(state.game?.stage08A));
  if(state.game?.stage08B?.stage!=='08B'||state.game?.stage08B?.commercialFacades!==8||state.game?.stage08B?.residentialFacades!==8||state.game?.stage08B?.detailMeshes<200||state.game?.stage08B?.batching!==true)throw new Error('Stage 08B facade detail metadata is incomplete: '+JSON.stringify(state.game?.stage08B));
@@ -78,7 +81,9 @@ try {
  if(state.game?.stage08D?.stage!=='08D'||state.game?.stage08D?.buildingsTextured!==48||state.game?.stage08D?.commercialBuildingsDetailed!==40||state.game?.stage08D?.residentialBuildingsDetailed!==8||state.game?.stage08D?.originalYabaBuildings!==32||state.game?.stage08D?.expansionBuildings!==16||state.game?.stage08D?.pbrMaterialFamilies!==10||state.game?.stage08D?.proceduralTextureMaps!==13||state.game?.stage08D?.signVariants!==4||state.game?.stage08D?.textureResolution!==512||state.game?.stage08D?.secondaryTextureResolution!==256||state.game?.stage08D?.batching!==true||state.game?.stage08D?.detailMeshes<550)throw new Error('Stage 08D building realism metadata is incomplete: '+JSON.stringify(state.game?.stage08D));
  await page.waitForFunction(()=>{const s=window.__NAIJA_GAME__?.getStage08EState?.();return !!s&&(s.loadedBuildings>0||s.failedBuildings>0);},null,{timeout:30000});
  try {
-  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getStage08EState?.()?.heroBuildingLoaded===true,null,{timeout:60000});
+  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,-65],0));
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getStage08EState?.()?.heroBuildingLoaded===true,null,{timeout:60000});
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
  } catch(error) {
   const diagnostic=await page.evaluate(()=>({
    stage08E:window.__NAIJA_GAME__?.getStage08EState?.(),
@@ -131,7 +136,7 @@ try {
     state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount<152||state.game?.traversal?.buildingRouteCount!==48||state.game?.traversal?.buildingAccessPointCount!==192||
     state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||
     state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||
-    state.game?.pedestrianState?.heroNpc?.isPlayer!==false||state.game?.pedestrianState?.heroNpc?.rigged!==true||
+    state.game?.pedestrianState?.heroNpc?.isPlayer!==false||(state.game?.pedestrianState?.heroNpc?.rigged!==true&&!state.game?.dataOptimization?.hero01NpcSkipped)||
     state.game?.physicsState?.player?.mode!=='ammo-bullet-capsule'||
     state.game?.physicsState?.player?.colliderCount<60||
     state.game?.worldCollision?.buildingProxies!==48||
@@ -139,10 +144,9 @@ try {
     !state.game?.mobileJoystick||!state.game?.cameraOrbit) {
   throw new Error('Ara player, Hero 01 NPC, traversal, physics or companion system was not mounted: '+JSON.stringify(state.game));
  }
- await page.waitForFunction(()=>window.__NAIJA_GAME__?.getHeroNpcState?.()?.moved===true&&
-  window.__NAIJA_GAME__?.getHeroNpcState?.()?.rigged===true,null,{timeout:10000});
+ await page.waitForFunction(()=>{const g=window.__NAIJA_GAME__;return g?.getHeroNpcState?.()?.moved===true&&(g.dataOptimization?.hero01NpcSkipped||g.getHeroNpcState?.()?.rigged===true);},null,{timeout:10000});
  const heroNpc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
- if(!heroNpc||heroNpc.name!=='Hero 01'||heroNpc.isPlayer!==false||heroNpc.active!==true||!heroNpc.moved||!heroNpc.rigged||!heroNpc.activeClip?.includes('Walk'))throw new Error('Hero 01 is not running as a visible animated city NPC: '+JSON.stringify(heroNpc));
+ if(!heroNpc||heroNpc.name!=='Hero 01'||heroNpc.isPlayer!==false||heroNpc.active!==true||!heroNpc.moved||(heroNpc.rigged&& !heroNpc.activeClip?.includes('Walk'))||(!heroNpc.rigged&&!state.game?.dataOptimization?.hero01NpcSkipped))throw new Error('Hero 01 is not running as a visible city NPC or its low-memory fallback is not active: '+JSON.stringify({heroNpc,optimization:state.game?.dataOptimization}));
  if(await page.locator('#character-switch-button').count()!==0||await page.locator('[data-player-action]').count()!==0)throw new Error('Character-switch controls must be completely removed from the HUD and Player menu');
  if(await page.locator('#player-character-file').count()!==0)throw new Error('Bundled Ara setup must not require an FBX upload control.');
 
@@ -212,7 +216,9 @@ try {
  if(await page.locator('.objective').count()!==0)throw new Error('Centre-screen objective/population overlay must be absent during gameplay.');
  if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
  const startup=await page.evaluate(()=>({preload:window.__NAIJA_GAME__?.startupPreload,loadingHidden:document.querySelector('#city-loading')?.hidden}));
- if(startup.preload?.total!==48||startup.preload?.loaded!==48||startup.preload?.failed!==0||!startup.preload?.ready||!startup.loadingHidden)throw new Error('Yaba building assets were not fully loaded before gameplay: '+JSON.stringify(startup));
+ const smallStartup=Boolean(state.game?.dataOptimization?.lowMemoryDevice||state.game?.dataOptimization?.lowDataMode);
+ const expectedStartupBuildings=smallStartup?8:14,expectedStartupBytes=smallStartup?1.5:2.5;
+ if(startup.preload?.total!==expectedStartupBuildings||startup.preload?.loaded!==expectedStartupBuildings||startup.preload?.bytes>expectedStartupBytes*1024*1024||startup.preload?.failed!==0||!startup.preload?.ready||!startup.loadingHidden)throw new Error('Nearby Yaba startup preload exceeded its adaptive '+expectedStartupBuildings+'-building/'+expectedStartupBytes+' MiB budget or did not finish: '+JSON.stringify(startup));
  const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
  if(hudBoxes['#move-joystick'].x>140||hudBoxes['.actions'].x<694||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
  if(await page.locator('.nav').isVisible())throw new Error('Legacy bottom navigation should be removed from active gameplay HUD');

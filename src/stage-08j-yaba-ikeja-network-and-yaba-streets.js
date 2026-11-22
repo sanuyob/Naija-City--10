@@ -45,7 +45,7 @@ function pbrMaterial(label, maps, colour, gloss = 0.12, tiling = [1, 1]) {
 }
 
 /** Stage 08J: join the Yaba avenue to Ikeja and finish the local roadside set. */
-export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, material }) {
+export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, material, lowDataMode = false, skipOptionalDownloads = lowDataMode }) {
   const group = app.batcher?.addGroup('stage08j-yaba-ikeja-static-streets', false, 128);
   const collisionProxies = [];
   const textureFailures = [];
@@ -114,29 +114,31 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
     }
   };
 
-  const maps = {};
-  for (const [family, paths] of Object.entries(materialPaths)) {
-    const familyMaps = {};
-    for (const [kind, path] of Object.entries(paths)) {
-      try {
-        familyMaps[kind] = (await loadTexture(app, `stage08j-${family}-${kind}`, path)).resource;
-        const texture = familyMaps[kind];
-        texture.anisotropy = 2;
-        texture.addressU = pc.ADDRESS_REPEAT;
-        texture.addressV = pc.ADDRESS_REPEAT;
-      } catch (error) {
-        textureFailures.push(error.message);
+  const maps = { asphalt: {}, concrete: {}, paving: {} };
+  if (!skipOptionalDownloads) {
+    for (const [family, paths] of Object.entries(materialPaths)) {
+      const familyMaps = {};
+      for (const [kind, path] of Object.entries(paths)) {
+        try {
+          familyMaps[kind] = (await loadTexture(app, `stage08j-${family}-${kind}`, path)).resource;
+          const texture = familyMaps[kind];
+          texture.anisotropy = 2;
+          texture.addressU = pc.ADDRESS_REPEAT;
+          texture.addressV = pc.ADDRESS_REPEAT;
+        } catch (error) {
+          textureFailures.push(error.message);
+        }
       }
+      maps[family] = familyMaps;
     }
-    maps[family] = familyMaps;
   }
 
   // ambientCG publishes roughness; PlayCanvas StandardMaterial expects gloss.
   // Invert roughness once offline and ship both source and derived maps.
   const pbr = {
-    asphalt: Object.keys(maps.asphalt).length >= 2 ? pbrMaterial('Stage 08J asphalt · Road 008 B', maps.asphalt, [1, 1, 1], 0.12, [4, 18]) : fallback.asphalt,
-    concrete: Object.keys(maps.concrete).length >= 2 ? pbrMaterial('Stage 08J worn concrete · Concrete 044 D', maps.concrete, [1, 1, 1], 0.16, [2, 12]) : fallback.concrete,
-    paving: Object.keys(maps.paving).length >= 2 ? pbrMaterial('Stage 08J interlocking paving · Paving Stones 152', maps.paving, [1, 1, 1], 0.18, [2, 16]) : fallback.concrete
+    asphalt: Object.keys(maps.asphalt || {}).length >= 2 ? pbrMaterial('Stage 08J asphalt · Road 008 B', maps.asphalt, [1, 1, 1], 0.12, [4, 18]) : fallback.asphalt,
+    concrete: Object.keys(maps.concrete || {}).length >= 2 ? pbrMaterial('Stage 08J worn concrete · Concrete 044 D', maps.concrete, [1, 1, 1], 0.16, [2, 12]) : fallback.concrete,
+    paving: Object.keys(maps.paving || {}).length >= 2 ? pbrMaterial('Stage 08J interlocking paving · Paving Stones 152', maps.paving, [1, 1, 1], 0.18, [2, 16]) : fallback.concrete
   };
 
   // A single continuous 77m connector bridges the existing Yaba avenue and
@@ -227,6 +229,15 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
     { id: 'wet-floor-sign-01', path: 'assets/city-props/polyhaven/WetFloorSign_01/WetFloorSign_01.glb', position: [-13.2, 0, 197], scale: 1, yaw: 0, mat: importedMaterials.sign }
   ];
   for (const spec of propSpecs) {
+    if (skipOptionalDownloads) {
+      importedAssets.push({ id: spec.id, path: spec.path, loaded: false, skipped: lowDataMode ? 'data-saver' : 'low-memory-device', fallback: 'procedural' });
+      if (spec.id === 'utility-box-01') {
+        detail('fallback-utility-cabinet', [spec.position[0], 0.62, spec.position[2]], [0.62, 1.24, 0.5], fallback.green, null, true);
+      } else {
+        detail('fallback-warning-sign', [spec.position[0], 0.40, spec.position[2]], [0.35, 0.8, 0.12], fallback.yellow, null, true);
+      }
+      continue;
+    }
     try {
       const asset = await loadContainer(app, 'stage08j-' + spec.id, spec.path);
       const entity = asset.resource.instantiateRenderEntity();
@@ -269,7 +280,9 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
     importedAssets,
     assetFailures,
     textureFailures,
-    pbrRuntimeResolution: 512,
+    pbrRuntimeResolution: skipOptionalDownloads ? 'procedural-fallback' : 512,
+    dataSaver: { enabled: lowDataMode, textureDownloadsSkipped: lowDataMode, importedPropDownloadsSkipped: lowDataMode },
+    optionalAssetsSkipped: skipOptionalDownloads,
     pbrMaterials: Object.fromEntries(Object.entries(maps).map(([name, set]) => [name, Object.keys(set)])),
     utilityPoles,
     signboards,

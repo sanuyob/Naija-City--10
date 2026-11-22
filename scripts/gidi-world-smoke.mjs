@@ -32,6 +32,13 @@ try {
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready === true, null, { timeout: 90000 });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.playerCharacterReady === true, null, { timeout: 60000 });
 
+  const startupGidiState = await page.evaluate(() => window.__NAIJA_GAME__.getGidiState());
+  if (startupGidiState.infrastructureLoaded || startupGidiState.totalCells !== 0) {
+    throw new Error('Distant GIDI infrastructure should remain unloaded while the player starts in Yaba: ' + JSON.stringify(startupGidiState));
+  }
+  // GIDI's road/terrain infrastructure now starts when Ara reaches the
+  // Yaba–GIDI gateway, rather than charging every Yaba-only launch.
+  await page.evaluate(() => window.__NAIJA_GAME__.debugLoadGidiForSmoke([100, 0, -445]));
   await page.waitForFunction(() => window.__NAIJA_GAME__?.getGidiState?.()?.infrastructureLoaded === true, null, { timeout: 60000 });
   const startState = await page.evaluate(() => window.__NAIJA_GAME__.getGidiState());
 
