@@ -2,6 +2,45 @@ import './ara-player-smoke.mjs';
 import { spawn } from 'node:child_process';
 import { setTimeout as delay } from 'node:timers/promises';
 import { chromium } from 'playwright';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { PNG } from 'pngjs';
+
+const reviewDir = new URL('../artifacts/daylight-review/', import.meta.url);
+await mkdir(reviewDir, { recursive: true });
+
+function makeReviewPreview(pngBuffer, targetWidth = 422) {
+ const source = PNG.sync.read(pngBuffer);
+ const targetHeight = Math.max(1, Math.round(source.height * targetWidth / source.width));
+ const target = new PNG({ width: targetWidth, height: targetHeight });
+ for (let y = 0; y < targetHeight; y++) {
+  for (let x = 0; x < targetWidth; x++) {
+   const sx = Math.min(source.width - 1, Math.floor(x * source.width / targetWidth));
+   const sy = Math.min(source.height - 1, Math.floor(y * source.height / targetHeight));
+   const si = (sy * source.width + sx) * 4;
+   const ti = (y * targetWidth + x) * 4;
+   target.data[ti] = source.data[si]; target.data[ti + 1] = source.data[si + 1];
+   target.data[ti + 2] = source.data[si + 2]; target.data[ti + 3] = source.data[si + 3];
+  }
+ }
+ return PNG.sync.write(target);
+}
+
+function measureDisplayLuminance(pngBuffer) {
+ const png = PNG.sync.read(pngBuffer), values = [];
+ let dark = 0, bright = 0, sum = 0;
+ for (let i = 0; i < png.data.length; i += 4) {
+  if (png.data[i + 3] === 0) continue;
+  const y = Math.round(.2126 * png.data[i] + .7152 * png.data[i + 1] + .0722 * png.data[i + 2]);
+  values.push(y); sum += y; if (y < 55) dark++; if (y > 235) bright++;
+ }
+ values.sort((a, b) => a - b);
+ const percentile = p => values[Math.min(values.length - 1, Math.floor((values.length - 1) * p))] ?? null;
+ return { pixelCount: values.length, mean: values.length ? Number((sum / values.length).toFixed(1)) : null,
+  p10: percentile(.10), p50: percentile(.50), p90: percentile(.90),
+  darkPixelPercent: values.length ? Number((dark / values.length * 100).toFixed(2)) : null,
+  highlightPixelPercent: values.length ? Number((bright / values.length * 100).toFixed(2)) : null,
+  scope: 'entire canvas; includes sky, ground, buildings and actors, not a facade-only measurement' };
+}
 const port=4173,origin=`http://127.0.0.1:${port}`;
 const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port',String(port),'--strictPort'],{stdio:'ignore'});
 let browser;
@@ -92,6 +131,27 @@ try {
   }));
   throw new Error('Computer Village KTX2 hero failed to load within 60 seconds: '+JSON.stringify({diagnostic,errors})+'; '+error.message);
  }
+ await page.waitForTimeout(220);
+ await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=true;});
+ const daylightScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ const daylightAudit=await page.evaluate(()=>{
+  const game=window.__NAIJA_GAME__,diag=window.__NAIJA_RENDER_DIAGNOSTICS__||{};
+  return {capture:'Yaba spawn after nearby building load',viewport:{width:innerWidth,height:innerHeight},
+   visualSettings:game?.getVisualSettings?.()||null,lightingAudit:game?.getLightingAudit?.()||null,
+   renderDiagnostics:{drawCallCount:diag.drawCallCount??null,primitiveCount:diag.primitiveCount??null,
+    meshInstances:diag.scene?.meshInstances??null,frameTime:diag.frameTime??null,camera:diag.camera??null},
+   stage08E:game?.getStage08EState?.()||null,playerPosition:game?.getPlayerState?.().position||null};
+ });
+ const daylightPreview=makeReviewPreview(daylightScreenshot);
+ const daylightMetrics=measureDisplayLuminance(daylightScreenshot);
+ await writeFile(new URL('yaba-daylight-full.png',reviewDir),daylightScreenshot);
+ await writeFile(new URL('yaba-daylight-preview.png',reviewDir),daylightPreview);
+ await writeFile(new URL('yaba-daylight-audit.json',reviewDir),JSON.stringify({...daylightAudit,displayLuminance:daylightMetrics},null,2));
+ console.log('DAYLIGHT_BASELINE_AUDIT '+JSON.stringify({...daylightAudit,displayLuminance:daylightMetrics}));
+ console.log('DAYLIGHT_BASELINE_PREVIEW_BASE64_BEGIN');
+ console.log(daylightPreview.toString('base64'));
+ console.log('DAYLIGHT_BASELINE_PREVIEW_BASE64_END');
+ await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
  const stage08EState=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08EState?.());
  const collisionTest=await page.evaluate(()=>{
   const state=window.__NAIJA_GAME__?.getStage08EState?.();
@@ -239,6 +299,12 @@ try {
  });
  await page.waitForTimeout(160);
  const ikejaScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ await writeFile(new URL('ikeja-daylight-full.png',reviewDir),ikejaScreenshot);
+ const ikejaPreview=makeReviewPreview(ikejaScreenshot);
+ await writeFile(new URL('ikeja-daylight-preview.png',reviewDir),ikejaPreview);
+ console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_BEGIN');
+ console.log(ikejaPreview.toString('base64'));
+ console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_END');
  const ikejaVisual=await page.evaluate(async encoded=>{
   const image=new Image();image.src='data:image/png;base64,'+encoded;await image.decode();
   const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
