@@ -127,6 +127,7 @@ try {
     yabaFarClipSweep,ikejaFarClipSweep,timeOfDayAudit,
     yabaVisuals:yabaAudit.visualSettings,ikejaVisuals:ikejaAudit.visualSettings,
     yabaRender:yabaAudit.renderDiagnostics,ikejaRender:ikejaAudit.renderDiagnostics,
+    yabaRenderBreakdown:yabaAudit.renderBreakdown,ikejaRenderBreakdown:ikejaAudit.renderBreakdown,
     consoleErrors,jsErrors:errors
   }));
 } finally {
