@@ -204,7 +204,6 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   let shadowAccumulator = 0;
   let shadowUpdates = 0;
   let lastSunElevation = 42;
-  let elapsed = 0;
 
   function applyProfile() {
     const profile = sampleProfile(gameHours);
@@ -243,7 +242,6 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   return {
     update(dt) {
       const delta = Math.max(0, Math.min(Number(dt) || 0, 0.1));
-      elapsed += delta;
       gameHours = (gameHours + delta / 60) % 24;
       profileAccumulator += delta;
       shadowAccumulator += delta;
