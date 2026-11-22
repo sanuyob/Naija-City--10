@@ -55,7 +55,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Capture Yaba and Ikeja daylight review
-        run: node scripts/browser-smoke.mjs
+        run: node scripts/daylight-review-smoke.mjs
 
       - name: Upload daylight screenshots and diagnostic report
         if: always()
