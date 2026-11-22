@@ -14,7 +14,7 @@ function hideLegacyBuildings(app) {
   return hidden;
 }
 
-export function createStage08EBuildings({app,lowMemoryDevice=false,lowDataMode=false}={}) {
+export function createStage08EBuildings({app,lowMemoryDevice=false,lowDataMode=false,applyShadowPolicy=()=>{}}={}) {
   const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],buildings:[],textureEncoding:'shared Yaba KTX2 Basis library; residential PNG assets retained',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
@@ -60,6 +60,7 @@ export function createStage08EBuildings({app,lowMemoryDevice=false,lowDataMode=f
         }
         if(batchGroup) component.batchGroupId=batchGroup.id;
       }
+      applyShadowPolicy(entity);
       app.root.addChild(entity);
       if(masterAssetId===null) masterAssetId=item.id;
       loaded.set(item.id,{entity,asset,lods,position:item.position,kind:item.kind,distance:Infinity,hero:Boolean(item.hero)});
