@@ -161,11 +161,13 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   function applyComponents(components) {
     let casting = 0, receiving = 0;
     for (const component of components) {
-      const cast = shouldCastShadow(component);
+      const cloudLayer = component.entity?.name === 'naija-city-single-batch-cloud-layer';
+      const cast = cloudLayer ? false : shouldCastShadow(component);
+      const receive = !cloudLayer;
       if (component.castShadows !== cast) component.castShadows = cast;
-      if (component.receiveShadows !== true) component.receiveShadows = true;
+      if (component.receiveShadows !== receive) component.receiveShadows = receive;
       if (cast) casting++;
-      if (component.receiveShadows) receiving++;
+      if (receive) receiving++;
     }
     return { casting, receiving, count: components.length };
   }
