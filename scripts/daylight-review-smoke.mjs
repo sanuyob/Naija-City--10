@@ -103,9 +103,19 @@ try {
   const ikejaImage=await capture('ikeja-daylight');
   const ikejaAudit=await getAudit();
   const ikejaFarClipSweep=await measureFarClipSweep();
+  const timeOfDayAudit=[];
+  for(const [hour,label] of [[6,'sunrise'],[12,'noon'],[18,'sunset'],[20,'night']]){
+    await page.evaluate(value=>window.__NAIJA_GAME__?.debugSetWorldTimeForSmoke?.(value),hour);
+    await page.waitForTimeout(120);
+    const image=await capture('time-'+label);
+    const audit=await getAudit();
+    timeOfDayAudit.push({hour,label,image,visualSettings:audit.visualSettings,lighting:audit.lightingAudit?.worldLighting});
+  }
+  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetWorldTimeForSmoke?.(9.25));
+  await page.waitForTimeout(120);
   await writeFile(new URL('ikeja-daylight-audit.json',reviewDir),JSON.stringify({
     capture:'Ikeja district camera view',viewport:{width:844,height:390},
-    image:ikejaImage,audit:ikejaAudit,farClipSweep:ikejaFarClipSweep,jsErrors:errors,consoleErrors
+    image:ikejaImage,audit:ikejaAudit,farClipSweep:ikejaFarClipSweep,timeOfDayAudit,jsErrors:errors,consoleErrors
   },null,2));
 
   if(errors.length)throw new Error('Browser JavaScript errors: '+errors.join(' | '));
@@ -113,7 +123,7 @@ try {
     boot,heroLoad,yabaImage,ikejaImage,
     yabaLighting:yabaAudit.lightingAudit,ikejaLighting:ikejaAudit.lightingAudit,
     yabaStaticBatchState:yabaAudit.staticBatchState,ikejaStaticBatchState:ikejaAudit.staticBatchState,
-    yabaFarClipSweep,ikejaFarClipSweep,
+    yabaFarClipSweep,ikejaFarClipSweep,timeOfDayAudit,
     yabaVisuals:yabaAudit.visualSettings,ikejaVisuals:ikejaAudit.visualSettings,
     yabaRender:yabaAudit.renderDiagnostics,ikejaRender:ikejaAudit.renderDiagnostics,
     consoleErrors,jsErrors:errors
