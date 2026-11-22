@@ -692,6 +692,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     surfacePatches:surfacePatches.map(patch=>({id:patch.id,surface:patch.surface,position:patch.position.slice(),halfExtents:patch.halfExtents.slice()})),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,getTrafficPositions:()=>traffic.map(item=>({name:item.entity.name,position:item.entity.getPosition().toArray()})),trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
   if(import.meta.env.DEV && new URLSearchParams(window.location.search).has('smoke')) {
     gameApi.debugSetCameraFarClipForSmoke=(value)=>{camera.camera.farClip=Math.max(100,Math.min(1000,Number(value)||650));return camera.camera.farClip;};
+    gameApi.debugSetWorldTimeForSmoke=(hours)=>worldLighting.setTimeHours(hours);
     gameApi.debugInteractForSmoke=()=>interactionSystem.interact(playerController.getState());
     gameApi.debugLoadGidiForSmoke=async(position=[100,0,-450])=>{playerController.setPositionForSmoke(position,0);await gidiStreamer.update(position,1);gidiAuthoredInteriors.update(position);return {streamer:gidiStreamer.getState(),interiors:gidiAuthoredInteriors.getState()};};
     gameApi.debugUpdateGidiInteriorsForSmoke=position=>gidiAuthoredInteriors.update(position);
