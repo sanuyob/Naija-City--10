@@ -127,6 +127,77 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
   cloudEntity.render.receiveShadows = false;
   app.root.addChild(cloudEntity);
 
+  const importantArchitecture = /residential-house-shell|residential-house-roof|mixed-use-commercial-shell|commercial-roof-parapet|transport-hall-main-shell|transport-hall-roof|bridge-(deck|pier|abutment|girder|support)|streetlight-pole|utility-pole|bus-shelter-roof|shelter-roof/i;
+  const detailArchitecture = /roof|tank|canopy|parapet|plinth/i;
+  const neighbourhoodStructure = /-(rear-wall|left-wall|right-wall|front-left|front-right|door-lintel|roof)$/i;
+  const gidiBuildingName = /building|house|tower|mall|office|apartment|warehouse|shop|structure|facade|residential|commercial/i;
+
+  function shouldCastShadow(component) {
+    if (component.meshInstances?.some(instance => Boolean(instance.skinInstance))) return true;
+    const pathNames = [];
+    let node = component.entity;
+    while (node) {
+      const lowerName = String(node.name || '').toLowerCase();
+      pathNames.push(lowerName);
+      const tags = node.tags;
+      if (lowerName.startsWith('stage08e-')) return true;
+      if (tags?.has('stage08a-building') || tags?.has('stage08a-roof') || tags?.has('stage08d-building')) return true;
+      if (tags?.has('stage08d-architecture') && detailArchitecture.test(lowerName)) return true;
+      if (tags?.has('stage08i-ikeja-district') && importantArchitecture.test(lowerName)) return true;
+      if (tags?.has('stage08n-neighbourhood') && neighbourhoodStructure.test(lowerName)) return true;
+      if (tags?.has('stage08c-street-detail') && importantArchitecture.test(lowerName)) return true;
+      if (tags?.has('stage08k-gidi-road-detail') && /bridge-(deck|pier|abutment|girder|support)/i.test(lowerName)) return true;
+      if (lowerName.startsWith('gidi-cell-') && gidiBuildingName.test(pathNames.join(' '))) return true;
+      node = node.parent;
+    }
+    return false;
+  }
+
+  const shadowPolicy = {
+    fullSceneScans: 0, componentsSeen: 0, castingComponents: 0, receivingComponents: 0,
+    registeredEntities: 0, registeredComponents: 0, initialScanMs: 0, lastEntityApplyMs: 0
+  };
+
+  function applyComponents(components) {
+    let casting = 0, receiving = 0;
+    for (const component of components) {
+      const cast = shouldCastShadow(component);
+      if (component.castShadows !== cast) component.castShadows = cast;
+      if (component.receiveShadows !== true) component.receiveShadows = true;
+      if (cast) casting++;
+      if (component.receiveShadows) receiving++;
+    }
+    return { casting, receiving, count: components.length };
+  }
+
+  let initialScanDone = false;
+  function applyInitialShadowPolicy() {
+    if (initialScanDone) return { ...shadowPolicy };
+    const started = typeof performance !== 'undefined' ? performance.now() : 0;
+    const components = app.root.findComponents('render') || [];
+    const result = applyComponents(components);
+    shadowPolicy.fullSceneScans = 1;
+    shadowPolicy.componentsSeen = result.count;
+    shadowPolicy.castingComponents = result.casting;
+    shadowPolicy.receivingComponents = result.receiving;
+    shadowPolicy.initialScanMs = Number(((typeof performance !== 'undefined' ? performance.now() : started) - started).toFixed(2));
+    initialScanDone = true;
+    return { ...shadowPolicy };
+  }
+
+  function applyToEntity(entity) {
+    if (!entity) return { casting: 0, receiving: 0, count: 0 };
+    const started = typeof performance !== 'undefined' ? performance.now() : 0;
+    const components = entity.findComponents?.('render') || [];
+    const result = applyComponents(components);
+    shadowPolicy.registeredEntities++;
+    shadowPolicy.registeredComponents += result.count;
+    shadowPolicy.castingComponents += result.casting;
+    shadowPolicy.receivingComponents += result.receiving;
+    shadowPolicy.lastEntityApplyMs = Number(((typeof performance !== 'undefined' ? performance.now() : started) - started).toFixed(2));
+    return result;
+  }
+
   let gameHours = 9.25;
   let profileAccumulator = 0;
   let shadowAccumulator = 0;
@@ -191,6 +262,8 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
       cloudEntity.setPosition(cameraPosition.x, 245, cameraPosition.z);
     },
     setTimeHours,
+    applyInitialShadowPolicy,
+    applyToEntity,
     getState() {
       const profile = sampleProfile(gameHours);
       const hour = Math.floor(gameHours), minute = Math.floor((gameHours - hour) * 60);
@@ -212,6 +285,7 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
         shadowIntensity: sun.light.shadowIntensity,
         shadowUpdateMode: 'on-demand-every-2-seconds',
         shadowUpdates,
+        shadowPolicy: { ...shadowPolicy },
         clouds: { enabled: true, drawCalls: 1, puffCount: cloudData.puffCount, triangles: cloudData.triangleCount },
         fog: { enabled: false, deferredUntilDrawCallOptimization: true },
         skySimulation: 'disabled',
