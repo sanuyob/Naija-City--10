@@ -285,4 +285,3 @@ try {
  console.log('Canvas screenshot metrics: '+JSON.stringify(visual));
  await context.close();
 } finally {if(browser)await browser.close();server.kill('SIGTERM');}
-[exit status 0]
