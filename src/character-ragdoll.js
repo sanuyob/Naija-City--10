@@ -266,9 +266,9 @@ export function createCharacterRagdoll({ Ammo, world, rig, initialVelocity = [0,
     ballJoint('spine', pelvis, chest, getPoint(bones.hips), [0.50, 0.42, 0.36]);
     ballJoint('neck', chest, head, getPoint(bones.neck), [0.38, 0.34, 0.28]);
     ballJoint('left-shoulder', chest, leftUpperArm, getPoint(bones.leftUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.40, 2.50);
+    hingeJoint('left-elbow', leftUpperArm, leftForeArm, getPoint(bones.leftForeArm), getHingeAxis('leftUpperArm','leftForeArm','leftHand', readNode(bones.leftUpperArm).rotation), -0.50, 2.50);
     ballJoint('right-shoulder', chest, rightUpperArm, getPoint(bones.rightUpperArm), [1.45, 1.25, 0.90]);
-    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.40, 2.50);
+    hingeJoint('right-elbow', rightUpperArm, rightForeArm, getPoint(bones.rightForeArm), getHingeAxis('rightUpperArm','rightForeArm','rightHand', readNode(bones.rightUpperArm).rotation), -0.50, 2.50);
     ballJoint('left-hip', pelvis, leftThigh, getPoint(bones.leftThigh), [1.00, 0.85, 0.72]);
     hingeJoint('left-knee', leftThigh, leftShin, getPoint(bones.leftShin), getHingeAxis('leftThigh','leftShin','leftFoot', readNode(bones.leftThigh).rotation), -0.40, 2.58);
     ballJoint('right-hip', pelvis, rightThigh, getPoint(bones.rightThigh), [1.00, 0.85, 0.72]);
