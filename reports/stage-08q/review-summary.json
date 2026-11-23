@@ -1,0 +1,758 @@
+{
+  "stage": "08Q",
+  "bundleBudget": {
+    "files": [
+      {
+        "name": "game-DGEbz6w9.js",
+        "rawBytes": 1637599,
+        "gzipBytes": 446445
+      },
+      {
+        "name": "index-hl_fiQTz.js",
+        "rawBytes": 37212,
+        "gzipBytes": 13330
+      }
+    ],
+    "totalRawBytes": 1674811,
+    "totalGzipBytes": 459775,
+    "maxTotalRawBytes": 1689600,
+    "maxTotalGzipBytes": 460800,
+    "headroomRawBytes": 14789,
+    "headroomGzipBytes": 1025,
+    "passed": true
+  },
+  "mobileSoak": {
+    "pass": true,
+    "profile": {
+      "lowMemoryMode": true,
+      "startup": {
+        "total": 8,
+        "loaded": 8,
+        "failed": 0,
+        "bytes": 1238864,
+        "ready": true
+      },
+      "deviceMemoryGiB": 3,
+      "hardwareConcurrency": 4,
+      "maxTouchPoints": 1,
+      "touchCapable": true,
+      "viewport": {
+        "width": 844,
+        "height": 390
+      },
+      "heap": {
+        "used": 247985236,
+        "total": 316117000,
+        "limit": 4254597120
+      }
+    },
+    "soak": {
+      "durationMs": 20235.400000002235,
+      "frames": 82,
+      "frameMs": {
+        "p50": 233.29999999999927,
+        "p95": 450,
+        "max": 2979.5000000029804
+      },
+      "heapStartBytes": 248028360,
+      "heapEndBytes": 294663521,
+      "heapGrowthBytes": 46635161,
+      "drawCalls": 312,
+      "meshInstances": 5151
+    },
+    "errors": [],
+    "consoleErrors": [],
+    "note": "Chromium 3 GiB / 4-core / touch profile; software-rendered Box soak, not a physical Android device run."
+  },
+  "capturedAt": "2026-11-23T20:28:53.735Z",
+  "previousUnbatchedTarget": 551,
+  "auditScope": "Current render components with no pre-existing batch group, plus components assigned by Stage 08Q. Earlier Stage 08A–08N batch groups are excluded from the unbatched CSV and counted separately as pre-existing batches.",
+  "districts": {
+    "yaba": {
+      "district": "Yaba",
+      "auditedRowsIncludingStage08Q": 571,
+      "currentUnbatchedAfterStage08Q": 418,
+      "separateStage08NDoorHandles": 20,
+      "original551Target": {
+        "stillUnbatched": 398,
+        "assignedToStage08Q": 153,
+        "reconciledTotal": 551,
+        "delta": 0,
+        "reconciled": true
+      },
+      "classification": {
+        "static": 268,
+        "dynamic": 276,
+        "transparent": 25,
+        "special": 2
+      },
+      "renderBreakdownTotal": 4856,
+      "preExistingBatchedBeforeStage08Q": 4285,
+      "totalBatchedAfterStage08Q": 4438,
+      "stage08QBatching": {
+        "enabled": true,
+        "cellSizeMetres": 48,
+        "inspectedStaticBoxes": 165,
+        "assignedComponents": 153,
+        "groupCount": 14,
+        "batches": 43,
+        "oversizedAabbs": 10,
+        "noBounds": 0,
+        "incompatible": 304,
+        "singletonCells": 2,
+        "unsafeAssignedComponents": 0,
+        "policy": "opaque single-material box meshes only; 48m X/Z cells; 48m max AABB; no moving/scripted/physics/skinned/transparent/interactive meshes"
+      },
+      "drawCalls": 343,
+      "lighting": {
+        "enabled": true,
+        "mode": "low-cost-day-night-cycle",
+        "timeHours": 9.25,
+        "timeLabel": "09:15",
+        "sunIntensity": 1.35,
+        "sunColor": [
+          1,
+          0.96,
+          0.9,
+          1
+        ],
+        "ambientLight": [
+          0.5,
+          0.52,
+          0.56,
+          1
+        ],
+        "exposure": 1,
+        "sunElevation": 42,
+        "shadows": true,
+        "shadowResolution": 512,
+        "shadowDistance": 42,
+        "shadowCascades": 1,
+        "shadowIntensity": 0.62,
+        "shadowUpdateMode": "on-demand-every-2-seconds",
+        "shadowPolicy": {
+          "fullSceneScans": 0,
+          "componentsSeen": 0,
+          "castingComponents": 32,
+          "receivingComponents": 32,
+          "registeredEntities": 8,
+          "registeredComponents": 32,
+          "initialScanMs": 0,
+          "lastEntityApplyMs": 0
+        },
+        "clouds": {
+          "enabled": true,
+          "drawCalls": 1,
+          "puffCount": 30,
+          "triangles": 300,
+          "nightOpacity": 0.18
+        },
+        "fog": {
+          "enabled": true,
+          "type": "linear",
+          "start": 235,
+          "end": 610,
+          "color": [
+            0.46,
+            0.65,
+            0.84,
+            1
+          ],
+          "sceneWide": true,
+          "extraDrawCalls": 0
+        },
+        "nightLighting": {
+          "enabled": true,
+          "method": "moderate cool directional moonlight + lifted blue ambient fill",
+          "extraLights": 0,
+          "night": false
+        },
+        "skySimulation": "disabled",
+        "environmentBake": "disabled"
+      },
+      "screenshot": {
+        "width": 844,
+        "height": 390,
+        "bytes": 237094
+      }
+    },
+    "ikeja": {
+      "district": "Ikeja",
+      "auditedRowsIncludingStage08Q": 571,
+      "currentUnbatchedAfterStage08Q": 418,
+      "separateStage08NDoorHandles": 20,
+      "original551Target": {
+        "stillUnbatched": 398,
+        "assignedToStage08Q": 153,
+        "reconciledTotal": 551,
+        "delta": 0,
+        "reconciled": true
+      },
+      "classification": {
+        "static": 268,
+        "dynamic": 276,
+        "transparent": 25,
+        "special": 2
+      },
+      "renderBreakdownTotal": 4856,
+      "preExistingBatchedBeforeStage08Q": 4285,
+      "totalBatchedAfterStage08Q": 4438,
+      "stage08QBatching": {
+        "enabled": true,
+        "cellSizeMetres": 48,
+        "inspectedStaticBoxes": 165,
+        "assignedComponents": 153,
+        "groupCount": 14,
+        "batches": 43,
+        "oversizedAabbs": 10,
+        "noBounds": 0,
+        "incompatible": 304,
+        "singletonCells": 2,
+        "unsafeAssignedComponents": 0,
+        "policy": "opaque single-material box meshes only; 48m X/Z cells; 48m max AABB; no moving/scripted/physics/skinned/transparent/interactive meshes"
+      },
+      "drawCalls": 517,
+      "lighting": {
+        "enabled": true,
+        "mode": "low-cost-day-night-cycle",
+        "timeHours": 9.25,
+        "timeLabel": "09:15",
+        "sunIntensity": 1.35,
+        "sunColor": [
+          1,
+          0.96,
+          0.9,
+          1
+        ],
+        "ambientLight": [
+          0.5,
+          0.52,
+          0.56,
+          1
+        ],
+        "exposure": 1,
+        "sunElevation": 42,
+        "shadows": true,
+        "shadowResolution": 512,
+        "shadowDistance": 42,
+        "shadowCascades": 1,
+        "shadowIntensity": 0.62,
+        "shadowUpdateMode": "on-demand-every-2-seconds",
+        "shadowPolicy": {
+          "fullSceneScans": 0,
+          "componentsSeen": 0,
+          "castingComponents": 32,
+          "receivingComponents": 32,
+          "registeredEntities": 8,
+          "registeredComponents": 32,
+          "initialScanMs": 0,
+          "lastEntityApplyMs": 0
+        },
+        "clouds": {
+          "enabled": true,
+          "drawCalls": 1,
+          "puffCount": 30,
+          "triangles": 300,
+          "nightOpacity": 0.18
+        },
+        "fog": {
+          "enabled": true,
+          "type": "linear",
+          "start": 235,
+          "end": 610,
+          "color": [
+            0.46,
+            0.65,
+            0.84,
+            1
+          ],
+          "sceneWide": true,
+          "extraDrawCalls": 0
+        },
+        "nightLighting": {
+          "enabled": true,
+          "method": "moderate cool directional moonlight + lifted blue ambient fill",
+          "extraLights": 0,
+          "night": false
+        },
+        "skySimulation": "disabled",
+        "environmentBake": "disabled"
+      },
+      "screenshot": {
+        "width": 844,
+        "height": 390,
+        "bytes": 236499
+      }
+    }
+  },
+  "benchmark": {
+    "method": "requestAnimationFrame intervals; 20 warm-up frames + 60 measured frames; 3 repeated trials per district and batching mode",
+    "matchingCamera": "same world-space height, look vector, FOV 62 and far clip 650; district origins differ only by location",
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "deviceProfile": {
+      "deviceMemoryGiB": 3,
+      "hardwareConcurrency": 4
+    },
+    "trialsPerDistrictAndMode": 3,
+    "framesPerTrial": 60,
+    "warmupFramesPerTrial": 20,
+    "results": {
+      "unbatchedBaseline": {
+        "yaba": {
+          "trials": 3,
+          "meanDrawCallsP50": 444,
+          "meanFrameMsP50": 188.90000000000146,
+          "meanFrameMsP95": 355.5333333333353
+        },
+        "ikeja": {
+          "trials": 3,
+          "meanDrawCallsP50": 619,
+          "meanFrameMsP50": 205.53333333333043,
+          "meanFrameMsP95": 388.8333333333333
+        }
+      },
+      "staticBatched": {
+        "yaba": {
+          "trials": 3,
+          "meanDrawCallsP50": 343,
+          "meanFrameMsP50": 183.3666666666686,
+          "meanFrameMsP95": 344.49999999999517
+        },
+        "ikeja": {
+          "trials": 3,
+          "meanDrawCallsP50": 517,
+          "meanFrameMsP50": 200,
+          "meanFrameMsP95": 294.43333333333914
+        }
+      }
+    }
+  },
+  "mobileProfile": {
+    "deviceMemoryGiB": 3,
+    "hardwareConcurrency": 4,
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "lowMemoryModeActivated": true,
+    "startup": {
+      "total": 8,
+      "loaded": 8,
+      "failed": 0,
+      "bytes": 1238864,
+      "ready": true
+    },
+    "touchCapable": true,
+    "maxTouchPoints": 1,
+    "memoryAtBoot": {
+      "usedJSHeapSize": 240049177,
+      "totalJSHeapSize": 289425069,
+      "jsHeapSizeLimit": 4254597120
+    },
+    "memoryAfterYabaAudit": {
+      "usedJSHeapSize": 288291380,
+      "totalJSHeapSize": 332363476,
+      "jsHeapSizeLimit": 4254597120
+    },
+    "memoryAfterBenchmark": {
+      "usedJSHeapSize": 273165576,
+      "totalJSHeapSize": 337618772,
+      "jsHeapSizeLimit": 4254597120
+    },
+    "jsErrors": [],
+    "consoleErrors": []
+  },
+  "visualReview": {
+    "timeOfDaySamples": [
+      {
+        "hour": 6,
+        "label": "sunrise",
+        "visualSettings": {
+          "ambientLight": [
+            0.3,
+            0.28,
+            0.32,
+            1
+          ],
+          "exposure": 1,
+          "toneMapping": "ACES2",
+          "directionalIntensity": 0.32,
+          "directionalColour": [
+            1,
+            0.48,
+            0.25,
+            1
+          ],
+          "clearColour": [
+            0.78,
+            0.38,
+            0.25,
+            1
+          ]
+        },
+        "lighting": {
+          "enabled": true,
+          "mode": "low-cost-day-night-cycle",
+          "timeHours": 6,
+          "timeLabel": "06:00",
+          "sunIntensity": 0.32,
+          "sunColor": [
+            1,
+            0.48,
+            0.25,
+            1
+          ],
+          "ambientLight": [
+            0.3,
+            0.28,
+            0.32,
+            1
+          ],
+          "exposure": 1,
+          "sunElevation": 0,
+          "shadows": false,
+          "shadowResolution": 512,
+          "shadowDistance": 42,
+          "shadowCascades": 1,
+          "shadowIntensity": 0.62,
+          "shadowUpdateMode": "on-demand-every-2-seconds",
+          "shadowPolicy": {
+            "fullSceneScans": 1,
+            "componentsSeen": 4724,
+            "castingComponents": 630,
+            "receivingComponents": 4753,
+            "registeredEntities": 11,
+            "registeredComponents": 62,
+            "initialScanMs": 9.1,
+            "lastEntityApplyMs": 0
+          },
+          "clouds": {
+            "enabled": true,
+            "drawCalls": 1,
+            "puffCount": 30,
+            "triangles": 300,
+            "nightOpacity": 0.18
+          },
+          "fog": {
+            "enabled": true,
+            "type": "linear",
+            "start": 235,
+            "end": 610,
+            "color": [
+              0.78,
+              0.38,
+              0.25,
+              1
+            ],
+            "sceneWide": true,
+            "extraDrawCalls": 0
+          },
+          "nightLighting": {
+            "enabled": true,
+            "method": "moderate cool directional moonlight + lifted blue ambient fill",
+            "extraLights": 0,
+            "night": false
+          },
+          "skySimulation": "disabled",
+          "environmentBake": "disabled"
+        }
+      },
+      {
+        "hour": 12,
+        "label": "noon",
+        "visualSettings": {
+          "ambientLight": [
+            0.49,
+            0.52,
+            0.57,
+            1
+          ],
+          "exposure": 1,
+          "toneMapping": "ACES2",
+          "directionalIntensity": 1.42,
+          "directionalColour": [
+            1,
+            0.98,
+            0.94,
+            1
+          ],
+          "clearColour": [
+            0.39,
+            0.61,
+            0.85,
+            1
+          ]
+        },
+        "lighting": {
+          "enabled": true,
+          "mode": "low-cost-day-night-cycle",
+          "timeHours": 12,
+          "timeLabel": "12:00",
+          "sunIntensity": 1.42,
+          "sunColor": [
+            1,
+            0.98,
+            0.94,
+            1
+          ],
+          "ambientLight": [
+            0.49,
+            0.52,
+            0.57,
+            1
+          ],
+          "exposure": 1,
+          "sunElevation": 65,
+          "shadows": true,
+          "shadowResolution": 512,
+          "shadowDistance": 42,
+          "shadowCascades": 1,
+          "shadowIntensity": 0.62,
+          "shadowUpdateMode": "on-demand-every-2-seconds",
+          "shadowPolicy": {
+            "fullSceneScans": 1,
+            "componentsSeen": 4724,
+            "castingComponents": 630,
+            "receivingComponents": 4753,
+            "registeredEntities": 11,
+            "registeredComponents": 62,
+            "initialScanMs": 9.1,
+            "lastEntityApplyMs": 0
+          },
+          "clouds": {
+            "enabled": true,
+            "drawCalls": 1,
+            "puffCount": 30,
+            "triangles": 300,
+            "nightOpacity": 0.18
+          },
+          "fog": {
+            "enabled": true,
+            "type": "linear",
+            "start": 235,
+            "end": 610,
+            "color": [
+              0.39,
+              0.61,
+              0.85,
+              1
+            ],
+            "sceneWide": true,
+            "extraDrawCalls": 0
+          },
+          "nightLighting": {
+            "enabled": true,
+            "method": "moderate cool directional moonlight + lifted blue ambient fill",
+            "extraLights": 0,
+            "night": false
+          },
+          "skySimulation": "disabled",
+          "environmentBake": "disabled"
+        }
+      },
+      {
+        "hour": 18,
+        "label": "sunset",
+        "visualSettings": {
+          "ambientLight": [
+            0.3,
+            0.26,
+            0.28,
+            1
+          ],
+          "exposure": 1,
+          "toneMapping": "ACES2",
+          "directionalIntensity": 0.48,
+          "directionalColour": [
+            1,
+            0.52,
+            0.29000000000000004,
+            1
+          ],
+          "clearColour": [
+            0.91,
+            0.47,
+            0.2899999999999999,
+            1
+          ]
+        },
+        "lighting": {
+          "enabled": true,
+          "mode": "low-cost-day-night-cycle",
+          "timeHours": 18,
+          "timeLabel": "18:00",
+          "sunIntensity": 0.48,
+          "sunColor": [
+            1,
+            0.52,
+            0.29000000000000004,
+            1
+          ],
+          "ambientLight": [
+            0.3,
+            0.26,
+            0.28,
+            1
+          ],
+          "exposure": 1,
+          "sunElevation": 0,
+          "shadows": true,
+          "shadowResolution": 512,
+          "shadowDistance": 42,
+          "shadowCascades": 1,
+          "shadowIntensity": 0.62,
+          "shadowUpdateMode": "on-demand-every-2-seconds",
+          "shadowPolicy": {
+            "fullSceneScans": 1,
+            "componentsSeen": 4724,
+            "castingComponents": 630,
+            "receivingComponents": 4753,
+            "registeredEntities": 11,
+            "registeredComponents": 62,
+            "initialScanMs": 9.1,
+            "lastEntityApplyMs": 0
+          },
+          "clouds": {
+            "enabled": true,
+            "drawCalls": 1,
+            "puffCount": 30,
+            "triangles": 300,
+            "nightOpacity": 0.18
+          },
+          "fog": {
+            "enabled": true,
+            "type": "linear",
+            "start": 235,
+            "end": 610,
+            "color": [
+              0.91,
+              0.47,
+              0.2899999999999999,
+              1
+            ],
+            "sceneWide": true,
+            "extraDrawCalls": 0
+          },
+          "nightLighting": {
+            "enabled": true,
+            "method": "moderate cool directional moonlight + lifted blue ambient fill",
+            "extraLights": 0,
+            "night": false
+          },
+          "skySimulation": "disabled",
+          "environmentBake": "disabled"
+        }
+      },
+      {
+        "hour": 20,
+        "label": "night",
+        "visualSettings": {
+          "ambientLight": [
+            0.38,
+            0.41,
+            0.52,
+            1
+          ],
+          "exposure": 1,
+          "toneMapping": "ACES2",
+          "directionalIntensity": 0.12,
+          "directionalColour": [
+            0.41999999999999993,
+            0.48,
+            0.72,
+            1
+          ],
+          "clearColour": [
+            0.07499999999999996,
+            0.09499999999999997,
+            0.18,
+            1
+          ]
+        },
+        "lighting": {
+          "enabled": true,
+          "mode": "low-cost-day-night-cycle",
+          "timeHours": 20,
+          "timeLabel": "20:00",
+          "sunIntensity": 0.12,
+          "sunColor": [
+            0.41999999999999993,
+            0.48,
+            0.72,
+            1
+          ],
+          "ambientLight": [
+            0.38,
+            0.41,
+            0.52,
+            1
+          ],
+          "exposure": 1,
+          "sunElevation": -10,
+          "shadows": false,
+          "shadowResolution": 512,
+          "shadowDistance": 42,
+          "shadowCascades": 1,
+          "shadowIntensity": 0.62,
+          "shadowUpdateMode": "on-demand-every-2-seconds",
+          "shadowPolicy": {
+            "fullSceneScans": 1,
+            "componentsSeen": 4724,
+            "castingComponents": 630,
+            "receivingComponents": 4753,
+            "registeredEntities": 11,
+            "registeredComponents": 62,
+            "initialScanMs": 9.1,
+            "lastEntityApplyMs": 0
+          },
+          "clouds": {
+            "enabled": true,
+            "drawCalls": 1,
+            "puffCount": 30,
+            "triangles": 300,
+            "nightOpacity": 0.18
+          },
+          "fog": {
+            "enabled": true,
+            "type": "linear",
+            "start": 165,
+            "end": 500,
+            "color": [
+              0.07499999999999996,
+              0.09499999999999997,
+              0.18,
+              1
+            ],
+            "sceneWide": true,
+            "extraDrawCalls": 0
+          },
+          "nightLighting": {
+            "enabled": true,
+            "method": "moderate cool directional moonlight + lifted blue ambient fill",
+            "extraLights": 0,
+            "night": true
+          },
+          "skySimulation": "disabled",
+          "environmentBake": "disabled"
+        }
+      }
+    ],
+    "screenshots": [
+      "yaba-daylight-full.png",
+      "ikeja-daylight-full.png",
+      "time-sunrise-full.png",
+      "time-noon-full.png",
+      "time-sunset-full.png",
+      "time-night-full.png"
+    ],
+    "jsErrors": [],
+    "consoleErrors": []
+  },
+  "limitations": [
+    "SwiftShader browser timings are comparative smoke measurements, not physical Android performance.",
+    "The actual Itel A90 sustained-performance and memory check still requires a device run."
+  ]
+}

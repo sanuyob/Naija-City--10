@@ -21,6 +21,9 @@ function measureSoleSlide(trace, side, mode, startAt = 5) {
   let worstPair = null;
   const contactSpeeds = [];
   const gaitClip=mode==='walk'?'Walk':'Run';
+  // Walk markers are calibrated within 1 cm of the ground; the faster run clip
+  // has up to 2.5 cm vertical marker offset. Horizontal planted-step limit stays 1 cm.
+  const contactTolerance=mode==='walk'?.010:.025;
   for (const sample of trace.slice(startAt)) {
     const progress = Number(sample.activeStateProgress);
     if (!Number.isFinite(progress)) { previous = null; continue; }
@@ -33,13 +36,13 @@ function measureSoleSlide(trace, side, mode, startAt = 5) {
     const candidates=[
       {kind:'toe',point:sample.limbs?.[`${side}SoleToe`]},
       {kind:'heel',point:sample.limbs?.[`${side}SoleHeel`]}
-    ].filter(item=>item.point?.every(Number.isFinite)&&Number.isFinite(y)&&Math.abs(item.point[1]-y)<=0.08);
+    ].filter(item=>item.point?.every(Number.isFinite)&&Number.isFinite(y)&&Math.abs(item.point[1]-y)<=contactTolerance);
     candidates.sort((a,b)=>Math.abs(a.point[1]-y)-Math.abs(b.point[1]-y));
     const contact=candidates[0];
     if (!contact) { previous=null; continue; }
     const point=contact.point;
     contacts++;
-    if (previous && sample.time - previous.time > 0.034) previous = null;
+    if (previous && (sample.time - previous.time > 0.034 || Math.floor(progress)!==Math.floor(previous.progress))) previous = null;
     if (previous && previous.kind === contact.kind) {
       const verticalDrift = Math.abs(point[1] - previous.point[1]);
       const dt = Math.max(1e-5, sample.time - previous.time);
