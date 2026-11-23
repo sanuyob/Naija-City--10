@@ -122,7 +122,57 @@ try {
   }
   await page.evaluate(()=>window.__NAIJA_RPG_UI__?.setVehicleControlsMode?.('one-handed'));
   const oneHandedLayout=await page.evaluate(()=>({
-   ã4o+^²‰¢¶×urnedRight.physicsTimeSeconds-steeringStartRight.physicsTimeSeconds);
+    mode:window.__NAIJA_RPG_UI__?.getVehicleControlsMode?.(),
+    pedalDisplay:getComputedStyle(document.querySelector('.drive-pedals')).display,
+    steeringDisplay:getComputedStyle(document.querySelector('.drive-steering')).display,
+    stickDisplay:getComputedStyle(document.querySelector('#move-joystick')).display
+  }));
+  if(oneHandedLayout.mode!=='one-handed'||oneHandedLayout.pedalDisplay!=='none'||oneHandedLayout.steeringDisplay!=='none'||oneHandedLayout.stickDisplay==='none'){
+    throw new Error('One-Handed layout must hide the arrow buttons and expose the thumb stick: '+JSON.stringify(oneHandedLayout));
+  }
+  await page.evaluate(()=>window.__NAIJA_RPG_UI__?.setVehicleControlsMode?.('two-handed'));
+
+  async function holdButton(selector,physicsFrames){
+    const box=await page.locator(selector).boundingBox();
+    if(!box)throw new Error('Vehicle touch control is not visible: '+selector);
+    const before=await page.evaluate(()=>window.__NAIJA_GAME__.getVehicleState().physicsSteps);
+    await page.mouse.move(box.x+box.width/2,box.y+box.height/2);
+    await page.mouse.down();
+    try{
+      // Keep the control pressed until the vehicle simulationâ€”not wall-clock
+      // timeâ€”has advanced the requested number of frames. SwiftShader can
+      // render slowly, so releasing after a fixed delay produces false fails.
+      await page.waitForFunction(({before,physicsFrames})=>
+        window.__NAIJA_GAME__?.getVehicleState?.().physicsSteps>=before+physicsFrames,
+        {before,physicsFrames},{timeout:120000});
+      return await page.evaluate(()=>window.__NAIJA_GAME__.getVehicleState());
+    }finally{
+      await page.mouse.up();
+    }
+  }
+  const accelerated = await holdButton('#drive-accelerate',90);
+  if (accelerated.speedKmh < 50 || accelerated.dynamics.measuredWheelContacts < 3 ||
+      accelerated.wheelAlignmentMaxError > .18 || accelerated.dynamics.uprightTiltDegrees>4.5 || Math.abs(accelerated.dynamics.pitchDegrees)>4.5) {
+    throw new Error('The Two-Handed accelerator must move the sedan without tipping and retain four wheel contacts: ' + JSON.stringify(accelerated));
+  }
+
+  // Check braking independently on a straight run, before turning or collision
+  // geometry can contaminate the measured deceleration.
+  const braked = await holdButton('#drive-brake',12);
+  const brakeSeconds = Math.max(.001,braked.physicsTimeSeconds-accelerated.physicsTimeSeconds);
+  const brakeDecelerationMps2 = Math.max(0,(accelerated.speedKmh-braked.speedKmh)/3.6)/brakeSeconds;
+  if (brakeDecelerationMps2 < 16 || braked.dynamics.uprightTiltDegrees>4.5) {
+    throw new Error('The brake/reverse arrow must deliver strong, stable forward deceleration: ' + JSON.stringify({beforeBrake:accelerated.speedKmh,braked,brakeDecelerationMps2}));
+  }
+
+  // Test each steering direction independently from the same clear lane.
+  // The old z=8 pose reached a roadside collider during the steering sweep;
+  // z=-20 is a verified clear straight for both independent button checks.
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,-20],180));
+  const steeringStartRight = await holdButton('#drive-accelerate',30);
+  const turnedRight = await holdButton('#drive-right',18);
+  const rightTurnDelta = ((turnedRight.yaw - steeringStartRight.yaw + 540) % 360) - 180;
+  const rightTurnSeconds = Math.max(.001,turnedRight.physicsTimeSeconds-steeringStartRight.physicsTimeSeconds);
   const rightTurnRateDegreesPerSecond = Math.abs(rightTurnDelta)/rightTurnSeconds;
   if (rightTurnDelta > -25 || rightTurnRateDegreesPerSecond < 42 ||
       turnedRight.dynamics.uprightTiltDegrees>4.5 || Math.abs(turnedRight.dynamics.pitchDegrees)>4.5) {
