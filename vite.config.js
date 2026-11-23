@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1650,
     minify: 'terser',
-    terserOptions: { compress: { passes: 12, pure_getters: true, toplevel: true, unsafe_arrows: true, unsafe_methods: true, unsafe_proto: true, booleans_as_integers: true }, mangle: { toplevel: true } }
+    terserOptions: { compress: { passes: 12, pure_getters: true, toplevel: true, drop_console: true }, mangle: { toplevel: true } }
   }
 });
 [exit status 0]
