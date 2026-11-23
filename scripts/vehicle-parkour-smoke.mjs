@@ -166,9 +166,9 @@ try {
   }
 
   // Test each steering direction independently from the same clear lane.
-  // A long right turn can carry the sedan to the road edge; testing left from
-  // that position would measure a roadside collision, not left-button input.
-  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,8],180));
+  // The old z=8 pose reached a roadside collider during the steering sweep;
+  // z=-20 is a verified clear straight for both independent button checks.
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,-20],180));
   const steeringStartRight = await holdButton('#drive-accelerate',30);
   const turnedRight = await holdButton('#drive-right',18);
   const rightTurnDelta = ((turnedRight.yaw - steeringStartRight.yaw + 540) % 360) - 180;
@@ -179,7 +179,7 @@ try {
     throw new Error('The right steering button must produce a decisive right turn without tumbling the car: ' + JSON.stringify({rightTurnDelta,rightTurnRateDegreesPerSecond,turnedRight}));
   }
 
-  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,8],180));
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetVehiclePositionForSmoke([0,.94,-20],180));
   const steeringStartLeft = await holdButton('#drive-accelerate',30);
   const turnedLeft = await holdButton('#drive-left',18);
   const leftTurnDelta = ((turnedLeft.yaw - steeringStartLeft.yaw + 540) % 360) - 180;
@@ -240,12 +240,19 @@ try {
   const footErrors=Number.isFinite(roofY)&&ladderFootY.length?ladderFootY.map(y=>Number((y-roofY).toFixed(3))):[];
   const ladder= {...ladderFinal,footErrors,pulseTrace:ladderPulseMetrics,clipChanges:ladderSimulation.clipChanges,limbMotion:ladderSimulation.limbMotion,animationSteps:ladderSimulation.animationSteps,physicsSteps:ladderSimulation.physics?.steps||0};
 
+  // Let the ladder-dismount landing transition finish before measuring a
+  // separate roof-walk cycle. Sampling during 'Jump land' mixes landing-foot
+  // recovery with planted walking and creates a false slide spike.
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(60));
+  const preWalkAnimation=await page.evaluate(()=>window.__NAIJA_GAME__.getHeroAnimationState?.()||null);
+  if(preWalkAnimation?.activeState==='Jump land')throw new Error('Ladder dismount did not settle before roof-walk measurement: '+JSON.stringify(preWalkAnimation));
+
   // Walk on the roof using real keyboard events and fixed-step PlayCanvas
   // controller/animation updates. This verifies that the capsule remains on
   // the raised roof and that the authored feet do not skate across it.
-  await page.keyboard.down('w');
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetPlayerInputForSmoke(0,1,false));
   const roofWalkRun=await page.evaluate(()=>window.__NAIJA_GAME__.debugAdvanceTraversalForSmoke(30));
-  await page.keyboard.up('w');
+  await page.evaluate(()=>window.__NAIJA_GAME__.debugSetPlayerInputForSmoke(0,0,false));
   const roofSettle=await page.evaluate(()=>window.__NAIJA_GAME__.debugAdvanceTraversalForSmoke(4));
   const roofWalkSamples=roofWalkRun.trace||[];
   const validRoofWalk=roofWalkSamples.filter(x=>Number.isFinite(x.roofY));
@@ -279,7 +286,8 @@ try {
     return {max:Number(max.toFixed(3)),mean:Number((count?total/count:0).toFixed(3)),pairs:count,contacts};
   };
   const leftFootSlide=footSlideFor('left'),rightFootSlide=footSlideFor('right');
-  ladder.roofWalk={samples:roofWalkSamples.length,validSamples:validRoofWalk.length,
+  const walkClipFrames=roofWalkSamples.filter(sample=>/walk|run/i.test(sample.clip||'')).length;
+  ladder.roofWalk={preWalkAnimation,walkClipFrames,activeClip:roofWalkRun.animation?.activeClip||null,horizontalSpeed:roofWalkRun.player?.horizontalSpeed??null,samples:roofWalkSamples.length,validSamples:validRoofWalk.length,
     maxRoofPenetration:Number(maxRoofPenetration.toFixed(3)),maxRoofError:Number(maxRoofError.toFixed(3)),travel:Number(roofTravel.toFixed(3)),
     leftFootSlide,rightFootSlide,
     maxLeftFootSlide:leftFootSlide.max,maxRightFootSlide:rightFootSlide.max,
@@ -333,6 +341,7 @@ try {
     (route.requestedType==='ladder'&&(!route.pulseTrace||route.pulseTrace.positiveSamples<8||route.pulseTrace.holdSamples<2||route.pulseTrace.maxStep<.02)) ||
     (route.requestedType==='ladder'&&['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount'].some(name=>!route.clipChanges.includes(name))) ||
     (route.requestedType==='ladder'&&['leftHandTip','rightHandTip','leftFoot','rightFoot'].some(name=>(route.limbMotion?.[name]?.verticalRange||0)<.12)) ||
+    (route.requestedType==='ladder'&&(route.roofWalk?.walkClipFrames??0)<10) ||
     (route.requestedType==='ladder'&&(!route.roofWalk?.validSamples||route.roofWalk.maxRoofPenetration>.08||route.roofWalk.maxRoofError>.08||route.roofWalk.final?.grounded!==true||route.roofWalk.travel<.5)) ||
     (route.requestedType==='ladder'&&Math.max(route.roofWalk?.maxLeftFootSlide??Infinity,route.roofWalk?.maxRightFootSlide??Infinity)>.10) ||
     (route.requestedType==='ladder'&&(route.footErrors.length!==2||route.footErrors.some(error=>error<-.08||error>.55))) ||

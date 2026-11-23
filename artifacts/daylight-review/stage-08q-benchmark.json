@@ -1,0 +1,4336 @@
+{
+  "method": "requestAnimationFrame intervals; 20 warm-up frames + 60 measured frames; 3 repeated trials per district and batching mode",
+  "matchingCamera": "same world-space height, look vector, FOV 62 and far clip 650; district origins differ only by location",
+  "viewport": {
+    "width": 844,
+    "height": 390
+  },
+  "deviceProfile": {
+    "deviceMemoryGiB": 3,
+    "hardwareConcurrency": 4
+  },
+  "unbatchedBaseline": {
+    "mode": "unbatched",
+    "batchToggleState": {
+      "enabled": false,
+      "components": 153,
+      "groupIds": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "batches": 0
+    },
+    "trials": [
+      {
+        "district": "yaba",
+        "mode": "unbatched",
+        "trial": 1,
+        "camera": {
+          "position": [
+            0,
+            10,
+            13
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              13
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 198.04833333333335,
+            "p50": 200,
+            "p95": 350,
+            "p99": 433.2999999999993,
+            "min": 16.600000000002183,
+            "max": 433.2999999999993
+          },
+          "drawCalls": {
+            "mean": 444,
+            "p50": 444,
+            "p95": 444,
+            "min": 444,
+            "max": 444
+          },
+          "primitives": {
+            "p50": 87616,
+            "p95": 87616
+          },
+          "rawSamples": [
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.70000000000073,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.600000000002183,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999782,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000218,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000000073,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 416.7000000000007,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.79999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000000073,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000000073,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 433.2999999999993,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.700000000000728,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.60000000000218,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 233.29999999999927,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.70000000000437,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.5,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.299999999995634,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            }
+          ]
+        }
+      },
+      {
+        "district": "yaba",
+        "mode": "unbatched",
+        "trial": 2,
+        "camera": {
+          "position": [
+            0,
+            10,
+            13
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              13
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 189.99166666666667,
+            "p50": 183.40000000000146,
+            "p95": 350,
+            "p99": 383.40000000000146,
+            "min": 16.69999999999709,
+            "max": 383.40000000000146
+          },
+          "drawCalls": {
+            "mean": 444,
+            "p50": 444,
+            "p95": 444,
+            "min": 444,
+            "max": 444
+          },
+          "primitives": {
+            "p50": 87616,
+            "p95": 87616
+          },
+          "rawSamples": [
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.5,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 383.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.1999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.700000000004366,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.59999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.59999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.59999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.6999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.400000000001455,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000000437,
+              "drawCalls": 444,
+              "primitives": 87616
+            }
+          ]
+        }
+      },
+      {
+        "district": "yaba",
+        "mode": "unbatched",
+        "trial": 3,
+        "camera": {
+          "position": [
+            0,
+            10,
+            13
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              13
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 189.15833333333333,
+            "p50": 183.3000000000029,
+            "p95": 366.6000000000058,
+            "p99": 400.09999999999854,
+            "min": 16.5,
+            "max": 400.09999999999854
+          },
+          "drawCalls": {
+            "mean": 444,
+            "p50": 444,
+            "p95": 444,
+            "min": 444,
+            "max": 444
+          },
+          "primitives": {
+            "p50": 87616,
+            "p95": 87616
+          },
+          "rawSamples": [
+            {
+              "frameMs": 400.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.6999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.79999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.5,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.5,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000000437,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.6999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.1999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.59999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999854,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.1999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.599999999998545,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 333.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000146,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999999563,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.09999999999127,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.6000000000058,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.6999999999971,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000873,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 444,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 444,
+              "primitives": 87616
+            }
+          ]
+        }
+      },
+      {
+        "district": "ikeja",
+        "mode": "unbatched",
+        "trial": 1,
+        "camera": {
+          "position": [
+            0,
+            10,
+            382
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              382
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 199.71333333333314,
+            "p50": 200,
+            "p95": 366.6000000000058,
+            "p99": 383.40000000000873,
+            "min": 16.59999999999127,
+            "max": 383.40000000000873
+          },
+          "drawCalls": {
+            "mean": 619,
+            "p50": 619,
+            "p95": 619,
+            "min": 619,
+            "max": 619
+          },
+          "primitives": {
+            "p50": 165971,
+            "p95": 165971
+          },
+          "rawSamples": [
+            {
+              "frameMs": 166.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.1999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.40000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 383.20000000001164,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.09999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.09999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 366.6000000000058,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 383.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.40000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 383.40000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            }
+          ]
+        }
+      },
+      {
+        "district": "ikeja",
+        "mode": "unbatched",
+        "trial": 2,
+        "camera": {
+          "position": [
+            0,
+            10,
+            382
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              382
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 214.15666666666658,
+            "p50": 216.59999999999127,
+            "p95": 399.8999999999942,
+            "p99": 416.59999999999127,
+            "min": 16.60000000000582,
+            "max": 416.59999999999127
+          },
+          "drawCalls": {
+            "mean": 619,
+            "p50": 619,
+            "p95": 619,
+            "min": 619,
+            "max": 619
+          },
+          "primitives": {
+            "p50": 165971,
+            "p95": 165971
+          },
+          "rawSamples": [
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 383.1999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 33.40000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 416.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.8000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 399.8999999999942,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 400,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 400,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 233.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 316.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            }
+          ]
+        }
+      },
+      {
+        "district": "ikeja",
+        "mode": "unbatched",
+        "trial": 3,
+        "camera": {
+          "position": [
+            0,
+            10,
+            382
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              382
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 213.8816666666668,
+            "p50": 200,
+            "p95": 400,
+            "p99": 500,
+            "min": 16.60000000000582,
+            "max": 500
+          },
+          "drawCalls": {
+            "mean": 619,
+            "p50": 619,
+            "p95": 619,
+            "min": 619,
+            "max": 619
+          },
+          "primitives": {
+            "p50": 165971,
+            "p95": 165971
+          },
+          "rawSamples": [
+            {
+              "frameMs": 266.8000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 266.6000000000058,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 266.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 500,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 266.6000000000058,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 383.29999999998836,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 416.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 233.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.80000000000291,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 33.5,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 400,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 33.30000000000291,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 400,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.6999999999971,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 416.59999999999127,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 399.8999999999942,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 16.69999999999709,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            },
+            {
+              "frameMs": 383.3000000000029,
+              "drawCalls": 619,
+              "primitives": 165971
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "staticBatched": {
+    "mode": "batched",
+    "batchToggleState": {
+      "enabled": true,
+      "components": 153,
+      "groupIds": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "batches": 43
+    },
+    "trials": [
+      {
+        "district": "yaba",
+        "mode": "batched",
+        "trial": 1,
+        "camera": {
+          "position": [
+            0,
+            10,
+            13
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              13
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 195.27000000000018,
+            "p50": 183.39999999999418,
+            "p95": 350.09999999999127,
+            "p99": 449.8999999999942,
+            "min": 16.60000000000582,
+            "max": 449.8999999999942
+          },
+          "drawCalls": {
+            "mean": 343,
+            "p50": 343,
+            "p95": 343,
+            "min": 343,
+            "max": 343
+          },
+          "primitives": {
+            "p50": 87616,
+            "p95": 87616
+          },
+          "rawSamples": [
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.59999999999127,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000873,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.6999999999971,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000000873,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350.09999999999127,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.30000000000291,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.6999999999971,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000873,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000000873,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.3000000000029,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.6000000000058,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350.0999999999767,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 250,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 449.8999999999942,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 233.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.69999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 233.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.59999999997672,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 383.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            }
+          ]
+        }
+      },
+      {
+        "district": "yaba",
+        "mode": "batched",
+        "trial": 2,
+        "camera": {
+          "position": [
+            0,
+            10,
+            13
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              13
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 182.77166666666648,
+            "p50": 183.30000000001746,
+            "p95": 350,
+            "p99": 366.70000000001164,
+            "min": 16.5,
+            "max": 366.70000000001164
+          },
+          "drawCalls": {
+            "mean": 343,
+            "p50": 343,
+            "p95": 343,
+            "min": 343,
+            "max": 343
+          },
+          "primitives": {
+            "p50": 87616,
+            "p95": 87616
+          },
+          "rawSamples": [
+            {
+              "frameMs": 333.3999999999942,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.19999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.79999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.69999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.699999999982538,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.69999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.5,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 333.3999999999942,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.69999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.69999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.6000000000058,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.699999999982538,
+              "drawCalls": 343,
+              "primitives": 87616
+            }
+          ]
+        }
+      },
+      {
+        "district": "yaba",
+        "mode": "batched",
+        "trial": 3,
+        "camera": {
+          "position": [
+            0,
+            10,
+            13
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              13
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 184.43666666666687,
+            "p50": 183.39999999999418,
+            "p95": 333.3999999999942,
+            "p99": 366.6000000000058,
+            "min": 16.60000000000582,
+            "max": 366.6000000000058
+          },
+          "drawCalls": {
+            "mean": 343,
+            "p50": 343,
+            "p95": 343,
+            "min": 343,
+            "max": 343
+          },
+          "primitives": {
+            "p50": 87616,
+            "p95": 87616
+          },
+          "rawSamples": [
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 366.6000000000058,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 349.8999999999942,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 33.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 350,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.90000000002328,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.699999999982538,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 333.3999999999942,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.69999999998254,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 16.79999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.60000000000582,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 333.3999999999942,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 166.70000000001164,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 343,
+              "primitives": 87616
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 343,
+              "primitives": 87616
+            }
+          ]
+        }
+      },
+      {
+        "district": "ikeja",
+        "mode": "batched",
+        "trial": 1,
+        "camera": {
+          "position": [
+            0,
+            10,
+            382
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              382
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 196.9350000000001,
+            "p50": 200,
+            "p95": 383.29999999998836,
+            "p99": 383.29999999998836,
+            "min": 16.60000000000582,
+            "max": 383.29999999998836
+          },
+          "drawCalls": {
+            "mean": 517,
+            "p50": 517,
+            "p95": 517,
+            "min": 517,
+            "max": 517
+          },
+          "primitives": {
+            "p50": 165983,
+            "p95": 165983
+          },
+          "rawSamples": [
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 166.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.09999999997672,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.20000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 366.6000000000058,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 383.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 383.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 383.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.90000000002328,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.699999999982538,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 33.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 383.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            }
+          ]
+        }
+      },
+      {
+        "district": "ikeja",
+        "mode": "batched",
+        "trial": 2,
+        "camera": {
+          "position": [
+            0,
+            10,
+            382
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              382
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 218.04666666666697,
+            "p50": 200,
+            "p95": 283.30000000001746,
+            "p99": 533.2999999999884,
+            "min": 16.70000000001164,
+            "max": 533.2999999999884
+          },
+          "drawCalls": {
+            "mean": 517,
+            "p50": 517,
+            "p95": 517,
+            "min": 517,
+            "max": 517
+          },
+          "primitives": {
+            "p50": 165983,
+            "p95": 165983
+          },
+          "rawSamples": [
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 450,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.69999999998254,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.90000000002328,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 249.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 250.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 233.20000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 250.09999999997672,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 233.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 266.6000000000058,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 250,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.69999999998254,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 450,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 233.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 233.40000000002328,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 249.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 233.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.69999999998254,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 250,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 533.2999999999884,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 250,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 283.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            }
+          ]
+        }
+      },
+      {
+        "district": "ikeja",
+        "mode": "batched",
+        "trial": 3,
+        "camera": {
+          "position": [
+            0,
+            10,
+            382
+          ],
+          "diagnostics": {
+            "position": [
+              0,
+              10,
+              382
+            ],
+            "forward": [
+              0,
+              -0.11565696261043046,
+              -0.9932892161901938
+            ],
+            "fov": 62,
+            "farClip": 650
+          }
+        },
+        "viewport": {
+          "width": 844,
+          "height": 390
+        },
+        "fov": 62,
+        "farClip": 650,
+        "metrics": {
+          "sampleCount": 60,
+          "frameMs": {
+            "mean": 192.76833333333343,
+            "p50": 200,
+            "p95": 216.70000000001164,
+            "p99": 399.8999999999942,
+            "min": 16.60000000000582,
+            "max": 399.8999999999942
+          },
+          "drawCalls": {
+            "mean": 517,
+            "p50": 517,
+            "p95": 517,
+            "min": 517,
+            "max": 517
+          },
+          "primitives": {
+            "p50": 165983,
+            "p95": 165983
+          },
+          "rawSamples": [
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 33.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 399.8999999999942,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 33.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.39999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.09999999997672,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.699999999982538,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 383.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.40000000002328,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.59999999997672,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.30000000001746,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.69999999998254,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 216.5,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 366.70000000001164,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 16.60000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200.10000000000582,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 200,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 183.29999999998836,
+              "drawCalls": 517,
+              "primitives": 165983
+            },
+            {
+              "frameMs": 199.89999999999418,
+              "drawCalls": 517,
+              "primitives": 165983
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

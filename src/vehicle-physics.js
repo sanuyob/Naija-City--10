@@ -280,7 +280,8 @@ export async function createVehiclePhysics(car, traffic = [], wheelRoots = [], o
     // Vehicle dynamics: v = v + a*dt, yaw-rate follows steering and speed.
     // The Bullet rigid body still resolves chassis impacts against city proxies.
     const speedSign=controlledSpeedMps<-.05?-1:1;
-    const yawRate=-steeringInput*Math.min(1.10,.18+Math.abs(controlledSpeedMps)*.072)*speedSign;
+    // Keep low-speed parking turns responsive while capping high-speed yaw.
+    const yawRate=-steeringInput*Math.min(1.25,.84+Math.abs(controlledSpeedMps)*.055)*speedSign;
     // setAngularVelocity expects radians/second. Multiplying this by chassis
     // mass (820 kg) was the source of the violent spin/tumble on throttle.
     steeringTorqueVector.setValue(0,yawRate,0);

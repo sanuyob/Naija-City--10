@@ -1,0 +1,43 @@
+{
+  "pass": true,
+  "profile": {
+    "lowMemoryMode": true,
+    "startup": {
+      "total": 8,
+      "loaded": 8,
+      "failed": 0,
+      "bytes": 1238864,
+      "ready": true
+    },
+    "deviceMemoryGiB": 3,
+    "hardwareConcurrency": 4,
+    "maxTouchPoints": 1,
+    "touchCapable": true,
+    "viewport": {
+      "width": 844,
+      "height": 390
+    },
+    "heap": {
+      "used": 247985236,
+      "total": 316117000,
+      "limit": 4254597120
+    }
+  },
+  "soak": {
+    "durationMs": 20235.400000002235,
+    "frames": 82,
+    "frameMs": {
+      "p50": 233.29999999999927,
+      "p95": 450,
+      "max": 2979.5000000029804
+    },
+    "heapStartBytes": 248028360,
+    "heapEndBytes": 294663521,
+    "heapGrowthBytes": 46635161,
+    "drawCalls": 312,
+    "meshInstances": 5151
+  },
+  "errors": [],
+  "consoleErrors": [],
+  "note": "Chromium 3 GiB / 4-core / touch profile; software-rendered Box soak, not a physical Android device run."
+}

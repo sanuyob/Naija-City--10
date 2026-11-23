@@ -19,7 +19,7 @@ try {
   }
   if(!ready)throw new Error('Vite preview did not become ready');
 
-  browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-webgl','--ignore-gpu-blocklist','--use-gl=angle','--use-angle=swiftshader']});
+  browser=await chromium.launch({headless:true,args:['--no-sandbox','--enable-webgl','--enable-precise-memory-info','--ignore-gpu-blocklist','--use-gl=angle','--use-angle=swiftshader']});
   const context=await browser.newContext({viewport:{width:844,height:390},screen:{width:844,height:390},deviceScaleFactor:1,isMobile:true,hasTouch:true});
   await context.addInitScript(()=>{
     Object.defineProperty(navigator,'deviceMemory',{configurable:true,get:()=>3});
@@ -27,6 +27,8 @@ try {
   });
   const page=await context.newPage();
   page.on('pageerror',error=>errors.push(error.message));
+  page.on('crash',()=>errors.push('Chromium renderer crashed during daylight/benchmark review'));
+  browser.on('disconnected',()=>errors.push('Chromium browser disconnected during daylight/benchmark review'));
   page.on('console',message=>{if(message.type()==='error')consoleErrors.push(message.text());});
 
   await page.goto(origin+'?smoke=1',{waitUntil:'networkidle',timeout:90000});
@@ -35,7 +37,12 @@ try {
   const boot=await page.evaluate(()=>({
     gameReady:window.__NAIJA_GAME__?.ready,
     lowMemoryDevice:window.__NAIJA_GAME__?.dataOptimization?.lowMemoryDevice,
-    startup:window.__NAIJA_GAME__?.startupPreload??null
+    startup:window.__NAIJA_GAME__?.startupPreload??null,
+    deviceMemoryGiB:navigator.deviceMemory??null,
+    hardwareConcurrency:navigator.hardwareConcurrency??null,
+    maxTouchPoints:navigator.maxTouchPoints??0,
+    touchCapable:('ontouchstart' in window)||navigator.maxTouchPoints>0,
+    memoryDiagnostics:performance.memory?{usedJSHeapSize:performance.memory.usedJSHeapSize,totalJSHeapSize:performance.memory.totalJSHeapSize,jsHeapSizeLimit:performance.memory.jsHeapSizeLimit}:null
   }));
   if(!boot.gameReady)throw new Error('Game did not become ready');
 
@@ -47,7 +54,8 @@ try {
 
   // Return to the original Yaba spawn, let the camera settle, then freeze world simulation for a clean still.
   await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
-  await page.waitForTimeout(900);
+  await page.waitForFunction(()=>window.__NAIJA_GAME__?.getUnbatchedComponentAudit?.()?.unbatchedComponents>=571,null,{timeout:45000});
+  await page.waitForTimeout(350);
   await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=true;window.__NAIJA_GAME__?.debugSetCameraForSmoke?.([0,10,13],[0,1.5,-60]);window.__NAIJA_GAME__?.debugSetCameraFarClipForSmoke?.(650);});
   await page.waitForTimeout(350);
 
@@ -58,13 +66,14 @@ try {
     await writeFile(new URL(name+'-full.png',reviewDir),buffer);
     return {width:png.width,height:png.height,bytes:buffer.length};
   };
-  const getAudit=()=>page.evaluate(()=>{
+  const getAudit=(includeBatchIndex=false)=>page.evaluate(includeBatchIndex=>{
     const game=window.__NAIJA_GAME__,diag=window.__NAIJA_RENDER_DIAGNOSTICS__||{};
     return {
       visualSettings:game?.getVisualSettings?.()||null,
       lightingAudit:game?.getLightingAudit?.()||null,
       staticBatchState:game?.getStaticBatchState?.()||null,
       unbatchedComponentAudit:game?.getUnbatchedComponentAudit?.()||null,
+      preExistingBatchIndex:includeBatchIndex?(game?.getPreExistingBatchIndex?.()||null):null,
       renderBreakdown:game?.getRenderBreakdown?.()||null,
       renderDiagnostics:{
         drawCallCount:diag.drawCallCount??null,primitiveCount:diag.primitiveCount??null,
@@ -74,11 +83,12 @@ try {
       worldLighting:game?.rendering?.worldLighting||null,
       stage08E:game?.getStage08EState?.()||null,
       playerPosition:game?.getPlayerState?.().position||null,
-      lowMemoryDevice:game?.dataOptimization?.lowMemoryDevice??null
+      lowMemoryDevice:game?.dataOptimization?.lowMemoryDevice??null,
+      memoryDiagnostics:performance.memory?{usedJSHeapSize:performance.memory.usedJSHeapSize,totalJSHeapSize:performance.memory.totalJSHeapSize,jsHeapSizeLimit:performance.memory.jsHeapSizeLimit}:null
     };
-  });
+  },includeBatchIndex);
   const yabaImage=await capture('yaba-daylight');
-  const yabaAudit=await getAudit();
+  const yabaAudit=await getAudit(true);
   const measureFarClipSweep=async()=>{
     const results=[];
     for(const distance of [650,500,420,350]){
@@ -103,7 +113,7 @@ try {
   });
   await page.waitForTimeout(250);
   const ikejaImage=await capture('ikeja-daylight');
-  const ikejaAudit=await getAudit();
+  const ikejaAudit=await getAudit(false);
   const ikejaFarClipSweep=await measureFarClipSweep();
   // Repeatable A/B benchmark: matched camera height, aim vector, FOV and far clip in both districts.
   // Three 90-frame trials per district and batching mode, with a 30-frame warm-up per trial.
@@ -148,7 +158,7 @@ try {
         primitives:{p50:quantile(primitives,.50),p95:quantile(primitives,.95)},
         rawSamples:samples
       };
-    },{warmFrames:30,sampleFrames:90});
+    },{warmFrames:20,sampleFrames:60});
     const camera=await page.evaluate(()=>({position:window.__NAIJA_GAME__?.getCameraPosition?.()||null,diagnostics:window.__NAIJA_RENDER_DIAGNOSTICS__?.camera||null}));
     return {district,mode,trial,camera,viewport:{width:844,height:390},fov:62,farClip:650,metrics};
   };
@@ -162,7 +172,7 @@ try {
     return {mode,batchToggleState:state,trials};
   };
   const benchmark={
-    method:'requestAnimationFrame intervals; 30 warm-up frames + 90 measured frames; 3 repeated trials per district and batching mode',
+    method:'requestAnimationFrame intervals; 20 warm-up frames + 60 measured frames; 3 repeated trials per district and batching mode',
     matchingCamera:'same world-space height, look vector, FOV 62 and far clip 650; district origins differ only by location',
     viewport:{width:844,height:390},deviceProfile:{deviceMemoryGiB:3,hardwareConcurrency:4},
     unbatchedBaseline:await runBenchmarkMode('unbatched'),

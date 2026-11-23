@@ -27,12 +27,12 @@ function makeCloudMesh(device) {
 }
 
 const DAY_PROFILE = [
-  [0,0.025,0.38,0.44,0.68,0.22,0.25,0.34,0.055,0.075,0.15,0.25],
-  [6,0.18,1.00,0.48,0.25,0.22,0.20,0.23,0.78,0.38,0.25,0.55],
+  [0,0.12,0.42,0.48,0.72,0.38,0.41,0.52,0.075,0.095,0.18,0.25],
+  [6,0.32,1.00,0.48,0.25,0.30,0.28,0.32,0.78,0.38,0.25,0.55],
   [9.25,1.35,1.00,0.96,0.90,0.50,0.52,0.56,0.46,0.65,0.84,0.72],
   [12,1.42,1.00,0.98,0.94,0.49,0.52,0.57,0.39,0.61,0.85,0.72],
   [18,0.48,1.00,0.52,0.29,0.30,0.26,0.28,0.91,0.47,0.29,0.58],
-  [20,0.025,0.38,0.44,0.68,0.22,0.25,0.34,0.055,0.075,0.15,0.25],
+  [20,0.12,0.42,0.48,0.72,0.38,0.41,0.52,0.075,0.095,0.18,0.25],
 ];
 
 function sampleProfile(hours) {
@@ -271,7 +271,7 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
         shadowPolicy: { ...shadowPolicy },
         clouds: { enabled: true, drawCalls: 1, puffCount: cloudData.puffCount, triangles: cloudData.triangleCount, nightOpacity: 0.18 },
         fog: { enabled: true, type: 'linear', start: app.scene.fog.start, end: app.scene.fog.end, color: app.scene.fog.color.toArray(), sceneWide: true, extraDrawCalls: 0 },
-        nightLighting: { enabled: true, method: 'cool low-intensity directional moonlight + blue ambient fill', extraLights: 0, night: gameHours >= 19 || gameHours < 6 },
+        nightLighting: { enabled: true, method: 'moderate cool directional moonlight + lifted blue ambient fill', extraLights: 0, night: gameHours >= 19 || gameHours < 6 },
         skySimulation: 'disabled',
         environmentBake: 'disabled'
       };
