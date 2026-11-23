@@ -27,12 +27,12 @@ function makeCloudMesh(device) {
 }
 
 const DAY_PROFILE = [
-  [0,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.25],
+  [0,0.025,0.38,0.44,0.68,0.22,0.25,0.34,0.055,0.075,0.15,0.25],
   [6,0.18,1.00,0.48,0.25,0.22,0.20,0.23,0.78,0.38,0.25,0.55],
   [9.25,1.35,1.00,0.96,0.90,0.50,0.52,0.56,0.46,0.65,0.84,0.72],
   [12,1.42,1.00,0.98,0.94,0.49,0.52,0.57,0.39,0.61,0.85,0.72],
   [18,0.48,1.00,0.52,0.29,0.30,0.26,0.28,0.91,0.47,0.29,0.58],
-  [20,0.015,0.34,0.40,0.62,0.13,0.15,0.23,0.035,0.055,0.13,0.25],
+  [20,0.025,0.38,0.44,0.68,0.22,0.25,0.34,0.055,0.075,0.15,0.25],
 ];
 
 function sampleProfile(hours) {
@@ -64,7 +64,7 @@ function sunElevation(hours) {
  * Mobile-first daylight and atmosphere.
  * Daylight at 09:15 retains the approved sun, ambient fill, exposure and shadows.
  * Clouds use one merged mesh (one extra draw call), with no shadow pass.
- * Fog and volumetric sky effects remain disabled until the draw-call pass is complete.
+ * Night fill is lifted slightly so unlit streets remain readable without adding light sources.
  */
 export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false }) {
   sun.setEulerAngles(48, 28, 0);
