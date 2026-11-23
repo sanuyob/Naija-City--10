@@ -48,8 +48,8 @@ try {
   // Return to the original Yaba spawn, let the camera settle, then freeze world simulation for a clean still.
   await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
   await page.waitForTimeout(900);
-  await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=true;});
-  await page.waitForTimeout(250);
+  await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=true;window.__NAIJA_GAME__?.debugSetCameraForSmoke?.([0,10,13],[0,1.5,-60]);window.__NAIJA_GAME__?.debugSetCameraFarClipForSmoke?.(650);});
+  await page.waitForTimeout(350);
 
   const capture=async(name)=>{
     const buffer=await page.locator('#application').screenshot({animations:'disabled',timeout:30000});
@@ -105,7 +105,74 @@ try {
   const ikejaImage=await capture('ikeja-daylight');
   const ikejaAudit=await getAudit();
   const ikejaFarClipSweep=await measureFarClipSweep();
-  const timeOfDayAudit=[];
+  // Repeatable A/B benchmark: matched camera height, aim vector, FOV and far clip in both districts.
+  // Three 90-frame trials per district and batching mode, with a 30-frame warm-up per trial.
+  const benchmarkPoses={
+    yaba:{position:[0,10,13],target:[0,1.5,-60]},
+    ikeja:{position:[0,10,382],target:[0,1.5,309]}
+  };
+  const measureFrameTrial=async(district,pose,mode,trial)=>{
+    await page.evaluate(({position,target})=>{
+      window.__NAIJA_GAME__?.debugSetCameraForSmoke?.(position,target);
+      window.__NAIJA_GAME__?.debugSetCameraFarClipForSmoke?.(650);
+      window.__NAIJA_RPG_PAUSED__=true;
+    },pose);
+    await page.waitForTimeout(250);
+    const metrics=await page.evaluate(async({warmFrames,sampleFrames})=>{
+      const frame=()=>new Promise(resolve=>requestAnimationFrame(time=>resolve(time)));
+      for(let i=0;i<warmFrames;i++)await frame();
+      const samples=[];
+      let previous=await frame();
+      for(let i=0;i<sampleFrames;i++){
+        const now=await frame();
+        const stats=window.__NAIJA_GAME__?.stats||{};
+        samples.push({
+          frameMs:now-previous,
+          drawCalls:Number(stats.drawCallCount)||0,
+          primitives:Number(stats.primitiveCount)||0
+        });
+        previous=now;
+      }
+      const quantile=(values,p)=>{
+        const sorted=values.slice().sort((a,b)=>a-b);
+        return sorted.length?sorted[Math.min(sorted.length-1,Math.ceil(p*sorted.length)-1)]:null;
+      };
+      const average=values=>values.length?values.reduce((sum,value)=>sum+value,0)/values.length:null;
+      const frameMs=samples.map(sample=>sample.frameMs);
+      const drawCalls=samples.map(sample=>sample.drawCalls);
+      const primitives=samples.map(sample=>sample.primitives);
+      return {
+        sampleCount:samples.length,
+        frameMs:{mean:average(frameMs),p50:quantile(frameMs,.50),p95:quantile(frameMs,.95),p99:quantile(frameMs,.99),min:Math.min(...frameMs),max:Math.max(...frameMs)},
+        drawCalls:{mean:average(drawCalls),p50:quantile(drawCalls,.50),p95:quantile(drawCalls,.95),min:Math.min(...drawCalls),max:Math.max(...drawCalls)},
+        primitives:{p50:quantile(primitives,.50),p95:quantile(primitives,.95)},
+        rawSamples:samples
+      };
+    },{warmFrames:30,sampleFrames:90});
+    const camera=await page.evaluate(()=>({position:window.__NAIJA_GAME__?.getCameraPosition?.()||null,diagnostics:window.__NAIJA_RENDER_DIAGNOSTICS__?.camera||null}));
+    return {district,mode,trial,camera,viewport:{width:844,height:390},fov:62,farClip:650,metrics};
+  };
+  const runBenchmarkMode=async(mode)=>{
+    const state=await page.evaluate(enabled=>window.__NAIJA_GAME__?.debugSetStage08QBatchingForSmoke?.(enabled)||null,mode==='batched');
+    await page.waitForTimeout(600);
+    const trials=[];
+    for(const district of ['yaba','ikeja']){
+      for(let trial=1;trial<=3;trial++)trials.push(await measureFrameTrial(district,benchmarkPoses[district],mode,trial));
+    }
+    return {mode,batchToggleState:state,trials};
+  };
+  const benchmark={
+    method:'requestAnimationFrame intervals; 30 warm-up frames + 90 measured frames; 3 repeated trials per district and batching mode',
+    matchingCamera:'same world-space height, look vector, FOV 62 and far clip 650; district origins differ only by location',
+    viewport:{width:844,height:390},deviceProfile:{deviceMemoryGiB:3,hardwareConcurrency:4},
+    unbatchedBaseline:await runBenchmarkMode('unbatched'),
+    staticBatched:await runBenchmarkMode('batched')
+  };
+  await page.evaluate(()=>{window.__NAIJA_GAME__?.debugSetWorldTimeForSmoke?.(12);});
+  await page.waitForTimeout(250);
+  await writeFile(new URL('stage-08q-benchmark.json',reviewDir),JSON.stringify(benchmark,null,2));
+  
+    const timeOfDayAudit=[];
   for(const [hour,label] of [[6,'sunrise'],[12,'noon'],[18,'sunset'],[20,'night']]){
     await page.evaluate(value=>window.__NAIJA_GAME__?.debugSetWorldTimeForSmoke?.(value),hour);
     await page.waitForTimeout(120);
@@ -129,6 +196,7 @@ try {
     yabaVisuals:yabaAudit.visualSettings,ikejaVisuals:ikejaAudit.visualSettings,
     yabaRender:yabaAudit.renderDiagnostics,ikejaRender:ikejaAudit.renderDiagnostics,
     yabaRenderBreakdown:yabaAudit.renderBreakdown,ikejaRenderBreakdown:ikejaAudit.renderBreakdown,
+    stage08QBenchmark:benchmark,
     consoleErrors,jsErrors:errors
   }));
 } finally {
