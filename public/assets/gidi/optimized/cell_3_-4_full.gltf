@@ -1,0 +1,1640 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 732,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 464,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5126,
+      "count": 464,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1944,
+      "normalized": false,
+      "byteOffset": 1464,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1296,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 972,
+      "normalized": false,
+      "byteOffset": 5352,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 648,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 4
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 3240,
+      "normalized": false,
+      "byteOffset": 7296,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 2160,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 5
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 420,
+      "normalized": false,
+      "byteOffset": 13776,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 280,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 6
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 11352,
+      "normalized": false,
+      "byteOffset": 14616,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 7560,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 7
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 2916,
+      "normalized": false,
+      "byteOffset": 37320,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1944,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 8
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 5190,
+      "normalized": false,
+      "byteOffset": 43152,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 3460,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 9
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 180,
+      "normalized": false,
+      "byteOffset": 53532,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 120,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 10
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5126,
+      "count": 120,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 11
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 12600,
+      "normalized": false,
+      "byteOffset": 53892,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 8400,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 12
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 900,
+      "normalized": false,
+      "byteOffset": 79092,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 600,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 13
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 18060,
+      "normalized": false,
+      "byteOffset": 80892,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 12040,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 14
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 464,
+      "max": [
+        19974,
+        19626,
+        32767
+      ],
+      "min": [
+        -19974,
+        -19626,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 15
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1296,
+      "max": [
+        32767,
+        6588,
+        21970
+      ],
+      "min": [
+        -32767,
+        -6588,
+        -21970
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 16
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5123,
+      "count": 1296,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 17
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 648,
+      "max": [
+        6100,
+        32767,
+        2760
+      ],
+      "min": [
+        -6100,
+        -32767,
+        -2760
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 18
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 2160,
+      "max": [
+        28327,
+        340,
+        32767
+      ],
+      "min": [
+        -28327,
+        -340,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 19
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5123,
+      "count": 2160,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 20
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 280,
+      "max": [
+        32767,
+        17250,
+        9649
+      ],
+      "min": [
+        -32767,
+        -17250,
+        -9649
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 21
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 7560,
+      "max": [
+        32767,
+        20614,
+        22838
+      ],
+      "min": [
+        -32767,
+        -20614,
+        -22838
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 22
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1944,
+      "max": [
+        20246,
+        692,
+        32767
+      ],
+      "min": [
+        -20246,
+        -692,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 23
+    },
+    {
+      "type": "VEC2",
+      "componentType": 5123,
+      "count": 1944,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 24
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 3460,
+      "max": [
+        32767,
+        11929,
+        32319
+      ],
+      "min": [
+        -32767,
+        -11929,
+        -32319
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 25
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 120,
+      "max": [
+        28183,
+        21650,
+        32767
+      ],
+      "min": [
+        -28183,
+        -21650,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 26
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 8400,
+      "max": [
+        22226,
+        10697,
+        32767
+      ],
+      "min": [
+        -22226,
+        -10697,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 27
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 600,
+      "max": [
+        32179,
+        304,
+        32767
+      ],
+      "min": [
+        -32179,
+        -304,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 28
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 12040,
+      "max": [
+        32767,
+        11965,
+        20726
+      ],
+      "min": [
+        -32767,
+        -11965,
+        -20726
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 29
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 117012,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 19530,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 58506
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 117012,
+      "byteLength": 1856,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 457,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 464
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 118868,
+      "byteLength": 3712,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 460,
+          "byteLength": 2548,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 464
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 122580,
+      "byteLength": 5184,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 3008,
+          "byteLength": 1249,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1296
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 127764,
+      "byteLength": 2592,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 4260,
+          "byteLength": 646,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 648
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 130356,
+      "byteLength": 8640,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 4908,
+          "byteLength": 2057,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 2160
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 138996,
+      "byteLength": 1120,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 6968,
+          "byteLength": 260,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 280
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 140116,
+      "byteLength": 30240,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 7228,
+          "byteLength": 1385,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 7560
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 170356,
+      "byteLength": 7776,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 8616,
+          "byteLength": 1860,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1944
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 178132,
+      "byteLength": 13840,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 10476,
+          "byteLength": 1614,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 3460
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 191972,
+      "byteLength": 480,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 12092,
+          "byteLength": 143,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 120
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 192452,
+      "byteLength": 960,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 12236,
+          "byteLength": 375,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 120
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 193412,
+      "byteLength": 33600,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 12612,
+          "byteLength": 1292,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 8400
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 227012,
+      "byteLength": 2400,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 13904,
+          "byteLength": 108,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 600
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 229412,
+      "byteLength": 48160,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 14012,
+          "byteLength": 1704,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 12040
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 277572,
+      "byteLength": 3712,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 15716,
+          "byteLength": 2206,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 464
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 281284,
+      "byteLength": 10368,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 17924,
+          "byteLength": 4715,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1296
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 291652,
+      "byteLength": 5184,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 22640,
+          "byteLength": 4043,
+          "mode": "ATTRIBUTES",
+          "byteStride": 4,
+          "count": 1296
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 296836,
+      "byteLength": 5184,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 26684,
+          "byteLength": 2196,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 648
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 302020,
+      "byteLength": 17280,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 28880,
+          "byteLength": 6435,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 2160
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 319300,
+      "byteLength": 8640,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 35316,
+          "byteLength": 7280,
+          "mode": "ATTRIBUTES",
+          "byteStride": 4,
+          "count": 2160
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 327940,
+      "byteLength": 2240,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 42596,
+          "byteLength": 1001,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 280
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 330180,
+      "byteLength": 60480,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 43600,
+          "byteLength": 24716,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 7560
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 390660,
+      "byteLength": 15552,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 68316,
+          "byteLength": 6184,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1944
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 406212,
+      "byteLength": 7776,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 74500,
+          "byteLength": 6457,
+          "mode": "ATTRIBUTES",
+          "byteStride": 4,
+          "count": 1944
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 413988,
+      "byteLength": 27680,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 80960,
+          "byteLength": 13062,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 3460
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 441668,
+      "byteLength": 960,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 94024,
+          "byteLength": 542,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 120
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 442628,
+      "byteLength": 67200,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 94568,
+          "byteLength": 26473,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 8400
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 509828,
+      "byteLength": 4800,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 121044,
+          "byteLength": 1977,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 600
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 514628,
+      "byteLength": 96320,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 123024,
+          "byteLength": 37954,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 12040
+        }
+      }
+    }
+  ],
+  "samplers": [
+    {
+      "magFilter": 9729,
+      "minFilter": 9987,
+      "wrapS": 10497,
+      "wrapT": 10497
+    }
+  ],
+  "textures": [
+    {
+      "source": 1,
+      "sampler": 0
+    },
+    {
+      "source": 0,
+      "sampler": 0
+    },
+    {
+      "source": 3,
+      "sampler": 0
+    },
+    {
+      "source": 2,
+      "sampler": 0
+    },
+    {
+      "source": 5,
+      "sampler": 0
+    },
+    {
+      "source": 4,
+      "sampler": 0
+    }
+  ],
+  "images": [
+    {
+      "name": "GIDI_ARCHITECTURAL_CONCRETE_MetallicRoughness_512",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-2.png"
+    },
+    {
+      "name": "GIDI_ARCHITECTURAL_CONCRETE_BaseColor_1024",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-0.png"
+    },
+    {
+      "name": "GIDI_PREMIUM_FACADE_COMPOSITE_MetallicRoughness_512",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-20.png"
+    },
+    {
+      "name": "GIDI_PREMIUM_FACADE_COMPOSITE_BaseColor_1024",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-18.png"
+    },
+    {
+      "name": "GIDI_PAINTED_METAL_ALUMINIUM_MetallicRoughness_512",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-17.png"
+    },
+    {
+      "name": "GIDI_PAINTED_METAL_ALUMINIUM_BaseColor_1024",
+      "mimeType": "image/png",
+      "uri": "../shared/textures/gidi-15.png"
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_3_-4_full_1.bin",
+      "byteLength": 19532
+    },
+    {
+      "uri": "cell_3_-4_full_2.bin",
+      "byteLength": 160980
+    },
+    {
+      "byteLength": 610948,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "GIDI_PBR_ARCHITECTURAL_CONCRETE",
+      "extras": {
+        "gidiMaterialFamily": "ARCHITECTURAL_CONCRETE",
+        "source": "GIDI_MASTER_PBR_LIBRARY.json",
+        "stage": "04"
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 0
+        },
+        "metallicRoughnessTexture": {
+          "index": 1
+        }
+      }
+    },
+    {
+      "name": "GIDI_PBR_PREMIUM_FACADE_COMPOSITE",
+      "extras": {
+        "gidiMaterialFamily": "PREMIUM_FACADE_COMPOSITE",
+        "source": "GIDI_MASTER_PBR_LIBRARY.json",
+        "stage": "04"
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 2
+        },
+        "metallicRoughnessTexture": {
+          "index": 3
+        }
+      }
+    },
+    {
+      "name": "EKO | charcoal structural metal",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.054999999701976776,
+          0.07500000298023224,
+          0.09000000357627869,
+          1
+        ],
+        "roughnessFactor": 0.30000001192092896,
+        "metallicFactor": 0.550000011920929
+      }
+    },
+    {
+      "name": "GIDI_PBR_PAINTED_METAL_ALUMINIUM",
+      "extras": {
+        "gidiMaterialFamily": "PAINTED_METAL_ALUMINIUM",
+        "source": "GIDI_MASTER_PBR_LIBRARY.json",
+        "stage": "04"
+      },
+      "pbrMetallicRoughness": {
+        "baseColorTexture": {
+          "index": 4
+        },
+        "metallicRoughnessTexture": {
+          "index": 5
+        }
+      }
+    },
+    {
+      "name": "EKO | champagne bronze fins",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6200000047683716,
+          0.38999998569488525,
+          0.17000000178813934,
+          1
+        ],
+        "roughnessFactor": 0.23999999463558197,
+        "metallicFactor": 0.7200000286102295
+      }
+    },
+    {
+      "name": "EKO | blue-green reflective glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.054999999701976776,
+          0.25,
+          0.28999999165534973,
+          1
+        ],
+        "roughnessFactor": 0.2199999988079071,
+        "metallicFactor": 0.41999998688697815
+      }
+    },
+    {
+      "name": "EKO | warm light architectural concrete",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6200000047683716,
+          0.6499999761581421,
+          0.6399999856948853,
+          1
+        ],
+        "roughnessFactor": 0.47999998927116394,
+        "metallicFactor": 0.07999999821186066
+      }
+    },
+    {
+      "name": "EKO | deep Atlantic blue glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.03500000014901161,
+          0.12999999523162842,
+          0.2199999988079071,
+          1
+        ],
+        "roughnessFactor": 0.1899999976158142,
+        "metallicFactor": 0.47999998927116394
+      }
+    },
+    {
+      "name": "EKO | retail storefront glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.014999999664723873,
+          0.07000000029802322,
+          0.10000000149011612,
+          1
+        ],
+        "roughnessFactor": 0.18000000715255737,
+        "metallicFactor": 0.3499999940395355
+      }
+    },
+    {
+      "name": "EKO | smoked bronze glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.18000000715255737,
+          0.15000000596046448,
+          0.11999999731779099,
+          1
+        ],
+        "roughnessFactor": 0.23999999463558197,
+        "metallicFactor": 0.3499999940395355
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "EKO_BOUTIQUE_HOTEL_03_mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "TEXCOORD_0": 2,
+            "POSITION": 26
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "Cube.223",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 4,
+            "POSITION": 27,
+            "TEXCOORD_0": 28
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 3
+        }
+      ]
+    },
+    {
+      "name": "Cube.224",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 6,
+            "POSITION": 29
+          },
+          "mode": 4,
+          "material": 2,
+          "indices": 5
+        }
+      ]
+    },
+    {
+      "name": "Cube.306",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 8,
+            "POSITION": 30,
+            "TEXCOORD_0": 31
+          },
+          "mode": 4,
+          "material": 3,
+          "indices": 7
+        }
+      ]
+    },
+    {
+      "name": "Cube.311",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 10,
+            "POSITION": 32
+          },
+          "mode": 4,
+          "material": 4,
+          "indices": 9
+        }
+      ]
+    },
+    {
+      "name": "Cube.310",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 12,
+            "POSITION": 33
+          },
+          "mode": 4,
+          "material": 5,
+          "indices": 11
+        }
+      ]
+    },
+    {
+      "name": "Cube.307",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 14,
+            "POSITION": 34,
+            "TEXCOORD_0": 35
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 13
+        }
+      ]
+    },
+    {
+      "name": "Cube.309",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 16,
+            "POSITION": 36
+          },
+          "mode": 4,
+          "material": 6,
+          "indices": 15
+        }
+      ]
+    },
+    {
+      "name": "MASS_EKO_008_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 18,
+            "TEXCOORD_0": 19,
+            "POSITION": 37
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 17
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass__3_-4",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 21,
+            "POSITION": 38
+          },
+          "mode": 4,
+          "material": 7,
+          "indices": 20
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass__3_-4",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 23,
+            "POSITION": 39
+          },
+          "mode": 4,
+          "material": 8,
+          "indices": 22
+        }
+      ]
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass__3_-4",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 25,
+            "POSITION": 40
+          },
+          "mode": 4,
+          "material": 9,
+          "indices": 24
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "EKO_BOUTIQUE_HOTEL_03",
+      "extras": {
+        "GIDI_DISTRICT": "EKO_FINANCIAL",
+        "building_use": "tower",
+        "height_m": 108,
+        "footprint_m_json": "[30, 30]",
+        "module_family": "EKO_TOWER_MODULE_V1",
+        "hf_id": "e7dc2ee7238340e8b33a50e80ac4575b"
+      },
+      "translation": [
+        1886.294740232193,
+        81.14999808966283,
+        -1720.003161611279
+      ],
+      "scale": [
+        134.99963494311598,
+        134.99963494311598,
+        134.99963494311598
+      ],
+      "mesh": 0
+    },
+    {
+      "name": "EKO_CROWN_EKO_BOUTIQUE_HOTEL_03",
+      "extras": {
+        "hf_id": "293f173b86a54997b1d437ce9c1730c7"
+      },
+      "translation": [
+        1767.946207648365,
+        124.17473980882733,
+        -1721.0500044286255
+      ],
+      "scale": [
+        191.7338455094432,
+        191.7338455094432,
+        191.7338455094432
+      ],
+      "mesh": 1
+    },
+    {
+      "name": "EKO_CROWN_EKO_RESIDENCE_COURT_06",
+      "extras": {
+        "hf_id": "cefcf26a8e8a4253bee7bbf0dbf7338e"
+      },
+      "translation": [
+        1953.2674463553228,
+        89.19992836196958,
+        -1830
+      ],
+      "scale": [
+        88.99992370923043,
+        88.99992370923043,
+        88.99992370923043
+      ],
+      "mesh": 2
+    },
+    {
+      "name": "EKO_ENTRY_CANOPY_EKO_BOUTIQUE_HOTEL_03",
+      "extras": {
+        "hf_id": "5c4978c82ad44e0090fb5b2600a6931a"
+      },
+      "translation": [
+        1755.3170318603516,
+        2.462369292974472,
+        -1795.8339385986328
+      ],
+      "scale": [
+        199.8339385986328,
+        199.8339385986328,
+        199.8339385986328
+      ],
+      "mesh": 3
+    },
+    {
+      "name": "EKO_ENTRY_CANOPY_EKO_RESIDENCE_COURT_06",
+      "extras": {
+        "hf_id": "64d8ccf497f5437c843f9bc5e2b70b3c"
+      },
+      "translation": [
+        1849.9510498046875,
+        71.36760534346104,
+        -1807.379210948944
+      ],
+      "scale": [
+        128.1689453125,
+        128.1689453125,
+        128.1689453125
+      ],
+      "mesh": 4
+    },
+    {
+      "name": "EKO_ENTRY_DOOR_EKO_RESIDENCE_COURT_06",
+      "extras": {
+        "hf_id": "1c6d8cbbed9c457dbc15ec4acae6e2bb"
+      },
+      "translation": [
+        1836.7731833457947,
+        89.15000116825104,
+        -1756.6556396484375
+      ],
+      "scale": [
+        141.22079229354858,
+        141.22079229354858,
+        141.22079229354858
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "EKO_ENTRY_PIER_A_EKO_BOUTIQUE_HOTEL_03",
+      "extras": {
+        "hf_id": "0f66a157c7c749ac96a7dd42138fbec1"
+      },
+      "translation": [
+        1885.5,
+        3.150239586830139,
+        -1719.9998931884766
+      ],
+      "scale": [
+        140.00010681152344,
+        140.00010681152344,
+        140.00010681152344
+      ],
+      "mesh": 6
+    },
+    {
+      "name": "EKO_RETAIL_PODIUM_EKO_RESIDENCE_COURT_06",
+      "extras": {
+        "hf_id": "68a8035f9b93493eb703394cd12fecc1"
+      },
+      "translation": [
+        1774.8735971450806,
+        76.06731690466404,
+        -1790.214106798172
+      ],
+      "scale": [
+        208.12640285491943,
+        208.12640285491943,
+        208.12640285491943
+      ],
+      "mesh": 7
+    },
+    {
+      "name": "MASS_EKO_008",
+      "extras": {
+        "GIDI_BLOCKOUT_ASSET": true,
+        "GIDI_HEIGHT_M": 156.65,
+        "GIDI_DISTRICT": "EKO",
+        "GIDI_FOOTPRINT_M_JSON": "[42, 40]",
+        "hf_id": "726d438d630d4b968dac7b4a72cfef06"
+      },
+      "translation": [
+        1664.385522180908,
+        81.44778911925422,
+        -1781.3004253669947
+      ],
+      "scale": [
+        122.99392735284803,
+        122.99392735284803,
+        122.99392735284803
+      ],
+      "mesh": 8
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_deep_Atlantic_blue_glass",
+      "extras": {
+        "hf_id": "e6f7ba6ecabe4ed7a8e6662172914c8c"
+      },
+      "translation": [
+        1836.60986328125,
+        64.04999923706055,
+        -1807.27783203125
+      ],
+      "scale": [
+        192.3577880859375,
+        192.3577880859375,
+        192.3577880859375
+      ],
+      "mesh": 9
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_retail_storefront_glass",
+      "extras": {
+        "hf_id": "e3060c0efd3e489ebd5119379adb359c"
+      },
+      "translation": [
+        1779.0362548828125,
+        2.5249999165534973,
+        -1787.7040405273438
+      ],
+      "scale": [
+        207.76409912109375,
+        207.76409912109375,
+        207.76409912109375
+      ],
+      "mesh": 10
+    },
+    {
+      "name": "EKO_BATCH_EKO_|_smoked_bronze_glass",
+      "extras": {
+        "hf_id": "6329639a908b4a2f8a44e8f97fbb0fb0"
+      },
+      "translation": [
+        1772.41357421875,
+        76.3499984741211,
+        -1715
+      ],
+      "scale": [
+        205.6663818359375,
+        205.6663818359375,
+        205.6663818359375
+      ],
+      "mesh": 11
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

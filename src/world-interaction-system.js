@@ -25,7 +25,7 @@ export function createWorldInteractionSystem({ targets = [], getPlayerState = ()
     const best = matches[0];
     nearest = best ? {
       id: best.target.id, name: best.target.name || best.target.id,
-      prompt: best.target.prompt || `INTERACT · ${best.target.name || best.target.id}`,
+      prompt: typeof best.target.prompt === 'function' ? best.target.prompt({ player: playerState, target: best.target, distance: best.distance }) : (best.target.prompt || `INTERACT · ${best.target.name || best.target.id}`),
       distance: Number(best.distance.toFixed(2)), visible: best.visible,
       available: best.available
     } : null;

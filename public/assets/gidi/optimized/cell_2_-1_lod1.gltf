@@ -1,0 +1,375 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 36,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 24,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 18,
+      "normalized": false,
+      "byteOffset": 72,
+      "bufferView": 0
+    },
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 16,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 528,
+      "normalized": false,
+      "byteOffset": 108,
+      "bufferView": 0
+    },
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 356,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    },
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 24,
+      "max": [
+        31811,
+        -136,
+        16265
+      ],
+      "min": [
+        7892,
+        -224,
+        -16265
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 4
+    },
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 16,
+      "max": [
+        -4064,
+        -156,
+        12437
+      ],
+      "min": [
+        -32767,
+        -212,
+        -2868
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 5
+    },
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 356,
+      "max": [
+        32767,
+        224,
+        16265
+      ],
+      "min": [
+        -16694,
+        -168,
+        9089
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 6
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 1,
+      "byteOffset": 0,
+      "byteLength": 1164,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 213,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 582
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 1164,
+      "byteLength": 96,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 216,
+          "byteLength": 55,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 24
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 1260,
+      "byteLength": 64,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 272,
+          "byteLength": 49,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 16
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 1324,
+      "byteLength": 1424,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 324,
+          "byteLength": 359,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 356
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 2748,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 684,
+          "byteLength": 132,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 24
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 2940,
+      "byteLength": 128,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 816,
+          "byteLength": 96,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 16
+        }
+      }
+    },
+    {
+      "buffer": 1,
+      "byteOffset": 3068,
+      "byteLength": 2848,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 912,
+          "byteLength": 1144,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 356
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_2_-1_lod1.bin",
+      "byteLength": 2056
+    },
+    {
+      "byteLength": 5916,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "VI CBD V2 | sidewalk stone",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5799999833106995,
+          0.5600000023841858,
+          0.49000000953674316,
+          1
+        ],
+        "roughnessFactor": 0.75,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "VI CBD V2 | tropical planting",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.10999999940395355,
+          0.25,
+          0.10000000149011612,
+          1
+        ],
+        "roughnessFactor": 0.8999999761581421,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "VI CBD V2 | iroko wood",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.25,
+          0.12999999523162842,
+          0.05999999865889549,
+          1
+        ],
+        "roughnessFactor": 0.6200000047683716,
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE__2_-1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 6
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        },
+        {
+          "attributes": {
+            "NORMAL": 3,
+            "POSITION": 7
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 2
+        },
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 8
+          },
+          "mode": 4,
+          "material": 2,
+          "indices": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "VI_PUBLIC_WATERFRONT_VIEW_TERRACE",
+      "extras": {
+        "public_space": true,
+        "interaction_type": "PUBLIC_VIEWPOINT",
+        "waterfront_access": "LANDSIDE_ONLY__NO_OCEAN_MESH_OVERLAP",
+        "hf_id": "78617e300bee4dae96638502bb584dd4"
+      },
+      "translation": [
+        1033.5,
+        0.7149999737739563,
+        -472
+      ],
+      "scale": [
+        68.5,
+        68.5,
+        68.5
+      ],
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

@@ -1,0 +1,3019 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 72,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 48,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 108,
+      "normalized": false,
+      "byteOffset": 144,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 72,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 24,
+      "normalized": false,
+      "byteOffset": 360,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 18,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 36,
+      "normalized": false,
+      "byteOffset": 408,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 24,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 4
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 36,
+      "normalized": false,
+      "byteOffset": 480,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 14,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 5
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 507,
+      "normalized": false,
+      "byteOffset": 552,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 445,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 6
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 336,
+      "normalized": false,
+      "byteOffset": 1566,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 336,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 7
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 120,
+      "normalized": false,
+      "byteOffset": 2238,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 120,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 8
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 219,
+      "normalized": false,
+      "byteOffset": 2478,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 219,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 9
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 702,
+      "normalized": false,
+      "byteOffset": 2916,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 394,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 10
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 102,
+      "normalized": false,
+      "byteOffset": 4320,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 52,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 11
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 138,
+      "normalized": false,
+      "byteOffset": 4524,
+      "bufferView": 0
+    },
+    {
+      "name": "EKITI_DRAINAGE_VALLEY_GUIDE_A_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 42,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 12
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 36,
+      "normalized": false,
+      "byteOffset": 4800,
+      "bufferView": 0
+    },
+    {
+      "name": "EKITI_RESERVE_BOUNDARY_REVIEW_V1_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 18,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 13
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 12,
+      "normalized": false,
+      "byteOffset": 4872,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 8,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 14
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 30,
+      "normalized": false,
+      "byteOffset": 4896,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 20,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 15
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 72,
+      "normalized": false,
+      "byteOffset": 4956,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 72,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 16
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 48,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 17
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1488,
+      "normalized": false,
+      "byteOffset": 5100,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 496,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 18
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 12960,
+      "normalized": false,
+      "byteOffset": 8076,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 2880,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 19
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 21264,
+      "normalized": false,
+      "byteOffset": 33996,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 4892,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 20
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 16836,
+      "normalized": false,
+      "byteOffset": 76524,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 3868,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 21
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 2112,
+      "normalized": false,
+      "byteOffset": 110196,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 484,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 22
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 8220,
+      "normalized": false,
+      "byteOffset": 114420,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1932,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 23
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 3672,
+      "normalized": false,
+      "byteOffset": 130860,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1284,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 24
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 798,
+      "normalized": false,
+      "byteOffset": 138204,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 247,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 25
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 48,
+      "max": [
+        32767,
+        760,
+        32423
+      ],
+      "min": [
+        -32767,
+        -760,
+        -32423
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 26
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 72,
+      "max": [
+        32767,
+        12369,
+        564
+      ],
+      "min": [
+        -32767,
+        -12369,
+        -564
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 27
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 18,
+      "max": [
+        32767,
+        3564,
+        25975
+      ],
+      "min": [
+        -32767,
+        -3564,
+        -25975
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 28
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 24,
+      "max": [
+        32767,
+        10921,
+        25487
+      ],
+      "min": [
+        -32767,
+        -10921,
+        -25487
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 29
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 48,
+      "max": [
+        32767,
+        4476,
+        316
+      ],
+      "min": [
+        -32767,
+        -4476,
+        -316
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 30
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 14,
+      "max": [
+        32767,
+        900,
+        27835
+      ],
+      "min": [
+        -32767,
+        -900,
+        -27835
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 31
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 24,
+      "max": [
+        32767,
+        228,
+        22938
+      ],
+      "min": [
+        -32767,
+        -228,
+        -22938
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 32
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 445,
+      "max": [
+        32767,
+        2368,
+        11721
+      ],
+      "min": [
+        -32767,
+        -4560,
+        -11721
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 33
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 336,
+      "max": [
+        31307,
+        4560,
+        11721
+      ],
+      "min": [
+        -32767,
+        -4560,
+        -11721
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 34
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 120,
+      "max": [
+        29975,
+        3640,
+        11721
+      ],
+      "min": [
+        -27703,
+        -4560,
+        -11721
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 35
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 219,
+      "max": [
+        29759,
+        3616,
+        8681
+      ],
+      "min": [
+        -30667,
+        -4020,
+        -9029
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 36
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 394,
+      "max": [
+        32767,
+        556,
+        20554
+      ],
+      "min": [
+        -32767,
+        -556,
+        -20554
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 37
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 24,
+      "max": [
+        32767,
+        7708,
+        16101
+      ],
+      "min": [
+        -32767,
+        -7708,
+        -16101
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 38
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 52,
+      "max": [
+        32767,
+        2416,
+        4932
+      ],
+      "min": [
+        -32767,
+        -2416,
+        -4932
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 39
+    },
+    {
+      "name": "EKITI_DRAINAGE_VALLEY_GUIDE_A_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 42,
+      "max": [
+        16966,
+        1788,
+        32767
+      ],
+      "min": [
+        -16966,
+        -1788,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 40
+    },
+    {
+      "name": "EKITI_RESERVE_BOUNDARY_REVIEW_V1_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 18,
+      "max": [
+        21310,
+        52,
+        32767
+      ],
+      "min": [
+        -21310,
+        -52,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 41
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 8,
+      "max": [
+        1260,
+        -480,
+        31763
+      ],
+      "min": [
+        1260,
+        -512,
+        -5340
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 42
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 20,
+      "max": [
+        1260,
+        -448,
+        32247
+      ],
+      "min": [
+        720,
+        -508,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 43
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 72,
+      "max": [
+        -768,
+        512,
+        32767
+      ],
+      "min": [
+        -1260,
+        -116,
+        -3672
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 44
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 48,
+      "max": [
+        -1024,
+        84,
+        32523
+      ],
+      "min": [
+        -1080,
+        -504,
+        -3416
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 45
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 496,
+      "max": [
+        32679,
+        1412,
+        32639
+      ],
+      "min": [
+        -32707,
+        -1668,
+        -32687
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 46
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 2880,
+      "max": [
+        32739,
+        1236,
+        32687
+      ],
+      "min": [
+        -32747,
+        -1664,
+        -30231
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 47
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 4892,
+      "max": [
+        32683,
+        1640,
+        32667
+      ],
+      "min": [
+        -32767,
+        -1668,
+        -30243
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 48
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 3868,
+      "max": [
+        32767,
+        1668,
+        32687
+      ],
+      "min": [
+        -32711,
+        -1664,
+        -30203
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 49
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 484,
+      "max": [
+        32767,
+        1772,
+        31895
+      ],
+      "min": [
+        -22670,
+        -1712,
+        -30323
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 50
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1932,
+      "max": [
+        32679,
+        1812,
+        31783
+      ],
+      "min": [
+        -32767,
+        -1812,
+        -31895
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 51
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1284,
+      "max": [
+        32767,
+        316,
+        22922
+      ],
+      "min": [
+        -32767,
+        -316,
+        -22922
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 52
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 247,
+      "max": [
+        32767,
+        2096,
+        30555
+      ],
+      "min": [
+        -32767,
+        -2096,
+        -30555
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 53
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 139800,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 25367,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 69900
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 139800,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 75,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 139992,
+      "byteLength": 288,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 76,
+          "byteLength": 103,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 140280,
+      "byteLength": 72,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 180,
+          "byteLength": 53,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 18
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 140352,
+      "byteLength": 96,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 236,
+          "byteLength": 59,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 24
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 140448,
+      "byteLength": 56,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 296,
+          "byteLength": 68,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 14
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 140504,
+      "byteLength": 1780,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 364,
+          "byteLength": 507,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 445
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 142284,
+      "byteLength": 1344,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 872,
+          "byteLength": 396,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 336
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 143628,
+      "byteLength": 480,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1268,
+          "byteLength": 167,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 120
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 144108,
+      "byteLength": 876,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1436,
+          "byteLength": 278,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 219
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 144984,
+      "byteLength": 1576,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1716,
+          "byteLength": 208,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 394
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 146560,
+      "byteLength": 208,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1924,
+          "byteLength": 70,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 52
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 146768,
+      "byteLength": 168,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1996,
+          "byteLength": 120,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 42
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 146936,
+      "byteLength": 72,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2116,
+          "byteLength": 81,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 18
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 147008,
+      "byteLength": 32,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2200,
+          "byteLength": 37,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 8
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 147040,
+      "byteLength": 80,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2240,
+          "byteLength": 37,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 20
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 147120,
+      "byteLength": 288,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2280,
+          "byteLength": 119,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 147408,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2400,
+          "byteLength": 77,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 147600,
+      "byteLength": 1984,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2480,
+          "byteLength": 1057,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 496
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 149584,
+      "byteLength": 11520,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 3540,
+          "byteLength": 5970,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 2880
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 161104,
+      "byteLength": 19568,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 9512,
+          "byteLength": 10115,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 4892
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 180672,
+      "byteLength": 15472,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 19628,
+          "byteLength": 8017,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 3868
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 196144,
+      "byteLength": 1936,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 27648,
+          "byteLength": 1039,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 484
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 198080,
+      "byteLength": 7728,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 28688,
+          "byteLength": 4025,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1932
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 205808,
+      "byteLength": 5136,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 32716,
+          "byteLength": 2693,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1284
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 210944,
+      "byteLength": 988,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 35412,
+          "byteLength": 551,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 247
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 211932,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 35964,
+          "byteLength": 211,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 212316,
+      "byteLength": 576,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 36176,
+          "byteLength": 328,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 212892,
+      "byteLength": 144,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 36504,
+          "byteLength": 124,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 18
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 213036,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 36628,
+          "byteLength": 132,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 24
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 213228,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 36760,
+          "byteLength": 224,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 213612,
+      "byteLength": 112,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 36984,
+          "byteLength": 110,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 14
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 213724,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37096,
+          "byteLength": 123,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 24
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 213916,
+      "byteLength": 3560,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37220,
+          "byteLength": 2280,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 445
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 217476,
+      "byteLength": 2688,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 39500,
+          "byteLength": 1871,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 336
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 220164,
+      "byteLength": 960,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 41372,
+          "byteLength": 747,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 120
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 221124,
+      "byteLength": 1752,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 42120,
+          "byteLength": 1186,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 219
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 222876,
+      "byteLength": 3152,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 43308,
+          "byteLength": 1608,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 394
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 226028,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 44916,
+          "byteLength": 132,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 24
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 226220,
+      "byteLength": 416,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 45048,
+          "byteLength": 304,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 52
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 226636,
+      "byteLength": 336,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 45352,
+          "byteLength": 261,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 42
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 226972,
+      "byteLength": 144,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 45616,
+          "byteLength": 133,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 18
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 227116,
+      "byteLength": 64,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 45752,
+          "byteLength": 66,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 8
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 227180,
+      "byteLength": 160,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 45820,
+          "byteLength": 104,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 20
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 227340,
+      "byteLength": 576,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 45924,
+          "byteLength": 359,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 227916,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 46284,
+          "byteLength": 213,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 228300,
+      "byteLength": 3968,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 46500,
+          "byteLength": 2141,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 496
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 232268,
+      "byteLength": 23040,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 48644,
+          "byteLength": 10676,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 2880
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 255308,
+      "byteLength": 39136,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 59320,
+          "byteLength": 18363,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 4892
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 294444,
+      "byteLength": 30944,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 77684,
+          "byteLength": 14362,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 3868
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 325388,
+      "byteLength": 3872,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 92048,
+          "byteLength": 2030,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 484
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 329260,
+      "byteLength": 15456,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 94080,
+          "byteLength": 7536,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1932
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 344716,
+      "byteLength": 10272,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 101616,
+          "byteLength": 4937,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1284
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 354988,
+      "byteLength": 1976,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 106556,
+          "byteLength": 1140,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 247
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_5_-3_lod1_1.bin",
+      "byteLength": 25368
+    },
+    {
+      "uri": "cell_5_-3_lod1_2.bin",
+      "byteLength": 107696
+    },
+    {
+      "byteLength": 356964,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "MAT_EKITI_FOUNDATION_CONCRETE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.36000001430511475,
+          0.3499999940395355,
+          0.3100000023841858,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_WINDOW_DOOR_TRIM",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.1599999964237213,
+          0.1899999976158142,
+          0.17000000178813934,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_ROOF_WEATHERED_TERRA",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.3100000023841858,
+          0.11999999731779099,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.7400000095367432,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_HOUSE_WARM_PLASTER",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.7200000286102295,
+          0.6200000047683716,
+          0.46000000834465027,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_WINDOW_GLASS",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.12999999523162842,
+          0.23999999463558197,
+          0.2800000011920929,
+          1
+        ],
+        "roughnessFactor": 0.3199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_SETTLEMENT_SHELF_GUIDE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6600000262260437,
+          0.5799999833106995,
+          0.2800000011920929,
+          1
+        ],
+        "roughnessFactor": 0.949999988079071,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_OLIVE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.1599999964237213,
+          0.25,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_FOREST",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.06499999761581421,
+          0.20999999344348907,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_SHRUB",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.07999999821186066,
+          0.20000000298023224,
+          0.06499999761581421,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_BARK_DARK",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.20000000298023224,
+          0.10499999672174454,
+          0.054999999701976776,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_SUNLIT",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.11999999731779099,
+          0.27000001072883606,
+          0.08500000089406967,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_DEEP",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.03500000014901161,
+          0.15000000596046448,
+          0.054999999701976776,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_PALM_LEAF",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.054999999701976776,
+          0.1899999976158142,
+          0.07000000029802322,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_BARK_WARM",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.28999999165534973,
+          0.1599999964237213,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_GATHERING_GREEN",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.25,
+          0.3199999928474426,
+          0.1599999964237213,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_ROCK_QUARTZITE_PALE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.550000011920929,
+          0.5199999809265137,
+          0.4399999976158142,
+          1
+        ],
+        "roughnessFactor": 0.8799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_ROCK_CHARNOCKITE_DARK",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.1899999976158142,
+          0.2199999988079071,
+          0.20000000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_ROCK_GNEISS_BANDING",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.27000001072883606,
+          0.28999999165534973,
+          0.2800000011920929,
+          1
+        ],
+        "roughnessFactor": 0.8799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_ROCK_WARM_GRANITE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.38999998569488525,
+          0.36000001430511475,
+          0.3100000023841858,
+          1
+        ],
+        "roughnessFactor": 0.8799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_LOCAL_LATERITE_LANE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.27000001072883606,
+          0.2199999988079071,
+          0.15000000596046448,
+          1
+        ],
+        "roughnessFactor": 0.949999988079071,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_MASS_LEKKI_NEUTRAL_RESIDENTIAL",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.4699999988079071,
+          0.4699999988079071,
+          0.41999998688697815,
+          1
+        ],
+        "roughnessFactor": 0.8799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_COMPOUND_PATH",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.47999998927116394,
+          0.4099999964237213,
+          0.30000001192092896,
+          1
+        ],
+        "roughnessFactor": 0.949999988079071,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_DRAINAGE_GUIDE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.10000000149011612,
+          0.23999999463558197,
+          0.20000000298023224,
+          1
+        ],
+        "roughnessFactor": 0.949999988079071,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_BOUNDARY_REVIEW",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.8500000238418579,
+          0.6600000262260437,
+          0.20000000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8500000238418579,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | quiet lane asphalt",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.10000000149011612,
+          0.10999999940395355,
+          0.10999999940395355,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | promenade stone",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5899999737739563,
+          0.5699999928474426,
+          0.5,
+          1
+        ],
+        "roughnessFactor": 0.7200000286102295,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | tropical foliage",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.07500000298023224,
+          0.18000000715255737,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8999999761581421,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | iroko timber",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.25,
+          0.12999999523162842,
+          0.06499999761581421,
+          1
+        ],
+        "roughnessFactor": 0.6200000047683716,
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "BUNGALOW_CENTRAL_C_FOUNDATION_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 49
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_FRONT_DOOR_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 3,
+            "POSITION": 50
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 2
+        }
+      ]
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_ROOF_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 51
+          },
+          "mode": 4,
+          "material": 2,
+          "indices": 4
+        }
+      ]
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_WALLS_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 52
+          },
+          "mode": 4,
+          "material": 3,
+          "indices": 6
+        }
+      ]
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_WINDOW_1_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 53,
+            "NORMAL": 1
+          },
+          "mode": 4,
+          "material": 4,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "EKITI_SETTLEMENT_SHELF_CENTRAL_CURVE",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 54
+          },
+          "mode": 4,
+          "material": 5,
+          "indices": 8
+        }
+      ]
+    },
+    {
+      "name": "GREEN_CENTRAL_GATHERING_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 55,
+            "NORMAL": 7
+          },
+          "mode": 4,
+          "material": 14,
+          "indices": 6
+        }
+      ]
+    },
+    {
+      "name": "LANDMARK_02_WESTERN_SPLIT_BOULDER_A_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 11,
+            "POSITION": 56
+          },
+          "mode": 4,
+          "material": 18,
+          "indices": 10
+        },
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 57
+          },
+          "mode": 4,
+          "material": 17,
+          "indices": 12
+        },
+        {
+          "attributes": {
+            "NORMAL": 15,
+            "POSITION": 58
+          },
+          "mode": 4,
+          "material": 16,
+          "indices": 14
+        },
+        {
+          "attributes": {
+            "NORMAL": 17,
+            "POSITION": 59
+          },
+          "mode": 4,
+          "material": 15,
+          "indices": 16
+        }
+      ]
+    },
+    {
+      "name": "LANE_CENTRAL_SHELF_LOOP_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 19,
+            "POSITION": 60
+          },
+          "mode": 4,
+          "material": 19,
+          "indices": 18
+        }
+      ]
+    },
+    {
+      "name": "MASS_LEKKI_014_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 61,
+            "NORMAL": 7
+          },
+          "mode": 4,
+          "material": 20,
+          "indices": 6
+        }
+      ]
+    },
+    {
+      "name": "PATH_TO_BUNGALOW_CENTRAL_C_MESH.001",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 21,
+            "POSITION": 62
+          },
+          "mode": 4,
+          "material": 21,
+          "indices": 20
+        }
+      ]
+    },
+    {
+      "name": "EKITI_DRAINAGE_VALLEY_GUIDE_A__5_-3",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 23,
+            "POSITION": 63
+          },
+          "mode": 4,
+          "material": 22,
+          "indices": 22
+        }
+      ]
+    },
+    {
+      "name": "EKITI_RESERVE_BOUNDARY_REVIEW_V1__5_-3",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 25,
+            "POSITION": 64
+          },
+          "mode": 4,
+          "material": 23,
+          "indices": 24
+        }
+      ]
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH__5_-3",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 27,
+            "POSITION": 65
+          },
+          "mode": 4,
+          "material": 24,
+          "indices": 26
+        },
+        {
+          "attributes": {
+            "NORMAL": 29,
+            "POSITION": 66
+          },
+          "mode": 4,
+          "material": 25,
+          "indices": 28
+        },
+        {
+          "attributes": {
+            "NORMAL": 31,
+            "POSITION": 67
+          },
+          "mode": 4,
+          "material": 26,
+          "indices": 30
+        },
+        {
+          "attributes": {
+            "NORMAL": 32,
+            "POSITION": 68
+          },
+          "mode": 4,
+          "material": 27,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_NATIVE_SHRUB_CLUSTER_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 34,
+            "POSITION": 69
+          },
+          "mode": 4,
+          "material": 9,
+          "indices": 33
+        },
+        {
+          "attributes": {
+            "NORMAL": 36,
+            "POSITION": 70
+          },
+          "mode": 4,
+          "material": 8,
+          "indices": 35
+        },
+        {
+          "attributes": {
+            "NORMAL": 38,
+            "POSITION": 71
+          },
+          "mode": 4,
+          "material": 7,
+          "indices": 37
+        },
+        {
+          "attributes": {
+            "NORMAL": 40,
+            "POSITION": 72
+          },
+          "mode": 4,
+          "material": 6,
+          "indices": 39
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_IROKO_BROAD_CROWN_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 42,
+            "POSITION": 73
+          },
+          "mode": 4,
+          "material": 11,
+          "indices": 41
+        },
+        {
+          "attributes": {
+            "NORMAL": 44,
+            "POSITION": 74
+          },
+          "mode": 4,
+          "material": 10,
+          "indices": 43
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_OIL_PALM_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 46,
+            "POSITION": 75
+          },
+          "mode": 4,
+          "material": 12,
+          "indices": 45
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_SMALL_ORCHARD_TREE_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 48,
+            "POSITION": 76
+          },
+          "mode": 4,
+          "material": 13,
+          "indices": 47
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "BUNGALOW_CENTRAL_C_FOUNDATION",
+      "extras": {
+        "hf_id": "9c70053abc9a44aa8278e9fa99b544b3"
+      },
+      "translation": [
+        2866,
+        0.619271844625473,
+        -1002.9498748034239
+      ],
+      "scale": [
+        4.75,
+        4.75,
+        4.75
+      ],
+      "mesh": 0
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_FRONT_DOOR",
+      "extras": {
+        "hf_id": "b130c61183db4b39941e10d031c8ec43"
+      },
+      "translation": [
+        2866,
+        1.9317714396970675,
+        -1005.5200131448676
+      ],
+      "scale": [
+        3.1850584918250604,
+        3.1850584918250604,
+        3.1850584918250604
+      ],
+      "mesh": 1
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_ROOF",
+      "extras": {
+        "hf_id": "8ac7b0e3f5e447559b2514379b879da4"
+      },
+      "translation": [
+        2866,
+        4.254271984100342,
+        -1002
+      ],
+      "scale": [
+        4.824951171875,
+        4.824951171875,
+        4.824951171875
+      ],
+      "mesh": 2
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_WALLS",
+      "extras": {
+        "hf_id": "bc4884b239254604adbbefafa9dd521d"
+      },
+      "translation": [
+        2866,
+        2.2292718589305878,
+        -1002
+      ],
+      "scale": [
+        4.5,
+        4.5,
+        4.5
+      ],
+      "mesh": 3
+    },
+    {
+      "name": "BUNGALOW_CENTRAL_C_WINDOW_1",
+      "extras": {
+        "hf_id": "1bcc90b005a542d788e53d2d2bc05f0a"
+      },
+      "translation": [
+        2866,
+        2.6292718648910522,
+        -1005.5350036621094
+      ],
+      "scale": [
+        3.110107421875,
+        3.110107421875,
+        3.110107421875
+      ],
+      "mesh": 4
+    },
+    {
+      "name": "EKITI_SETTLEMENT_SHELF_CENTRAL",
+      "extras": {
+        "role": "landscape planning guide; not a water polygon or drivable road",
+        "hf_id": "17d94cfa0dba4a428d876ddebd0a4d3c"
+      },
+      "translation": [
+        2854.7884569802864,
+        1.3665654264151947,
+        -1007.5000305175781
+      ],
+      "scale": [
+        44.797490183411476,
+        44.797490183411476,
+        44.797490183411476
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "EKITI_SHRUB_0204",
+      "extras": {
+        "species_asset": "ASSET_EKITI_NATIVE_SHRUB_CLUSTER",
+        "vegetation_role": "understory_shrub",
+        "collision_radius_m": 0.55,
+        "hf_id": "837a8faf34b54aeba83921c8f23f13d3"
+      },
+      "translation": [
+        2800.171179109781,
+        12.068544913879002,
+        -1200.3872709328443
+      ],
+      "rotation": [
+        0,
+        -0.5936622064419245,
+        0,
+        0.8047143497182747
+      ],
+      "scale": [
+        234.28140870615817,
+        234.28140100821201,
+        234.28140870615817
+      ],
+      "mesh": 14
+    },
+    {
+      "name": "EKITI_TREE_149",
+      "extras": {
+        "species_asset": "ASSET_EKITI_IROKO_BROAD_CROWN",
+        "vegetation_role": "canopy_tree",
+        "collision_radius_m": 2.09,
+        "hf_id": "1bb7dfb7fded461e8519b64486ead47f"
+      },
+      "translation": [
+        2797.5538481433305,
+        13.21784533945518,
+        -1227.3238217588635
+      ],
+      "rotation": [
+        0,
+        -0.09570181522649136,
+        0,
+        0.9954100474489669
+      ],
+      "scale": [
+        195.0718964497904,
+        195.07189576675333,
+        195.0718964497904
+      ],
+      "mesh": 15
+    },
+    {
+      "name": "EKITI_TREE_151",
+      "extras": {
+        "species_asset": "ASSET_EKITI_OIL_PALM",
+        "vegetation_role": "canopy_tree",
+        "collision_radius_m": 1.02,
+        "hf_id": "075dc335cf1e4b0aa928b7750216a257"
+      },
+      "translation": [
+        2880.963667050961,
+        5.015411675702598,
+        -1235.316740086199
+      ],
+      "rotation": [
+        0,
+        -0.5820852506957902,
+        0,
+        0.813127764205859
+      ],
+      "scale": [
+        213.45925124371894,
+        213.4592373040751,
+        213.45925124371894
+      ],
+      "mesh": 16
+    },
+    {
+      "name": "EKITI_TREE_165",
+      "extras": {
+        "species_asset": "ASSET_EKITI_SMALL_ORCHARD_TREE",
+        "vegetation_role": "canopy_tree",
+        "collision_radius_m": 1.17,
+        "hf_id": "2f5a50a2a73c4613b0ac499bb34dc7fe"
+      },
+      "translation": [
+        2789.561072417783,
+        11.505116740374557,
+        -1245.4346619520134
+      ],
+      "rotation": [
+        0,
+        0.9986299396054076,
+        0,
+        0.05232823065707568
+      ],
+      "scale": [
+        177.92263534129899,
+        177.92257007922535,
+        177.92263534129899
+      ],
+      "mesh": 17
+    },
+    {
+      "name": "GREEN_CENTRAL_GATHERING",
+      "extras": {
+        "hf_id": "63d14cc8055a4a0ea7ed895d7f7e91eb"
+      },
+      "translation": [
+        2880,
+        1.0544320940971375,
+        -1037
+      ],
+      "scale": [
+        5,
+        5,
+        5
+      ],
+      "mesh": 6
+    },
+    {
+      "name": "LANDMARK_02_WESTERN_SPLIT_BOULDER_A",
+      "extras": {
+        "landmark_asset_type": "shelf",
+        "geology_reference": "Artistic interpretation of southwestern Nigerian basement-complex rocks; not a geological survey",
+        "ground_contact": "Terrain-conforming base ring sampled by vertical raycast; lower ring embedded 0.08-0.38 m",
+        "collision_role": "Scenic landmark; do not place in road or designated pedestrian corridor",
+        "hf_id": "c95902c805de4d33a808e32abf3e8788"
+      },
+      "translation": [
+        2698.5246585188142,
+        2.93842398023844,
+        -1179.9153441825401
+      ],
+      "scale": [
+        25.29614289381425,
+        25.29614289381425,
+        25.29614289381425
+      ],
+      "mesh": 7
+    },
+    {
+      "name": "LANE_CENTRAL_SHELF_LOOP",
+      "extras": {
+        "design_speed_kmh": 20,
+        "surface": "compacted local laterite",
+        "width_m": 4.5,
+        "max_sampled_grade_percent": 6.96,
+        "centerline_sample_count": 118,
+        "hf_id": "ea7a27f7102f4ed4a2424005e31e4634"
+      },
+      "translation": [
+        2827.0091552734375,
+        1.3167460262775421,
+        -1002.2037048339844
+      ],
+      "scale": [
+        67.6783447265625,
+        67.6783447265625,
+        67.6783447265625
+      ],
+      "mesh": 8
+    },
+    {
+      "name": "MASS_LEKKI_014",
+      "extras": {
+        "GIDI_BLOCKOUT_ASSET": true,
+        "GIDI_HEIGHT_M": 8.89,
+        "GIDI_DISTRICT": "LEKKI",
+        "GIDI_FOOTPRINT_M_JSON": "[37.79, 18.57]",
+        "hf_id": "ae199e5f14364786b04677c4f3eb91d7"
+      },
+      "translation": [
+        2559.4935302734375,
+        4.625146239995956,
+        -1221.7276000976562
+      ],
+      "scale": [
+        18.8968505859375,
+        18.8968505859375,
+        18.8968505859375
+      ],
+      "mesh": 9
+    },
+    {
+      "name": "PATH_TO_BUNGALOW_CENTRAL_C",
+      "extras": {
+        "connects_to_lane": "LANE_CENTRAL_SHELF_LOOP",
+        "terminates_at": "front porch apron",
+        "length_m": 25.99,
+        "hf_id": "be4cb11014d34e8b8b045c61fa07cb81"
+      },
+      "translation": [
+        2878.92578125,
+        1.5362525582313538,
+        -1008.8843688964844
+      ],
+      "scale": [
+        12.989990234375,
+        12.989990234375,
+        12.989990234375
+      ],
+      "mesh": 10
+    },
+    {
+      "name": "EKITI_DRAINAGE_VALLEY_GUIDE_A",
+      "extras": {
+        "role": "landscape planning guide; not a water polygon or drivable road",
+        "hf_id": "0d8acbb7164d4a2396bdcc993e72089e",
+        "rollback_points_rev72": "[[2781.10009765625,570.0,0.7041941285133362],[2783.699951171875,590.0,0.8299575448036194],[2786.300048828125,610.0,0.965323269367218],[2788.89990234375,630.0,1.1041017770767212],[2791.5,650.0,1.245034098625183],[2794.10009765625,670.0,1.033428430557251],[2796.699951171875,690.0,0.4925045371055603],[2799.300048828125,710.0,0.49882790446281433],[2801.89990234375,730.0,1.3820815086364746],[2804.5,750.0,3.1050922870635986],[2807.10009765625,770.0,3.884739875793457],[2809.699951171875,790.0,4.429795265197754],[2812.300048828125,810.0,4.483569622039795],[2814.89990234375,830.0,4.0842461585998535],[2817.5,850.0,2.278233766555786],[2820.10009765625,870.0,0.7989557981491089],[2822.699951171875,890.0,0.4500042796134949],[2825.300048828125,910.0,0.5212246775627136],[2827.89990234375,930.0,0.6386251449584961],[2830.5,950.0,0.6218258738517761],[2833.10009765625,970.0,0.6175915598869324],[2835.699951171875,990.0,0.6136624217033386],[2838.300048828125,1010.0,0.6100766062736511],[2840.89990234375,1030.0,0.6068722605705261],[2843.5,1050.0,0.6040036082267761],[2846.10009765625,1070.0,0.5135132670402527],[2848.699951171875,1090.0,0.46425923705101013],[2851.300048828125,1110.0,0.4795007109642029],[2853.89990234375,1130.0,1.1479487419128418],[2856.5,1150.0,2.901677370071411],[2859.10009765625,1170.0,5.351133346557617],[2861.699951171875,1190.0,11.14804744720459],[2864.300048828125,1210.0,17.471019744873047],[2866.89990234375,1230.0,14.114442825317383],[2869.5,1250.0,8.524413108825684],[2872.10009765625,1270.0,3.162956476211548],[2874.699951171875,1290.0,0.7207103967666626],[2877.300048828125,1310.0,0.4500042796134949]]",
+        "aligned_to_terrain_revision": 72
+      },
+      "translation": [
+        2918.142251558187,
+        8.56331541389227,
+        -1150
+      ],
+      "scale": [
+        160.0579833984375,
+        160.0579833984375,
+        160.0579833984375
+      ],
+      "mesh": 11
+    },
+    {
+      "name": "EKITI_RESERVE_BOUNDARY_REVIEW_V1",
+      "extras": {
+        "hf_id": "a3884afc586c48219fd520fb4382d6ad"
+      },
+      "translation": [
+        2925,
+        0.9643751978874207,
+        -910
+      ],
+      "scale": [
+        500.565673828125,
+        500.565673828125,
+        500.565673828125
+      ],
+      "mesh": 12
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH",
+      "extras": {
+        "hf_id": "e6b0cde026194003af78b0dae67cf2f8"
+      },
+      "translation": [
+        2505.9775390625,
+        3.05803332477808,
+        -1223.7008056640625
+      ],
+      "scale": [
+        182.7991943359375,
+        182.7991943359375,
+        182.7991943359375
+      ],
+      "mesh": 13
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

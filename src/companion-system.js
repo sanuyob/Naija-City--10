@@ -4,12 +4,19 @@ const COMMANDS=["Follow","Hold","Regroup","PointAhead","RadioCall","AssistUp","D
 /** Two squad actors driven through the same collision-aware movement solver as pedestrians. */
 export function createCompanionSystem({app,playerController,heroCharacter,obstacles=[],physics,maxActive=2,onStatus,onEffect}={}) {
  if(!app||!playerController||typeof heroCharacter?.createInstance!=="function")throw new Error("Companions require app, player and Hero instance factory");
+ let companionCharacter=heroCharacter;
  const solver=physics||createActorPhysics({colliders:obstacles}),cap=Math.max(0,Math.min(2,maxActive)),actors=new Map();let commandsIssued=0,updates=0,lastMessage="";
  const message=s=>{lastMessage=s;onStatus?.(s);};
- function play(a,clip){if(!a.root?.anim||!a.clipNames.has(clip))return false;try{a.root.anim.baseLayer.transition(clip,.16);a.activeClip=clip;return true;}catch(e){return false;}}
+ function play(a,clip){
+  if(!a.root?.anim)return false;
+  const aliases={Hero01_Idle:a.defaultClips?.idle||a.defaultClips?.run,Hero01_Walk:a.defaultClips?.walk||a.defaultClips?.run,Hero01_Run:a.defaultClips?.run||a.defaultClips?.walk};
+  const resolved=a.clipNames.has(clip)?clip:aliases[clip];
+  if(!resolved||!a.clipNames.has(resolved))return false;
+  try{a.root.anim.baseLayer.transition(resolved,.16);a.activeClip=resolved;return true;}catch(e){return false;}
+ }
  function summon(id){const d=ROSTER.find(r=>r.id===id);if(!d)return false;if(actors.has(id))return true;if(actors.size>=cap){message("Maximum of two active companions reached.");return false;}
-  const p=playerController.getState().position,spawnDistance=Math.hypot(d.spawn[0]-p[0],d.spawn[2]-p[2]),root=heroCharacter.createInstance("NaijaCityCompanion_"+id,d.tint);root.setPosition(...d.spawn);root.setLocalScale(.98,.98,.98);root.tags.add("squad-companion");app.root.addChild(root);
-  const a={...d,root,spawnDistance,motion:{position:d.spawn.slice(),velocity:[0,0,0],radius:.34,height:1.78,grounded:true},state:"approaching",command:"Follow",timer:0,distance:Infinity,activeClip:"Hero01_Idle",clipNames:new Set(heroCharacter.clipNames||[]),arrival:false};actors.set(id,a);play(a,"Hero01_Idle");message(d.name+" walking in from district entry.");return true;}
+  const p=playerController.getState().position,spawnDistance=Math.hypot(d.spawn[0]-p[0],d.spawn[2]-p[2]),root=companionCharacter.createInstance("NaijaCityCompanion_"+id,d.tint);root.setPosition(...d.spawn);root.setLocalScale(.98,.98,.98);root.tags.add("squad-companion");app.root.addChild(root);
+  const a={...d,root,spawnDistance,motion:{position:d.spawn.slice(),velocity:[0,0,0],radius:.34,height:1.78,grounded:true},state:"approaching",command:"Follow",timer:0,distance:Infinity,activeClip:companionCharacter.defaultClips?.idle||"Hero01_Idle",clipNames:new Set(companionCharacter.clipNames||[]),defaultClips:{...(companionCharacter.defaultClips||{})},arrival:false};actors.set(id,a);play(a,"Hero01_Idle");message(d.name+" walking in from district entry.");return true;}
  function dismiss(id){const a=actors.get(id);if(!a)return false;a.root.destroy();actors.delete(id);message(a.name+" dismissed.");return true;}
  function command(id,action){if(action==="Summon")return summon(id);const a=actors.get(id);if(!a){message("Summon this companion first.");return false;}if(!COMMANDS.includes(action))return false;commandsIssued++;if(action==="Dismiss")return dismiss(id);a.command=action;a.timer=0;
   if(action==="Follow"){a.state="following";play(a,"Hero01_Idle");}else if(action==="Hold"){a.state="holding";play(a,"Hero01_Idle");}else if(action==="Regroup"){a.state="regrouping";play(a,"Hero01_SquadRegroup");}else if(action==="PointAhead"){a.state="command-action";a.timer=1.45;play(a,"Hero01_SquadPointAhead");}else if(action==="RadioCall"){a.state="command-action";a.timer=1.6;play(a,"Hero01_SquadRadioCall");}else if(action==="AssistUp"){a.state="command-action";a.timer=1.8;play(a,"Hero01_SquadAssistUp");}message(a.name+" · "+action);return true;}
@@ -18,5 +25,6 @@ export function createCompanionSystem({app,playerController,heroCharacter,obstac
   if(d>.85){solver.step(a.motion,[dx/Math.max(d,.001)*(d>9?4:2.55),0,dz/Math.max(d,.001)*(d>9?4:2.55)],h,group.filter(b=>b!==a).map(b=>b.motion));a.root.setPosition(...p);a.root.setEulerAngles(0,Math.atan2(a.motion.velocity[0],-a.motion.velocity[2])*180/Math.PI,0);a.state=d>3?"approaching":"following";play(a,d>9&&a.clipNames.has("Hero01_Run")?"Hero01_Run":"Hero01_Walk");if(d<=3&&!a.arrival){a.arrival=true;onEffect?.("arrival",p);}}else{a.state="following";play(a,"Hero01_Idle");}}
  }
  function destroy(){for(const a of actors.values())a.root.destroy();actors.clear();}
- return {summon,command,update,destroy,getState:()=>({stage:"companion-physics",maxActive:cap,activeCount:actors.size,commandsIssued,updates,commands:COMMANDS.slice(),roster:ROSTER.map(d=>({id:d.id,name:d.name,active:actors.has(d.id),state:actors.get(d.id)?.state||"inactive",command:actors.get(d.id)?.command||null,distance:actors.get(d.id)?.distance??null,spawnDistance:actors.get(d.id)?.spawnDistance??null,activeClip:actors.get(d.id)?.activeClip||null})),lastMessage})};
+ function setHeroCharacter(character){if(typeof character?.createInstance!=="function")return false;companionCharacter=character;return true;}
+ return {summon,command,update,destroy,setHeroCharacter,getState:()=>({stage:"companion-physics",maxActive:cap,activeCount:actors.size,commandsIssued,updates,commands:COMMANDS.slice(),roster:ROSTER.map(d=>({id:d.id,name:d.name,active:actors.has(d.id),state:actors.get(d.id)?.state||"inactive",command:actors.get(d.id)?.command||null,distance:actors.get(d.id)?.distance??null,spawnDistance:actors.get(d.id)?.spawnDistance??null,activeClip:actors.get(d.id)?.activeClip||null})),lastMessage})};
 }

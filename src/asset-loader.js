@@ -306,7 +306,7 @@ export async function loadSceneAssets(app, { statusLabel } = {}) {
   };
   let manifest;
   try {
-    const response = await fetch(new URL('assets/manifest.json', new URL(base, window.location.origin)), { cache: 'no-store' });
+    const response = await fetch(new URL('assets/manifest.json', new URL(base, window.location.origin)), { cache: 'force-cache' });
     if (!response.ok) throw new Error(`manifest HTTP ${response.status}`);
     manifest = await response.json();
   } catch (error) {
@@ -382,7 +382,8 @@ export async function loadHeroCharacter(app, {
   urls = ['assets/hero/NaijaCityHero01_60clips.glb.b64'],
   characterId = 'hero01',
   statusLabel,
-  bundledUrl = null
+  bundledUrl = null,
+  bundledFallbackUrl = null
 } = {}) {
   if (!['hero01', 'ara-female'].includes(characterId)) {
     throw new Error('Unknown character in player roster: ' + characterId);
@@ -400,12 +401,41 @@ export async function loadHeroCharacter(app, {
     if (characterId === 'ara-female') {
       setStatus('Loading Ara 3D Gen female character…');
       if (bundledUrl) {
-        const response = await fetch(resolveAssetUrl(bundledUrl), { cache: 'no-store' });
-        if (!response.ok) throw new Error('Ara character GLB HTTP ' + response.status);
-        const buffer = await response.arrayBuffer();
+        let prefetched=null;
+        const earlyDownload=window.__NAIJA_ARA_PRELOAD__;
+        if(earlyDownload?.url===bundledUrl&&earlyDownload.promise){
+          prefetched=await earlyDownload.promise;
+        }
+        let buffer=prefetched?.buffer||null;
+        let transferBytes=Number(prefetched?.transferBytes)||0;
+        let contentEncoding=String(prefetched?.contentEncoding||'').toLowerCase();
+        if(!buffer){
+          const response=await fetch(resolveAssetUrl(bundledUrl),{cache:'force-cache'});
+          if(!response.ok)throw new Error('Ara character GLB HTTP '+response.status);
+          buffer=await response.arrayBuffer();
+          transferBytes=Number(response.headers.get('content-length'))||buffer.byteLength;
+          contentEncoding=String(response.headers.get('content-encoding')||'').toLowerCase();
+        }
+        if(String(bundledUrl).endsWith('.gz')){
+          // Some static hosts automatically decompress Content-Encoding:gzip. Others
+          // serve the .gz bytes as-is; use DecompressionStream only in that case.
+          if(!contentEncoding.includes('gzip')){
+            if(typeof DecompressionStream==='function'){
+              try{buffer=await new Response(new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();}
+              catch(error){buffer=null;console.warn('Compressed Ara player could not be decompressed.',error);}
+            }
+            if(!buffer&&bundledFallbackUrl){
+              const fallback=await fetch(resolveAssetUrl(bundledFallbackUrl),{cache:'force-cache'});
+              if(!fallback.ok)throw new Error('Ara fallback GLB HTTP '+fallback.status);
+              buffer=await fallback.arrayBuffer();
+              transferBytes=Number(fallback.headers.get('content-length'))||buffer.byteLength;
+            }
+            if(!buffer)throw new Error('This browser cannot decompress the optimized Ara player and no fallback is configured.');
+          }
+        }
         const bytes = new Uint8Array(buffer);
         if (bytes.length < 20 || bytes[0] !== 0x67 || bytes[1] !== 0x6c || bytes[2] !== 0x54 || bytes[3] !== 0x46) throw new Error('Bundled Ara character is not a valid GLB.');
-        metadata = { source: 'Ara 3D Gen · ready-made Female Executive preset', sourceFileName: 'Ara_Female_Executive_Animated_Ladder.glb', glbBytes: bytes.length };
+        metadata = { source: 'Ara 3D Gen · ready-made Female Executive preset', sourceFileName: 'Ara_Female_Executive_Animated_Ladder.glb', glbBytes: bytes.length, transferBytes };
         source = 'ara-3d-gen-female-preset';
         blobUrl = URL.createObjectURL(new Blob([buffer], { type: 'model/gltf-binary' }));
       } else {
@@ -419,7 +449,7 @@ export async function loadHeroCharacter(app, {
       setStatus('Loading Hero 01 character…');
       const responses = await Promise.all(urls.map(path => fetch(
         new URL(String(path).replace(/^\//, ''), new URL(base, window.location.origin)),
-        { cache: 'no-store' }
+        { cache: 'force-cache' }
       )));
       for (let i = 0; i < responses.length; i++) {
         if (!responses[i].ok) throw new Error('Hero GLB payload part ' + (i + 1) + ' HTTP ' + responses[i].status);

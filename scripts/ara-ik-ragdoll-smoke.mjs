@@ -43,7 +43,12 @@ try {
 
   // Exercise the real animated Ara leg chain and check the end-effector error
   // before the next animation tick can replace this procedural correction.
-  await page.evaluate(() => window.__NAIJA_PLAY_HERO_ANIMATION__('Walk', 2.2));
+  await page.evaluate(() => {
+    const game = window.__NAIJA_GAME__;
+    game.debugSetPlayerForSmoke([0, 0, 0], 0);
+    game.debugSetPlayerInputForSmoke(0, 0, false);
+    window.__NAIJA_PLAY_HERO_ANIMATION__('Walk', 2.2);
+  });
   await page.evaluate(() => window.__NAIJA_GAME__.debugAdvanceCharacterSimulationForSmoke(30, 1 / 60));
   const ik = await page.evaluate(() => {
     const game = window.__NAIJA_GAME__;
@@ -51,7 +56,19 @@ try {
     const beforeUpper = before.find(bone => bone.name === 'LeftUpLeg')?.rotation;
     const beforeLower = before.find(bone => bone.name === 'LeftLeg')?.rotation;
     const ankle = game.getHeroLimbPositions().leftAnkle;
-    const target = [ankle[0] + 0.035, ankle[1] + 0.018, ankle[2] + 0.025];
+    const pose = game.debugGetHeroRagdollPoseForSmoke();
+    const hip = pose?.leftThigh?.position;
+    const knee = pose?.leftShin?.position;
+    if (!hip || !knee || !ankle) throw new Error('Ara IK test could not read the live left-leg chain');
+    const distance = (a, b) => Math.hypot(a[0]-b[0], a[1]-b[1], a[2]-b[2]);
+    const upperLength = distance(hip, knee);
+    const lowerLength = distance(knee, ankle);
+    const currentReach = distance(hip, ankle);
+    const minReach = Math.abs(upperLength-lowerLength) + 0.02;
+    const maxReach = upperLength + lowerLength - 0.02;
+    const targetReach = Math.max(minReach, Math.min(maxReach, currentReach - 0.015));
+    const direction = ankle.map((value, index) => (value-hip[index]) / Math.max(currentReach, 1e-6));
+    const target = hip.map((value, index) => value + direction[index] * targetReach);
     const result = game.debugApplyHeroLimbIKForSmoke('left', target, 0.95);
     const after = game.getHeroRigSnapshot().bones;
     return {
@@ -63,7 +80,7 @@ try {
     };
   });
   assert(ik.result?.applied, 'Ara left-leg IK did not bind to the live skeleton');
-  assert(ik.result?.reachable, 'Ara IK test target was unexpectedly unreachable');
+  assert(ik.result?.reachable, `Ara IK test target was unexpectedly unreachable: ${JSON.stringify(ik.result)}`);
   assert(Number.isFinite(ik.result?.error) && ik.result.error <= 0.01,
     `Ara IK end-effector error exceeded 1 cm: ${ik.result?.error}`);
   assert(JSON.stringify(ik.upperBefore) !== JSON.stringify(ik.upperAfter), 'IK did not rotate Ara upper-leg bone');

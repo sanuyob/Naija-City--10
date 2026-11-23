@@ -20,6 +20,7 @@ export function createActorPhysics({colliders=[],groundY=0,gravity=18}={}){
   if(a.grounded===false||p[1]>groundY+.02){v[1]=Math.max(-24,v[1]-gravity*h);p[1]+=v[1]*h;if(p[1]<=groundY){p[1]=groundY;v[1]=0;a.grounded=true;}}else{p[1]=groundY;v[1]=0;a.grounded=true;}
   stats.steps++;if(Math.hypot(p[0]-ox,p[2]-oz)>.002)stats.actorsMoved++;return p;}
  function addStaticColliders(items=[],ownerId='dynamic-world'){if(!ownerId||!Array.isArray(items)||owners.has(ownerId))return owners.get(ownerId)?.length||0;const added=[];for(const item of items){if(!Array.isArray(item?.position)||!Array.isArray(item?.halfExtents))continue;const proxy={...item,ownerId};colliders.push(proxy);added.push(proxy);}owners.set(ownerId,added);return added.length;}
+ function setStaticColliderEnabled(ownerId,localIndex,enabled){const items=owners.get(ownerId);if(!items)return false;const item=items[Math.floor(Number(localIndex))];if(!item)return false;const index=colliders.indexOf(item);if(enabled&&index<0)colliders.push(item);else if(!enabled&&index>=0)colliders.splice(index,1);return true;}
  function removeStaticColliders(ownerId){const items=owners.get(ownerId);if(!items)return 0;const refs=new Set(items);for(let i=colliders.length-1;i>=0;i--)if(refs.has(colliders[i]))colliders.splice(i,1);owners.delete(ownerId);return items.length;}
- return {step,addStaticColliders,removeStaticColliders,getState:()=>({...stats,colliderCount:colliders.length,gravity,groundY,mode:"kinematic-capsule"})};
+ return {step,addStaticColliders,setStaticColliderEnabled,removeStaticColliders,getState:()=>({...stats,colliderCount:colliders.length,gravity,groundY,mode:"kinematic-capsule"})};
 }

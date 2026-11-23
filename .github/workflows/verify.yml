@@ -16,6 +16,7 @@ on:
       - feature/naija-city-stage-08f-final-artistry
       - feature/naija-city-stage-08g-ikeja-street-life
       - feature/naija-city-stage-08h-ikeja-prop-realism
+      - feature/stage-08j-yaba-ikeja-gidi-arterials
   pull_request:
     branches:
       - main

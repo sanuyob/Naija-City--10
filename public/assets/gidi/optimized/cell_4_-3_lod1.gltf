@@ -1,0 +1,2036 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 324,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 216,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 168,
+      "normalized": false,
+      "byteOffset": 648,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 96,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 924,
+      "normalized": false,
+      "byteOffset": 984,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 816,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 72,
+      "normalized": false,
+      "byteOffset": 2832,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 48,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 4
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 6,
+      "normalized": false,
+      "byteOffset": 2976,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 4,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 5
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 12,
+      "normalized": false,
+      "byteOffset": 2988,
+      "bufferView": 0
+    },
+    {
+      "name": "EKO_BOULEVARD_EDGE_LINE_1310.8_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 8,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 6
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 72,
+      "normalized": false,
+      "byteOffset": 3012,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 56,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 7
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 648,
+      "normalized": false,
+      "byteOffset": 3156,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 456,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 8
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 108,
+      "normalized": false,
+      "byteOffset": 4452,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 72,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 9
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 15516,
+      "normalized": false,
+      "byteOffset": 4668,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 10448,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 10
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 3060,
+      "normalized": false,
+      "byteOffset": 35700,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 2040,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 11
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 22032,
+      "normalized": false,
+      "byteOffset": 41820,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 14696,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 12
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 324,
+      "normalized": false,
+      "byteOffset": 85884,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 232,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 13
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1836,
+      "normalized": false,
+      "byteOffset": 86532,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1224,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 14
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 132,
+      "normalized": false,
+      "byteOffset": 90204,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 88,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 15
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1158,
+      "normalized": false,
+      "byteOffset": 90468,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 772,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 16
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1764,
+      "normalized": false,
+      "byteOffset": 92784,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1692,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 17
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 2880,
+      "normalized": false,
+      "byteOffset": 96312,
+      "bufferView": 0
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1718,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 18
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 216,
+      "max": [
+        32767,
+        2096,
+        6336
+      ],
+      "min": [
+        -32767,
+        -2096,
+        -6336
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 19
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 96,
+      "max": [
+        468,
+        4404,
+        32767
+      ],
+      "min": [
+        -468,
+        -4404,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 20
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 816,
+      "max": [
+        22582,
+        4136,
+        32767
+      ],
+      "min": [
+        -22582,
+        -4136,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 21
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 48,
+      "max": [
+        4292,
+        4616,
+        32767
+      ],
+      "min": [
+        -4292,
+        -4616,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 22
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 4,
+      "max": [
+        32767,
+        0,
+        21426
+      ],
+      "min": [
+        -32767,
+        0,
+        -21426
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 23
+    },
+    {
+      "name": "EKO_BOULEVARD_EDGE_LINE_1310.8_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 8,
+      "max": [
+        0,
+        44,
+        32767
+      ],
+      "min": [
+        0,
+        -44,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 24
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 56,
+      "max": [
+        -4256,
+        3788,
+        32575
+      ],
+      "min": [
+        -27019,
+        -4436,
+        -96
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 25
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 456,
+      "max": [
+        28119,
+        3788,
+        32723
+      ],
+      "min": [
+        -27071,
+        -4436,
+        -24558
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 26
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 72,
+      "max": [
+        28119,
+        -1352,
+        3280
+      ],
+      "min": [
+        -8225,
+        -4436,
+        -24470
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 27
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 10448,
+      "max": [
+        28143,
+        3372,
+        31371
+      ],
+      "min": [
+        -26511,
+        -4276,
+        -23194
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 28
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 2040,
+      "max": [
+        26915,
+        2760,
+        28919
+      ],
+      "min": [
+        -26595,
+        -4232,
+        -20666
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 29
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 14696,
+      "max": [
+        28119,
+        4552,
+        32767
+      ],
+      "min": [
+        -27063,
+        -4436,
+        -27643
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 30
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 232,
+      "max": [
+        28163,
+        -900,
+        32695
+      ],
+      "min": [
+        -26771,
+        -3224,
+        -24514
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 31
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1224,
+      "max": [
+        28855,
+        -4040,
+        29491
+      ],
+      "min": [
+        -29295,
+        -4420,
+        -21166
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 32
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 88,
+      "max": [
+        31055,
+        -4420,
+        23986
+      ],
+      "min": [
+        -31055,
+        -4448,
+        -6408
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 33
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 772,
+      "max": [
+        31055,
+        -4396,
+        29491
+      ],
+      "min": [
+        -31055,
+        -4444,
+        -28875
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 34
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 72,
+      "max": [
+        16650,
+        -4420,
+        3648
+      ],
+      "min": [
+        -22966,
+        -4440,
+        -21430
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 35
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1692,
+      "max": [
+        29147,
+        -3548,
+        24839
+      ],
+      "min": [
+        -29855,
+        -4436,
+        -29931
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 36
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1718,
+      "max": [
+        29171,
+        -3524,
+        29423
+      ],
+      "min": [
+        -29623,
+        -4552,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 37
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 48,
+      "max": [
+        18502,
+        -3888,
+        29399
+      ],
+      "min": [
+        5284,
+        -3936,
+        -204
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 38
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 102072,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 17046,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 51036
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 102072,
+      "byteLength": 864,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 240,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 216
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 102936,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 240,
+          "byteLength": 117,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 96
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 103320,
+      "byteLength": 3264,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 360,
+          "byteLength": 972,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 816
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 106584,
+      "byteLength": 192,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1332,
+          "byteLength": 75,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 106776,
+      "byteLength": 16,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1408,
+          "byteLength": 37,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 4
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 106792,
+      "byteLength": 32,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1448,
+          "byteLength": 37,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 8
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 106824,
+      "byteLength": 224,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1488,
+          "byteLength": 91,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 56
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 107048,
+      "byteLength": 1824,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1580,
+          "byteLength": 463,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 456
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 108872,
+      "byteLength": 288,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2044,
+          "byteLength": 103,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 109160,
+      "byteLength": 41792,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 2148,
+          "byteLength": 9463,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 10448
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 150952,
+      "byteLength": 8160,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 11612,
+          "byteLength": 1863,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 2040
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 159112,
+      "byteLength": 58784,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 13476,
+          "byteLength": 13207,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 14696
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 217896,
+      "byteLength": 928,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 26684,
+          "byteLength": 255,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 232
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 218824,
+      "byteLength": 4896,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 26940,
+          "byteLength": 1135,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1224
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 223720,
+      "byteLength": 352,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 28076,
+          "byteLength": 119,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 88
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 224072,
+      "byteLength": 3088,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 28196,
+          "byteLength": 739,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 772
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 227160,
+      "byteLength": 6768,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 28936,
+          "byteLength": 1988,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1692
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 233928,
+      "byteLength": 6872,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 30924,
+          "byteLength": 1525,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1718
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 240800,
+      "byteLength": 1728,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 32452,
+          "byteLength": 987,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 216
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 242528,
+      "byteLength": 768,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 33440,
+          "byteLength": 390,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 96
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 243296,
+      "byteLength": 6528,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 33832,
+          "byteLength": 3561,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 816
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 249824,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37396,
+          "byteLength": 217,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 48
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 250208,
+      "byteLength": 32,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37616,
+          "byteLength": 61,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 4
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 250240,
+      "byteLength": 64,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37680,
+          "byteLength": 64,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 8
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 250304,
+      "byteLength": 448,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 37744,
+          "byteLength": 290,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 56
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 250752,
+      "byteLength": 3648,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 38036,
+          "byteLength": 1743,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 456
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 254400,
+      "byteLength": 576,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 39780,
+          "byteLength": 347,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 254976,
+      "byteLength": 83584,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 40128,
+          "byteLength": 30384,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 10448
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 338560,
+      "byteLength": 16320,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 70512,
+          "byteLength": 5777,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 2040
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 354880,
+      "byteLength": 117568,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 76292,
+          "byteLength": 41241,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 14696
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 472448,
+      "byteLength": 1856,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 117536,
+          "byteLength": 932,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 232
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 474304,
+      "byteLength": 9792,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 118468,
+          "byteLength": 3299,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1224
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 484096,
+      "byteLength": 704,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 121768,
+          "byteLength": 338,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 88
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 484800,
+      "byteLength": 6176,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 122108,
+          "byteLength": 2564,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 772
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 490976,
+      "byteLength": 576,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 124672,
+          "byteLength": 291,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 72
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 491552,
+      "byteLength": 13536,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 124964,
+          "byteLength": 6559,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1692
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 505088,
+      "byteLength": 13744,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 131524,
+          "byteLength": 5786,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1718
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 518832,
+      "byteLength": 384,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 137312,
+          "byteLength": 182,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 48
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_4_-3_lod1_1.bin",
+      "byteLength": 17048
+    },
+    {
+      "uri": "cell_4_-3_lod1_2.bin",
+      "byteLength": 137496
+    },
+    {
+      "byteLength": 519216,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "EKO | dark plaza stone",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.1899999976158142,
+          0.23999999463558197,
+          0.25999999046325684,
+          1
+        ],
+        "roughnessFactor": 0.5199999809265137,
+        "metallicFactor": 0.07999999821186066
+      }
+    },
+    {
+      "name": "EKO | palm trunk",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.2800000011920929,
+          0.1899999976158142,
+          0.10000000149011612,
+          1
+        ],
+        "roughnessFactor": 0.8999999761581421,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "EKO | tropical landscape foliage",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.07500000298023224,
+          0.2199999988079071,
+          0.12999999523162842,
+          1
+        ],
+        "roughnessFactor": 0.800000011920929,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_MASS_LEKKI_NEUTRAL_RESIDENTIAL",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.4699999988079071,
+          0.4699999988079071,
+          0.41999998688697815,
+          1
+        ],
+        "roughnessFactor": 0.8799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_GIDI_OPEN_SPACE_GRASS",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.11999999731779099,
+          0.23000000417232513,
+          0.11999999731779099,
+          1
+        ],
+        "roughnessFactor": 0.949999988079071,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "EKO | wayfinding and crosswalk paint",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.8799999952316284,
+          0.8899999856948853,
+          0.8199999928474426,
+          1
+        ],
+        "roughnessFactor": 0.5,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | champagne limestone",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.6800000071525574,
+          0.5899999737739563,
+          0.44999998807907104,
+          1
+        ],
+        "roughnessFactor": 0.3799999952316284,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | ivory render",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.7900000214576721,
+          0.7599999904632568,
+          0.6800000071525574,
+          1
+        ],
+        "roughnessFactor": 0.41999998688697815,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | pale sandstone",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5400000214576721,
+          0.46000000834465027,
+          0.3499999940395355,
+          1
+        ],
+        "roughnessFactor": 0.5,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | lagoon glazing",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.04500000178813934,
+          0.17000000178813934,
+          0.20999999344348907,
+          1
+        ],
+        "roughnessFactor": 0.20000000298023224,
+        "metallicFactor": 0.2800000011920929
+      }
+    },
+    {
+      "name": "IKO V2 | balcony glass",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.11999999731779099,
+          0.3400000035762787,
+          0.3499999940395355,
+          1
+        ],
+        "roughnessFactor": 0.2199999988079071,
+        "metallicFactor": 0.18000000715255737
+      }
+    },
+    {
+      "name": "IKO V2 | champagne bronze",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.3400000035762787,
+          0.2199999988079071,
+          0.10999999940395355,
+          1
+        ],
+        "roughnessFactor": 0.30000001192092896,
+        "metallicFactor": 0.550000011920929
+      }
+    },
+    {
+      "name": "IKO V2 | roof slate",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.12999999523162842,
+          0.1599999964237213,
+          0.17000000178813934,
+          1
+        ],
+        "roughnessFactor": 0.6000000238418579,
+        "metallicFactor": 0.10000000149011612
+      }
+    },
+    {
+      "name": "IKO V2 | warm white trim",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.8999999761581421,
+          0.8600000143051147,
+          0.7599999904632568,
+          1
+        ],
+        "roughnessFactor": 0.41999998688697815,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | quiet lane asphalt",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.10000000149011612,
+          0.10999999940395355,
+          0.10999999940395355,
+          1
+        ],
+        "roughnessFactor": 0.8199999928474426,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | promenade stone",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.5899999737739563,
+          0.5699999928474426,
+          0.5,
+          1
+        ],
+        "roughnessFactor": 0.7200000286102295,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | manicured lawn",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.11999999731779099,
+          0.25,
+          0.10999999940395355,
+          1
+        ],
+        "roughnessFactor": 0.8999999761581421,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | tropical foliage",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.07500000298023224,
+          0.18000000715255737,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8999999761581421,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | iroko timber",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.25,
+          0.12999999523162842,
+          0.06499999761581421,
+          1
+        ],
+        "roughnessFactor": 0.6200000047683716,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "IKO V2 | emerald cafe canopy",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.054999999701976776,
+          0.2199999988079071,
+          0.17000000178813934,
+          1
+        ],
+        "roughnessFactor": 0.5,
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Cube.338",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 36
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "Cylinder.040",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 3,
+            "POSITION": 37
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 2
+        }
+      ]
+    },
+    {
+      "name": "Cube.339",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 38
+          },
+          "mode": 4,
+          "material": 2,
+          "indices": 4
+        }
+      ]
+    },
+    {
+      "name": "MASS_LEKKI_006_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 39
+          },
+          "mode": 4,
+          "material": 3,
+          "indices": 6
+        }
+      ]
+    },
+    {
+      "name": "OPENSPACE_2230_mesh",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 40
+          },
+          "mode": 4,
+          "material": 4,
+          "indices": 8
+        }
+      ]
+    },
+    {
+      "name": "EKO_BOULEVARD_EDGE_LINE_1310.8__4_-3",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 11,
+            "POSITION": 41
+          },
+          "mode": 4,
+          "material": 5,
+          "indices": 10
+        }
+      ]
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH__4_-3",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 42
+          },
+          "mode": 4,
+          "material": 6,
+          "indices": 12
+        },
+        {
+          "attributes": {
+            "NORMAL": 15,
+            "POSITION": 43
+          },
+          "mode": 4,
+          "material": 7,
+          "indices": 14
+        },
+        {
+          "attributes": {
+            "NORMAL": 17,
+            "POSITION": 44
+          },
+          "mode": 4,
+          "material": 8,
+          "indices": 16
+        },
+        {
+          "attributes": {
+            "NORMAL": 19,
+            "POSITION": 45
+          },
+          "mode": 4,
+          "material": 9,
+          "indices": 18
+        },
+        {
+          "attributes": {
+            "NORMAL": 21,
+            "POSITION": 46
+          },
+          "mode": 4,
+          "material": 10,
+          "indices": 20
+        },
+        {
+          "attributes": {
+            "NORMAL": 23,
+            "POSITION": 47
+          },
+          "mode": 4,
+          "material": 11,
+          "indices": 22
+        },
+        {
+          "attributes": {
+            "NORMAL": 25,
+            "POSITION": 48
+          },
+          "mode": 4,
+          "material": 12,
+          "indices": 24
+        },
+        {
+          "attributes": {
+            "NORMAL": 27,
+            "POSITION": 49
+          },
+          "mode": 4,
+          "material": 13,
+          "indices": 26
+        },
+        {
+          "attributes": {
+            "NORMAL": 29,
+            "POSITION": 50
+          },
+          "mode": 4,
+          "material": 14,
+          "indices": 28
+        },
+        {
+          "attributes": {
+            "NORMAL": 31,
+            "POSITION": 51
+          },
+          "mode": 4,
+          "material": 15,
+          "indices": 30
+        },
+        {
+          "attributes": {
+            "POSITION": 52,
+            "NORMAL": 17
+          },
+          "mode": 4,
+          "material": 16,
+          "indices": 16
+        },
+        {
+          "attributes": {
+            "NORMAL": 33,
+            "POSITION": 53
+          },
+          "mode": 4,
+          "material": 17,
+          "indices": 32
+        },
+        {
+          "attributes": {
+            "NORMAL": 35,
+            "POSITION": 54
+          },
+          "mode": 4,
+          "material": 18,
+          "indices": 34
+        },
+        {
+          "attributes": {
+            "POSITION": 55,
+            "NORMAL": 7
+          },
+          "mode": 4,
+          "material": 19,
+          "indices": 6
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "EKO_BOULEVARD_MEDIAN_PLANTER_2035",
+      "extras": {
+        "hf_id": "4fa5c83e13954a688e583d76e28b94f8"
+      },
+      "translation": [
+        2035,
+        0.5799999833106995,
+        -1320
+      ],
+      "scale": [
+        3.75,
+        3.75,
+        3.75
+      ],
+      "mesh": 0
+    },
+    {
+      "name": "EKO_BOULEVARD_PALM_TRUNK_2007_1298",
+      "extras": {
+        "hf_id": "c444c6b6890144efba1019d9fa5106ea"
+      },
+      "translation": [
+        2007,
+        3.200000047683716,
+        -1319.999999884516
+      ],
+      "scale": [
+        22.320078011602163,
+        22.320078011602163,
+        22.320078011602163
+      ],
+      "mesh": 1
+    },
+    {
+      "name": "EKO_MEDIAN_GREEN_2035",
+      "extras": {
+        "hf_id": "f8424e288ccd4e45b18227aaa0f76af3"
+      },
+      "translation": [
+        2021.121038198471,
+        3.725093518383801,
+        -1320
+      ],
+      "scale": [
+        23.403350830078125,
+        23.403350830078125,
+        23.403350830078125
+      ],
+      "mesh": 2
+    },
+    {
+      "name": "MASS_LEKKI_006",
+      "extras": {
+        "GIDI_BLOCKOUT_ASSET": true,
+        "GIDI_HEIGHT_M": 38.77,
+        "GIDI_DISTRICT": "LEKKI",
+        "GIDI_FOOTPRINT_M_JSON": "[26.1, 19.18]",
+        "hf_id": "aae135833519470fa669490a86d3ebff"
+      },
+      "translation": [
+        2414.7564690679515,
+        19.566205622426068,
+        -1310.8009438562176
+      ],
+      "scale": [
+        137.5567709254379,
+        137.5567709254379,
+        137.5567709254379
+      ],
+      "mesh": 3
+    },
+    {
+      "name": "OPENSPACE_2230",
+      "extras": {
+        "hf_id": "7a1f6dfd33dc4c21ba5c030922ffe2e3"
+      },
+      "translation": [
+        2230,
+        10.119999997317791,
+        -1180
+      ],
+      "scale": [
+        130,
+        130,
+        130
+      ],
+      "mesh": 4
+    },
+    {
+      "name": "EKO_BOULEVARD_EDGE_LINE_1310.8",
+      "extras": {
+        "hf_id": "d494b1fb223e496c9591960b78fa8259"
+      },
+      "translation": [
+        2070,
+        0.32499998807907104,
+        -1319.999999794365
+      ],
+      "scale": [
+        9.259950964898962,
+        9.259950964898962,
+        9.259950964898962
+      ],
+      "mesh": 5
+    },
+    {
+      "name": "GIDI_IKOYI_WATERFRONT_DISTRICT_V2_MESH",
+      "extras": {
+        "hf_id": "e6b0cde026194003af78b0dae67cf2f8"
+      },
+      "translation": [
+        2301.5,
+        30.489999771118164,
+        -1209.8500061035156
+      ],
+      "scale": [
+        223.14999389648438,
+        223.14999389648438,
+        223.14999389648438
+      ],
+      "mesh": 6
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

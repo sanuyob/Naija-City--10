@@ -46,9 +46,9 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
     return entity;
   };
 
-  const idleClip = heroCharacter?.clipNames?.find(name => /^Hero01_Idle$/i.test(name))
+  let idleClip = heroCharacter?.clipNames?.find(name => /^Hero01_Idle$/i.test(name))
     || heroCharacter?.defaultClips?.idle || null;
-  const walkClip = heroCharacter?.clipNames?.find(name => /^Hero01_Walk$/i.test(name))
+  let walkClip = heroCharacter?.clipNames?.find(name => /^Hero01_Walk$/i.test(name))
     || heroCharacter?.defaultClips?.walk || heroCharacter?.defaultClips?.run || null;
 
   const facePlayer = (actor, player) => {
@@ -157,12 +157,13 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
 
   for (let i = 0; i < DEFS.length; i++) {
     const [role, x, z, shirt, skin] = DEFS[i];
-    const isHero01 = i === 0 && !!heroCharacter?.root?.anim;
-    const root = isHero01 ? heroCharacter.root : new pc.Entity("ambient-pedestrian-" + (i + 1));
+    const isHero01 = i === 0;
+    const hasHeroRig = isHero01 && !!heroCharacter?.root?.anim;
+    const root = hasHeroRig ? heroCharacter.root : new pc.Entity(isHero01 ? "city-npc-hero01" : "ambient-pedestrian-" + (i + 1));
     root.name = isHero01 ? "city-npc-hero01" : "ambient-pedestrian-" + (i + 1);
     root.tags.add("ambient-pedestrian");
-    if (isHero01) {
-      root.tags.add("hero01-city-npc");
+    if (isHero01) root.tags.add("hero01-city-npc");
+    if (hasHeroRig) {
       root.setLocalScale(1, 1, 1);
     } else {
       const shirtMat = material(shirt);
@@ -176,7 +177,7 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
     }
 
     let la = null, ra = null, ll = null, rl = null;
-    if (!isHero01) {
+    if (!hasHeroRig) {
       la = new pc.Entity("left-arm");
       ra = new pc.Entity("right-arm");
       ll = new pc.Entity("left-leg");
@@ -229,10 +230,10 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
     };
     actor.behaviour = buildBehaviour(actor);
     actors.push(actor);
-    if (isHero01 && walkClip) {
+    if (hasHeroRig && walkClip) {
       actor.activeClip = walkClip;
       root.anim.baseLayer.transition(walkClip, .12);
-    }
+    } else if (isHero01) actor.activeClip = "procedural-walk";
   }
 
   let accumulator = 0;
@@ -280,7 +281,7 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
         actor.gait += h * 7.5;
       }
 
-      if (actor.isHero01) {
+      if (actor.isHero01 && actor.root.anim) {
         playNpcClip(actor, actor.state === "walking" ? walkClip : idleClip);
       } else {
         const swing = Math.sin(actor.gait) * (actor.state === "walking" ? 24 : 0);
@@ -292,6 +293,34 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
 
       if (Math.hypot(p[0] - oldX, p[2] - oldZ) > .006) stats.moved++;
     }
+  }
+
+  function setHeroCharacter(character) {
+    if (!character?.root?.anim) return false;
+    const actor = actors.find(item => item.isHero01 && !item.root.anim);
+    if (!actor) return false;
+    const previousRoot = actor.root;
+    const position = actor.motion.position.slice();
+    const yaw = actor.facingYaw || 0;
+    try { previousRoot.destroy(); } catch {}
+    const root = character.root;
+    root.name = 'city-npc-hero01';
+    root.tags.add('ambient-pedestrian');
+    root.tags.add('hero01-city-npc');
+    root.setLocalScale(1, 1, 1);
+    root.setPosition(...position);
+    root.setEulerAngles(0, yaw, 0);
+    app.root.addChild(root);
+    actor.id = root.name;
+    actor.role = 'Hero 01 · City NPC';
+    actor.root = root;
+    actor.isHero01 = true;
+    actor.la = actor.ra = actor.ll = actor.rl = null;
+    idleClip = character.clipNames?.find(name => /^Hero01_Idle$/i.test(name)) || character.defaultClips?.idle || null;
+    walkClip = character.clipNames?.find(name => /^Hero01_Walk$/i.test(name)) || character.defaultClips?.walk || character.defaultClips?.run || null;
+    actor.activeClip = walkClip || '';
+    if (walkClip) root.anim.baseLayer.transition(walkClip, .12);
+    return true;
   }
 
   function destroy() {
@@ -344,5 +373,5 @@ export function createPedestrianSystem({ app, physics, colliders = [], heroChara
     };
   }
 
-  return { update, destroy, getState };
+  return { update, destroy, getState, setHeroCharacter };
 }

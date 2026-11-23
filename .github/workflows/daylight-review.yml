@@ -1,0 +1,67 @@
+name: Naija City daylight review
+
+on:
+  push:
+    branches:
+      - feature/stage-08j-yaba-ikeja-gidi-arterials
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: naija-city-daylight-review
+  cancel-in-progress: true
+
+jobs:
+  daylight-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out daylight baseline
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install project dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Khronos KTX-Software 4.4.2
+        shell: bash
+        run: |
+          archive="${RUNNER_TEMP}/KTX-Software-4.4.2-Linux-x86_64.tar.bz2"
+          install_dir="${RUNNER_TEMP}/ktx-software"
+          curl --fail --location --silent --show-error "https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.tar.bz2" --output "$archive"
+          echo "a8781bad05f9624edbf910b7f258cd0a4ba7d3e63b49ecc0a0ab440bf6a0a245  $archive" | sha256sum --check
+          mkdir -p "$install_dir"
+          tar -xjf "$archive" -C "$install_dir"
+          ktx_bin="$(find "$install_dir" -type f -name ktx -perm -u+x -print -quit)"
+          test -n "$ktx_bin"
+          echo "$(dirname "$ktx_bin")" >> "$GITHUB_PATH"
+          ktx_lib="$(find "$install_dir" -type d -name lib -print -quit)"
+          if [ -n "$ktx_lib" ]; then
+            echo "LD_LIBRARY_PATH=$ktx_lib:${LD_LIBRARY_PATH:-}" >> "$GITHUB_ENV"
+          fi
+          "$ktx_bin" --version
+
+      - name: Build the exact project assets and production bundle
+        run: npm run build
+
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Capture Yaba and Ikeja daylight review
+        run: node scripts/daylight-review-smoke.mjs
+
+      - name: Upload daylight screenshots and diagnostic report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: naija-city-daylight-review
+          path: artifacts/daylight-review/
+          if-no-files-found: warn
+          retention-days: 7

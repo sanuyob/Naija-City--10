@@ -1,0 +1,929 @@
+{
+  "asset": {
+    "generator": "glTF-Transform v4.5.1",
+    "version": "2.0"
+  },
+  "accessors": [
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 36,
+      "normalized": false,
+      "byteOffset": 0,
+      "bufferView": 0
+    },
+    {
+      "name": "EKITI_COASTAL_SETBACK_GUIDE_V1_NORMAL",
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 26,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 1
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 840,
+      "normalized": false,
+      "byteOffset": 72,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 164,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 2
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1680,
+      "normalized": false,
+      "byteOffset": 1752,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 336,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 3
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 6270,
+      "normalized": false,
+      "byteOffset": 5112,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 1254,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 4
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 3600,
+      "normalized": false,
+      "byteOffset": 17652,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 720,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 5
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 1800,
+      "normalized": false,
+      "byteOffset": 24852,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 350,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 6
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 3150,
+      "normalized": false,
+      "byteOffset": 28452,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 630,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 7
+    },
+    {
+      "type": "SCALAR",
+      "componentType": 5123,
+      "count": 924,
+      "normalized": false,
+      "byteOffset": 34752,
+      "bufferView": 0
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5120,
+      "count": 176,
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 8
+    },
+    {
+      "name": "EKITI_COASTAL_SETBACK_GUIDE_V1_POSITION",
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 26,
+      "max": [
+        32767,
+        72,
+        1068
+      ],
+      "min": [
+        -32767,
+        -72,
+        -1068
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 9
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 164,
+      "max": [
+        32383,
+        360,
+        24314
+      ],
+      "min": [
+        -32455,
+        -724,
+        -24046
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 10
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 336,
+      "max": [
+        16614,
+        -404,
+        24398
+      ],
+      "min": [
+        -25139,
+        -688,
+        -18742
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 11
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 1254,
+      "max": [
+        32767,
+        724,
+        24366
+      ],
+      "min": [
+        -32767,
+        -692,
+        -24398
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 12
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 720,
+      "max": [
+        16554,
+        256,
+        24398
+      ],
+      "min": [
+        -28107,
+        -688,
+        -18766
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 13
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 350,
+      "max": [
+        32767,
+        448,
+        14637
+      ],
+      "min": [
+        -32767,
+        -508,
+        -20446
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 14
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 630,
+      "max": [
+        32583,
+        520,
+        20446
+      ],
+      "min": [
+        -32675,
+        -520,
+        -20266
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 15
+    },
+    {
+      "type": "VEC3",
+      "componentType": 5122,
+      "count": 176,
+      "max": [
+        16618,
+        528,
+        32767
+      ],
+      "min": [
+        -16618,
+        -528,
+        -32767
+      ],
+      "normalized": true,
+      "byteOffset": 0,
+      "bufferView": 16
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 2,
+      "byteOffset": 0,
+      "byteLength": 36600,
+      "target": 34963,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 0,
+          "byteOffset": 0,
+          "byteLength": 6625,
+          "mode": "TRIANGLES",
+          "byteStride": 2,
+          "count": 18300
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 36600,
+      "byteLength": 104,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 0,
+          "byteLength": 82,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 26
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 36704,
+      "byteLength": 656,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 84,
+          "byteLength": 381,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 164
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 37360,
+      "byteLength": 1344,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 468,
+          "byteLength": 728,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 336
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 38704,
+      "byteLength": 5016,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 1196,
+          "byteLength": 2623,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 1254
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 43720,
+      "byteLength": 2880,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 3820,
+          "byteLength": 1512,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 720
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 46600,
+      "byteLength": 1400,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 5332,
+          "byteLength": 755,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 350
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 48000,
+      "byteLength": 2520,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 6088,
+          "byteLength": 1338,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 630
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 50520,
+      "byteLength": 704,
+      "target": 34962,
+      "byteStride": 4,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 7428,
+          "byteLength": 395,
+          "mode": "ATTRIBUTES",
+          "filter": "OCTAHEDRAL",
+          "byteStride": 4,
+          "count": 176
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 51224,
+      "byteLength": 208,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 7824,
+          "byteLength": 138,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 26
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 51432,
+      "byteLength": 1312,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 7964,
+          "byteLength": 620,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 164
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 52744,
+      "byteLength": 2688,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 8584,
+          "byteLength": 1081,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 336
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 55432,
+      "byteLength": 10032,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 9668,
+          "byteLength": 4072,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 1254
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 65464,
+      "byteLength": 5760,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 13740,
+          "byteLength": 2288,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 720
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 71224,
+      "byteLength": 2800,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 16028,
+          "byteLength": 1169,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 350
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 74024,
+      "byteLength": 5040,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 17200,
+          "byteLength": 2067,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 630
+        }
+      }
+    },
+    {
+      "buffer": 2,
+      "byteOffset": 79064,
+      "byteLength": 1408,
+      "target": 34962,
+      "byteStride": 8,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "buffer": 1,
+          "byteOffset": 19268,
+          "byteLength": 687,
+          "mode": "ATTRIBUTES",
+          "byteStride": 8,
+          "count": 176
+        }
+      }
+    }
+  ],
+  "buffers": [
+    {
+      "name": "GIDI Cell Buffer",
+      "uri": "cell_5_-1_full_1.bin",
+      "byteLength": 6628
+    },
+    {
+      "uri": "cell_5_-1_full_2.bin",
+      "byteLength": 19956
+    },
+    {
+      "byteLength": 80472,
+      "extensions": {
+        "EXT_meshopt_compression": {
+          "fallback": true
+        }
+      }
+    }
+  ],
+  "materials": [
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_OLIVE",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.1599999964237213,
+          0.25,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_FOREST",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.06499999761581421,
+          0.20999999344348907,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_SHRUB",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.07999999821186066,
+          0.20000000298023224,
+          0.06499999761581421,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_BARK_DARK",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.20000000298023224,
+          0.10499999672174454,
+          0.054999999701976776,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_SUNLIT",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.11999999731779099,
+          0.27000001072883606,
+          0.08500000089406967,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_FOLIAGE_DEEP",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.03500000014901161,
+          0.15000000596046448,
+          0.054999999701976776,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_VEG_BARK_WARM",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.28999999165534973,
+          0.1599999964237213,
+          0.07500000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8600000143051147,
+        "metallicFactor": 0
+      }
+    },
+    {
+      "name": "MAT_EKITI_BOUNDARY_REVIEW",
+      "doubleSided": true,
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.8500000238418579,
+          0.6600000262260437,
+          0.20000000298023224,
+          1
+        ],
+        "roughnessFactor": 0.8500000238418579,
+        "metallicFactor": 0
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "EKITI_COASTAL_SETBACK_GUIDE_V1__5_-1",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 16
+          },
+          "mode": 4,
+          "material": 7,
+          "indices": 0
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_NATIVE_SHRUB_CLUSTER_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 3,
+            "POSITION": 17
+          },
+          "mode": 4,
+          "material": 3,
+          "indices": 2
+        },
+        {
+          "attributes": {
+            "NORMAL": 5,
+            "POSITION": 18
+          },
+          "mode": 4,
+          "material": 2,
+          "indices": 4
+        },
+        {
+          "attributes": {
+            "NORMAL": 7,
+            "POSITION": 19
+          },
+          "mode": 4,
+          "material": 1,
+          "indices": 6
+        },
+        {
+          "attributes": {
+            "NORMAL": 9,
+            "POSITION": 20
+          },
+          "mode": 4,
+          "material": 0,
+          "indices": 8
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_IROKO_BROAD_CROWN_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 11,
+            "POSITION": 21
+          },
+          "mode": 4,
+          "material": 5,
+          "indices": 10
+        },
+        {
+          "attributes": {
+            "NORMAL": 13,
+            "POSITION": 22
+          },
+          "mode": 4,
+          "material": 4,
+          "indices": 12
+        }
+      ]
+    },
+    {
+      "name": "ASSET_EKITI_LOCUST_BEAN_OPEN_CROWN_MESH",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 15,
+            "POSITION": 23
+          },
+          "mode": 4,
+          "material": 6,
+          "indices": 14
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "name": "EKITI_SHRUB_0000",
+      "extras": {
+        "species_asset": "ASSET_EKITI_NATIVE_SHRUB_CLUSTER",
+        "vegetation_role": "understory_shrub",
+        "collision_radius_m": 0.68,
+        "hf_id": "1cc8847ba534457096025e3c61daa6b1"
+      },
+      "translation": [
+        2795.1286396944142,
+        3.811031418596217,
+        -467.14291563088864
+      ],
+      "rotation": [
+        0,
+        -0.3234398945547794,
+        0,
+        0.9462487170984134
+      ],
+      "scale": [
+        166.84479519926387,
+        166.84477671472305,
+        166.84479519926387
+      ],
+      "mesh": 1
+    },
+    {
+      "name": "EKITI_TREE_000",
+      "extras": {
+        "species_asset": "ASSET_EKITI_IROKO_BROAD_CROWN",
+        "vegetation_role": "canopy_tree",
+        "collision_radius_m": 1.63,
+        "hf_id": "2a5bf01d254e4c3aa86af63f6f72ef85"
+      },
+      "translation": [
+        2797.258774989928,
+        5.79112184843937,
+        -467.79558393672227
+      ],
+      "rotation": [
+        0,
+        -0.2852114075597912,
+        0,
+        0.9584646331491646
+      ],
+      "scale": [
+        174.6198630565856,
+        174.6198575217148,
+        174.6198630565856
+      ],
+      "mesh": 2
+    },
+    {
+      "name": "EKITI_TREE_002",
+      "extras": {
+        "species_asset": "ASSET_EKITI_LOCUST_BEAN_OPEN_CROWN",
+        "vegetation_role": "canopy_tree",
+        "collision_radius_m": 1.6,
+        "hf_id": "8cbaf8321e1c4cbdb4bab68cfc00ba6c"
+      },
+      "translation": [
+        2746.4236812409417,
+        2.151484702779477,
+        -467.70538762263607
+      ],
+      "rotation": [
+        0,
+        -0.8365694937584679,
+        0,
+        0.547860823670301
+      ],
+      "scale": [
+        121.6232533957354,
+        121.62325920976632,
+        121.6232533957354
+      ],
+      "mesh": 3
+    },
+    {
+      "name": "EKITI_COASTAL_SETBACK_GUIDE_V1",
+      "extras": {
+        "role": "inner edge of 20 m shoreline/revetment non-buildable buffer",
+        "hf_id": "2d886c4eaf974922b10cc9724922f63c"
+      },
+      "translation": [
+        2925,
+        1.0909841143293306,
+        -420.0391903705895
+      ],
+      "scale": [
+        325.56568682193756,
+        325.56568682193756,
+        325.56568682193756
+      ],
+      "mesh": 0
+    }
+  ],
+  "scenes": [
+    {
+      "name": "GIDI",
+      "nodes": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  ],
+  "extensionsUsed": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_materials_emissive_strength",
+    "KHR_materials_specular",
+    "KHR_materials_transmission",
+    "KHR_mesh_quantization"
+  ],
+  "extensionsRequired": [
+    "EXT_meshopt_compression",
+    "KHR_lights_punctual",
+    "KHR_mesh_quantization"
+  ]
+}

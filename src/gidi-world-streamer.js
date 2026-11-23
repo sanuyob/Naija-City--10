@@ -1,4 +1,5 @@
 import * as pc from 'playcanvas';
+import { isPlayerInteriorReplacementCollider } from './gidi-authored-interiors.js';
 
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -52,13 +53,24 @@ export function createGidiWorldStreamer({
   collisionLoadRadius = 220,
   collisionUnloadRadius = 460,
   updateInterval = 0.22,
-  maxLoadsPerUpdate = 2
+  maxLoadsPerUpdate = 2,
+  activationPoint = [100, 0, -445],
+  activationRadius = 220,
+  applyShadowPolicy = () => {}
 } = {}) {
   if (!app) throw new Error('GIDI streamer requires a PlayCanvas application.');
 
   const records = new Map();
   const inFlight = new Map();
+  const namedEntityOverrides = new Map();
   const errors = [];
+  // GIDI imports use offline-joined static geometry and stay in the normal
+  // render path. Runtime BatchManager groups hid streamed GLTF components,
+  // so they are intentionally not assigned to runtime batch groups.
+  const cellBatchGroup = null;
+  const infrastructureBatchGroup = null;
+  let materialRefractionDowngrades = 0;
+  let infrastructureRenderComponents = 0;
   let manifest = null;
   let infrastructureAsset = null;
   let infrastructureEntity = null;
@@ -93,6 +105,27 @@ export function createGidiWorldStreamer({
     return manifest;
   }
 
+  function prepareStaticRenderEntity(entity, group) {
+    const components = entity.findComponents('render');
+    for (const component of components) {
+      for (const instance of component.meshInstances || []) {
+        const material = instance.material;
+        if (material?.useDynamicRefraction) {
+          // Keep the imported tinted glass colour, but remove per-frame scene
+          // colour grab-pass refraction for the low-memory mobile renderer.
+          material.useDynamicRefraction = false;
+          material.refraction = 0;
+          if (Number(material.opacity) >= 0.98) material.blendType = pc.BLEND_NONE;
+          material.update();
+          materialRefractionDowngrades++;
+        }
+      }
+      if (group) component.batchGroupId = group.id;
+    }
+    applyShadowPolicy(entity);
+    return components.length;
+  }
+
   async function ensureInfrastructure() {
     if (infrastructureEntity) return infrastructureEntity;
     if (infrastructurePromise) return infrastructurePromise;
@@ -107,6 +140,7 @@ export function createGidiWorldStreamer({
       const entity = asset.resource.instantiateRenderEntity();
       entity.name = 'GIDI-streamed-infrastructure';
       entity.setPosition(0, Number(data.worldYOffset) || 0, 0);
+      infrastructureRenderComponents = prepareStaticRenderEntity(entity, null);
       app.root.addChild(entity);
       infrastructureAsset = asset;
       infrastructureEntity = entity;
@@ -134,7 +168,8 @@ export function createGidiWorldStreamer({
         lastDistance: Infinity,
         lastError: null,
         pendingMode: null,
-        visualPromise: null
+        visualPromise: null,
+        streamedRenderComponents: 0
       };
       records.set(cell.id, record);
     }
@@ -148,7 +183,11 @@ export function createGidiWorldStreamer({
     const proxies = (record.cell.colliders || []).map(proxy => ({
       ...proxy, position: [proxy.position[0], proxy.position[1] + yOffset, proxy.position[2]]
     }));
-    const playerCount = playerPhysics?.addStaticColliders?.(proxies, ownerId) || 0;
+    // Large generated footprint boxes remain for vehicles, but would seal the
+    // authored door openings for the player. The interior module replaces
+    // these few player blockers with source-derived wall/floor boxes.
+    const playerProxies = proxies.filter(proxy => !isPlayerInteriorReplacementCollider(proxy));
+    const playerCount = playerPhysics?.addStaticColliders?.(playerProxies, ownerId) || 0;
     const vehicleCount = vehicleSystem?.addStaticColliders?.(proxies, ownerId) || 0;
     record.collisionAdded = true;
     record.playerColliderCount = playerCount;
@@ -167,10 +206,47 @@ export function createGidiWorldStreamer({
     record.vehicleColliderCount = 0;
   }
 
+  function applyNamedEntityOverrides(root) {
+    if (!root || namedEntityOverrides.size === 0) return 0;
+    let applied = 0;
+    const stack = [root];
+    while (stack.length) {
+      const entity = stack.pop();
+      const enabled = namedEntityOverrides.get(entity.name);
+      if (enabled !== undefined) { entity.enabled = enabled; applied++; }
+      for (const child of entity.children || []) stack.push(child);
+    }
+    return applied;
+  }
+
+  function setNamedEntityEnabled(name, enabled) {
+    if (!name) return 0;
+    const value = Boolean(enabled);
+    namedEntityOverrides.set(String(name), value);
+    let changed = 0;
+    for (const record of records.values()) changed += applyNamedEntityOverrides(record.visual);
+    return changed;
+  }
+
+  function getNamedEntityState(name) {
+    const matches = [];
+    for (const record of records.values()) {
+      if (!record.visual) continue;
+      const stack = [record.visual];
+      while (stack.length) {
+        const entity = stack.pop();
+        if (entity.name === name) matches.push({ cellId: record.cell.id, enabled: entity.enabled, renderEnabled: entity.render?.enabled ?? null });
+        for (const child of entity.children || []) stack.push(child);
+      }
+    }
+    return { name, override: namedEntityOverrides.get(name) ?? null, matches };
+  }
+
   function destroyVisual(record) {
     if (record.visual) {
       try { record.visual.destroy(); } catch {}
       record.visual = null;
+      record.streamedRenderComponents = 0;
     }
     if (record.visualAsset) {
       try { app.assets.remove(record.visualAsset); } catch {}
@@ -197,8 +273,10 @@ export function createGidiWorldStreamer({
         const entity = asset.resource.instantiateRenderEntity();
         entity.name = 'GIDI-cell-' + cell.id.replace(',', '_') + '-' + mode;
         entity.setPosition(0, Number(manifest?.worldYOffset) || 0, 0);
+        record.streamedRenderComponents = prepareStaticRenderEntity(entity, null);
         app.root.addChild(entity);
         record.visual = entity;
+        applyNamedEntityOverrides(entity);
         record.visualAsset = asset;
         record.visualMode = mode;
         totalCellLoads++;
@@ -236,6 +314,13 @@ export function createGidiWorldStreamer({
     const x = Number(position?.[0]) || 0;
     const z = Number(position?.[2]) || 0;
     const current = [x, 0, z];
+    // Do not download the distant GIDI infrastructure during a Yaba-only
+    // session. It activates when the player reaches the western gateway.
+    if (!infrastructureEntity && activationPoint &&
+        Math.hypot(x - activationPoint[0], z - activationPoint[2]) > activationRadius) {
+      lastPosition = null;
+      return;
+    }
     if (lastPosition && Math.hypot(current[0] - lastPosition[0], current[2] - lastPosition[2]) < 8) {
       // Still refresh mode changes and asynchronous loads, but avoid rebuilding the desired set every frame.
       for (const record of records.values()) {
@@ -292,13 +377,14 @@ export function createGidiWorldStreamer({
 
   function getState() {
     let fullCells = 0, mediumCells = 0, hiddenCollisionCells = 0, visibleBuildings = 0;
-    let playerCollisionCount = 0, vehicleCollisionCount = 0;
+    let playerCollisionCount = 0, vehicleCollisionCount = 0, streamedRenderComponents = 0;
     for (const record of records.values()) {
       if (record.visualMode === 'full') fullCells++;
       else if (record.visualMode === 'lod1') mediumCells++;
       else if (record.collisionAdded) hiddenCollisionCells++;
       playerCollisionCount += record.playerColliderCount || 0;
       vehicleCollisionCount += record.vehicleColliderCount || 0;
+      streamedRenderComponents += record.streamedRenderComponents || 0;
       if (record.visual) {
         for (const render of record.visual.findComponents('render')) {
           visibleBuildings += (render.meshInstances || []).filter(mesh => mesh.visible !== false).length;
@@ -309,10 +395,22 @@ export function createGidiWorldStreamer({
       ready,
       lastStatus,
       cellSize: manifest?.cellSize || 500,
+      fullDetailRadius,
+      mediumDetailRadius,
       collisionLoadRadius,
       collisionUnloadRadius,
       visualUnloadRadius: unloadRadius,
+      maxLoadsPerUpdate,
+      updateInterval,
       totalCells: manifest?.cells?.length || 0,
+      cellBatchGroupId: cellBatchGroup?.id ?? null,
+      cellBatchCount: 0,
+      infrastructureBatchGroupId: infrastructureBatchGroup?.id ?? null,
+      infrastructureBatchCount: 0,
+      infrastructureRenderComponents,
+      materialRefractionDowngrades,
+      streamedRenderComponents,
+      staticImportsBatched: false,
       loadedCells: records.size,
       desiredCells: lastDesiredCount,
       fullCells,
@@ -330,6 +428,7 @@ export function createGidiWorldStreamer({
       totalColliderAdds,
       totalColliderRemoves,
       inFlightLoads: [...records.values()].filter(record => Boolean(record.visualPromise)).length,
+      namedEntityOverrides: Object.fromEntries(namedEntityOverrides),
       errors: errors.slice(-8)
     };
   }
@@ -352,6 +451,8 @@ export function createGidiWorldStreamer({
   return {
     start: ensureInfrastructure,
     update,
+    setNamedEntityEnabled,
+    getNamedEntityState,
     getState,
     destroy
   };

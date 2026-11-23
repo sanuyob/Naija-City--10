@@ -14,13 +14,18 @@ function hideLegacyBuildings(app) {
   return hidden;
 }
 
-export function createStage08EBuildings({app}) {
-  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],textureEncoding:'shared Yaba KTX2 Basis library; residential PNG assets retained',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
+export function createStage08EBuildings({app,lowMemoryDevice=false,lowDataMode=false,applyShadowPolicy=()=>{}}={}) {
+  const state={stage:'08E',ready:false,expectedBuildings:0,loadedBuildings:0,loadingBuildings:0,failedBuildings:0,unloadedBuildings:0,legacyBodiesHidden:0,staticBatching:false,lod0:0,lod1:0,lod2:0,lastPlayerPosition:null,lastCandidateCount:0,activeDistricts:[],failures:[],buildings:[],textureEncoding:'shared Yaba KTX2 Basis library; residential PNG assets retained',heroBuildingId:null,heroBuildingLoaded:false,heroLoadMs:null,heroTextureEncoding:'not loaded',heroPbrMaterials:[],heroLoadError:null};
   const entries=[],loading=new Set(),loaded=new Map(),sharedMaterials=new Map(),assetsById=new Map();
   let masterAssetId=null;
-  const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,96);
+  const batchGroup=app.batcher?.addGroup('stage08e-static-buildings',false,128);
+  state.batchGroupId=batchGroup?.id??null;
   let tick=0,activeLoads=0;
-  const maxConcurrent=2;
+  const maxConcurrent=lowMemoryDevice?1:2;
+  const progressiveLoadRadius=lowDataMode?85:(lowMemoryDevice?140:180);
+  const heroActivationRadius=lowDataMode?48:(lowMemoryDevice?65:76);
+  const progressiveLoadIntervalMs=lowDataMode?900:(lowMemoryDevice?420:180);
+  let nextProgressiveLoadAt=0;
 
   async function loadOne(item) {
     if(loading.has(item.id)) return false;
@@ -55,6 +60,7 @@ export function createStage08EBuildings({app}) {
         }
         if(batchGroup) component.batchGroupId=batchGroup.id;
       }
+      applyShadowPolicy(entity);
       app.root.addChild(entity);
       if(masterAssetId===null) masterAssetId=item.id;
       loaded.set(item.id,{entity,asset,lods,position:item.position,kind:item.kind,distance:Infinity,hero:Boolean(item.hero)});
@@ -75,12 +81,13 @@ export function createStage08EBuildings({app}) {
 
   async function initialize() {
     state.legacyBodiesHidden=hideLegacyBuildings(app);
-    const response=await fetch(assetUrl('assets/stage-08e-manifest.json'),{cache:'no-store'});
+    const response=await fetch(assetUrl('assets/stage-08e-manifest.json'),{cache:'force-cache'});
     if(!response.ok) throw new Error('Stage 08E manifest HTTP '+response.status);
     const manifest=await response.json();
     if(manifest.stage!=='08E'||!Array.isArray(manifest.models)) throw new Error('Invalid Stage 08E asset manifest');
     entries.push(...manifest.models);
     state.expectedBuildings=entries.length;
+    state.buildings=entries.map(item=>({id:item.id,name:item.name,kind:item.kind,position:item.position.slice(),size:item.size?.slice()||null,rotationY:Number(item.rotationY)||0,district:item.district,enterable:false,hero:Boolean(item.hero)}));
     state.textureEncoding=manifest.textureEncoding||state.textureEncoding;
     return state;
   }
@@ -131,6 +138,7 @@ export function createStage08EBuildings({app}) {
     state.preloadTotal=targets.length;
     state.preloadCompleted=0;
     state.preloadFailed=0;
+    state.preloadBytes=0;
     let cursor=0;
     const worker=async()=>{
       while(cursor<targets.length){
@@ -138,13 +146,14 @@ export function createStage08EBuildings({app}) {
         const ok=await loadOne(item);
         state.preloadCompleted++;
         if(!ok)state.preloadFailed++;
-        onProgress({total:targets.length,completed:state.preloadCompleted,loaded:state.loadedBuildings,failed:state.preloadFailed,percent:targets.length?state.preloadCompleted/targets.length*100:100});
+        else state.preloadBytes+=Number(item.bytes)||0;
+        onProgress({total:targets.length,completed:state.preloadCompleted,loaded:state.loadedBuildings,failed:state.preloadFailed,bytes:state.preloadBytes,percent:targets.length?state.preloadCompleted/targets.length*100:100});
       }
     };
     await Promise.all(Array.from({length:Math.min(maxConcurrent,targets.length)},worker));
     state.preloading=false;
     state.preloadReady=state.preloadFailed===0;
-    return {total:targets.length,loaded:state.loadedBuildings,failed:state.preloadFailed,ready:state.preloadReady};
+    return {total:targets.length,loaded:state.loadedBuildings,failed:state.preloadFailed,bytes:state.preloadBytes,ready:state.preloadReady};
   }
 
   function update(position) {
@@ -170,16 +179,20 @@ export function createStage08EBuildings({app}) {
         if(item.entity.enabled) state['lod'+level]++;
       }
     }
-    if(activeLoads>=maxConcurrent) return;
+    const now=performance.now();
+    if(activeLoads>=maxConcurrent||now<nextProgressiveLoadAt) return;
+    const distanceFromSpawn=Math.hypot(position[0],position[2]);
+    const activeLoadRadius=distanceFromSpawn<10?35:Math.min(progressiveLoadRadius,Math.max(55,distanceFromSpawn+45));
     const candidates=entries
       .filter(item=>!loaded.has(item.id)&&!loading.has(item.id)&&!state.failures.some(f=>f.startsWith(item.id+':')))
       .map(item=>({...item,distance:Math.hypot(position[0]-item.position[0],position[2]-item.position[2])}))
-      .filter(item=>item.distance<=220)
+      .filter(item=>item.distance<=activeLoadRadius&&(item.hero?item.distance<=heroActivationRadius:true))
       .sort((a,b)=>Number(Boolean(b.hero))-Number(Boolean(a.hero))||a.distance-b.distance);
     state.lastCandidateCount=candidates.length;
     state.activeDistricts=[...new Set(candidates.map(item=>item.district).filter(Boolean))];
-    for(const item of candidates.slice(0,maxConcurrent-activeLoads)) loadOne(item);
+    const scheduled=candidates.slice(0,Math.min(maxConcurrent-activeLoads,lowMemoryDevice?1:2));
+    if(scheduled.length){nextProgressiveLoadAt=now+progressiveLoadIntervalMs;for(const item of scheduled)void loadOne(item);}
   }
 
-  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static rotated-box Bullet proxies';state.collisionRadius=collisionRadius;return state;},preloadArea,update,resolveMovement,getCollisionProxies,getState:()=>({...state,streaming:'startup-preloaded district + progressive background loading with 300m eviction (first shared-material source is pinned)',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterAsset:masterAssetId})};
+  return {initialize:async()=>{await initialize();state.ready=true;state.collisionProxyCount=entries.length;state.collisionMode='persistent static rotated-box Bullet proxies';state.collisionRadius=collisionRadius;return state;},preloadArea,update,resolveMovement,getCollisionProxies,getState:()=>({...state,streaming:'35m startup preload + distance-prioritized progressive loading; '+progressiveLoadRadius+'m background radius, hero asset at '+heroActivationRadius+'m, '+progressiveLoadIntervalMs+'ms pacing, 300m visual eviction',cachedAssets:loaded.size,sharedMaterialCount:sharedMaterials.size,masterAsset:masterAssetId})};
 }

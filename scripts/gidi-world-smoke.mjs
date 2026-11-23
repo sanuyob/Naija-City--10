@@ -18,13 +18,27 @@ try {
   browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--enable-webgl', '--ignore-gpu-blocklist', '--use-gl=angle', '--use-angle=swiftshader'] });
   const page = await browser.newPage({ viewport: { width: 844, height: 390 }, isMobile: true, hasTouch: true });
   const errors = [];
+  const vertexAlignmentWarnings = new Map();
   page.on('pageerror', error => errors.push('pageerror: ' + error.message));
-  page.on('console', message => { if (message.type() === 'error') errors.push('console: ' + message.text()); });
+  page.on('console', message => {
+    if (message.type() !== 'error') return;
+    const text = message.text();
+    const alignment = text.match(/Non-interleaved vertex format with element size not multiple of 4[^]*?Element size: (\d+)/);
+    if (alignment) vertexAlignmentWarnings.set(Number(alignment[1]), (vertexAlignmentWarnings.get(Number(alignment[1])) || 0) + 1);
+    else errors.push('console: ' + text);
+  });
   page.on('requestfailed', request => errors.push('requestfailed: ' + request.url() + ' ' + request.failure()?.errorText));
   await page.goto(origin + '?smoke=gidi', { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready === true, null, { timeout: 90000 });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.playerCharacterReady === true, null, { timeout: 60000 });
 
+  const startupGidiState = await page.evaluate(() => window.__NAIJA_GAME__.getGidiState());
+  if (startupGidiState.infrastructureLoaded || startupGidiState.totalCells !== 0) {
+    throw new Error('Distant GIDI infrastructure should remain unloaded while the player starts in Yaba: ' + JSON.stringify(startupGidiState));
+  }
+  // GIDI's road/terrain infrastructure now starts when Ara reaches the
+  // Yaba–GIDI gateway, rather than charging every Yaba-only launch.
+  await page.evaluate(() => window.__NAIJA_GAME__.debugLoadGidiForSmoke([100, 0, -445]));
   await page.waitForFunction(() => window.__NAIJA_GAME__?.getGidiState?.()?.infrastructureLoaded === true, null, { timeout: 60000 });
   const startState = await page.evaluate(() => window.__NAIJA_GAME__.getGidiState());
 
@@ -159,6 +173,7 @@ try {
     gatewayDriveSamples,
     gatewayDrive: { position: gatewayDriveState.position, speedKmh: gatewayDriveState.speedKmh, measuredWheelContacts: gatewayDriveState.dynamics.measuredWheelContacts },
     screenshot,
+    vertexAlignmentWarnings: Object.fromEntries(vertexAlignmentWarnings),
     errors
   };
   console.log('GIDI_RUNTIME_SMOKE ' + JSON.stringify(result));

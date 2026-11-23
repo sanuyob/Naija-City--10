@@ -873,5 +873,11 @@
         "removedDetailNodeCount": 0
       }
     }
-  ]
+  ],
+  "sourceProject": {
+    "name": "GIDI 02 REBUILD",
+    "projectId": "5d0b57d1-197f-4532-bb0f-4ca703c3224a",
+    "revision": 106,
+    "sceneSequence": 2
+  }
 }

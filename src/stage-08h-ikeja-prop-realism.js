@@ -174,7 +174,7 @@ function tintedVariant(source, name, tint, glossFactor = 1) {
 }
 
 export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
-  const group = app.batcher?.addGroup('stage08h-ikeja-realistic-prop-details', false, 72);
+  const group = app.batcher?.addGroup('stage08h-ikeja-realistic-prop-details', false, 160);
   const mapCache = new Map();
   const map = (type, size, seed, color) => {
     const key = type + ':' + seed;
@@ -272,11 +272,13 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     silt: tintedVariant(silt, '08H-dark-drain-silt', [0.73,0.68,0.6],0.42)
   };
 
-  const colorWearSet = (family, label, tint) => ({
-    clean: tintedVariant(clean[family], '08H-' + label + '-clean', tint, 0.96),
-    used: tintedVariant(used[family], '08H-' + label + '-used', tint, 0.78),
-    weathered: tintedVariant(weathered[family], '08H-' + label + '-weathered', tint, 0.56)
-  });
+  const colorWearSet = (family, label, tint) => {
+    // Keep colour identity while sharing a single material across wear states.
+    // Texture maps already carry most of the surface variation; fewer unique
+    // materials allow the static prop batch to combine more geometry.
+    const shared = tintedVariant(clean[family], '08H-' + label + '-shared', tint, 0.82);
+    return { clean: shared, used: shared, weathered: shared };
+  };
   const signBlue = colorWearSet('paintMetal','blue-sign-paint',[0.42,0.66,1.35]);
   const signGreen = colorWearSet('paintMetal','green-sign-paint',[0.38,1.12,0.58]);
   const signYellow = colorWearSet('paintMetal','yellow-streetlight-paint',[1.28,1.08,0.46]);
@@ -308,28 +310,6 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     colorWearSet('plaster','cool-grey-shop-plaster',[0.75,0.9,0.93]),
     colorWearSet('plaster','warm-stone-shop-plaster',[0.94,0.93,0.78])
   ];
-  const vehiclePaints = {
-    danfo: {
-      clean: tintedVariant(clean.paintMetal,'08H-danfo-yellow-clean',[1.24,1.04,0.62]),
-      used: tintedVariant(used.paintMetal,'08H-danfo-yellow-used',[1.13,0.98,0.58]),
-      weathered: tintedVariant(weathered.paintMetal,'08H-danfo-yellow-weathered',[1.02,0.92,0.55])
-    },
-    keke: {
-      clean: tintedVariant(clean.paintMetal,'08H-keke-green-clean',[0.62,1.08,0.72]),
-      used: tintedVariant(used.paintMetal,'08H-keke-green-used',[0.58,0.98,0.67]),
-      weathered: tintedVariant(weathered.paintMetal,'08H-keke-green-weathered',[0.54,0.88,0.61])
-    },
-    sedan: {
-      clean: tintedVariant(clean.paintMetal,'08H-sedan-light-clean',[1.12,1.12,1.08]),
-      used: tintedVariant(used.paintMetal,'08H-sedan-light-used',[1.02,1.02,0.99]),
-      weathered: tintedVariant(weathered.paintMetal,'08H-sedan-light-weathered',[0.92,0.92,0.9])
-    }
-  };
-
-  const entities = app.root.findByTag('stage08g-ikeja-street-life') || [];
-  let texturedProps = 0, cleanProps = 0, usedProps = 0, weatheredProps = 0;
-  const assigned = [];
-
   function selectWear(name, position, index) {
     if (/bottle-litter|carton-litter|sachet-litter|gutter-silt|shallow-road-depression/.test(name)) return 'weathered';
     if (/generator|open-gutter|drain-cover|utility-pole|pole-crossarm|asphalt-repair|security-grille/.test(name)) return 'weathered';
@@ -346,10 +326,6 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
 
   function getMaterial(name, wear, index, position) {
     const mats = wear === 'clean' ? clean : wear === 'weathered' ? weathered : used;
-    if (/parked-.*-(body|roof)$/.test(name)) {
-      const vehicleType = name.includes('danfo') ? 'danfo' : name.includes('keke') ? 'keke' : 'sedan';
-      return vehiclePaints[vehicleType][wear];
-    }
     if (/pedestrian-head/.test(name)) return skin;
     if (/pedestrian-torso/.test(name)) {
       const shirt = position[2] > 350 || position[2] < 285 ? 0 : position[2] < 320 ? 1 : 2;
@@ -399,6 +375,10 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     if (/parked-/.test(name)) return mats.paintMetal;
     return mats.concrete;
   }
+
+  const entities = app.root.findByTag('stage08g-ikeja-street-life') || [];
+  let texturedProps = 0, cleanProps = 0, usedProps = 0, weatheredProps = 0;
+  const assigned = [];
 
   for (let index = 0; index < entities.length; index++) {
     const entity = entities[index];
@@ -559,20 +539,7 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     const p = entity.getPosition();
     detail('wheel-hub', 'cylinder', [p.x,p.y,p.z], [0.11,0.16,0.16], galvanized, [0,0,90]);
   }
-  for (const entity of entities.filter(item => /stage08g-parked-.*-body$/.test(item.name))) {
-    const p = entity.getPosition();
-    const zSize = entity.getLocalScale().z;
-    const vehicleType = entity.name.includes('danfo') ? 'danfo' : entity.name.includes('keke') ? 'keke' : 'sedan';
-    const vehiclePaint = vehiclePaints[vehicleType].used;
-    detail('vehicle-front-bumper', 'box', [p.x,p.y-0.27,p.z-zSize*0.48],
-      [entity.getLocalScale().x*0.96,0.16,0.12], weathered.paintMetal);
-    detail('vehicle-rear-bumper', 'box', [p.x,p.y-0.27,p.z+zSize*0.48],
-      [entity.getLocalScale().x*0.96,0.16,0.12], vehiclePaint);
-    detail('vehicle-headlamp-left', 'box', [p.x-entity.getLocalScale().x*0.38,p.y+0.12,p.z-zSize*0.5],
-      [0.22,0.16,0.035], glass);
-    detail('vehicle-headlamp-right', 'box', [p.x+entity.getLocalScale().x*0.38,p.y+0.12,p.z-zSize*0.5],
-      [0.22,0.16,0.035], glass);
-  }
+  // Parked road-vehicle props were removed from the Ikeja carriageway.
 
   const materialAssignmentCounts = assigned.reduce((counts, item) => {
     counts[item.material] = (counts[item.material] || 0) + 1;
@@ -597,10 +564,11 @@ export function createStage08HIkejaPropRealism({ app, graphicsDevice }) {
     materialAssignmentCounts,
     unrenderedTaggedProps,
     staticBatching:Boolean(group),
+    batchGroupId:group?.id??null,
     sourceAttribution:'Original procedural maps generated in project; no third-party image textures.',
     limitations:[
       'Surface maps are procedural, not scans of the actual street materials.',
-      'Existing 08G pedestrian figures and parked vehicles remain static scene props.',
+      'Existing 08G pedestrian figures remain static scene props; parked cars were removed from the carriageway.',
       'No real device visual or thermal acceptance has been performed.'
     ]
   };
