@@ -359,6 +359,7 @@ export function mountRPGInterface() {
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     setWorldMapData:worldMapUI.setData, setWorldMapPlayerPosition:worldMapUI.setPlayerPosition, getWorldMapState:worldMapUI.getState,
-    isPlayerCharacterRequired: () => characterRequired
+    isPlayerCharacterRequired: () => characterRequired,
+    refreshEquipmentUI
   };
 }
