@@ -42,8 +42,8 @@ try {
   assert.equal(firstSpawn.grounded, true, 'Ara should be grounded at first spawn');
   assert.equal(firstSpawn.ground?.surface, 'concrete', 'first spawn should be on the pedestrian sidewalk, not the carriageway');
   assert.equal(firstSpawn.ground?.id, 'yaba-concrete-sidewalk-west', 'first spawn should use the matching sidewalk support collider');
-  assert.deepEqual(firstSpawn.roadHierarchy.yabaCrossStreetsMetres, {'-110': 9, '42': 12.5, '118': 12.5}, 'Only the two busier Yaba cross streets should be widened');
-  assert.deepEqual(firstSpawn.roadHierarchy.yabaCrossStreetsRenderedMetres, {'-110': 9, '42': 12.5, '118': 12.5}, 'Rendered widths must agree with the cross-street road hierarchy');
+  assert.deepEqual(firstSpawn.roadHierarchy.yabaCrossStreetsMetres, {'-110': 9, '42': 15.5, '118': 12.5}, 'Only the two busier Yaba cross streets should be widened');
+  assert.deepEqual(firstSpawn.roadHierarchy.yabaCrossStreetsRenderedMetres, {'-110': 9, '42': 15.5, '118': 12.5}, 'Rendered widths must agree with the cross-street road hierarchy');
   assert.ok(firstSpawn.camera?.every(Number.isFinite), 'first-person-follow camera should be initialized');
   const points = [
     { name: 'Yaba main road / first-spawn frontage', x: 0, z: -40, yaw: 0, expected: 'asphalt' },

@@ -59,7 +59,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
       }
     }
   }
-  const crossStreetWidths = new Map([[-110, 9.0], [42, 12.5], [118, 12.5]]);
+  const crossStreetWidths = new Map([[-110, 9.0], [42, 15.5], [118, 12.5]]);
   for (const z of [-110, 42, 118]) {
     const roadWidth = crossStreetWidths.get(z);
     const curbOffset = roadWidth / 2 + 0.1;
@@ -188,7 +188,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     distributorKerbEdges: 4,
     distributorDrainLines: 4,
     distributorFurnitureOffsetsMetres: { kerb: 4.6, drainCover: 4.95, footpath: 6, streetlight: 6.8 },
-    roadWidthsMetres: { mainAvenue: 14, localDistributors: 9, crossStreets: { '-110': 9, '42': 12.5, '118': 12.5 } },
+    roadWidthsMetres: { mainAvenue: 14, localDistributors: 9, crossStreets: Object.fromEntries(crossStreetWidths) },
     busShelters: 2,
     roadsideStalls: 2,
     pocketParksFurnished: 3,

@@ -46,9 +46,9 @@ try{
   assert.equal(r.parallelDistributorRoadMetres,9);
   assert.equal(r.parallelFootpathCentreOffsetMetres,6);
   assert.deepEqual(r.distributorFurnitureOffsetsMetres,{kerb:4.6,drainCover:4.95,footpath:6,streetlight:6.8});
-  assert.deepEqual(r.yabaCrossStreetsMetres,{'-110':9,'42':12.5,'118':12.5});
-  assert.deepEqual(r.yabaCrossStreetsRenderedMetres,{'-110':9,'42':12.5,'118':12.5},'Measured road geometry must match the intended hierarchy');
-  assert.equal(r.busyCrossStreetLaneMarkingSegments,52,'Both widened collectors need center, lane-divider and edge markings');
+  assert.deepEqual(r.yabaCrossStreetsMetres,{'-110':9,'42':15.5,'118':12.5});
+  assert.deepEqual(r.yabaCrossStreetsRenderedMetres,{'-110':9,'42':15.5,'118':12.5},'Measured road geometry must match the intended hierarchy');
+  assert.equal(r.busyCrossStreetLaneMarkingSegments,68,'The 15.5m and 12.5m collectors need width-matched lane and edge markings');
   assert.equal(r.distributorKerbEdges,4,'Both sides of both narrow distributors retain kerbs');
   assert.equal(r.distributorDrainLines,4,'Both sides of both narrow distributors retain drainage');
   assert.equal(r.ikejaCommercialRoadMetres,18,'Existing Ikeja commercial corridor should not be altered');
@@ -56,8 +56,8 @@ try{
   assert.deepEqual(result.spawn,[-8,0.12,-40]);
   assert.equal(result.player.grounded,true,'Player should start grounded on the updated footpath');
   assert.equal(result.player.position[0],-8);
-  assert.deepEqual(result.streetInfrastructure,{mainAvenue:14,localDistributors:9,crossStreets:{'-110':9,'42':12.5,'118':12.5}});
-  assert.equal(r.busyCrossStreetLaneMarkingsMetres,12.5);
+  assert.deepEqual(result.streetInfrastructure,{mainAvenue:14,localDistributors:9,crossStreets:{'-110':9,'42':15.5,'118':12.5}});
+  assert.equal(r.busyCrossStreetLaneMarkingsMetres,15.5);
   assert.deepEqual(r.widenedCrossStreetIds,[42,118]);
   assert.ok(result.render.includes('stage08j-yaba-ikeja'),'Existing Yaba street infrastructure should remain in the live scene');
   assert.deepEqual(errors,[],'browser errors: '+errors.join('; '));

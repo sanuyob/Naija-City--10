@@ -54,7 +54,7 @@ try{
   assert.deepEqual(result.spawn,[-8,0.12,-40]);
   assert.ok(result.world.includes('stage08p-yaba-street-life-01'));
   assert.ok(result.collision.yabaStreetLife01Proxies>=20);
-  assert.ok(result.batches?.groupId>=0&&result.batches?.batches>0,'Stage 08P static batch group must generate render batches');
+  assert.ok(street.staticBatching&&street.staticBatches>0,'Stage 08P must generate real static render batches');
   assert.ok(result.world.includes('stage08j-yaba-ikeja'),'existing Yaba street infrastructure should remain');
   assert.deepEqual(errors,[],'browser errors: '+errors.join('; '));
 

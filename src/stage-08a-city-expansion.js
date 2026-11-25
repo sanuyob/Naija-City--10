@@ -61,7 +61,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   }
   // Preserve the northern 9m neighbourhood street while widening only the
   // two busier east-west collectors. Local residential lanes stay narrow.
-  const crossStreetWidths = new Map([[-110, 9.0], [42, 12.5], [118, 12.5]]);
+  const crossStreetWidths = new Map([[-110, 9.0], [42, 15.5], [118, 12.5]]);
   const crossStreetRoads = [];
   let busyCrossStreetLaneMarkingSegments = 0;
   for (const z of [-110, 42, 118]) {
@@ -86,8 +86,9 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
       for (let x = -42; x <= 42; x += 12) {
         staticBox('stage08-cross-street-centre-dash', [x, 0.035, z], [4.6, 0.03, 0.14], extra.yellow);
         busyCrossStreetLaneMarkingSegments++;
-        for (const side of [-1, 1]) {
-          staticBox('stage08-cross-street-lane-dash', [x, 0.035, z + side * 3.05], [4.6, 0.03, 0.12], extra.white);
+        const laneDividerOffsets = roadWidth >= 15 ? [-6.2, -3.1, 3.1, 6.2] : [-3.05, 3.05];
+        for (const offset of laneDividerOffsets) {
+          staticBox('stage08-cross-street-lane-dash', [x, 0.035, z + offset], [4.6, 0.03, 0.12], extra.white);
           busyCrossStreetLaneMarkingSegments++;
         }
       }
