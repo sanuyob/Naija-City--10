@@ -35,12 +35,12 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
   // Raised kerbs, drainage channels and access covers around the extended avenue.
   for (const side of [-1, 1]) {
     for (const [start, length] of [[-196, 82], [-88, 110], [72, 88], [166, 6]]) {
-      const x = side * 5.58;
+      const x = side * 7.12;
       detail('stage08c-main-road-kerb', [x, 0.14, start + length / 2], [0.22, 0.28, length], mats.curb);
-      detail('stage08c-main-drain-channel', [side * 6.72, 0.045, start + length / 2], [0.22, 0.09, length], mats.dark);
+      detail('stage08c-main-drain-channel', [side * 9.0, 0.045, start + length / 2], [0.22, 0.09, length], mats.dark);
       for (let z = start + 5; z < start + length - 2; z += 18) {
-        detail('stage08c-main-drain-cover', [side * 6.72, 0.12, z], [0.52, 0.08, 1.25], mats.galvanized);
-        detail('stage08c-main-drain-slot', [side * 6.72, 0.165, z], [0.035, 0.018, 0.9], mats.dark);
+        detail('stage08c-main-drain-cover', [side * 9.0, 0.12, z], [0.52, 0.08, 1.25], mats.galvanized);
+        detail('stage08c-main-drain-slot', [side * 9.0, 0.165, z], [0.035, 0.018, 0.9], mats.dark);
       }
     }
   }
@@ -56,10 +56,13 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     }
   }
   for (const z of [-110, 42, 118]) {
+    const roadWidth = (z === 42 || z === 118) ? 10.5 : 7.5;
+    const curbOffset = roadWidth / 2 + 0.1;
+    const drainOffset = roadWidth / 2 + 1.45;
     for (const side of [-1, 1]) {
-      detail('stage08c-cross-street-kerb', [0, 0.13, z + side * 3.85], [91, 0.26, 0.2], mats.curb);
+      detail('stage08c-cross-street-kerb', [0, 0.13, z + side * curbOffset], [91, 0.26, 0.2], mats.curb);
       for (const x of [-40, -20, 20, 40]) {
-        detail('stage08c-cross-street-drain-cover', [x, 0.13, z + side * 5.55], [1.35, 0.08, 0.55], mats.galvanized);
+        detail('stage08c-cross-street-drain-cover', [x, 0.13, z + side * drainOffset], [1.35, 0.08, 0.55], mats.galvanized);
       }
     }
   }
@@ -79,7 +82,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
   const poleZ = [-188, -146, -104, -20, 22, 64, 106, 148];
   for (const side of [-1, 1]) {
     for (const z of poleZ) {
-      const x = side * 7.55;
+      const x = side * 9.6;
       detail('stage08c-utility-pole', [x, 4.15, z], [0.24, 8.3, 0.24], mats.pole);
       detail('stage08c-utility-crossarm', [x, 7.45, z], [1.5, 0.16, 0.18], mats.galvanized);
       for (const offset of [-0.48, 0, 0.48]) {
@@ -90,7 +93,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
       const z = (poleZ[i] + poleZ[i + 1]) / 2;
       const length = poleZ[i + 1] - poleZ[i];
       for (const offset of [-0.48, 0, 0.48]) {
-        detail('stage08c-overhead-service-wire', [side * 7.55 + offset, 7.82, z], [0.045, 0.045, length], mats.wire);
+        detail('stage08c-overhead-service-wire', [side * 9.6 + offset, 7.82, z], [0.045, 0.045, length], mats.wire);
       }
     }
   }
@@ -177,6 +180,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     overheadWireRuns: (poleZ.length - 1) * 2 * 3,
     distributorStreetlights: 16,
     roadSigns: signs.length,
+    roadWidthsMetres: { mainAvenue: 14, localDistributors: 7.5, crossStreets: { '-110': 7.5, '42': 10.5, '118': 10.5 } },
     busShelters: 2,
     roadsideStalls: 2,
     pocketParksFurnished: 3,

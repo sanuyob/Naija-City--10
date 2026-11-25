@@ -19,6 +19,7 @@ const stage08i=await readFile(new URL('../src/stage-08i-ikeja-city-expansion.js'
 const stage08j=await readFile(new URL('../src/stage-08j-yaba-ikeja-network-and-yaba-streets.js',import.meta.url),'utf8');
 const stage08p=await readFile(new URL('../src/stage-08p-yaba-street-life-01.js',import.meta.url),'utf8');
 const stage08pSmoke=await readFile(new URL('./stage-08p-yaba-street-life-01-smoke.mjs',import.meta.url),'utf8');
+const stage08rSmoke=await readFile(new URL('./stage-08r-road-hierarchy-smoke.mjs',import.meta.url),'utf8');
 const stage08k=await readFile(new URL('../src/stage-08k-gidi-district-roads-and-bridges.js',import.meta.url),'utf8');
 const stage08fSpec=await readFile(new URL('../docs/STAGE-08F-PRODUCTION-SPEC.md',import.meta.url),'utf8');
 const stage08fMaterials=JSON.parse(await readFile(new URL('../public/assets/stage-08f-material-library.json',import.meta.url),'utf8'));
@@ -407,6 +408,12 @@ assert.match(stage08p,/overhead-wire-span-mobile\.glb/,'Stage 08P must use the l
 assert.match(stage08p,/stage08p-yaba-street-life-01/,'Stage 08P assets must be tagged for scene QA and profiling');
 assert.match(stage08pSmoke,/assetsLoaded/,'Stage 08P smoke test must check imported asset loads');
 assert.match(stage08pSmoke,/browserErrors/,'Stage 08P smoke test must fail on browser or asset-load errors');
+assert.match(stage08rSmoke,/getRoadHierarchyState/,'Stage 08R browser smoke test must inspect live road hierarchy metadata');
+assert.match(stage08rSmoke,/yabaCentralAvenueRenderedMetres/,'Stage 08R browser smoke test must verify the actual rendered Yaba avenue width');
+assert.match(expansion,/mainAvenueMetres: 14/,'Yaba main avenue must use the new 14m arterial profile');
+assert.match(expansion,/parallelLocalRoadMetres: 7\.5/,'Yaba parallel local streets must remain narrow');
+assert.match(street,/mainAvenue: 14/,'Stage 08C kerbs and drainage must follow the widened main avenue');
+assert.match(game,/firstSpawnPosition = \[-8\.0, 0\.12, -40\]/,'Player spawn must remain on the relocated west footpath after road widening');
 assert.match(game,/createStage08JYabaIkejaNetworkAndStreets/,'Stage 08J Yaba-to-Ikeja road and local streets must be mounted in the live scene');
 assert.match(game,/createStage08KGidiDistrictRoadsAndBridges/,'Stage 08K GIDI bridge, junction and district treatments must be mounted in the live scene');
 assert.match(game,/createStage08LGidiDistrictActivities/,'Stage 08L enterable district activity hubs must be mounted in the live scene');

@@ -39,9 +39,9 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
 
   // Continue the original central avenue beyond its old north/south ends.
   for (const z of [-149, 113]) {
-    staticBox('stage08-main-road-extension', [0, -0.07, z], [11, 0.16, 112], extra.asphalt);
-    staticBox('stage08-main-road-footpath', [-6.1, 0.02, z], [1.1, 0.2, 112], extra.concrete);
-    staticBox('stage08-main-road-footpath', [6.1, 0.02, z], [1.1, 0.2, 110], extra.concrete);
+    staticBox('stage08-main-road-extension', [0, -0.07, z], [14, 0.16, 112], extra.asphalt);
+    staticBox('stage08-main-road-footpath', [-8.0, 0.02, z], [1.1, 0.2, 112], extra.concrete);
+    staticBox('stage08-main-road-footpath', [8.0, 0.02, z], [1.1, 0.2, 110], extra.concrete);
     for (let offset = -48; offset <= 48; offset += 12) {
       staticBox('stage08-main-road-lane-dash', [0, 0.025, z + offset], [0.14, 0.025, 4.2], extra.yellow);
     }
@@ -56,14 +56,19 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
       staticBox('stage08-lane-dash', [x, 0.025, z], [0.13, 0.025, 4.5], extra.yellow);
     }
   }
+  const crossStreetWidths = new Map([[-110, 7.5], [42, 10.5], [118, 10.5]]);
   for (const z of [-110, 42, 118]) {
-    staticBox('stage08-cross-street', [0, -0.055, z], [91, 0.17, 7.5], extra.asphalt);
-    staticBox('stage08-cross-street-footpath', [0, 0.02, z - 4.4], [91, 0.2, 1.1], extra.concrete);
-    staticBox('stage08-cross-street-footpath', [0, 0.02, z + 4.4], [91, 0.2, 1.1], extra.concrete);
+    const roadWidth = crossStreetWidths.get(z);
+    const sidewalkOffset = roadWidth / 2 + 0.75;
+    const crossingOffset = roadWidth / 2 + 1.45;
+    staticBox('stage08-cross-street', [0, -0.055, z], [91, 0.17, roadWidth], extra.asphalt);
+    staticBox('stage08-cross-street-footpath', [0, 0.02, z - sidewalkOffset], [91, 0.2, 1.1], extra.concrete);
+    staticBox('stage08-cross-street-footpath', [0, 0.02, z + sidewalkOffset], [91, 0.2, 1.1], extra.concrete);
     for (const x of [-32, 0, 32]) {
-      for (let i = -2; i <= 2; i++) {
-        staticBox('stage08-crosswalk-stripe', [x + i * 1.25, 0.035, z - 5.2], [0.72, 0.03, 0.8], extra.white);
-        staticBox('stage08-crosswalk-stripe', [x + i * 1.25, 0.035, z + 5.2], [0.72, 0.03, 0.8], extra.white);
+      const stripeRange = x === 0 ? (roadWidth > 8 ? 5 : 2) : 2;
+      for (let i = -stripeRange; i <= stripeRange; i++) {
+        staticBox('stage08-crosswalk-stripe', [x + i * 1.25, 0.035, z - crossingOffset], [0.72, 0.03, 0.8], extra.white);
+        staticBox('stage08-crosswalk-stripe', [x + i * 1.25, 0.035, z + crossingOffset], [0.72, 0.03, 0.8], extra.white);
       }
     }
   }
@@ -113,6 +118,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
     expansionBounds: { min: [-48, -1, -205], max: [48, 8, 169] },
     parallelRoads: 2,
     crossStreets: 3,
+    roadHierarchy: { mainAvenueMetres: 14, parallelLocalRoadMetres: 7.5, crossStreetsMetres: { '-110': 7.5, '42': 10.5, '118': 10.5 } },
     commercialBuildings: 8,
     residentialBuildings: 8,
     pocketParks: 3,

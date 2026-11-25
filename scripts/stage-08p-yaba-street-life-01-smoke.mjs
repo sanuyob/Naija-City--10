@@ -51,7 +51,7 @@ try{
   assert.ok(street.customMeshes>=90);
   assert.ok(street.collisionProxies>=20);
   assert.equal(result.player.grounded,true);
-  assert.deepEqual(result.spawn,[-6.1,0.12,-40]);
+  assert.deepEqual(result.spawn,[-8,0.12,-40]);
   assert.ok(result.world.includes('stage08p-yaba-street-life-01'));
   assert.ok(result.collision.yabaStreetLife01Proxies>=20);
   assert.ok(result.batches?.groupId>=0&&result.batches?.batches>0,'Stage 08P static batch group must generate render batches');
