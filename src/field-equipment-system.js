@@ -2,21 +2,19 @@ import * as pc from 'playcanvas';
 
 export const FIELD_EQUIPMENT_DEFINITIONS = Object.freeze([
   { id: 'field-radio', name: 'Field Radio', shortName: 'RADIO', description: 'Communications and location pings', kind: 'communication', cooldown: 1.4, maxCount: 1 },
-  { id: 'first-aid-pouch', name: 'First-aid Pouch', shortName: 'MED', description: 'Restores a small amount of player health', kind: 'medical', cooldown: 5, maxCount: 3 },
   { id: 'repair-kit', name: 'Repair Kit', shortName: 'REPAIR', description: 'Utility kit for service-point interactions', kind: 'maintenance', cooldown: 4, maxCount: 2 },
   { id: 'survey-beacon', name: 'Survey Beacon', shortName: 'BEACON', description: 'Marks your current location with a visual pulse', kind: 'navigation', cooldown: 2.5, maxCount: 3 }
 ]);
 
 export const FIELD_EQUIPMENT_DEFAULT_INVENTORY = Object.freeze({
   'field-radio': 1,
-  'first-aid-pouch': 2,
   'repair-kit': 1,
   'survey-beacon': 2
 });
 
 export const FIELD_EQUIPMENT_DEFAULT_SLOTS = Object.freeze([
   'field-radio',
-  'first-aid-pouch',
+  'survey-beacon',
   'repair-kit'
 ]);
 
@@ -99,8 +97,6 @@ export function createFieldEquipmentSystem({
   makeMaterial('field-case-green', [0.12, 0.28, 0.22], 0.72);
   makeMaterial('field-screen-blue', [0.12, 0.38, 0.48], 0.28);
   makeMaterial('field-trim-metal', [0.43, 0.48, 0.46], 0.42);
-  makeMaterial('field-med-white', [0.88, 0.87, 0.78], 0.82);
-  makeMaterial('field-med-green', [0.10, 0.50, 0.32], 0.62);
   makeMaterial('field-beacon-cyan', [0.12, 0.66, 0.72], 0.34);
   makeMaterial('field-rubber', [0.025, 0.035, 0.035], 0.92);
 
@@ -138,12 +134,6 @@ export function createFieldEquipmentSystem({
       addBox(group, 'radio-antenna', [0.075, 0.205, 0], [0.018, 0.16, 0.018], metal);
       addSphere(group, 'radio-knob', [-0.073, 0.145, 0.055], [0.045, 0.045, 0.025], metal);
       addBox(group, 'radio-belt-clip', [0, -0.17, -0.06], [0.12, 0.035, 0.018], metal);
-    } else if (itemId === 'first-aid-pouch') {
-      addBox(group, 'medical-pouch', [0, 0, 0], [0.29, 0.22, 0.13], materials['field-med-white']);
-      addBox(group, 'medical-cross-vertical', [0, 0, 0.071], [0.055, 0.15, 0.012], materials['field-med-green']);
-      addBox(group, 'medical-cross-horizontal', [0, 0, 0.073], [0.16, 0.05, 0.014], materials['field-med-green']);
-      addBox(group, 'medical-handle', [0, 0.145, 0], [0.12, 0.035, 0.035], green);
-      addBox(group, 'medical-zipper', [0, -0.105, 0.04], [0.22, 0.018, 0.018], metal);
     } else if (itemId === 'repair-kit') {
       addBox(group, 'repair-case', [0, 0, 0], [0.31, 0.23, 0.19], charcoal);
       addBox(group, 'repair-lid', [0, 0.13, 0], [0.32, 0.045, 0.20], green);
@@ -273,15 +263,6 @@ export function createFieldEquipmentSystem({
       vfxSystem?.emit?.('arrival', position, 0.9, 'concrete');
       audioSystem?.play?.('utilityPing');
       message = 'SURVEY BEACON · current position marked.';
-    } else if (itemId === 'first-aid-pouch') {
-      const before = playerController.getVitalsState?.()?.health ?? 100;
-      if (before >= 99.5) return status('Health is already full.', false);
-      const result = playerController.heal(22, { source: 'field-first-aid' });
-      if (!result?.applied) return status('First aid could not be used right now.', false);
-      inventory[itemId] = Math.max(0, inventory[itemId] - 1);
-      message = 'FIRST AID · health restored by ' + Math.round(result.health - before) + '.';
-      persist();
-      if (inventory[itemId] <= 0 && activeItemId === itemId) stow();
     } else if (itemId === 'repair-kit') {
       vfxSystem?.emit?.('arrival', position, 0.45, 'metal');
       audioSystem?.play?.('repairReady');
