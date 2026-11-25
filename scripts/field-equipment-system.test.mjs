@@ -7,13 +7,13 @@ import {
   stepDroppedFieldProp
 } from '../src/field-equipment-system.js';
 
-assert.equal(FIELD_EQUIPMENT_DEFINITIONS.length, 4);
+assert.equal(FIELD_EQUIPMENT_DEFINITIONS.length, 3);
 assert.equal(new Set(FIELD_EQUIPMENT_DEFINITIONS.map(item => item.id)).size, 4);
-assert.deepEqual(FIELD_EQUIPMENT_DEFAULT_SLOTS, ['field-radio', 'first-aid-pouch', 'repair-kit']);
+assert.deepEqual(FIELD_EQUIPMENT_DEFAULT_SLOTS, ['field-radio', 'survey-beacon', 'repair-kit']);
 
-const inventory = normalizeFieldEquipmentInventory({ 'field-radio': 5, 'first-aid-pouch': -2, 'repair-kit': 'bad' });
+const inventory = normalizeFieldEquipmentInventory({ 'field-radio': 5, 'survey-beacon': -2, 'repair-kit': 'bad' });
 assert.equal(inventory['field-radio'], 1, 'radio count is capped');
-assert.equal(inventory['first-aid-pouch'], 0, 'negative counts are clamped');
+assert.equal(inventory['survey-beacon'], 0, 'negative counts are clamped');
 assert.equal(inventory['repair-kit'], 0, 'invalid counts become zero');
 assert.equal(inventory['survey-beacon'], FIELD_EQUIPMENT_DEFAULT_INVENTORY['survey-beacon'], 'missing counts use starter inventory');
 
