@@ -199,10 +199,21 @@ export function mountRPGInterface() {
       if (setting.dataset.setting === 'touch') root.classList.toggle('large-touch', enabled);
       return;
     }
+    const gearAction = event.target.closest('[data-gear-action]');
+    if (gearAction) {
+      const system = window.__NAIJA_FIELD_EQUIPMENT__;
+      const action = gearAction.dataset.gearAction;
+      const itemId = gearAction.dataset.gearId;
+      const result = system?.[action]?.(itemId);
+      if (result?.message) showToast(result.message);
+      refreshEquipmentUI();
+      return;
+    }
     const slot = event.target.closest('[data-slot]');
     if (slot) {
-      root.querySelectorAll('[data-slot]').forEach(item => item.setAttribute('aria-pressed', String(item === slot)));
-      showToast('Quick slot ' + slot.dataset.slot + ' is empty.');
+      const result = window.__NAIJA_FIELD_EQUIPMENT__?.equipSlot?.(slot.dataset.slot);
+      if (result?.message) showToast(result.message);
+      refreshEquipmentUI();
       return;
     }
   });
@@ -229,11 +240,45 @@ export function mountRPGInterface() {
 
   const escapeMarkup = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   function renderInventory() {
-    const items = Object.entries(economyState.inventory || {}).filter(([, count]) => Number(count) > 0);
-    const rows = items.length
-      ? items.map(([id, count], index) => `<article><b>${String(index + 1).padStart(2, '0')}</b><strong>${escapeMarkup(id.replaceAll('-', ' '))}</strong><small>QUANTITY · ${Math.floor(Number(count) || 0)}</small></article>`).join('')
+    const goods = Object.entries(economyState.inventory || {}).filter(([, count]) => Number(count) > 0);
+    const goodsRows = goods.length
+      ? goods.map(([id, count], index) => '<article><b>' + String(index + 1).padStart(2, '0') + '</b><strong>' + escapeMarkup(id.replaceAll('-', ' ')) + '</strong><small>QUANTITY · ' + Math.floor(Number(count) || 0) + '</small></article>').join('')
       : '<article><b>01</b><strong>Supplies</strong><small>No purchased goods yet</small></article>';
-    return `<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦${Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG')}</b></div><div class="tiles">${rows}</div>`;
+    const equipment = window.__NAIJA_FIELD_EQUIPMENT__?.getState?.();
+    const gearRows = equipment?.items?.length
+      ? equipment.items.map(item => {
+          const cooldown = item.cooldownRemaining > 0 ? 'READY IN ' + item.cooldownRemaining.toFixed(1) + 'S' : 'READY';
+          const equipped = item.equipped ? ' · EQUIPPED' : '';
+          const disabled = item.count <= 0 ? ' disabled' : '';
+          const equipLabel = item.equipped ? 'STOW' : 'EQUIP';
+          return '<article class="gear-card"><div class="gear-card-heading"><b>' + escapeMarkup(item.shortName) + '</b><strong>' + escapeMarkup(item.name) + '</strong></div>' +
+            '<small>' + escapeMarkup(item.description) + '</small><small>QTY · ' + item.count + ' · ' + cooldown + equipped + '</small>' +
+            '<div class="gear-actions"><button type="button" data-gear-action="equip" data-gear-id="' + escapeMarkup(item.id) + '"' + disabled + '>' + equipLabel + '</button>' +
+            '<button type="button" data-gear-action="activate" data-gear-id="' + escapeMarkup(item.id) + '"' + disabled + '>USE</button>' +
+            '<button type="button" data-gear-action="drop" data-gear-id="' + escapeMarkup(item.id) + '"' + disabled + '>DROP</button></div></article>';
+        }).join('')
+      : '<article><strong>Field equipment is loading</strong><small>Start the game to initialise the field kit.</small></article>';
+    return '<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦' + Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG') + '</b></div>' +
+      '<section class="field-equipment-list"><div class="field-section-heading"><b>FIELD EQUIPMENT</b><small>UTILITY GEAR · 3 QUICK SLOTS</small></div><div class="gear-grid">' + gearRows + '</div></section>' +
+      '<section><div class="field-section-heading"><b>STORES & SUPPLIES</b></div><div class="tiles">' + goodsRows + '</div></section>';
+  }
+
+  function refreshEquipmentUI(state = null) {
+    const equipment = state || window.__NAIJA_FIELD_EQUIPMENT__?.getState?.();
+    const slots = equipment?.quickSlots || [];
+    root.querySelectorAll('[data-slot]').forEach(button => {
+      const slot = slots.find(item => String(item.slot) === String(button.dataset.slot));
+      const label = button.querySelector('small');
+      if (label) label.textContent = slot?.count > 0 ? slot.shortName : 'EMPTY';
+      button.setAttribute('aria-pressed', String(Boolean(slot?.equipped)));
+      button.setAttribute('aria-label', 'Quick slot ' + button.dataset.slot + (slot?.count > 0 ? ' · ' + slot.name + ' · quantity ' + slot.count : ' · empty'));
+      button.title = slot?.count > 0 ? slot.name : 'Empty quick slot';
+      button.disabled = !slot || slot.count <= 0;
+    });
+    if (!panel.hidden && root.querySelector('#panel-title')?.textContent === 'Inventory') {
+      root.querySelector('#panel-content').innerHTML = renderInventory();
+    }
+    return equipment || null;
   }
   function setEconomy(state = {}) {
     economyState = {
