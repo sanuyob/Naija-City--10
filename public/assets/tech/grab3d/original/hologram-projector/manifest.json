@@ -1,0 +1,47 @@
+{
+ "slug": "hologram-projector",
+ "triangles": 9056,
+ "texture_px": 2048,
+ "triangles_light": null,
+ "texture_px_light": null,
+ "files": {
+  "glb": {
+   "name": "hologram-projector.glb",
+   "bytes": 622072
+  },
+  "blend": {
+   "name": "hologram-projector.blend",
+   "bytes": 506305
+  },
+  "fbx": {
+   "name": "hologram-projector.fbx",
+   "bytes": 1053132
+  },
+  "obj": {
+   "name": "hologram-projector-obj.zip",
+   "bytes": 446020
+  },
+  "usdz": {
+   "name": "hologram-projector.usdz",
+   "bytes": 982100
+  }
+ },
+ "extras": {
+  "license": "CC0-1.0",
+  "source": "grab3d.com",
+  "dimensions_m": "0.464 x 0.464 x 0.990",
+  "triangles": 9056,
+  "textures": "PBR 2048px: base color, roughness, metallic, normal (baked)",
+  "generator": "Created by grab3d",
+  "created": "2026-10-19",
+  "real_size": "sci-fi hologram projector, 1.0 m high incl. hologram, pedestal 0.46 m diameter, 0.54 m high",
+  "notes": "front faces -Y; white goblet-shaped pedestal with grey foot ring, lilac band in real ring seams, cyan light ring, recessed projector top with glowing lens and six emitter dots; the hologram (hologram-projector_hologram_glow) is a separate semi-transparent emissive object: light cone with scan rings, a planet with ring and a small moon; can be hidden or swapped; no moving parts; no text",
+  "set": "Cozy Sci-Fi Base Kit"
+ },
+ "origin": {
+  "method": "procedural",
+  "detail": "Built procedurally with Blender scripts. The scripts were written with the help of an AI coding assistant. No generative AI model produced the geometry or textures directly.",
+  "ai_content": false,
+  "ai_assisted_code": true
+ }
+}

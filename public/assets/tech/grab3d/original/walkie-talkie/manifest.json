@@ -1,0 +1,47 @@
+{
+ "slug": "walkie-talkie",
+ "triangles": 6716,
+ "texture_px": 2048,
+ "triangles_light": null,
+ "texture_px_light": null,
+ "files": {
+  "glb": {
+   "name": "walkie-talkie.glb",
+   "bytes": 666828
+  },
+  "blend": {
+   "name": "walkie-talkie.blend",
+   "bytes": 561265
+  },
+  "fbx": {
+   "name": "walkie-talkie.fbx",
+   "bytes": 1052876
+  },
+  "obj": {
+   "name": "walkie-talkie-obj.zip",
+   "bytes": 553802
+  },
+  "usdz": {
+   "name": "walkie-talkie.usdz",
+   "bytes": 1003091
+  }
+ },
+ "extras": {
+  "license": "CC0-1.0",
+  "source": "grab3d.com",
+  "dimensions_m": "0.065 x 0.048 x 0.229",
+  "triangles": 6716,
+  "textures": "PBR 2048px: base color, roughness, metallic, normal (baked)",
+  "generator": "Created by grab3d",
+  "created": "2026-09-26",
+  "real_size": "handheld two-way radio (walkie-talkie), approx. 6.2 x 4.5 x 23 cm incl. antenna",
+  "notes": "stands upright, front faces -Y; butter-yellow rounded housing, rubber antenna and ridged volume knob on top with green status LED (emissive), speaker grille as dot pattern, light-blue LCD with simple bars (no digits, no text), three keys, rubber push-to-talk key on the left side, belt clip on the back; no moving parts",
+  "set": "Cozy Electronics Kit"
+ },
+ "origin": {
+  "method": "procedural",
+  "detail": "Built procedurally with Blender scripts. The scripts were written with the help of an AI coding assistant. No generative AI model produced the geometry or textures directly.",
+  "ai_content": false,
+  "ai_assisted_code": true
+ }
+}

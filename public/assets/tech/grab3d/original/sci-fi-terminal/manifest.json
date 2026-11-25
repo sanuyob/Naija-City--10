@@ -1,0 +1,47 @@
+{
+ "slug": "sci-fi-terminal",
+ "triangles": 10280,
+ "texture_px": 2048,
+ "triangles_light": null,
+ "texture_px_light": null,
+ "files": {
+  "glb": {
+   "name": "sci-fi-terminal.glb",
+   "bytes": 887076
+  },
+  "blend": {
+   "name": "sci-fi-terminal.blend",
+   "bytes": 740445
+  },
+  "fbx": {
+   "name": "sci-fi-terminal.fbx",
+   "bytes": 1525836
+  },
+  "obj": {
+   "name": "sci-fi-terminal-obj.zip",
+   "bytes": 763971
+  },
+  "usdz": {
+   "name": "sci-fi-terminal.usdz",
+   "bytes": 1416394
+  }
+ },
+ "extras": {
+  "license": "CC0-1.0",
+  "source": "grab3d.com",
+  "dimensions_m": "0.640 x 0.502 x 1.388",
+  "triangles": 10280,
+  "textures": "PBR 2048px: base color, roughness, metallic, normal (baked)",
+  "generator": "Created by grab3d",
+  "created": "2026-10-19",
+  "real_size": "sci-fi info terminal (access kiosk), 1.4 m high, 0.64 m wide, 0.5 m deep",
+  "notes": "user side faces -Y; grey plinth, white column with grey chamfers, real inset panel seams, lilac base band and a glowing cyan light strip in a groove; slanted desk with keypad and round hand scanner (lilac light ring); tilted screen housing with abstract radar, bar graph and status bar (emissive, no text, no digits), lilac side light strips, orange status lamp on top, rear service hatch with rivets and vent grooves; no moving parts",
+  "set": "Cozy Sci-Fi Base Kit"
+ },
+ "origin": {
+  "method": "procedural",
+  "detail": "Built procedurally with Blender scripts. The scripts were written with the help of an AI coding assistant. No generative AI model produced the geometry or textures directly.",
+  "ai_content": false,
+  "ai_assisted_code": true
+ }
+}

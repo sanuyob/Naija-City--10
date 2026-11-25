@@ -1,0 +1,47 @@
+{
+ "slug": "data-pad",
+ "triangles": 3496,
+ "texture_px": 2048,
+ "triangles_light": null,
+ "texture_px_light": null,
+ "files": {
+  "glb": {
+   "name": "data-pad.glb",
+   "bytes": 434200
+  },
+  "blend": {
+   "name": "data-pad.blend",
+   "bytes": 297304
+  },
+  "fbx": {
+   "name": "data-pad.fbx",
+   "bytes": 713580
+  },
+  "obj": {
+   "name": "data-pad-obj.zip",
+   "bytes": 240304
+  },
+  "usdz": {
+   "name": "data-pad.usdz",
+   "bytes": 665123
+  }
+ },
+ "extras": {
+  "license": "CC0-1.0",
+  "source": "grab3d.com",
+  "dimensions_m": "0.250 x 0.173 x 0.020",
+  "triangles": 3496,
+  "textures": "PBR 2048px: base color, roughness, metallic, normal (baked)",
+  "generator": "Created by grab3d",
+  "created": "2026-10-19",
+  "real_size": "sci-fi data pad (tablet), 25 x 17 cm, 1.7 cm thick",
+  "notes": "lies flat with the screen facing up, bottom edge of the screen towards -Y; white top shell and grey bottom shell with a real parting seam, slightly raised screen with abstract wave, bars and status bar (emissive, no text, no digits), three colour buttons, status LED, speaker dots and a lilac stylus in a groove on the back edge; no moving parts",
+  "set": "Cozy Sci-Fi Base Kit"
+ },
+ "origin": {
+  "method": "procedural",
+  "detail": "Built procedurally with Blender scripts. The scripts were written with the help of an AI coding assistant. No generative AI model produced the geometry or textures directly.",
+  "ai_content": false,
+  "ai_assisted_code": true
+ }
+}

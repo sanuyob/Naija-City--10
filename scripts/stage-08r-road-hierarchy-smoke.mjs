@@ -30,6 +30,9 @@ try{
       spawn:game.firstSpawnPosition,
       player:game.getPlayerState(),
       streetInfrastructure:game.stage08C.roadWidthsMetres,
+      yabaJunctions:game.stage08C.junctionGeometry,
+      yabaCornerCollider:game.getGroundProbe([8.8,1.1,51.55],[8.8,-0.2,51.55]),
+      yabaRoadSurface:game.getGroundProbe([0,1.1,42],[0,-0.2,42]),
       ikejaJunctions:game.stage08I.junctionGeometry,
       render:game.getRenderBreakdown().groups.map(group=>group.name)
     };
@@ -68,8 +71,23 @@ try{
   assert.equal(result.ikejaJunctions.drainRunsSplitAtIntersections,true);
   assert.equal(r.busyCrossStreetLaneMarkingsMetres,15.5);
   assert.deepEqual(r.widenedCrossStreetIds,[42,118]);
+  assert.equal(result.yabaJunctions.treatedIntersections,6,'Only the six approaches on the two busy Yaba streets should be treated');
+  assert.equal(result.yabaJunctions.cornerCurbReturns,24);
+  assert.equal(result.yabaJunctions.cornerSurfaceTriangles,24);
+  assert.equal(result.yabaJunctions.cornerSurfaceMeshCreated,true);
+  assert.equal(result.yabaJunctions.approachStopLines,24);
+  assert.deepEqual(result.yabaJunctions.selectedCrossStreetIds,[42,118]);
+  assert.equal(result.yabaJunctions.untouchedLocalCrossStreetWidthMetres,9);
+  assert.equal(result.yabaJunctions.roadWidthsUnchanged,true);
+  assert.equal(result.yabaJunctions.sidewalksAndKerbsSplitAtIntersections,true);
+  assert.equal(result.yabaJunctions.drainRunsSplitAtIntersections,true);
+  assert.ok(result.yabaCornerCollider?.id.includes('junction-chamfered-curb-return'),'The new Yaba curb return must be registered in Bullet collision');
+  assert.equal(result.yabaCornerCollider.surface,'concrete');
+  assert.equal(result.yabaRoadSurface.surface,'asphalt','The intersection carriageway must remain clear for traffic');
+  assert.ok(!result.yabaRoadSurface.id.includes('junction-chamfered-curb-return'));
   assert.ok(result.render.includes('stage08j-yaba-ikeja'),'Existing Yaba street infrastructure should remain in the live scene');
   assert.ok(result.render.includes('stage08i-junction-surfaces'),'The corner pavement apron mesh should be included in render diagnostics');
+  assert.ok(result.render.includes('stage08c-junction-surfaces'),'Yaba corner pavement apron mesh should be included in render diagnostics');
   assert.deepEqual(errors,[],'browser errors: '+errors.join('; '));
   console.log(JSON.stringify({pass:true,result,browserErrors:errors},null,2));
 }finally{

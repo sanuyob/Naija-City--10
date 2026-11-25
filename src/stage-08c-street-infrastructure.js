@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 // Stage 08C: static Nigerian street infrastructure and roadside environment.
 // Keep assets procedural, shared-material and spatially batched. No animated traffic or NPCs here.
 export function createStage08CStreetInfrastructure({ app, box, material }) {
@@ -32,13 +34,82 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     return entity;
   };
 
+  function lineSegments(start, end, cuts = []) {
+    const ranges = cuts.map(([center, halfWidth]) => [Math.max(start, center - halfWidth), Math.min(end, center + halfWidth)])
+      .filter(([a, b]) => b > a).sort((a, b) => a[0] - b[0]);
+    const merged = [];
+    for (const range of ranges) {
+      const last = merged[merged.length - 1];
+      if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+      else merged.push(range.slice());
+    }
+    const result = [];
+    let cursor = start;
+    for (const [a, b] of merged) {
+      if (a - cursor >= 1.5) result.push([cursor, a]);
+      cursor = Math.max(cursor, b);
+    }
+    if (end - cursor >= 1.5) result.push([cursor, end]);
+    return result;
+  }
+
+  // Only the two already-widened east/west streets receive full junction
+  // returns. The 9m northern neighbourhood lane is deliberately left alone.
+  const yabaBusyCrossings = [
+    { z: 42, width: 15.5, halfWidth: 7.75 },
+    { z: 118, width: 12.5, halfWidth: 6.25 }
+  ];
+  const yabaJunctionRoadNodes = [
+    { x: -32, width: 9, halfWidth: 4.5, chamfer: 2.2, role: 'distributor' },
+    { x: 0, width: 14, halfWidth: 7, chamfer: 3.4, role: 'arterial' },
+    { x: 32, width: 9, halfWidth: 4.5, chamfer: 2.2, role: 'distributor' }
+  ];
+  let yabaJunctionCurbReturns = 0;
+  let yabaJunctionCornerTriangles = 0;
+  let yabaJunctionStopLines = 0;
+  const yabaCornerPositions = [];
+  const yabaCornerNormals = [];
+  const yabaCornerIndices = [];
+
+  function addYabaCornerTriangle(start, end, outer) {
+    const area = (end[0] - start[0]) * (outer[1] - start[1]) - (end[1] - start[1]) * (outer[0] - start[0]);
+    const vertices = area < 0 ? [start, end, outer] : [start, outer, end];
+    const base = yabaCornerPositions.length / 3;
+    for (const [x, z] of vertices) {
+      yabaCornerPositions.push(x, 0.112, z);
+      yabaCornerNormals.push(0, 1, 0);
+    }
+    yabaCornerIndices.push(base, base + 1, base + 2);
+    yabaJunctionCornerTriangles++;
+  }
+
+  function createYabaJunctionCornerMesh() {
+    if (!yabaCornerPositions.length) return false;
+    const mesh = new pc.Mesh(app.graphicsDevice);
+    mesh.setPositions(new Float32Array(yabaCornerPositions));
+    mesh.setNormals(new Float32Array(yabaCornerNormals));
+    mesh.setIndices(new Uint16Array(yabaCornerIndices));
+    mesh.update();
+    const entity = new pc.Entity('stage08c-yaba-junction-corner-aprons');
+    entity.tags.add('stage08c-junction-surfaces');
+    entity.addComponent('render', { meshInstances: [new pc.MeshInstance(mesh, mats.concrete)] });
+    app.root.addChild(entity);
+    return true;
+  }
+
   // Raised kerbs, drainage channels and access covers around the extended avenue.
+  // The main-road edges are interrupted only at the busy z=118 crossing.
+  const mainRoadRuns = [[-196, 82], [-88, 110], [72, 88], [166, 6]];
   for (const side of [-1, 1]) {
-    for (const [start, length] of [[-196, 82], [-88, 110], [72, 88], [166, 6]]) {
-      const x = side * 7.12;
-      detail('stage08c-main-road-kerb', [x, 0.14, start + length / 2], [0.22, 0.28, length], mats.curb);
-      detail('stage08c-main-drain-channel', [side * 9.0, 0.045, start + length / 2], [0.22, 0.09, length], mats.dark);
+    for (const [start, length] of mainRoadRuns) {
+      const cuts = yabaBusyCrossings.map(crossing => [crossing.z, crossing.halfWidth + 3.4 + 0.7]);
+      for (const [a, b] of lineSegments(start, start + length, cuts)) {
+        const x = side * 7.12, mid = (a + b) / 2, span = b - a;
+        detail('stage08c-main-road-kerb', [x, 0.14, mid], [0.22, 0.28, span], mats.curb);
+        detail('stage08c-main-drain-channel', [side * 9.0, 0.045, mid], [0.22, 0.09, span], mats.dark);
+      }
       for (let z = start + 5; z < start + length - 2; z += 18) {
+        if (yabaBusyCrossings.some(crossing => Math.abs(z - crossing.z) < crossing.halfWidth + 4.4)) continue;
         detail('stage08c-main-drain-cover', [side * 9.0, 0.12, z], [0.52, 0.08, 1.25], mats.galvanized);
         detail('stage08c-main-drain-slot', [side * 9.0, 0.165, z], [0.035, 0.018, 0.9], mats.dark);
       }
@@ -51,10 +122,14 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
   const distributorRoadWidth = 9.0;
   const distributorKerbOffset = distributorRoadWidth / 2 + 0.1;
   const distributorDrainOffset = distributorRoadWidth / 2 + 0.45;
+  const distributorCuts = yabaBusyCrossings.map(crossing => [crossing.z, crossing.halfWidth + 2.2 + 0.7]);
   for (const roadX of [-32, 32]) {
     for (const side of [-1, 1]) {
-      detail('stage08c-distributor-kerb', [roadX + side * distributorKerbOffset, 0.13, -18], [0.2, 0.26, 338], mats.curb);
+      for (const [a, b] of lineSegments(-187, 151, distributorCuts)) {
+        detail('stage08c-distributor-kerb', [roadX + side * distributorKerbOffset, 0.13, (a + b) / 2], [0.2, 0.26, b - a], mats.curb);
+      }
       for (let z = -180; z <= 145; z += 36) {
+        if (yabaBusyCrossings.some(crossing => Math.abs(z - crossing.z) < crossing.halfWidth + 3.4)) continue;
         detail('stage08c-distributor-drain-cover', [roadX + side * distributorDrainOffset, 0.13, z], [0.58, 0.08, 1.5], mats.galvanized);
       }
     }
@@ -64,13 +139,41 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     const roadWidth = crossStreetWidths.get(z);
     const curbOffset = roadWidth / 2 + 0.1;
     const drainOffset = roadWidth / 2 + 1.45;
+    const busy = roadWidth >= 12;
+    const cuts = busy ? yabaJunctionRoadNodes.map(node => [node.x, node.halfWidth + node.chamfer + 0.12]) : [];
     for (const side of [-1, 1]) {
-      detail('stage08c-cross-street-kerb', [0, 0.13, z + side * curbOffset], [91, 0.26, 0.2], mats.curb);
+      for (const [a, b] of lineSegments(-45.5, 45.5, cuts)) {
+        detail('stage08c-cross-street-kerb', [(a + b) / 2, 0.13, z + side * curbOffset], [b - a, 0.26, 0.2], mats.curb);
+      }
       for (const x of [-40, -20, 20, 40]) {
+        if (busy && yabaJunctionRoadNodes.some(node => Math.abs(x - node.x) < node.halfWidth + node.chamfer + 0.8)) continue;
         detail('stage08c-cross-street-drain-cover', [x, 0.13, z + side * drainOffset], [1.35, 0.08, 0.55], mats.galvanized);
       }
     }
   }
+
+  // Six selected Yaba intersections receive chamfered curb returns, matching
+  // concrete aprons and clear stop bars. The 9m local street remains unchanged.
+  for (const crossing of yabaBusyCrossings) {
+    for (const node of yabaJunctionRoadNodes) {
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+        const start = [node.x + sx * (node.halfWidth + 0.1), crossing.z + sz * (crossing.halfWidth + node.chamfer + 0.1)];
+        const end = [node.x + sx * (node.halfWidth + node.chamfer + 0.1), crossing.z + sz * (crossing.halfWidth + 0.1)];
+        const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+        const yaw = Math.atan2(sz, sx) * 180 / Math.PI;
+        detail('junction-chamfered-curb-return', [center[0], 0.13, center[1]], [Math.SQRT2 * node.chamfer + 0.16, 0.26, 0.2], mats.curb, [0, yaw, 0]);
+        yabaJunctionCurbReturns++;
+        const outer = [node.x + sx * (node.halfWidth + node.chamfer + 0.1), crossing.z + sz * (crossing.halfWidth + node.chamfer + 0.1)];
+        addYabaCornerTriangle(start, end, outer);
+      }
+      for (const side of [-1, 1]) {
+        detail('yaba-junction-stop-line', [node.x, 0.028, crossing.z + side * (crossing.halfWidth + 0.65)], [node.width - 1.2, 0.035, 0.22], mats.signWhite);
+        detail('yaba-junction-stop-line', [node.x + side * (node.halfWidth + 0.65), 0.028, crossing.z], [0.22, 0.035, crossing.width - 1.2], mats.signWhite);
+        yabaJunctionStopLines += 2;
+      }
+    }
+  }
+  const yabaJunctionCornerSurfaceMeshCreated = createYabaJunctionCornerMesh();
 
   // Raised pedestrian crossings and speed tables at neighbourhood junction approaches.
   for (const z of [-110, 42, 118]) {
@@ -168,7 +271,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     }
   }
 
-  const solidName = /(?:main-road-kerb|distributor-kerb|cross-street-kerb|utility-pole|streetlight-pole|road-sign-post|bus-shelter-post|bus-stop-pole|park-bench-seat|park-bench-back|park-bin-body|park-planter-edge|roadside-stall-support|roadside-stall-leg|pedestrian-bollard)/;
+  const solidName = /(?:main-road-kerb|distributor-kerb|cross-street-kerb|junction-chamfered-curb-return|utility-pole|streetlight-pole|road-sign-post|bus-shelter-post|bus-stop-pole|park-bench-seat|park-bench-back|park-bin-body|park-planter-edge|roadside-stall-support|roadside-stall-leg|pedestrian-bollard)/;
   const collisionProxies = (app.root.findByTag('stage08c-street-detail') || [])
     .filter(entity => solidName.test(entity.name))
     .map(entity => {
@@ -189,6 +292,18 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     distributorDrainLines: 4,
     distributorFurnitureOffsetsMetres: { kerb: 4.6, drainCover: 4.95, footpath: 6, streetlight: 6.8 },
     roadWidthsMetres: { mainAvenue: 14, localDistributors: 9, crossStreets: Object.fromEntries(crossStreetWidths) },
+    junctionGeometry: {
+      treatedIntersections: yabaBusyCrossings.length * yabaJunctionRoadNodes.length,
+      cornerCurbReturns: yabaJunctionCurbReturns,
+      cornerSurfaceTriangles: yabaJunctionCornerTriangles,
+      cornerSurfaceMeshCreated: yabaJunctionCornerSurfaceMeshCreated,
+      approachStopLines: yabaJunctionStopLines,
+      selectedCrossStreetIds: yabaBusyCrossings.map(crossing => crossing.z),
+      untouchedLocalCrossStreetWidthMetres: crossStreetWidths.get(-110),
+      roadWidthsUnchanged: true,
+      sidewalksAndKerbsSplitAtIntersections: true,
+      drainRunsSplitAtIntersections: true
+    },
     busShelters: 2,
     roadsideStalls: 2,
     pocketParksFurnished: 3,

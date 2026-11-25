@@ -26,7 +26,8 @@
     "test:activities": "node scripts/stage-08l-activities.test.mjs && node scripts/stage-08l-activities-smoke.mjs",
     "test:districts": "node scripts/stage-08n-neighbourhoods.test.mjs && node scripts/city-economy.test.mjs && node scripts/city-traffic-ai.test.mjs",
     "test:districts:runtime": "node scripts/stage-08n-neighbourhoods-smoke.mjs",
-    "test:gidi:interiors": "node scripts/gidi-authored-interiors.test.mjs && node scripts/gidi-authored-interiors-smoke.mjs"
+    "test:gidi:interiors": "node scripts/gidi-authored-interiors.test.mjs && node scripts/gidi-authored-interiors-smoke.mjs",
+    "test:tech": "node scripts/stage-09-tech-equipment-smoke.mjs"
   },
   "dependencies": {
     "playcanvas": "^2.24.0"

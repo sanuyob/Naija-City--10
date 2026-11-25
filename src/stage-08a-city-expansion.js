@@ -9,6 +9,31 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
     return entity;
   };
 
+  function lineSegments(start, end, cuts = []) {
+    const ranges = cuts.map(([center, halfWidth]) => [Math.max(start, center - halfWidth), Math.min(end, center + halfWidth)])
+      .filter(([a, b]) => b > a).sort((a, b) => a[0] - b[0]);
+    const merged = [];
+    for (const range of ranges) {
+      const last = merged[merged.length - 1];
+      if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+      else merged.push(range.slice());
+    }
+    const result = [];
+    let cursor = start;
+    for (const [a, b] of merged) {
+      if (a - cursor >= 1.5) result.push([cursor, a]);
+      cursor = Math.max(cursor, b);
+    }
+    if (end - cursor >= 1.5) result.push([cursor, end]);
+    return result;
+  }
+
+  const yabaJunctionRoadNodes = [
+    { x: -32, halfWidth: 4.5, chamfer: 2.2 },
+    { x: 0, halfWidth: 7.0, chamfer: 3.4 },
+    { x: 32, halfWidth: 4.5, chamfer: 2.2 }
+  ];
+
   const extra = {
     asphalt: m.asphalt,
     concrete: m.concrete,
@@ -38,10 +63,17 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
   staticBox('stage08-ground-south', [0, -0.35, 114], [46, 0.5, 110], extra.ground);
 
   // Continue the original central avenue beyond its old north/south ends.
+  // Footpath runs are split at the busy 118 junction so the crossing sidewalk
+  // and the chamfered corner aprons can join without concrete slabs crossing.
+  const busyYabaCrossings = [{ z: 42, width: 15.5 }, { z: 118, width: 12.5 }];
   for (const z of [-149, 113]) {
     staticBox('stage08-main-road-extension', [0, -0.07, z], [14, 0.16, 112], extra.asphalt);
-    staticBox('stage08-main-road-footpath', [-8.0, 0.02, z], [1.1, 0.2, 112], extra.concrete);
-    staticBox('stage08-main-road-footpath', [8.0, 0.02, z], [1.1, 0.2, 110], extra.concrete);
+    const cuts = busyYabaCrossings.map(crossing => [crossing.z, crossing.width / 2 + 3.4 + 0.7]);
+    for (const x of [-8.0, 8.0]) {
+      for (const [a, b] of lineSegments(z - 56, z + 56, cuts)) {
+        staticBox('stage08-main-road-footpath', [x, 0.02, (a + b) / 2], [1.1, 0.2, b - a], extra.concrete);
+      }
+    }
     for (let offset = -48; offset <= 48; offset += 12) {
       staticBox('stage08-main-road-lane-dash', [0, 0.025, z + offset], [0.14, 0.025, 4.2], extra.yellow);
     }
@@ -70,8 +102,15 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
     const crossingOffset = roadWidth / 2 + 1.45;
     const roadEntity = staticBox('stage08-cross-street', [0, -0.055, z], [91, 0.17, roadWidth], extra.asphalt);
     crossStreetRoads.push({ z, entity: roadEntity });
-    staticBox('stage08-cross-street-footpath', [0, 0.02, z - sidewalkOffset], [91, 0.2, 1.1], extra.concrete);
-    staticBox('stage08-cross-street-footpath', [0, 0.02, z + sidewalkOffset], [91, 0.2, 1.1], extra.concrete);
+    const busyCrossing = roadWidth >= 12;
+    const sidewalkCuts = busyCrossing
+      ? yabaJunctionRoadNodes.map(node => [node.x, node.halfWidth + node.chamfer + 0.12])
+      : [];
+    for (const side of [-1, 1]) {
+      for (const [a, b] of lineSegments(-45.5, 45.5, sidewalkCuts)) {
+        staticBox('stage08-cross-street-footpath', [(a + b) / 2, 0.02, z + side * sidewalkOffset], [b - a, 0.2, 1.1], extra.concrete);
+      }
+    }
     for (const x of [-32, 0, 32]) {
       const stripeRange = x === 0 ? (roadWidth > 8 ? 5 : 2) : 2;
       for (let i = -stripeRange; i <= stripeRange; i++) {
