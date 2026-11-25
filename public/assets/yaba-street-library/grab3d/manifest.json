@@ -1,0 +1,49 @@
+{
+  "collection": "Naija City — Yaba Nigerian Street Life Asset Library",
+  "version": 1,
+  "source": "Grab3D",
+  "sourceLicense": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "sourceLicenseUrl": "https://grab3d.com/license/",
+  "notes": [
+    "Original downloaded source GLBs are in original/; mobile texture-resized copies are in mobile/.",
+    "The mobile copies cap embedded textures at 512px; geometry has not been simplified.",
+    "Official lightweight variants are used for several large street/building models.",
+    "Assets are candidates only and are not yet runtime-integrated into district spawning."
+  ],
+  "assets": [
+    {"id":"portable-generator","name":"Portable Petrol Generator","category":"power-and-utilities","sourcePage":"https://grab3d.com/models/electronics/generator/","original":"original/generator.glb","mobile":"mobile/generator.glb","licenseFile":"original/generator.LICENSE.txt","adaptation":"Recolour the yellow fuel tank and dark frame toward locally plausible generator finishes; position near a shop or compound wall, not in the middle of a pedestrian path."},
+    {"id":"gas-cylinder","name":"Gas Cylinder","category":"food-vending","sourcePage":"https://grab3d.com/models/props/gas-cylinder/","original":"original/gas-cylinder.glb","mobile":"mobile/gas-cylinder.glb","licenseFile":"original/gas-cylinder.LICENSE.txt","adaptation":"Useful beside a roadside food seller; recolour and remove the source palette if it looks too stylized."},
+    {"id":"market-stall","name":"Market Stall (Light)","category":"market-and-vending","sourcePage":"https://grab3d.com/models/buildings/market-stall/","original":"original/market-stall-light.glb","mobile":"mobile/market-stall-light.glb","licenseFile":"original/market-stall.LICENSE.txt","adaptation":"Replace the fruit set and apple pictogram for local produce; recolour the canopy and counter."},
+    {"id":"hot-dog-cart","name":"Hot Dog Cart (Light)","category":"market-and-vending","sourcePage":"https://grab3d.com/models/props/hot-dog-cart/","original":"original/hot-dog-cart-light.glb","mobile":"mobile/hot-dog-cart-light.glb","licenseFile":"original/hot-dog-cart.LICENSE.txt","adaptation":"Use as a cart base for akara, roasted corn or roadside snacks; change food props, signage and colours."},
+    {"id":"ramen-stand","name":"Ramen Stand (Light)","category":"market-and-vending","sourcePage":"https://grab3d.com/models/buildings/ramen-stand/","original":"original/ramen-stand-light.glb","mobile":"mobile/ramen-stand-light.glb","licenseFile":"original/ramen-stand.LICENSE.txt","adaptation":"Use only as a structural donor for a small roadside food kiosk; remove Japanese lantern/sign cues and restyle."},
+    {"id":"wooden-crate","name":"Wooden Crate","category":"market-stock","sourcePage":"https://grab3d.com/models/props/wooden-crate/","original":"original/wooden-crate.glb","mobile":"mobile/wooden-crate.glb","licenseFile":"original/wooden-crate.LICENSE.txt","adaptation":"Useful as market storage; can be recoloured or placed in stacks."},
+    {"id":"vegetable-crate","name":"Vegetable Crate","category":"market-stock","sourcePage":"https://grab3d.com/models/food/vegetable-crate/","original":"original/vegetable-crate.glb","mobile":"mobile/vegetable-crate.glb","licenseFile":"original/vegetable-crate.LICENSE.txt","adaptation":"Replace or recolour produce where the supplied vegetables do not fit the scene."},
+    {"id":"apple-crate","name":"Apple Crate","category":"market-stock","sourcePage":"https://grab3d.com/models/food/apple-crate/","original":"original/apple-crate.glb","mobile":"mobile/apple-crate.glb","licenseFile":"original/apple-crate.LICENSE.txt","adaptation":"Use the crate as a generic produce container only after removing or replacing the apples."},
+    {"id":"produce-display","name":"Produce Display (Light)","category":"market-stock","sourcePage":"https://grab3d.com/models/furniture/produce-display/","original":"original/produce-display-light.glb","mobile":"mobile/produce-display-light.glb","licenseFile":"original/produce-display.LICENSE.txt","alternateOriginal":"original/produce-display.glb","adaptation":"Repopulate the tiers with locally appropriate market goods; full-resolution alternate is retained but not the preferred mobile variant."},
+    {"id":"shopping-basket","name":"Shopping Basket","category":"market-stock","sourcePage":"https://grab3d.com/models/props/shopping-basket/","original":"original/shopping-basket.glb","mobile":"mobile/shopping-basket.glb","licenseFile":"original/shopping-basket.LICENSE.txt","adaptation":"A small market/shop prop; recolour the basket to vary vendors."},
+    {"id":"cash-register","name":"Cash Register","category":"shop-equipment","sourcePage":"https://grab3d.com/models/props/cash-register/","original":"original/cash-register.glb","mobile":"mobile/cash-register.glb","licenseFile":"original/cash-register.LICENSE.txt","adaptation":"Use inside a shop counter; avoid repeating it at every vendor."},
+    {"id":"cooking-pot","name":"Cooking Pot","category":"food-vending","sourcePage":"https://grab3d.com/models/food/cooking-pot/","original":"original/cooking-pot.glb","mobile":"mobile/cooking-pot.glb","licenseFile":"original/cooking-pot.LICENSE.txt","adaptation":"Cooking-pot prop for a food seller; lid is a separate movable part."},
+    {"id":"camping-stove","name":"Camping Stove","category":"food-vending","sourcePage":"https://grab3d.com/models/props/camping-stove/","original":"original/camping-stove.glb","mobile":"mobile/camping-stove.glb","licenseFile":"original/camping-stove.LICENSE.txt","adaptation":"Generic compact stove donor; not a full Nigerian roadside burner model."},
+    {"id":"bucket","name":"Galvanised Bucket","category":"market-stock","sourcePage":"https://grab3d.com/models/props/bucket/","original":"original/bucket.glb","mobile":"mobile/bucket.glb","licenseFile":"original/bucket.LICENSE.txt","adaptation":"Useful as a roadside/vendor utility prop; recolour or replace the contents for scene fit."},
+    {"id":"milking-stool","name":"Milking Stool","category":"market-furniture","sourcePage":"https://grab3d.com/models/furniture/milking-stool/","original":"original/milking-stool.glb","mobile":"mobile/milking-stool.glb","licenseFile":"original/milking-stool.LICENSE.txt","adaptation":"Low wooden stool donor for outdoor seller seating."},
+    {"id":"shop-front","name":"Shop Front (Light)","category":"shopfronts-and-buildings","sourcePage":"https://grab3d.com/models/buildings/shop-front/","original":"original/shop-front-light.glb","mobile":"mobile/shop-front-light.glb","licenseFile":"original/shop-front.LICENSE.txt","adaptation":"Candidate shop façade only; recolour and remove foreign iconography before use."},
+    {"id":"corner-shop","name":"Corner Shop (Light)","category":"shopfronts-and-buildings","sourcePage":"https://grab3d.com/models/buildings/corner-shop/","original":"original/corner-shop-light.glb","mobile":"mobile/corner-shop-light.glb","licenseFile":"original/corner-shop.LICENSE.txt","adaptation":"Candidate landmark/store shell; scale and architecture need review against Yaba buildings."},
+    {"id":"bakery","name":"Bakery (Light)","category":"shopfronts-and-buildings","sourcePage":"https://grab3d.com/models/buildings/bakery/","original":"original/bakery-light.glb","mobile":"mobile/bakery-light.glb","licenseFile":"original/bakery.LICENSE.txt","adaptation":"Candidate bakery shell; update signs, awnings and storefront goods for a Nigerian bakery."},
+    {"id":"shop-sign-set","name":"Shop Sign Set","category":"signage","sourcePage":"https://grab3d.com/models/city/shop-sign/","original":"original/shop-sign.glb","mobile":"mobile/shop-sign.glb","licenseFile":"original/shop-sign.LICENSE.txt","adaptation":"Three pictogram-only sign faces; use as mesh donors and replace the pictograms with Naija City sign textures."},
+    {"id":"hanging-sign","name":"Hanging Sign","category":"signage","sourcePage":"https://grab3d.com/models/city/hanging-sign/","original":"original/hanging-sign.glb","mobile":"mobile/hanging-sign.glb","licenseFile":"original/hanging-sign.LICENSE.txt","adaptation":"Projecting wall sign donor; replace the glasses pictogram with a shop-specific local sign texture."}
+  ],
+  "customAssets": [
+    {"id":"overhead-wire-span","name":"Three-wire overhead service span","path":"custom/overhead-wire-span.glb","mobilePath":"custom/overhead-wire-span-mobile.glb","generator":"scripts/generate-yaba-overhead-wire-span.mjs","license":"Original Naija City project-authored asset","details":"12 m span, 0.52 m centre sag, three cables, approximately 1,176 triangles; poles not included."}
+  ],
+  "signageTextures": [
+    {"id":"yaba-provisions","name":"Yaba Provisions","path":"../signage/yaba-provisions.png"},
+    {"id":"mide-phone-repairs","name":"Mide Phone Repairs","path":"../signage/mide-phone-repairs.png"},
+    {"id":"fresh-cut-barbers","name":"Fresh Cut Barbers","path":"../signage/fresh-cut-barbers.png"},
+    {"id":"mama-ts-kitchen","name":"Mama T's Kitchen","path":"../signage/mama-ts-kitchen.png"},
+    {"id":"akara-and-pap","name":"Akara & Pap","path":"../signage/akara-and-pap.png"},
+    {"id":"suya-and-grill","name":"Suya & Grill","path":"../signage/suya-and-grill.png"},
+    {"id":"pos-and-transfers","name":"POS & Transfers","path":"../signage/pos-and-transfers.png"},
+    {"id":"cold-drinks","name":"Cold Drinks","path":"../signage/cold-drinks.png"}
+  ]
+}
