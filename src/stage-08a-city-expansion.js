@@ -47,16 +47,21 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
     }
   }
 
-  // Two parallel distributor streets and three cross streets connect the new blocks.
+  // Two distributor streets are widened for comfortable two-way traffic;
+  // smaller neighbourhood lanes remain deliberately tighter.
+  const parallelRoadWidth = 9.0;
+  const parallelFootpathOffset = parallelRoadWidth / 2 + 1.5;
   for (const x of [-32, 32]) {
-    staticBox('stage08-parallel-road', [x, -0.07, -18], [7.5, 0.16, 350], extra.asphalt);
-    staticBox('stage08-roadside-footpath', [x - 4.35, 0.02, -18], [1.1, 0.2, 350], extra.concrete);
-    staticBox('stage08-roadside-footpath', [x + 4.35, 0.02, -18], [1.1, 0.2, 350], extra.concrete);
+    staticBox('stage08-parallel-road', [x, -0.07, -18], [parallelRoadWidth, 0.16, 350], extra.asphalt);
+    staticBox('stage08-roadside-footpath', [x - parallelFootpathOffset, 0.02, -18], [1.1, 0.2, 350], extra.concrete);
+    staticBox('stage08-roadside-footpath', [x + parallelFootpathOffset, 0.02, -18], [1.1, 0.2, 350], extra.concrete);
     for (let z = -185; z < 150; z += 13) {
       staticBox('stage08-lane-dash', [x, 0.025, z], [0.13, 0.025, 4.5], extra.yellow);
     }
   }
-  const crossStreetWidths = new Map([[-110, 7.5], [42, 10.5], [118, 10.5]]);
+  // Widen only the northern cross street. The two busier junction streets
+  // retain their existing 10.5m width and local residential lanes stay narrow.
+  const crossStreetWidths = new Map([[-110, 9.0], [42, 10.5], [118, 10.5]]);
   for (const z of [-110, 42, 118]) {
     const roadWidth = crossStreetWidths.get(z);
     const sidewalkOffset = roadWidth / 2 + 0.75;
@@ -118,7 +123,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
     expansionBounds: { min: [-48, -1, -205], max: [48, 8, 169] },
     parallelRoads: 2,
     crossStreets: 3,
-    roadHierarchy: { mainAvenueMetres: 14, parallelLocalRoadMetres: 7.5, crossStreetsMetres: { '-110': 7.5, '42': 10.5, '118': 10.5 } },
+    roadHierarchy: { mainAvenueMetres: 14, parallelDistributorRoadMetres: 9, parallelLocalRoadMetres: 9, parallelFootpathCentreOffsetMetres: 6, crossStreetsMetres: { '-110': 9, '42': 10.5, '118': 10.5 } },
     commercialBuildings: 8,
     residentialBuildings: 8,
     pocketParks: 3,

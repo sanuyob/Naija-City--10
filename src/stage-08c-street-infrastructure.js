@@ -48,10 +48,10 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
   // Distributor-road kerbs and storm-water grates. Existing sidewalks remain untouched.
   for (const side of [-1, 1]) {
     for (const roadX of [-32, 32]) {
-      const roadEdge = roadX + Math.sign(roadX) * 3.78;
+      const roadEdge = roadX + Math.sign(roadX) * 4.6;
       detail('stage08c-distributor-kerb', [roadEdge, 0.13, -18], [0.2, 0.26, 338], mats.curb);
       for (let z = -180; z <= 145; z += 36) {
-        detail('stage08c-distributor-drain-cover', [roadX + Math.sign(roadX) * 4.55, 0.13, z], [0.58, 0.08, 1.5], mats.galvanized);
+        detail('stage08c-distributor-drain-cover', [roadX + Math.sign(roadX) * 4.95, 0.13, z], [0.58, 0.08, 1.5], mats.galvanized);
       }
     }
   }
@@ -101,7 +101,7 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
   // Streetlights on the outer distributor streets; no dynamic light sources are added.
   for (const side of [-1, 1]) {
     for (const z of [-174, -126, -78, -30, 18, 66, 114, 162]) {
-      const x = side * 27.45;
+      const x = side * 25.2;
       detail('stage08c-streetlight-pole', [x, 3.45, z], [0.16, 6.9, 0.16], mats.metal);
       detail('stage08c-streetlight-arm', [x - side * 0.55, 6.75, z], [1.2, 0.12, 0.14], mats.metal);
       detail('stage08c-streetlight-head', [x - side * 1.1, 6.62, z], [0.55, 0.18, 0.34], mats.yellow);
@@ -180,7 +180,8 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     overheadWireRuns: (poleZ.length - 1) * 2 * 3,
     distributorStreetlights: 16,
     roadSigns: signs.length,
-    roadWidthsMetres: { mainAvenue: 14, localDistributors: 7.5, crossStreets: { '-110': 7.5, '42': 10.5, '118': 10.5 } },
+    distributorFurnitureOffsetsMetres: { kerb: 4.6, drainCover: 4.95, footpath: 6, streetlight: 6.8 },
+    roadWidthsMetres: { mainAvenue: 14, localDistributors: 9, crossStreets: { '-110': 9, '42': 10.5, '118': 10.5 } },
     busShelters: 2,
     roadsideStalls: 2,
     pocketParksFurnished: 3,

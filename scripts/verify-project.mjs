@@ -411,7 +411,8 @@ assert.match(stage08pSmoke,/browserErrors/,'Stage 08P smoke test must fail on br
 assert.match(stage08rSmoke,/getRoadHierarchyState/,'Stage 08R browser smoke test must inspect live road hierarchy metadata');
 assert.match(stage08rSmoke,/yabaCentralAvenueRenderedMetres/,'Stage 08R browser smoke test must verify the actual rendered Yaba avenue width');
 assert.match(expansion,/mainAvenueMetres: 14/,'Yaba main avenue must use the new 14m arterial profile');
-assert.match(expansion,/parallelLocalRoadMetres: 7\.5/,'Yaba parallel local streets must remain narrow');
+assert.match(expansion,/parallelDistributorRoadMetres: 9/,'Yaba distributor roads must be widened selectively');
+assert.match(expansion,/parallelLocalRoadMetres: 9/,'Yaba distributor road width metadata must match rendered geometry');
 assert.match(street,/mainAvenue: 14/,'Stage 08C kerbs and drainage must follow the widened main avenue');
 assert.match(game,/firstSpawnPosition = \[-8\.0, 0\.12, -40\]/,'Player spawn must remain on the relocated west footpath after road widening');
 assert.match(game,/createStage08JYabaIkejaNetworkAndStreets/,'Stage 08J Yaba-to-Ikeja road and local streets must be mounted in the live scene');
