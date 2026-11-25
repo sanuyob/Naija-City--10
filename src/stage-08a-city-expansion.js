@@ -59,14 +59,17 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
       staticBox('stage08-lane-dash', [x, 0.025, z], [0.13, 0.025, 4.5], extra.yellow);
     }
   }
-  // Widen only the northern cross street. The two busier junction streets
-  // retain their existing 10.5m width and local residential lanes stay narrow.
-  const crossStreetWidths = new Map([[-110, 9.0], [42, 10.5], [118, 10.5]]);
+  // Preserve the northern 9m neighbourhood street while widening only the
+  // two busier east-west collectors. Local residential lanes stay narrow.
+  const crossStreetWidths = new Map([[-110, 9.0], [42, 12.5], [118, 12.5]]);
+  const crossStreetRoads = [];
+  let busyCrossStreetLaneMarkingSegments = 0;
   for (const z of [-110, 42, 118]) {
     const roadWidth = crossStreetWidths.get(z);
     const sidewalkOffset = roadWidth / 2 + 0.75;
     const crossingOffset = roadWidth / 2 + 1.45;
-    staticBox('stage08-cross-street', [0, -0.055, z], [91, 0.17, roadWidth], extra.asphalt);
+    const roadEntity = staticBox('stage08-cross-street', [0, -0.055, z], [91, 0.17, roadWidth], extra.asphalt);
+    crossStreetRoads.push({ z, entity: roadEntity });
     staticBox('stage08-cross-street-footpath', [0, 0.02, z - sidewalkOffset], [91, 0.2, 1.1], extra.concrete);
     staticBox('stage08-cross-street-footpath', [0, 0.02, z + sidewalkOffset], [91, 0.2, 1.1], extra.concrete);
     for (const x of [-32, 0, 32]) {
@@ -74,6 +77,23 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
       for (let i = -stripeRange; i <= stripeRange; i++) {
         staticBox('stage08-crosswalk-stripe', [x + i * 1.25, 0.035, z - crossingOffset], [0.72, 0.03, 0.8], extra.white);
         staticBox('stage08-crosswalk-stripe', [x + i * 1.25, 0.035, z + crossingOffset], [0.72, 0.03, 0.8], extra.white);
+      }
+    }
+    // The two busiest east-west streets are four-lane collectors. Their
+    // markings scale with the wider carriageway; the 9m northern lane stays
+    // a simple neighbourhood road with no unnecessary extra lane paint.
+    if (roadWidth >= 12) {
+      for (let x = -42; x <= 42; x += 12) {
+        staticBox('stage08-cross-street-centre-dash', [x, 0.035, z], [4.6, 0.03, 0.14], extra.yellow);
+        busyCrossStreetLaneMarkingSegments++;
+        for (const side of [-1, 1]) {
+          staticBox('stage08-cross-street-lane-dash', [x, 0.035, z + side * 3.05], [4.6, 0.03, 0.12], extra.white);
+          busyCrossStreetLaneMarkingSegments++;
+        }
+      }
+      for (const side of [-1, 1]) {
+        staticBox('stage08-cross-street-edge-line', [0, 0.035, z + side * (roadWidth / 2 - 0.22)], [91, 0.025, 0.12], extra.white);
+        busyCrossStreetLaneMarkingSegments++;
       }
     }
   }
@@ -123,7 +143,7 @@ export function createStage08ACityExpansion({ app, box, material, m }) {
     expansionBounds: { min: [-48, -1, -205], max: [48, 8, 169] },
     parallelRoads: 2,
     crossStreets: 3,
-    roadHierarchy: { mainAvenueMetres: 14, parallelDistributorRoadMetres: 9, parallelLocalRoadMetres: 9, parallelFootpathCentreOffsetMetres: 6, crossStreetsMetres: { '-110': 9, '42': 10.5, '118': 10.5 } },
+    roadHierarchy: { mainAvenueMetres: 14, parallelDistributorRoadMetres: 9, parallelLocalRoadMetres: 9, parallelFootpathCentreOffsetMetres: 6, crossStreetsMetres: Object.fromEntries(crossStreetWidths), crossStreetsRenderedMetres: Object.fromEntries(crossStreetRoads.map(({z,entity})=>[String(z),entity.getLocalScale().z])), widenedCrossStreetIds: [...crossStreetWidths].filter(([,width])=>width>=12).map(([z])=>z), busyCrossStreetLaneMarkingSegments },
     commercialBuildings: 8,
     residentialBuildings: 8,
     pocketParks: 3,

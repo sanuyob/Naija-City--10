@@ -30,21 +30,27 @@ try {
     return {
       position: player.position,
       grounded: player.grounded,
-      ground: g.getGroundProbe([-6.1, 2, -40], [-6.1, -2, -40]),
+      ground: g.getGroundProbe([-8.0, 2, -40], [-8.0, -2, -40]),
       spawn: g.firstSpawnPosition,
       camera: g.getCameraPosition(),
-      visualSettings: g.getVisualSettings()
+      visualSettings: g.getVisualSettings(),
+      roadHierarchy: g.getRoadHierarchyState()
     };
   });
-  assert.ok(Math.abs(firstSpawn.position[0] + 6.1) < 0.1 && Math.abs(firstSpawn.position[1] - 0.12) < 0.1 && Math.abs(firstSpawn.position[2] + 40) < 0.1,
-    `Ara should start on the Yaba west pedestrian footpath: ${JSON.stringify(firstSpawn)}`);
+  assert.ok(Math.abs(firstSpawn.position[0] + 8.0) < 0.1 && Math.abs(firstSpawn.position[1] - 0.12) < 0.1 && Math.abs(firstSpawn.position[2] + 40) < 0.1,
+    `Ara should start on the Yaba west pedestrian footpath at the revised 14m avenue edge: ${JSON.stringify(firstSpawn)}`);
   assert.equal(firstSpawn.grounded, true, 'Ara should be grounded at first spawn');
   assert.equal(firstSpawn.ground?.surface, 'concrete', 'first spawn should be on the pedestrian sidewalk, not the carriageway');
   assert.equal(firstSpawn.ground?.id, 'yaba-concrete-sidewalk-west', 'first spawn should use the matching sidewalk support collider');
+  assert.deepEqual(firstSpawn.roadHierarchy.yabaCrossStreetsMetres, {'-110': 9, '42': 12.5, '118': 12.5}, 'Only the two busier Yaba cross streets should be widened');
+  assert.deepEqual(firstSpawn.roadHierarchy.yabaCrossStreetsRenderedMetres, {'-110': 9, '42': 12.5, '118': 12.5}, 'Rendered widths must agree with the cross-street road hierarchy');
   assert.ok(firstSpawn.camera?.every(Number.isFinite), 'first-person-follow camera should be initialized');
   const points = [
     { name: 'Yaba main road / first-spawn frontage', x: 0, z: -40, yaw: 0, expected: 'asphalt' },
     { name: 'Yaba-Ikeja connector', x: 0, z: 207, yaw: 0, expected: 'asphalt' },
+    { name: 'Yaba local north cross street', x: 0, z: -110, yaw: 90, expected: 'asphalt' },
+    { name: 'Yaba wide cross street 01', x: 0, z: 42, yaw: 90, expected: 'asphalt' },
+    { name: 'Yaba wide cross street 02', x: 0, z: 118, yaw: 90, expected: 'asphalt' },
     { name: 'Ikeja approach', x: 0, z: 220, yaw: 0, expected: 'asphalt' },
     { name: 'Ikeja commercial avenue', x: 0, z: 310, yaw: 0, expected: 'asphalt' },
     { name: 'Ikeja west collector', x: -45, z: 320, yaw: 0, expected: 'asphalt' },

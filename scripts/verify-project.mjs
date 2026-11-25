@@ -403,6 +403,7 @@ assert.match(game,/createStage08GIkejaStreetLife/,'Stage 08G Ikeja street life m
 assert.match(game,/createStage08HIkejaPropRealism/,'Stage 08H prop realism must be mounted in the live scene');
 assert.match(game,/stage08G,stage08H,stage08I,stage08J,stage08P,stage08K,stage08L/,'Stages 08G through 08L city metadata must be exposed at runtime');
 assert.match(game,/createYabaStreetLife01/,'Stage 08P Yaba Street Life 01 must be mounted in the live scene');
+assert.match(game,/yabaCrossStreetsRenderedMetres/,'Road hierarchy QA must expose rendered cross-street widths');
 assert.match(game,/getYabaStreetLife01State/,'Stage 08P asset and collision diagnostics must be exposed');
 assert.match(stage08p,/overhead-wire-span-mobile\.glb/,'Stage 08P must use the lightweight project-authored overhead wire span');
 assert.match(stage08p,/stage08p-yaba-street-life-01/,'Stage 08P assets must be tagged for scene QA and profiling');

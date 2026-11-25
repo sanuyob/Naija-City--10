@@ -45,18 +45,23 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     }
   }
 
-  // Distributor-road kerbs and storm-water grates. Existing sidewalks remain untouched.
-  for (const side of [-1, 1]) {
-    for (const roadX of [-32, 32]) {
-      const roadEdge = roadX + Math.sign(roadX) * 4.6;
-      detail('stage08c-distributor-kerb', [roadEdge, 0.13, -18], [0.2, 0.26, 338], mats.curb);
+  // Distributor-road kerbs and storm-water grates on both sides of both
+  // 9m roads. Keep the inboard and outboard edges separate so widening a
+  // selected corridor never leaves the opposite edge undressed.
+  const distributorRoadWidth = 9.0;
+  const distributorKerbOffset = distributorRoadWidth / 2 + 0.1;
+  const distributorDrainOffset = distributorRoadWidth / 2 + 0.45;
+  for (const roadX of [-32, 32]) {
+    for (const side of [-1, 1]) {
+      detail('stage08c-distributor-kerb', [roadX + side * distributorKerbOffset, 0.13, -18], [0.2, 0.26, 338], mats.curb);
       for (let z = -180; z <= 145; z += 36) {
-        detail('stage08c-distributor-drain-cover', [roadX + Math.sign(roadX) * 4.95, 0.13, z], [0.58, 0.08, 1.5], mats.galvanized);
+        detail('stage08c-distributor-drain-cover', [roadX + side * distributorDrainOffset, 0.13, z], [0.58, 0.08, 1.5], mats.galvanized);
       }
     }
   }
+  const crossStreetWidths = new Map([[-110, 9.0], [42, 12.5], [118, 12.5]]);
   for (const z of [-110, 42, 118]) {
-    const roadWidth = (z === 42 || z === 118) ? 10.5 : 7.5;
+    const roadWidth = crossStreetWidths.get(z);
     const curbOffset = roadWidth / 2 + 0.1;
     const drainOffset = roadWidth / 2 + 1.45;
     for (const side of [-1, 1]) {
@@ -180,8 +185,10 @@ export function createStage08CStreetInfrastructure({ app, box, material }) {
     overheadWireRuns: (poleZ.length - 1) * 2 * 3,
     distributorStreetlights: 16,
     roadSigns: signs.length,
+    distributorKerbEdges: 4,
+    distributorDrainLines: 4,
     distributorFurnitureOffsetsMetres: { kerb: 4.6, drainCover: 4.95, footpath: 6, streetlight: 6.8 },
-    roadWidthsMetres: { mainAvenue: 14, localDistributors: 9, crossStreets: { '-110': 9, '42': 10.5, '118': 10.5 } },
+    roadWidthsMetres: { mainAvenue: 14, localDistributors: 9, crossStreets: { '-110': 9, '42': 12.5, '118': 12.5 } },
     busShelters: 2,
     roadsideStalls: 2,
     pocketParksFurnished: 3,
