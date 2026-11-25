@@ -8,14 +8,14 @@ import {
 } from '../src/field-equipment-system.js';
 
 assert.equal(FIELD_EQUIPMENT_DEFINITIONS.length, 3);
-assert.equal(new Set(FIELD_EQUIPMENT_DEFINITIONS.map(item => item.id)).size, 4);
+assert.equal(new Set(FIELD_EQUIPMENT_DEFINITIONS.map(item => item.id)).size, 3);
 assert.deepEqual(FIELD_EQUIPMENT_DEFAULT_SLOTS, ['field-radio', 'survey-beacon', 'repair-kit']);
 
 const inventory = normalizeFieldEquipmentInventory({ 'field-radio': 5, 'survey-beacon': -2, 'repair-kit': 'bad' });
 assert.equal(inventory['field-radio'], 1, 'radio count is capped');
 assert.equal(inventory['survey-beacon'], 0, 'negative counts are clamped');
 assert.equal(inventory['repair-kit'], 0, 'invalid counts become zero');
-assert.equal(inventory['survey-beacon'], FIELD_EQUIPMENT_DEFAULT_INVENTORY['survey-beacon'], 'missing counts use starter inventory');
+assert.equal(normalizeFieldEquipmentInventory()['survey-beacon'], FIELD_EQUIPMENT_DEFAULT_INVENTORY['survey-beacon'], 'missing counts use starter inventory');
 
 const airborne = stepDroppedFieldProp({
   position: [0, 1, 0], velocity: [1, 2, 0], rotationY: 0, spin: 60, radius: 0.16

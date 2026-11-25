@@ -5,6 +5,40 @@ const ASSETS = Object.freeze({
   policeCar: 'https://grab3d.com/dl/police-car/police-car.glb'
 });
 
+
+function createLowMemoryOfficer(app, position) {
+  const root = new pc.Entity('naija-city-police-officer-low-memory');
+  const uniform = new pc.StandardMaterial();
+  uniform.diffuse = new pc.Color(0.035, 0.075, 0.16);
+  uniform.update();
+  const dark = new pc.StandardMaterial();
+  dark.diffuse = new pc.Color(0.018, 0.025, 0.04);
+  dark.update();
+  const skin = new pc.StandardMaterial();
+  skin.diffuse = new pc.Color(0.48, 0.29, 0.20);
+  skin.update();
+  const add = (name, type, scale, pos, material) => {
+    const part = new pc.Entity(name);
+    part.addComponent('render', { type, material });
+    part.setLocalScale(...scale);
+    part.setLocalPosition(...pos);
+    root.addChild(part);
+    return part;
+  };
+  add('uniform-torso','box',[.43,.64,.24],[0,1.12,0],uniform);
+  add('officer-head','sphere',[.22,.25,.21],[0,1.60,0],skin);
+  add('uniform-cap','cylinder',[.25,.07,.25],[0,1.77,0],dark);
+  add('uniform-left-arm','capsule',[.12,.43,.12],[-.29,1.13,0],uniform);
+  add('uniform-right-arm','capsule',[.12,.43,.12],[.29,1.13,0],uniform);
+  add('uniform-left-leg','capsule',[.14,.48,.14],[-.12,.48,0],dark);
+  add('uniform-right-leg','capsule',[.14,.48,.14],[.12,.48,0],dark);
+  root.tags.add('ambient-pedestrian');
+  root.tags.add('police-patrol-npc');
+  root.setPosition(...position);
+  app.root.addChild(root);
+  return root;
+}
+
 function loadContainer(app, name, url) {
   return new Promise((resolve, reject) => {
     const asset = new pc.Asset(name, 'container', { url });
@@ -54,14 +88,9 @@ export function createPolicePatrolSystem({ app, playerPhysics, lowMemoryDevice =
   }
 
   async function load() {
-    if (lowMemoryDevice) {
-      state = 'deferred-low-memory';
-      onStatus('Police patrol deferred on low-memory device profile.');
-      return;
-    }
     try {
       const [officerResult, carResult] = await Promise.allSettled([
-        loadContainer(app, 'grab3d-police-officer-rigged', ASSETS.officer),
+        lowMemoryDevice ? Promise.reject(new Error('Rigged officer deferred for low-memory profile')) : loadContainer(app, 'grab3d-police-officer-rigged', ASSETS.officer),
         loadContainer(app, 'grab3d-police-car-lightweight', ASSETS.policeCar)
       ]);
       if (destroyed) {
@@ -79,6 +108,9 @@ export function createPolicePatrolSystem({ app, playerPhysics, lowMemoryDevice =
         officer.setPosition(...route[0]);
         app.root.addChild(officer);
         setWalkAnimation();
+      } else if (lowMemoryDevice) {
+        officer = createLowMemoryOfficer(app, route[0]);
+        animationName = 'low-poly procedural patrol';
       } else {
         loadError = String(officerResult.reason?.message || officerResult.reason);
       }
