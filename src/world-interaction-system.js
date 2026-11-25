@@ -18,7 +18,7 @@ export function createWorldInteractionSystem({ targets = [], getPlayerState = ()
     for (const target of registry.values()) {
       if (target.enabled === false || target.canInteract?.(playerState) === false) continue;
       const distance = Math.hypot(p[0] - target.position[0], p[2] - target.position[2]);
-      const visible = lineOfSight ? lineOfSight([p[0], p[1] + 1.2, p[2]], [target.position[0], target.position[1] + (target.eyeHeight || 0.9), target.position[2]]) : true;
+      const visible = target.requiresLineOfSight === false ? true : (lineOfSight ? lineOfSight([p[0], p[1] + 1.2, p[2]], [target.position[0], target.position[1] + (target.eyeHeight || 0.9), target.position[2]]) : true);
       matches.push({ target, distance, visible, available: visible && distance <= (target.range || defaultRange) });
     }
     matches.sort((a, b) => a.distance - b.distance);

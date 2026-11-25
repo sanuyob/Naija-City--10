@@ -315,3 +315,19 @@
 .gps-readout{display:block;overflow:hidden;margin-top:4px;color:#f0d49a;font:700 6px/1.25 ui-monospace,monospace;letter-spacing:.03em;text-overflow:ellipsis;white-space:nowrap}
 #hud-interaction-prompt{position:fixed;left:50%;bottom:calc(142px + var(--safe-bottom,0px));transform:translateX(-50%);z-index:8;max-width:min(280px,65vw);padding:7px 11px;border:1px solid #d8b77999;border-radius:7px;background:#07110fee;color:#f1d5a0;text-align:center;font:700 9px/1.3 ui-monospace,monospace;letter-spacing:.06em;box-shadow:0 4px 18px #0008}
 @media (orientation:landscape) and (max-height:560px){#hud-interaction-prompt{bottom:calc(112px + var(--safe-bottom,0px))}}
+
+
+/* Portable device inventory and inspection screens. */
+.inventory-slots-summary{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px;color:var(--hud-muted);font-size:8px;letter-spacing:.07em}
+.inventory-slots-summary span{padding:6px 8px;border:1px solid var(--hud-stroke);border-radius:7px;background:rgba(255,255,255,.035)}
+.inventory-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.inventory-actions button,.inventory-back{min-height:32px;padding:7px 10px;border:1px solid rgba(215,184,120,.38);border-radius:7px;background:rgba(215,184,120,.10);color:var(--ink);font-size:8px;letter-spacing:.06em}
+.item-inspection{max-width:660px;margin:12px auto;padding:clamp(14px,3vw,22px);border:1px solid var(--hud-stroke);border-radius:13px;background:rgba(255,255,255,.035)}
+.item-inspection>small{color:var(--gold);font-size:8px;letter-spacing:.14em}
+.item-inspection h3{margin:9px 0;font:24px Georgia,serif}
+.item-inspection p,.item-inspection li{color:#bfcbc2;font-size:11px;line-height:1.55}
+.item-inspection ul{padding-left:18px;margin:12px 0}
+.item-inspection-status{margin-top:14px;color:var(--gold);font-size:8px;letter-spacing:.1em}
+.item-inspection .inventory-actions button:first-child{border-color:rgba(134,196,156,.55);background:rgba(38,98,75,.22)}
+.inventory-back{display:block;margin-top:18px;background:rgba(255,255,255,.04)}
+.quick-slots button small{max-width:40px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

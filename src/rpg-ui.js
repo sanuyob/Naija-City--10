@@ -10,6 +10,21 @@ const views = {
   crew: ['CITY CREW', 'Companions', '<div class="mission"><small>ACTIVE ROSTER · MAXIMUM TWO</small><b>TECH SPECIALIST</b><p>Arrives from a district entry point. Follows, holds position and responds to field commands.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="tech">SUMMON</button><button data-companion-command="Follow" data-companion-id="tech">FOLLOW</button><button data-companion-command="Hold" data-companion-id="tech">HOLD</button><button data-companion-command="Dismiss" data-companion-id="tech">DISMISS</button></div></div><div class="mission"><small>TRANSPORT SUPPORT</small><b>DRIVER</b><p>Second companion slot. Walks in from a separate entry point; no instant teleport.</p><div class="tiles"><button data-companion-command="Summon" data-companion-id="driver">SUMMON</button><button data-companion-command="Regroup" data-companion-id="driver">REGROUP</button><button data-companion-command="RadioCall" data-companion-id="driver">RADIO</button><button data-companion-command="Dismiss" data-companion-id="driver">DISMISS</button></div></div><div class="tiles"><button data-companion-command="PointAhead" data-companion-id="tech">POINT AHEAD</button><button data-companion-command="AssistUp" data-companion-id="tech">ASSIST UP</button></div>']
 };
 
+const inventoryCatalog = {
+  'tech-data-pad': {
+    id: 'tech-data-pad', name: 'City Data Pad', slotLabel: 'DATA PAD', category: 'PORTABLE CITY DEVICE',
+    description: 'A compact field tablet used by city workers to check district information, saved points and local service notes.',
+    details: ['Offline district reference', 'Saved place notes', 'Portable inspection tool'],
+    useMessage: 'DATA PAD · Yaba district reference opened. Saved place notes are available; live GPS sync is not connected yet.'
+  },
+  'tech-field-radio': {
+    id: 'tech-field-radio', name: 'Field Radio', slotLabel: 'RADIO', category: 'PORTABLE COMMUNICATION DEVICE',
+    description: 'A short-range city service radio for fictional in-game status checks and local crew messages.',
+    details: ['Local service status', 'Crew check-in panel', 'No real-world radio transmission'],
+    useMessage: 'FIELD RADIO · Local channel check complete. The city network is a game-only communication system.'
+  }
+};
+
 export function mountRPGInterface() {
   const root = document.getElementById('rpg-interface');
   if (!root) throw new Error('Missing RPG interface root');
@@ -96,12 +111,14 @@ export function mountRPGInterface() {
   let activeDistrict = 'YABA';
   let activeRegion = 'LAGOS';
   let economyState = { cash:5000, inventory:{} };
+  let inspectionItem = null;
   const worldMapUI = mountWorldMapUI(root);
   window.__NAIJA_RPG_PAUSED__ = false;
   const panel = root.querySelector('#rpg-panel');
   const pause = root.querySelector('#rpg-pause');
   const toast = root.querySelector('#hud-toast');
   const loadingScreen = root.querySelector('#city-loading');
+  renderQuickSlots();
   const updateLoading = progress => {
     const percent=Math.max(0,Math.min(100,Number(progress?.percent)||0));
     root.querySelector('#city-loading-fill').style.width=percent+'%';
@@ -134,6 +151,7 @@ export function mountRPGInterface() {
     if (!view) return;
     root.querySelector('#panel-kicker').textContent = view[0];
     root.querySelector('#panel-title').textContent = view[1];
+    if (name === 'inventory') inspectionItem = null;
     root.querySelector('#panel-content').innerHTML = name === 'inventory' ? renderInventory() : view[2];
     if (name === 'settings') {
       const dataSaverButton = root.querySelector('[data-setting=\"data-saver\"]');
@@ -185,6 +203,47 @@ export function mountRPGInterface() {
       window.__NAIJA_INTERACT__?.();
       return;
     }
+    const inspectButton = event.target.closest('[data-item-inspect]');
+    if (inspectButton) {
+      const item = inventoryCatalog[inspectButton.dataset.itemId];
+      if (item) inspectItem(item);
+      return;
+    }
+    const collectButton = event.target.closest('[data-item-collect]');
+    if (collectButton) {
+      const result = window.__NAIJA_COLLECT_ITEM__?.(collectButton.dataset.itemId);
+      if (result?.success) {
+        if (result.state) setEconomy(result.state);
+        inspectionItem = inventoryCatalog[collectButton.dataset.itemId] || inspectionItem;
+        root.querySelector('#panel-content').innerHTML = renderItemInspection(inspectionItem);
+        showToast(result.message || 'Item added to inventory.');
+      } else showToast(result?.message || 'This item could not be collected.');
+      return;
+    }
+    const equipButton = event.target.closest('[data-item-equip]');
+    if (equipButton) {
+      const result = window.__NAIJA_EQUIP_ITEM__?.(equipButton.dataset.itemId, equipButton.dataset.slot);
+      if (result?.success) {
+        if (result.state) setEconomy(result.state);
+        showToast(result.message || 'Quick slot updated.');
+      } else showToast(result?.message || 'Could not equip that item.');
+      return;
+    }
+    const inventoryBack = event.target.closest('[data-inventory-back]');
+    if (inventoryBack) {
+      inspectionItem = null;
+      root.querySelector('#panel-kicker').textContent = 'FIELD KIT';
+      root.querySelector('#panel-title').textContent = 'Inventory';
+      root.querySelector('#panel-content').innerHTML = renderInventory();
+      return;
+    }
+    const useButton = event.target.closest('[data-item-use]');
+    if (useButton) {
+      const result = window.__NAIJA_USE_ITEM__?.(useButton.dataset.itemId);
+      showToast(result?.message || 'That device is not ready.');
+      if (result?.action === 'open-map') open('map');
+      return;
+    }
     const setting = event.target.closest('[data-setting]');
     if (setting) {
       if(setting.dataset.setting==='vehicle-controls'){
@@ -202,7 +261,13 @@ export function mountRPGInterface() {
     const slot = event.target.closest('[data-slot]');
     if (slot) {
       root.querySelectorAll('[data-slot]').forEach(item => item.setAttribute('aria-pressed', String(item === slot)));
-      showToast('Quick slot ' + slot.dataset.slot + ' is empty.');
+      const itemId = economyState.quickSlots?.[slot.dataset.slot];
+      if (!itemId) showToast('Quick slot ' + slot.dataset.slot + ' is empty.');
+      else {
+        const result = window.__NAIJA_USE_ITEM__?.(itemId);
+        showToast(result?.message || 'This item is not ready yet.');
+        if (result?.action === 'open-map') open('map');
+      }
       return;
     }
   });
@@ -228,24 +293,66 @@ export function mountRPGInterface() {
   });
 
   const escapeMarkup = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function renderItemInspection(item) {
+    if (!item) return renderInventory();
+    const count = Math.max(0, Math.floor(Number(economyState.inventory?.[item.id]) || 0));
+    const collected = count > 0;
+    const detailRows = (item.details || []).map(detail => `<li>${escapeMarkup(detail)}</li>`).join('');
+    const actions = collected
+      ? `<div class="inventory-actions"><button data-item-use data-item-id="${escapeMarkup(item.id)}">USE DEVICE</button><button data-item-equip data-item-id="${escapeMarkup(item.id)}" data-slot="1">EQUIP SLOT 1</button><button data-item-equip data-item-id="${escapeMarkup(item.id)}" data-slot="2">EQUIP SLOT 2</button></div>`
+      : `<div class="inventory-actions"><button data-item-collect data-item-id="${escapeMarkup(item.id)}">COLLECT TO INVENTORY</button></div>`;
+    return `<section class="item-inspection"><small>${escapeMarkup(item.category || 'FIELD EQUIPMENT')}</small><h3>${escapeMarkup(item.name)}</h3><p>${escapeMarkup(item.description || 'A portable field device.')}</p><ul>${detailRows}</ul><div class="item-inspection-status">${collected ? 'IN BAG · QUANTITY '+count : 'AVAILABLE TO COLLECT'}</div>${actions}<button class="inventory-back" data-inventory-back>← BACK TO INVENTORY</button></section>`;
+  }
   function renderInventory() {
     const items = Object.entries(economyState.inventory || {}).filter(([, count]) => Number(count) > 0);
     const rows = items.length
-      ? items.map(([id, count], index) => `<article><b>${String(index + 1).padStart(2, '0')}</b><strong>${escapeMarkup(id.replaceAll('-', ' '))}</strong><small>QUANTITY · ${Math.floor(Number(count) || 0)}</small></article>`).join('')
-      : '<article><b>01</b><strong>Supplies</strong><small>No purchased goods yet</small></article>';
-    return `<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦${Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG')}</b></div><div class="tiles">${rows}</div>`;
+      ? items.map(([id, count], index) => {
+          const item = inventoryCatalog[id];
+          const name = item?.name || id.replaceAll('-', ' ');
+          const category = item?.category || 'COLLECTED ITEM';
+          return `<article><b>${String(index + 1).padStart(2, '0')} · ${escapeMarkup(category)}</b><strong>${escapeMarkup(name)}</strong><small>QUANTITY · ${Math.floor(Number(count) || 0)}</small><div class="inventory-actions"><button data-item-inspect data-item-id="${escapeMarkup(id)}">INSPECT</button><button data-item-equip data-item-id="${escapeMarkup(id)}" data-slot="1">SLOT 1</button><button data-item-equip data-item-id="${escapeMarkup(id)}" data-slot="2">SLOT 2</button></div></article>`;
+        }).join('')
+      : '<article><b>FIELD KIT</b><strong>No devices collected</strong><small>Inspect the data pad and field radio at Mide Tech Hub.</small></article>';
+    const slots = [1,2,3].map(slot => {
+      const id = economyState.quickSlots?.[slot];
+      const item = id ? inventoryCatalog[id] : null;
+      return `<span>${slot} · ${escapeMarkup(item?.slotLabel || (id ? id.replaceAll('-', ' ').toUpperCase() : 'EMPTY'))}</span>`;
+    }).join('');
+    return `<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦${Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG')}</b></div><div class="inventory-slots-summary">${slots}</div><div class="tiles">${rows}</div>`;
+  }
+  function inspectItem(item) {
+    open('inventory');
+    inspectionItem = item;
+    paused = true;
+    window.__NAIJA_RPG_PAUSED__ = true;
+    root.querySelector('#panel-kicker').textContent = item.category || 'FIELD EQUIPMENT';
+    root.querySelector('#panel-title').textContent = item.name;
+    root.querySelector('#panel-content').innerHTML = renderItemInspection(item);
+    return true;
   }
   function setEconomy(state = {}) {
     economyState = {
       cash: Number.isFinite(state.cash) ? Math.max(0, state.cash) : economyState.cash,
-      inventory: state.inventory && typeof state.inventory === 'object' ? { ...state.inventory } : economyState.inventory
+      inventory: state.inventory && typeof state.inventory === 'object' ? { ...state.inventory } : economyState.inventory,
+      quickSlots: state.quickSlots && typeof state.quickSlots === 'object' ? { ...state.quickSlots } : economyState.quickSlots
     };
     const cash = root.querySelector('#hud-wallet-value');
     if (cash) cash.textContent = '₦' + Math.floor(economyState.cash).toLocaleString('en-NG');
     const count = root.querySelector('#hud-inventory-count');
     if (count) count.textContent = 'BAG · ' + Object.values(economyState.inventory).reduce((sum, value) => sum + Math.max(0, Math.floor(Number(value) || 0)), 0);
-    if (!panel.hidden && root.querySelector('#panel-title')?.textContent === 'Inventory') root.querySelector('#panel-content').innerHTML = renderInventory();
-    return { cash: economyState.cash, inventory: { ...economyState.inventory } };
+    renderQuickSlots();
+    if (!panel.hidden && root.querySelector('#panel-title')?.textContent === 'Inventory') root.querySelector('#panel-content').innerHTML = inspectionItem ? renderItemInspection(inspectionItem) : renderInventory();
+    return { cash: economyState.cash, inventory: { ...economyState.inventory }, quickSlots: { ...economyState.quickSlots } };
+  }
+  function renderQuickSlots() {
+    root.querySelectorAll('[data-slot]').forEach(slot => {
+      const id = economyState.quickSlots?.[slot.dataset.slot];
+      const item = id ? inventoryCatalog[id] : null;
+      const label = item?.slotLabel || (id ? id.replaceAll('-', ' ').toUpperCase() : 'EMPTY');
+      const small = slot.querySelector('small');
+      if (small) small.textContent = label;
+      slot.title = item?.name || (id || 'Empty quick slot');
+    });
   }
   function showToast(message) {
     toast.textContent = message;
@@ -310,7 +417,7 @@ export function mountRPGInterface() {
     if (fuel) fuel.textContent = 'FUEL ' + Math.round(state.fuelPercent ?? 100) + '%';
   }
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, setEconomy, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, inspectItem, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, setEconomy, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     setWorldMapData:worldMapUI.setData, setWorldMapPlayerPosition:worldMapUI.setPlayerPosition, getWorldMapState:worldMapUI.getState,

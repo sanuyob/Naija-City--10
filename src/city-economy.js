@@ -8,6 +8,7 @@ function normalizeProgress(value) {
     version: SAVE_VERSION,
     cash: Number.isFinite(source.cash) ? Math.max(0, Math.floor(source.cash)) : STARTING_CASH,
     inventory: source.inventory && typeof source.inventory === 'object' ? { ...source.inventory } : {},
+    quickSlots: source.quickSlots && typeof source.quickSlots === 'object' ? { 1: source.quickSlots[1] || null, 2: source.quickSlots[2] || null, 3: source.quickSlots[3] || null } : { 1: null, 2: null, 3: null },
     activities: source.activities && typeof source.activities === 'object' ? { ...source.activities } : {},
     purchases: Number.isFinite(source.purchases) ? Math.max(0, Math.floor(source.purchases)) : 0,
     updatedAt: typeof source.updatedAt === 'string' ? source.updatedAt : null
@@ -77,6 +78,27 @@ export function createCityEconomy({ storage = globalThis.localStorage, key = STO
     return entry ? { ...entry, pickups: Array.isArray(entry.pickups) ? entry.pickups.slice() : [] } : null;
   }
 
+  function addItem(productId, quantity = 1) {
+    if (typeof productId !== 'string' || !productId || !Number.isFinite(quantity) || quantity <= 0) {
+      return { success: false, message: 'This item cannot be added right now.' };
+    }
+    const amount = Math.max(1, Math.floor(quantity));
+    state.inventory[productId] = Math.max(0, Math.floor(Number(state.inventory[productId]) || 0)) + amount;
+    const saved = persist();
+    return { success: true, productId, quantity: amount, saved, state: getState(), message: `Collected ${productId.replaceAll('-', ' ')}.` };
+  }
+
+  function setQuickSlot(slot, productId = null) {
+    const index = String(slot);
+    if (!['1', '2', '3'].includes(index)) return { success: false, message: 'That quick slot is unavailable.' };
+    if (productId !== null && (typeof productId !== 'string' || !productId || (Number(state.inventory[productId]) || 0) < 1)) {
+      return { success: false, message: 'Collect the item before equipping it.' };
+    }
+    state.quickSlots[index] = productId;
+    const saved = persist();
+    return { success: true, slot: Number(index), productId, saved, state: getState(), message: productId ? `Equipped ${productId.replaceAll('-', ' ')} to slot ${index}.` : `Quick slot ${index} cleared.` };
+  }
+
   function purchase(productId, price) {
     if (typeof productId !== 'string' || !productId || !Number.isFinite(price) || price <= 0) {
       return { success: false, message: 'This item is not available right now.' };
@@ -91,10 +113,10 @@ export function createCityEconomy({ storage = globalThis.localStorage, key = STO
   }
 
   function getState() {
-    return { ...state, inventory: { ...state.inventory }, activities: JSON.parse(JSON.stringify(state.activities)), persistence: { available: saveAvailable, saves, errors: saveErrors, key } };
+    return { ...state, inventory: { ...state.inventory }, quickSlots: { ...state.quickSlots }, activities: JSON.parse(JSON.stringify(state.activities)), persistence: { available: saveAvailable, saves, errors: saveErrors, key } };
   }
 
-  return { awardActivity, setActivityProgress, getActivityProgress, purchase, getState, save: persist };
+  return { awardActivity, setActivityProgress, getActivityProgress, addItem, setQuickSlot, purchase, getState, save: persist };
 }
 
 export const CITY_ECONOMY_DEFAULTS = Object.freeze({ startingCash: STARTING_CASH, activityReward: 500, storageKey: STORAGE_KEY });

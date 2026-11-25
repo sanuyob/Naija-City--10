@@ -307,7 +307,14 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const gidiManifest=await gidiManifestResponse.json();
   const stage08N=createStage08NDistrictNeighbourhoods({app,box,material,manifest:gidiManifest,surfaceMaterials:stage08J.surfaceMaterials});
   const stage08P=await createYabaStreetLife01({app,material,lowMemoryDevice,lowDataMode,surfaceMaterials:stage08J.surfaceMaterials});
-  const stage09Tech=await createStage09TechEquipment({app});
+  const stage09Tech=await createStage09TechEquipment({app,economy:cityEconomy});
+  window.__NAIJA_COLLECT_ITEM__=inventoryId=>stage09Tech.collectItem(inventoryId);
+  window.__NAIJA_EQUIP_ITEM__=(inventoryId,slot)=>{
+    const result=cityEconomy.setQuickSlot(slot,inventoryId);
+    if(result.success)window.__NAIJA_RPG_UI__?.setEconomy?.(result.state||cityEconomy.getState());
+    return result;
+  };
+  window.__NAIJA_USE_ITEM__=inventoryId=>stage09Tech.useItem(inventoryId);
 
   // A small, bounded tutorial traversal lane beside the Yaba spawn route.
   const ladderFrame=new pc.Entity('traversal-ladder-assembly');
