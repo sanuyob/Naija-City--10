@@ -1,3 +1,5 @@
+import * as pc from 'playcanvas';
+
 // Stage 08I: extend the existing Ikeja corridor into a connected, playable
 // neighbourhood district. Geometry stays modular, static and mobile-batched.
 // The existing Stage 08G/08H corridor is preserved; this module adds the
@@ -117,45 +119,112 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
     { id: 'stage08i-ground-south', position: [0, -0.2, 450], halfExtents: [60, 0.2, 25], surface: 'grass' }
   );
 
-  // Two collector streets and two outer access streets create a true block
-  // network around the existing north-south Ikeja commercial avenue.
-  for (const x of [-45, 45]) {
-    road('collector-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [12, 0.16, 260]);
+  // The network has five north/south roads. Major approaches get wider
+  // corner cuts; the two residential links stay narrower and use tighter cuts.
+  const crossStreetZ = [246, 310, 374, 438];
+  const crossStreetWidth = 12;
+  const crossStreetHalfWidth = crossStreetWidth / 2;
+  const junctionRoadNodes = [
+    { x: -83, width: 11, halfWidth: 5.5, chamfer: 2.2, role: 'residential' },
+    { x: -45, width: 12, halfWidth: 6, chamfer: 3.0, role: 'collector' },
+    { x: 0, width: 18, halfWidth: 9, chamfer: 3.4, role: 'arterial' },
+    { x: 45, width: 12, halfWidth: 6, chamfer: 3.0, role: 'collector' },
+    { x: 83, width: 11, halfWidth: 5.5, chamfer: 2.2, role: 'residential' }
+  ];
+  let junctionCurbReturns = 0;
+  let junctionCornerSurfaceTriangles = 0;
+  let junctionApproachStopLines = 0;
+  let junctionCornerSurfaceMeshCreated = false;
+  const cornerPositions = [];
+  const cornerNormals = [];
+  const cornerIndices = [];
+
+  function lineSegments(start, end, cuts) {
+    const ranges = cuts
+      .map(([center, halfWidth]) => [Math.max(start, center - halfWidth), Math.min(end, center + halfWidth)])
+      .filter(([a, b]) => b > a)
+      .sort((a, b) => a[0] - b[0]);
+    const merged = [];
+    for (const range of ranges) {
+      const last = merged[merged.length - 1];
+      if (last && range[0] <= last[1]) last[1] = Math.max(last[1], range[1]);
+      else merged.push(range.slice());
+    }
+    const result = [];
+    let cursor = start;
+    for (const [a, b] of merged) {
+      if (a - cursor >= 1.5) result.push([cursor, a]);
+      cursor = Math.max(cursor, b);
+    }
+    if (end - cursor >= 1.5) result.push([cursor, end]);
+    return result;
+  }
+
+  function addCornerPavementTriangle(start, end, outer) {
+    const area = (end[0] - start[0]) * (outer[1] - start[1]) - (end[1] - start[1]) * (outer[0] - start[0]);
+    const vertices = area < 0 ? [start, end, outer] : [start, outer, end];
+    const base = cornerPositions.length / 3;
+    for (const [x, z] of vertices) {
+      cornerPositions.push(x, 0.112, z);
+      cornerNormals.push(0, 1, 0);
+    }
+    cornerIndices.push(base, base + 1, base + 2);
+    junctionCornerSurfaceTriangles++;
+  }
+
+  // Two collectors and two local access streets connect into the existing
+  // avenue. Sidewalk, kerb and gutter runs stop at the intersection corners.
+  for (const node of junctionRoadNodes) {
+    const { x, width, halfWidth, chamfer, role } = node;
+    const roadLength = role === 'residential' ? 250 : 260;
+    if (role !== 'arterial') {
+      road(role === 'collector' ? 'collector-' + (x < 0 ? 'west' : 'east') : 'outer-residential-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [width, 0.16, roadLength]);
+    }
+    if (role === 'arterial') continue; // Stage 08G owns the existing 18m avenue and its trimmed footpaths.
+    const cuts = crossStreetZ.map(z => [z, crossStreetHalfWidth + chamfer + 0.12]);
     for (const side of [-1, 1]) {
-      detail('collector-sidewalk', [x + side * 6.85, 0.015, 320], [1.35, 0.19, 260], mats.concrete);
-      detail('collector-kerb', [x + side * 6.18, 0.14, 320], [0.2, 0.28, 260], mats.curb);
-      detail('collector-gutter', [x + side * 7.95, 0.015, 320], [0.26, 0.08, 260], mats.drain);
-      for (let z = 215; z <= 430; z += 27) {
-        detail('collector-drain-cover', [x + side * 7.95, 0.105, z], [0.58, 0.08, 1.4], mats.galvanized);
-        drainCovers++;
+      const curbOffset = halfWidth + 0.1;
+      const sidewalkOffset = role === 'residential' ? 6.4 : 6.85;
+      const sidewalkWidth = role === 'residential' ? 1.15 : 1.35;
+      const gutterOffset = role === 'residential' ? null : 7.95;
+      for (const [a, b] of lineSegments(320 - roadLength / 2, 320 + roadLength / 2, cuts)) {
+        detail(role + '-sidewalk-segment', [x + side * sidewalkOffset, 0.015, (a + b) / 2], [sidewalkWidth, role === 'residential' ? 0.18 : 0.19, b - a], mats.concrete);
+        detail(role + '-kerb-segment', [x + side * curbOffset, 0.13, (a + b) / 2], [role === 'residential' ? 0.18 : 0.2, role === 'residential' ? 0.26 : 0.28, b - a], mats.curb);
+        if (gutterOffset !== null) detail('collector-gutter-segment', [x + side * gutterOffset, 0.015, (a + b) / 2], [0.26, 0.08, b - a], mats.drain);
+      }
+      if (gutterOffset !== null) {
+        for (let z = 215; z <= 430; z += 27) {
+          if (crossStreetZ.some(crossZ => Math.abs(z - crossZ) < crossStreetHalfWidth + chamfer + 1.0)) continue;
+          detail('collector-drain-cover', [x + side * gutterOffset, 0.105, z], [0.58, 0.08, 1.4], mats.galvanized);
+          drainCovers++;
+        }
       }
     }
   }
-  for (const x of [-83, 83]) {
-    road('outer-residential-' + (x < 0 ? 'west' : 'east'), [x, -0.08, 320], [11, 0.16, 250]);
-    for (const side of [-1, 1]) {
-      detail('outer-road-footpath', [x + side * 6.4, 0.015, 320], [1.15, 0.18, 250], mats.concrete);
-      detail('outer-road-kerb', [x + side * 5.62, 0.13, 320], [0.18, 0.26, 250], mats.curb);
-    }
-  }
 
-  // East-west local streets tie the old Ikeja avenue into both collectors and
-  // both residential streets. These intersections are the new network spine.
-  const crossStreetZ = [246, 310, 374, 438];
+  // East-west streets tie the road hierarchy together. Their footpaths and
+  // kerbs are segmented around each north/south carriageway, not laid across it.
+  let junctionIntersectionCount = 0;
   for (const z of crossStreetZ) {
-    road('cross-' + z, [0, -0.08, z], [190, 0.16, 12], 'east-west');
+    road('cross-' + z, [0, -0.08, z], [190, 0.16, crossStreetWidth], 'east-west');
+    const activeNodes = junctionRoadNodes.filter(node => node.x !== 0 || z < 400);
+    junctionIntersectionCount += activeNodes.length;
+    const cuts = activeNodes.map(node => [node.x, node.halfWidth + node.chamfer + 0.12]);
     for (const side of [-1, 1]) {
-      detail('cross-street-footpath', [0, 0.015, z + side * 6.85], [190, 0.18, 1.2], mats.concrete);
-      detail('cross-street-kerb', [0, 0.13, z + side * 6.18], [190, 0.26, 0.18], mats.curb);
-      detail('cross-street-gutter', [0, 0.015, z + side * 7.95], [190, 0.08, 0.24], mats.drain);
+      for (const [a, b] of lineSegments(-95, 95, cuts)) {
+        detail('cross-street-footpath-segment', [(a + b) / 2, 0.015, z + side * 6.85], [b - a, 0.18, 1.2], mats.concrete);
+        detail('cross-street-kerb-segment', [(a + b) / 2, 0.13, z + side * 6.18], [b - a, 0.26, 0.18], mats.curb);
+        detail('cross-street-gutter-segment', [(a + b) / 2, 0.015, z + side * 7.95], [b - a, 0.08, 0.24], mats.drain);
+      }
       for (let x = -76; x <= 76; x += 25) {
+        if (junctionRoadNodes.some(node => Math.abs(x - node.x) < node.halfWidth + node.chamfer + 1.0)) continue;
         detail('cross-street-drain-cover', [x, 0.105, z + side * 7.95], [1.35, 0.08, 0.55], mats.galvanized);
         drainCovers++;
       }
     }
-    junctions += 3; // The main avenue and the two collector-road crossings.
+    junctions += z < 400 ? 3 : 2; // The avenue ends before the fourth cross-street.
 
-    // Raised approaches and zebra crossings appear at the principal nodes.
+    // Raised approaches and a zebra crossing remain on the principal approaches.
     for (const x of [-45, 0, 45]) {
       detail('speed-table-approach', [x, 0.045, z - 7.6], [9.3, 0.1, 1.05], mats.asphaltPatch);
       for (let stripe = -2; stripe <= 2; stripe++) {
@@ -166,7 +235,49 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
     for (let stripe = -4; stripe <= 4; stripe++) {
       detail('zebra-crossing-stripe', [stripe * 0.92, 0.025, z + 5.3], [0.52, 0.03, 1.15], mats.white);
     }
-    detail('junction-stop-line', [0, 0.028, z - 6.4], [10.5, 0.035, 0.22], mats.white);
+
+    // Four clear stop bars per junction identify the approaches without
+    // changing carriageway widths or adding traffic-control obstacles.
+    for (const node of activeNodes) {
+      for (const side of [-1, 1]) {
+        detail('junction-north-south-stop-line', [node.x, 0.028, z + side * (crossStreetHalfWidth + 0.65)], [node.width - 1.2, 0.035, 0.22], mats.white);
+        detail('junction-east-west-stop-line', [node.x + side * (node.halfWidth + 0.65), 0.028, z], [0.22, 0.035, crossStreetWidth - 1.2], mats.white);
+        junctionApproachStopLines += 2;
+      }
+    }
+  }
+
+  // Chamfered curb returns create real corner turning space. A single small
+  // mesh carries all matching concrete corner aprons to keep the mobile draw
+  // call cost low; the road surface remains open inside each return.
+  for (const z of crossStreetZ) {
+    const activeNodes = junctionRoadNodes.filter(node => node.x !== 0 || z < 400);
+    for (const node of activeNodes) {
+      const radius = node.chamfer;
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+        const start = [node.x + sx * (node.halfWidth + 0.1), z + sz * (crossStreetHalfWidth + radius + 0.1)];
+        const end = [node.x + sx * (node.halfWidth + radius + 0.1), z + sz * (crossStreetHalfWidth + 0.1)];
+        const center = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+        const yaw = Math.atan2(sz, sx) * 180 / Math.PI;
+        detail('junction-chamfered-curb-return', [center[0], 0.13, center[1]], [Math.SQRT2 * radius + 0.16, 0.26, 0.2], mats.curb, [0, yaw, 0]);
+        junctionCurbReturns++;
+        const outer = [node.x + sx * (node.halfWidth + radius + 0.1), z + sz * (crossStreetHalfWidth + radius + 0.1)];
+        addCornerPavementTriangle(start, end, outer);
+      }
+    }
+  }
+
+  if (cornerPositions.length) {
+    const mesh = new pc.Mesh(app.graphicsDevice);
+    mesh.setPositions(new Float32Array(cornerPositions));
+    mesh.setNormals(new Float32Array(cornerNormals));
+    mesh.setIndices(new Uint16Array(cornerIndices));
+    mesh.update();
+    const apronEntity = new pc.Entity('stage08i-junction-corner-aprons');
+    apronEntity.tags.add('stage08i-junction-surfaces');
+    apronEntity.addComponent('render', { meshInstances: [new pc.MeshInstance(mesh, mats.concrete)] });
+    app.root.addChild(apronEntity);
+    junctionCornerSurfaceMeshCreated = true;
   }
 
   // Residential compounds: modest low-rise homes, service balconies, security
@@ -307,11 +418,22 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
       collectorRoads: 2,
       outerResidentialRoads: 2,
       crossStreets: crossStreetZ.length,
-      connectedJunctions: crossStreetZ.length * 5,
+      connectedJunctions: junctionIntersectionCount,
       principalJunctions: junctions,
       connectedToExistingIkejaCorridor: true,
       approachRoadInheritedFromStage08G: true,
-      roadWidthsMetres: { collector: 12, outerResidential: 11, crossStreet: 12 }
+      roadWidthsMetres: { collector: 12, outerResidential: 11, crossStreet: 12, mainAvenue: 18 }
+    },
+    junctionGeometry: {
+      treatedIntersections: junctionIntersectionCount,
+      cornerCurbReturns: junctionCurbReturns,
+      cornerSurfaceTriangles: junctionCornerSurfaceTriangles,
+      cornerSurfaceMeshCreated: junctionCornerSurfaceMeshCreated,
+      approachStopLines: junctionApproachStopLines,
+      cornerTypes: { arterial: 3.4, collector: 3.0, residential: 2.2 },
+      roadWidthsUnchanged: true,
+      sidewalksAndKerbsSplitAtIntersections: true,
+      drainRunsSplitAtIntersections: true
     },
     treesRemoved: 2,
     overheadMarketGateRemoved: true,
@@ -336,7 +458,8 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
       'sparse verge grass and weeds at selected unmaintained edges',
       'continuous ground cover and physics support around the Ikeja extension',
       'widened 12m collectors, 11m residential access roads and 12m cross streets',
-      'sixteen-plus connected road junction approaches and crossings',
+      'nineteen treated intersections with chamfered turning corners and concrete corner aprons',
+      'four-way stop bars with sidewalks, kerbs and drainage segmented around junctions',
       'residential compounds with doors, security grilles and rooftop tanks',
       'mixed-use commercial frontage',
       'six-stall open-air neighbourhood market',

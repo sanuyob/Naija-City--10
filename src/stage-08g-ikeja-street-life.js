@@ -34,11 +34,29 @@ export function createStage08GIkejaStreetLife({ app, box, material }) {
   detail('approach-right-walkway',[8.2,0.02,205],[2.2,0.18,82],mats.concrete);
   // Ikeja commercial corridor: broad carriageway, uneven sidewalks and mixed-use shop rows.
   detail('main-road',[0,-0.09,Z],[18,0.22,150],mats.asphalt);
+  // Keep the 18m road uninterrupted, but open the sidewalk/kerb line at the
+  // three major cross-streets so the new corner returns can meet cleanly.
+  const arterialCrossings=[246,310,374];
+  const arterialCornerCut=9.5;
+  function arterialSegments(start,end){
+    const result=[];let cursor=start;
+    for(const z of arterialCrossings){
+      const a=Math.max(start,z-arterialCornerCut),b=Math.min(end,z+arterialCornerCut);
+      if(a-cursor>=1.5)result.push([cursor,a]);
+      cursor=Math.max(cursor,b);
+    }
+    if(end-cursor>=1.5)result.push([cursor,end]);
+    return result;
+  }
   for(const side of [-1,1]){
-    detail('sidewalk',[side*10.55,0.02,Z],[2.7,0.2,150],mats.concrete);
-    detail('kerb',[side*9.08,0.14,Z],[0.22,0.28,150],mats.curb);
-    detail('open-gutter',[side*12.05,0.02,Z],[0.42,0.12,150],mats.gutter);
+    for(const [a,b] of arterialSegments(235,385)){
+      const mid=(a+b)/2,length=b-a;
+      detail('sidewalk-segment',[side*10.55,0.02,mid],[2.7,0.2,length],mats.concrete);
+      detail('kerb-segment',[side*9.08,0.14,mid],[0.22,0.28,length],mats.curb);
+      detail('open-gutter-segment',[side*12.05,0.02,mid],[0.42,0.12,length],mats.gutter);
+    }
     for(let z=244;z<382;z+=19){
+      if(arterialCrossings.some(crossZ=>Math.abs(z-crossZ)<arterialCornerCut+1.2))continue;
       detail('drain-cover',[side*12.05,0.13,z],[0.72,0.08,1.45],mats.metal);
       detail('gutter-silt',[side*11.76,0.095,z+2.4],[0.18,0.035,1.9],mats.silt);
     }

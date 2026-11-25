@@ -30,6 +30,7 @@ try{
       spawn:game.firstSpawnPosition,
       player:game.getPlayerState(),
       streetInfrastructure:game.stage08C.roadWidthsMetres,
+      ikejaJunctions:game.stage08I.junctionGeometry,
       render:game.getRenderBreakdown().groups.map(group=>group.name)
     };
   });
@@ -57,9 +58,18 @@ try{
   assert.equal(result.player.grounded,true,'Player should start grounded on the updated footpath');
   assert.equal(result.player.position[0],-8);
   assert.deepEqual(result.streetInfrastructure,{mainAvenue:14,localDistributors:9,crossStreets:{'-110':9,'42':15.5,'118':12.5}});
+  assert.equal(result.ikejaJunctions.treatedIntersections,19,'The major Ikeja intersections should receive corner geometry');
+  assert.equal(result.ikejaJunctions.cornerCurbReturns,76,'Every treated intersection needs four chamfered curb returns');
+  assert.equal(result.ikejaJunctions.cornerSurfaceTriangles,76,'Every curb return needs a matching corner pavement surface');
+  assert.equal(result.ikejaJunctions.cornerSurfaceMeshCreated,true,'The corner pavement apron mesh must be attached to the live scene');
+  assert.equal(result.ikejaJunctions.approachStopLines,76,'Each approach should receive a clear stop line');
+  assert.equal(result.ikejaJunctions.roadWidthsUnchanged,true,'Junction treatment must not widen the road network');
+  assert.equal(result.ikejaJunctions.sidewalksAndKerbsSplitAtIntersections,true);
+  assert.equal(result.ikejaJunctions.drainRunsSplitAtIntersections,true);
   assert.equal(r.busyCrossStreetLaneMarkingsMetres,15.5);
   assert.deepEqual(r.widenedCrossStreetIds,[42,118]);
   assert.ok(result.render.includes('stage08j-yaba-ikeja'),'Existing Yaba street infrastructure should remain in the live scene');
+  assert.ok(result.render.includes('stage08i-junction-surfaces'),'The corner pavement apron mesh should be included in render diagnostics');
   assert.deepEqual(errors,[],'browser errors: '+errors.join('; '));
   console.log(JSON.stringify({pass:true,result,browserErrors:errors},null,2));
 }finally{

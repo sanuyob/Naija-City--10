@@ -154,7 +154,7 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
       if (/(?:main-road|approach-road|stage08i-road-)/.test(name)) {
         entity.render.material=pbr.asphalt;
         inheritedRoadMaterials++;
-      } else if (/(?:walkway|sidewalk|footpath)$/.test(name)) {
+      } else if (/(?:walkway|sidewalk|footpath)(?:-segment)?$/.test(name)) {
         entity.render.material=pbr.paving;
         inheritedPavingMaterials++;
       }

@@ -441,7 +441,12 @@ assert.match(stage08i,/stage08i-ikeja-neighbourhood-static/,'Stage 08I must use 
 assert.match(stage08i,/collectorRoads: 2/,'Stage 08I must add two collector roads');
 assert.match(stage08i,/outerResidentialRoads: 2/,'Stage 08I must add two outer residential streets');
 assert.match(stage08i,/crossStreets: crossStreetZ\.length/,'Stage 08I must add four connecting cross streets');
-assert.match(stage08i,/connectedJunctions: crossStreetZ\.length \* 5/,'Stage 08I must count all twenty intersections in the connected road grid');
+assert.match(stage08i,/connectedJunctions: junctionIntersectionCount/,'Stage 08I must count the intersections that have an actual connecting north/south road');
+assert.match(stage08i,/treatedIntersections: junctionIntersectionCount/,'Stage 08I must report the exact number of junctions receiving the new corner geometry');
+assert.match(stage08i,/junction-chamfered-curb-return/,'Stage 08I must create chamfered turning-space curb returns');
+assert.match(stage08i,/stage08i-junction-corner-aprons/,'Stage 08I must render the matching concrete corner apron mesh');
+assert.match(stage08i,/junction-east-west-stop-line/,'Stage 08I must provide stop lines on the east/west approaches');
+assert.match(stage08g,/arterialSegments/,'Stage 08G avenue sidewalks and kerbs must be split around the main junctions');
 for(const feature of ['residential-house-shell','mixed-use-commercial-shell','market-stall-counter','transport-hall-main-shell','open-storm-drain','residential-rooftop-water-tank','zebra-crossing-stripe']) assert.ok(stage08i.includes(feature),`Missing Stage 08I district feature: ${feature}`);
 for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','jerrycan-cap','jerrycan-handle-grip','wheelbarrow-handle','handcart-upright-frame','blue-market-crate','yellow-poly-jerrycan','green-pos-kiosk','red-vendor-canvas','matte-silhouette-skin','ochre-shop-plaster']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
 assert.match(stage08h,/textureResolutions:\{asphalt:512,otherFamilies:256\}/,'Stage 08H texture resolution contract must remain mobile-conscious');
