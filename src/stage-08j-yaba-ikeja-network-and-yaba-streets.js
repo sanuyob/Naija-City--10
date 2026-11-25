@@ -45,7 +45,7 @@ function pbrMaterial(label, maps, colour, gloss = 0.12, tiling = [1, 1]) {
 }
 
 /** Stage 08J: join the Yaba avenue to Ikeja and finish the local roadside set. */
-export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, material, lowDataMode = false, skipOptionalDownloads = lowDataMode }) {
+export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, material, lowMemoryDevice = false, lowDataMode = false, skipOptionalDownloads = lowDataMode }) {
   const group = app.batcher?.addGroup('stage08j-yaba-ikeja-static-streets', false, 128);
   const collisionProxies = [];
   const textureFailures = [];
@@ -115,22 +115,23 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
   };
 
   const maps = { asphalt: {}, concrete: {}, paving: {} };
-  if (!skipOptionalDownloads) {
-    for (const [family, paths] of Object.entries(materialPaths)) {
-      const familyMaps = {};
-      for (const [kind, path] of Object.entries(paths)) {
-        try {
-          familyMaps[kind] = (await loadTexture(app, `stage08j-${family}-${kind}`, path)).resource;
-          const texture = familyMaps[kind];
-          texture.anisotropy = 2;
-          texture.addressU = pc.ADDRESS_REPEAT;
-          texture.addressV = pc.ADDRESS_REPEAT;
-        } catch (error) {
-          textureFailures.push(error.message);
-        }
+  // Keep one compact asphalt PBR set on low-memory phones; data-saver mode
+  // still skips all optional textures. Full devices receive all three families.
+  const textureFamilies=lowDataMode?[]:(lowMemoryDevice?['asphalt']:Object.keys(materialPaths));
+  for (const family of textureFamilies) {
+    const paths=materialPaths[family],familyMaps={};
+    for (const [kind, path] of Object.entries(paths)) {
+      try {
+        familyMaps[kind] = (await loadTexture(app, `stage08j-${family}-${kind}`, path)).resource;
+        const texture = familyMaps[kind];
+        texture.anisotropy = lowMemoryDevice?1:2;
+        texture.addressU = pc.ADDRESS_REPEAT;
+        texture.addressV = pc.ADDRESS_REPEAT;
+      } catch (error) {
+        textureFailures.push(error.message);
       }
-      maps[family] = familyMaps;
     }
+    maps[family] = familyMaps;
   }
 
   // ambientCG publishes roughness; PlayCanvas StandardMaterial expects gloss.
@@ -140,6 +141,34 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
     concrete: Object.keys(maps.concrete || {}).length >= 2 ? pbrMaterial('Stage 08J worn concrete · Concrete 044 D', maps.concrete, [1, 1, 1], 0.16, [2, 12]) : fallback.concrete,
     paving: Object.keys(maps.paving || {}).length >= 2 ? pbrMaterial('Stage 08J interlocking paving · Paving Stones 152', maps.paving, [1, 1, 1], 0.18, [2, 16]) : fallback.concrete
   };
+
+  // Reuse the same physically-scaled PBR asphalt/paving families on the
+  // already-authored Yaba and Ikeja road decks. Clean road markings and repair
+  // patches remain separate overlays, rather than baking dirt across every lane.
+  let inheritedRoadMaterials=0, inheritedPavingMaterials=0;
+  for (const tag of ['stage08g-ikeja-street-life','stage08i-ikeja-district']) {
+    const taggedEntities=typeof app.root.findByTag==='function' ? (app.root.findByTag(tag) || []) : [];
+    for (const entity of taggedEntities) {
+      if (!entity.render) continue;
+      const name=entity.name || '';
+      if (/(?:main-road|approach-road|stage08i-road-)/.test(name)) {
+        entity.render.material=pbr.asphalt;
+        inheritedRoadMaterials++;
+      } else if (/(?:walkway|sidewalk|footpath)$/.test(name)) {
+        entity.render.material=pbr.paving;
+        inheritedPavingMaterials++;
+      }
+    }
+  }
+  // The original Yaba spine and gateway were authored before the district stages.
+  for (const name of ['main-road','cross-street']) {
+    const entity=typeof app.root.findByName==='function' ? app.root.findByName(name) : null;
+    if (entity?.render) { entity.render.material=pbr.asphalt; inheritedRoadMaterials++; }
+  }
+  for (let i=0;i<7;i++) {
+    const entity=typeof app.root.findByName==='function' ? app.root.findByName('gidi-gateway-road-'+i) : null;
+    if (entity?.render) { entity.render.material=pbr.asphalt; inheritedRoadMaterials++; }
+  }
 
   // A single continuous 77m connector bridges the existing Yaba avenue and
   // the Stage 08I Ikeja cross street. Its ends overlap the existing road slabs
@@ -280,8 +309,10 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
     importedAssets,
     assetFailures,
     textureFailures,
-    pbrRuntimeResolution: skipOptionalDownloads ? 'procedural-fallback' : 512,
-    dataSaver: { enabled: lowDataMode, textureDownloadsSkipped: lowDataMode, importedPropDownloadsSkipped: lowDataMode },
+    pbrRuntimeResolution: lowDataMode ? 'procedural-fallback' : (lowMemoryDevice ? '512 asphalt only' : 512),
+    inheritedRoadMaterials,
+    inheritedPavingMaterials,
+    dataSaver: { enabled: lowDataMode, textureDownloadsSkipped: lowDataMode, importedPropDownloadsSkipped: skipOptionalDownloads },
     optionalAssetsSkipped: skipOptionalDownloads,
     pbrMaterials: Object.fromEntries(Object.entries(maps).map(([name, set]) => [name, Object.keys(set)])),
     utilityPoles,

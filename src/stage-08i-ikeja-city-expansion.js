@@ -6,6 +6,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
   const mats = {
     ground: material([0.24, 0.32, 0.23]),
     grass: material([0.13, 0.30, 0.16]),
+    grassDry: material([0.34, 0.29, 0.15]),
     asphalt: material([0.12, 0.13, 0.135]),
     asphaltPatch: material([0.19, 0.185, 0.16]),
     concrete: material([0.47, 0.45, 0.41]),
@@ -47,6 +48,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
   let drainCovers = 0;
   let streetlights = 0;
   let utilityPoles = 0;
+  let vegetationTufts = 0;
 
   function detail(name, position, scale, mat, rotation = null, solid = false) {
     const entity = box('stage08i-' + name, position, scale, mat);
@@ -89,6 +91,22 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
   detail('ground-extension', [0, -0.36, 320], [220, 0.5, 300], mats.ground);
   detail('west-green-verge', [-104, -0.06, 320], [10, 0.08, 286], mats.grass);
   detail('east-green-verge', [104, -0.06, 320], [10, 0.08, 286], mats.grass);
+
+  // Sparse volunteer grass grows at unmaintained outer verge edges and a few
+  // sidewalk seams. Kept away from carriageways and maintained shop frontages.
+  const weedSites=[
+    [-108.2,246],[-108.4,302],[-108.1,366],[-108.3,420],
+    [108.2,260],[108.4,326],[108.1,390],[108.3,430],
+    [-89.2,278],[89.2,354],[-89.2,414],[89.2,238]
+  ];
+  for(const [x,z] of weedSites) {
+    for(let blade=0;blade<3;blade++) {
+      const offset=(blade-1)*0.10;
+      const lean=(blade-1)*9;
+      detail('verge-weed-blade',[x+offset,0.12,z+(blade%2)*0.08],[0.045,0.28+(blade%2)*0.06,0.045],blade===1?mats.grassDry:mats.grass,[0,blade*38,lean]);
+    }
+    vegetationTufts++;
+  }
 
   // The original city floor covers x=-60..60 and z=-215..425. Add only the
   // uncovered western/eastern strips and southern tail; do not stack a second
@@ -301,6 +319,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
     residentialBuildings,
     commercialBuildings,
     marketStalls,
+    vegetationTufts,
     landmark: 'Ikeja Transport and Community Hall',
     pocketParks: 1,
     utilityPoles,
@@ -314,6 +333,7 @@ export function createStage08ICityDistrictExpansion({ app, box, material }) {
     liveTrafficAdded: false,
     liveNpcAdded: false,
     features: [
+      'sparse verge grass and weeds at selected unmaintained edges',
       'continuous ground cover and physics support around the Ikeja extension',
       'widened 12m collectors, 11m residential access roads and 12m cross streets',
       'sixteen-plus connected road junction approaches and crossings',

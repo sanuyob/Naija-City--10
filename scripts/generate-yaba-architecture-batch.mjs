@@ -184,6 +184,22 @@ function addBox(g, material, x, y, z, sx, sy, sz, tile=1.5) {
   }
 }
 
+// Rotate a newly-added box around its own centre without splitting the shared mesh groups.
+function addTiltedBox(g, material, x, y, z, sx, sy, sz, angleZ, tile=1.5) {
+  const group=g[material], start=group.p.length/3;
+  addBox(g,material,x,y,z,sx,sy,sz,tile);
+  const c=Math.cos(angleZ),s=Math.sin(angleZ);
+  for(let i=start;i<group.p.length/3;i++) {
+    const p=i*3,dx=group.p[p]-x,dy=group.p[p+1]-y;
+    group.p[p]=x+dx*c-dy*s;
+    group.p[p+1]=y+dx*s+dy*c;
+    const nx=group.n[p],ny=group.n[p+1];
+    group.n[p]=nx*c-ny*s;group.n[p+1]=nx*s+ny*c;
+    const t=i*4,tx=group.t[t],ty=group.t[t+1];
+    group.t[t]=tx*c-ty*s;group.t[t+1]=tx*s+ty*c;
+  }
+}
+
 function addCylinder(g,material,x,y,z,radius,height,segments=14) {
   const group=g[material];
   const bottom=y-height/2,top=y+height/2;
@@ -256,6 +272,7 @@ function makeBuildingLOD(entry,level,seed) {
   const mixed=kind==='mixed-use';
   const expansion=entry.id.startsWith('expansion-shop-');
   const variant=seed%4;
+  const roofStyle=seed%4;
   const groundH=Math.min(h*0.60, expansion?3.25:2.95);
   const hasUpper=(mixed||h>=6.25)&&h-groundH>=1.65;
   const upperBase=groundH;
@@ -346,17 +363,55 @@ function makeBuildingLOD(entry,level,seed) {
 
     // Parapet coping, rooftop service plinth and polyethylene tank.
     const parapetY=h+0.31;
-    addBox(g,MAT.CONCRETE,0,parapetY,-d/2,w+0.20,0.52,0.18,1);
-    addBox(g,MAT.CONCRETE,0,parapetY,d/2,w+0.20,0.52,0.18,1);
-    addBox(g,MAT.CONCRETE,-w/2,parapetY,0,0.18,0.52,d,1);
-    addBox(g,MAT.CONCRETE,w/2,parapetY,0,0.18,0.52,d,1);
+    if(roofStyle===2) {
+      // Selected lower-rise shops use a restrained paired sheet-roof profile.
+      addTiltedBox(g,MAT.ROOF,-w*0.25,h+0.34,0,w*0.56,0.14,d+0.30,0.13,1.2);
+      addTiltedBox(g,MAT.ROOF,w*0.25,h+0.34,0,w*0.56,0.14,d+0.30,-0.13,1.2);
+      addBox(g,MAT.METAL,0,h+0.56,0,0.10,0.18,d+0.34,1);
+    } else {
+      addBox(g,MAT.CONCRETE,0,parapetY,-d/2,w+0.20,0.52,0.18,1);
+      addBox(g,MAT.CONCRETE,0,parapetY,d/2,w+0.20,0.52,0.18,1);
+      addBox(g,MAT.CONCRETE,-w/2,parapetY,0,0.18,0.52,d,1);
+      addBox(g,MAT.CONCRETE,w/2,parapetY,0,0.18,0.52,d,1);
+    }
     const tankX=w*0.25,tankZ=d*0.20;
     addBox(g,MAT.METAL,tankX,h+0.55,tankZ,1.10,0.18,1.10,1);
     addCylinder(g,MAT.TANK,tankX,h+1.14,tankZ,Math.min(0.52,w*0.095),1.05,14);
     addBox(g,MAT.METAL,tankX,h+1.69,tankZ,0.64,0.08,0.64,1);
     addBox(g,MAT.METAL,tankX+0.42,h+0.95,tankZ,0.055,0.95,0.055,1);
-    // Small rooftop ventilation/service hatch.
-    addBox(g,MAT.ROOF,-w*0.22,h+0.20,-d*0.18,Math.min(1.2,w*0.23),0.12,Math.min(1.0,d*0.18),1.4);
+    // Small rooftop service forms vary the skyline without changing footprints.
+    if(roofStyle===1) {
+      addBox(g,MAT.PLASTER,-w*0.22,h+0.82,-d*0.18,Math.min(2.1,w*0.34),1.18,Math.min(2.2,d*0.28),1.8);
+      addBox(g,MAT.METAL,-w*0.22,h+1.44,-d*0.18,Math.min(2.2,w*0.36),0.08,Math.min(2.3,d*0.30),1.2);
+    } else if(roofStyle===3) {
+      const pergolaW=Math.min(w*0.52,4.2),pergolaD=Math.min(d*0.54,5.2),px=-w*0.18,pz=-d*0.12;
+      addBox(g,MAT.METAL,px,h+1.05,pz-pergolaD/2,pergolaW,0.08,0.08,1);
+      addBox(g,MAT.METAL,px,h+1.05,pz+pergolaD/2,pergolaW,0.08,0.08,1);
+      for(let slat=-2;slat<=2;slat++) addBox(g,MAT.ROOF,px+slat*pergolaW/5,h+1.08,pz,0.07,0.08,pergolaD,1);
+    } else {
+      addBox(g,MAT.ROOF,-w*0.22,h+0.20,-d*0.18,Math.min(1.2,w*0.23),0.12,Math.min(1.0,d*0.18),1.4);
+    }
+
+    // Localized weathering: most shops remain clean; selected plots show a
+    // damaged plaster patch, rain streaks or a few pieces of settled rubble.
+    const wearStyle=seed%12;
+    if(wearStyle===0) {
+      const patchZ=-d*0.31,brickCount=Math.max(3,Math.min(6,Math.floor(d*0.42)));
+      addBox(g,MAT.ROOF,front-0.205,0.48,patchZ,0.035,0.76,Math.min(1.65,d*0.30),1);
+      for(let row=0;row<2;row++) for(let brick=0;brick<brickCount;brick++) {
+        const span=Math.min(1.5,d*0.28),step=span/brickCount;
+        addBox(g,MAT.TERRACOTTA,front-0.24,0.27+row*0.23,patchZ-span/2+step*(brick+0.5)+(row%2)*step*0.22,0.045,0.17,step*0.78,0.34);
+      }
+    } else if(wearStyle===1||wearStyle===5) {
+      for(const [offset,streakH] of [[-d*0.34,0.72],[d*0.29,0.48]]) {
+        addBox(g,MAT.ROOF,front-0.19,Math.max(0.28,h*0.20),offset,0.035,streakH,0.12,1);
+      }
+      addBox(g,MAT.CONCRETE,front-0.18,0.10,0,0.035,0.14,d*0.62,1.2);
+    } else if(wearStyle===2) {
+      for(const [dx,dz,sz] of [[-0.45,-0.34,0.26],[-0.72,-0.08,0.34],[-0.32,0.30,0.22]]) {
+        addBox(g,MAT.TERRACOTTA,front+dx,0.055,dz*d,0.22,0.10,sz,0.3);
+      }
+    }
   }
 
   if(level===1) {
@@ -365,7 +420,17 @@ function makeBuildingLOD(entry,level,seed) {
       addBox(g,MAT.CONCRETE,front-0.50,upperBase+0.36,0,0.84,0.14,d*0.62,1);
       addBox(g,MAT.METAL,front-0.91,upperBase+0.77,0,0.055,0.72,d*0.62,1);
     }
-    addBox(g,MAT.CONCRETE,0,h+0.31,0,w+0.20,0.52,d+0.20,1.8);
+    if(roofStyle===2) {
+      addTiltedBox(g,MAT.ROOF,-w*0.25,h+0.34,0,w*0.56,0.14,d+0.30,0.13,1.2);
+      addTiltedBox(g,MAT.ROOF,w*0.25,h+0.34,0,w*0.56,0.14,d+0.30,-0.13,1.2);
+    } else addBox(g,MAT.CONCRETE,0,h+0.31,0,w+0.20,0.52,d+0.20,1.8);
+    if(roofStyle===1) addBox(g,MAT.PLASTER,-w*0.22,h+0.82,-d*0.18,Math.min(2.1,w*0.34),1.18,Math.min(2.2,d*0.28),1.8);
+    if(roofStyle===3) {
+      const pergolaW=Math.min(w*0.52,4.2),pergolaD=Math.min(d*0.54,5.2),px=-w*0.18,pz=-d*0.12;
+      addBox(g,MAT.METAL,px,h+1.05,pz-pergolaD/2,pergolaW,0.08,0.08,1);
+      addBox(g,MAT.METAL,px,h+1.05,pz+pergolaD/2,pergolaW,0.08,0.08,1);
+      for(let slat=-2;slat<=2;slat++) addBox(g,MAT.ROOF,px+slat*pergolaW/5,h+1.08,pz,0.07,0.08,pergolaD,1);
+    }
     addCylinder(g,MAT.TANK,w*0.25,h+1.10,d*0.20,Math.min(0.50,w*0.09),0.95,10);
   }
 

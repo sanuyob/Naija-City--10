@@ -295,7 +295,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const stage08H=createStage08HIkejaPropRealism({app,graphicsDevice:device});
   const stage08I=createStage08ICityDistrictExpansion({app,box,material});
   const skipOptionalStreetDownloads=lowDataMode||lowMemoryDevice;
-  const stage08J=await createStage08JYabaIkejaNetworkAndStreets({app,box,material,lowDataMode,skipOptionalDownloads:skipOptionalStreetDownloads});
+  const stage08J=await createStage08JYabaIkejaNetworkAndStreets({app,box,material,lowMemoryDevice,lowDataMode,skipOptionalDownloads:skipOptionalStreetDownloads});
   const stage08K=createStage08KGidiDistrictRoadsAndBridges({app,box,material});
   const cityEconomy=createCityEconomy();
   window.__NAIJA_RPG_UI__?.setEconomy?.(cityEconomy.getState());

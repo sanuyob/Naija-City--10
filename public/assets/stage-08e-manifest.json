@@ -3,7 +3,7 @@
   "format": "glTF 2.0 binary",
   "units": "meters",
   "frontAxis": "-X",
-  "textureEncoding": "Shared KTX2 Basis library for 39 curated Yaba commercial/mixed-use assets; the Stage 08F Computer Village hero uses its own 10 KTX2 maps; 8 neighbourhood-home GLBs retain their existing embedded PNG maps",
+  "textureEncoding": "Shared KTX2 Basis library for 39 curated Yaba commercial/mixed-use assets; Computer Village hero retains its own 08F KTX2 materials; 8 neighbourhood homes remain unchanged",
   "lods": [
     "LOD0",
     "LOD1",
@@ -82,7 +82,7 @@
       "seed": 1,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-02.glb",
-      "bytes": 112656,
+      "bytes": 118780,
       "lodDistances": [
         75,
         145
@@ -134,7 +134,7 @@
       "seed": 2,
       "district": "west-north",
       "url": "/assets/curated-buildings/yaba-core-03.glb",
-      "bytes": 121536,
+      "bytes": 126208,
       "lodDistances": [
         75,
         145
@@ -186,7 +186,7 @@
       "seed": 3,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-04.glb",
-      "bytes": 223280,
+      "bytes": 240164,
       "lodDistances": [
         75,
         145
@@ -290,7 +290,7 @@
       "seed": 5,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-06.glb",
-      "bytes": 112620,
+      "bytes": 118772,
       "lodDistances": [
         75,
         145
@@ -342,7 +342,7 @@
       "seed": 6,
       "district": "west-north",
       "url": "/assets/curated-buildings/yaba-core-07.glb",
-      "bytes": 121480,
+      "bytes": 122500,
       "lodDistances": [
         75,
         145
@@ -394,7 +394,7 @@
       "seed": 7,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-08.glb",
-      "bytes": 117900,
+      "bytes": 134796,
       "lodDistances": [
         75,
         145
@@ -498,7 +498,7 @@
       "seed": 9,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-10.glb",
-      "bytes": 191100,
+      "bytes": 192616,
       "lodDistances": [
         75,
         145
@@ -550,7 +550,7 @@
       "seed": 10,
       "district": "west-north",
       "url": "/assets/curated-buildings/yaba-core-11.glb",
-      "bytes": 175528,
+      "bytes": 176560,
       "lodDistances": [
         75,
         145
@@ -602,7 +602,7 @@
       "seed": 11,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-12.glb",
-      "bytes": 117864,
+      "bytes": 134760,
       "lodDistances": [
         75,
         145
@@ -654,7 +654,7 @@
       "seed": 12,
       "district": "west-north",
       "url": "/assets/curated-buildings/yaba-core-13.glb",
-      "bytes": 121488,
+      "bytes": 130080,
       "lodDistances": [
         75,
         145
@@ -706,7 +706,7 @@
       "seed": 13,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-14.glb",
-      "bytes": 112656,
+      "bytes": 118780,
       "lodDistances": [
         75,
         145
@@ -758,7 +758,7 @@
       "seed": 14,
       "district": "west-north",
       "url": "/assets/curated-buildings/yaba-core-15.glb",
-      "bytes": 121540,
+      "bytes": 126212,
       "lodDistances": [
         75,
         145
@@ -810,7 +810,7 @@
       "seed": 15,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-16.glb",
-      "bytes": 223280,
+      "bytes": 240168,
       "lodDistances": [
         75,
         145
@@ -914,7 +914,7 @@
       "seed": 17,
       "district": "east-north",
       "url": "/assets/curated-buildings/yaba-core-18.glb",
-      "bytes": 112620,
+      "bytes": 118772,
       "lodDistances": [
         75,
         145
@@ -966,7 +966,7 @@
       "seed": 18,
       "district": "west-south",
       "url": "/assets/curated-buildings/yaba-core-19.glb",
-      "bytes": 121480,
+      "bytes": 122504,
       "lodDistances": [
         75,
         145
@@ -1018,7 +1018,7 @@
       "seed": 19,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-20.glb",
-      "bytes": 117900,
+      "bytes": 134796,
       "lodDistances": [
         75,
         145
@@ -1122,7 +1122,7 @@
       "seed": 21,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-22.glb",
-      "bytes": 191100,
+      "bytes": 192620,
       "lodDistances": [
         75,
         145
@@ -1174,7 +1174,7 @@
       "seed": 22,
       "district": "west-south",
       "url": "/assets/curated-buildings/yaba-core-23.glb",
-      "bytes": 175528,
+      "bytes": 176560,
       "lodDistances": [
         75,
         145
@@ -1226,7 +1226,7 @@
       "seed": 23,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-24.glb",
-      "bytes": 117864,
+      "bytes": 134760,
       "lodDistances": [
         75,
         145
@@ -1278,7 +1278,7 @@
       "seed": 24,
       "district": "west-south",
       "url": "/assets/curated-buildings/yaba-core-25.glb",
-      "bytes": 229396,
+      "bytes": 237972,
       "lodDistances": [
         75,
         145
@@ -1330,7 +1330,7 @@
       "seed": 25,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-26.glb",
-      "bytes": 112656,
+      "bytes": 118780,
       "lodDistances": [
         75,
         145
@@ -1382,7 +1382,7 @@
       "seed": 26,
       "district": "west-south",
       "url": "/assets/curated-buildings/yaba-core-27.glb",
-      "bytes": 121540,
+      "bytes": 126212,
       "lodDistances": [
         75,
         145
@@ -1434,7 +1434,7 @@
       "seed": 27,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-28.glb",
-      "bytes": 223280,
+      "bytes": 240168,
       "lodDistances": [
         75,
         145
@@ -1538,7 +1538,7 @@
       "seed": 29,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-30.glb",
-      "bytes": 112620,
+      "bytes": 118772,
       "lodDistances": [
         75,
         145
@@ -1590,7 +1590,7 @@
       "seed": 30,
       "district": "west-south",
       "url": "/assets/curated-buildings/yaba-core-31.glb",
-      "bytes": 121480,
+      "bytes": 122504,
       "lodDistances": [
         75,
         145
@@ -1642,7 +1642,7 @@
       "seed": 31,
       "district": "east-south",
       "url": "/assets/curated-buildings/yaba-core-32.glb",
-      "bytes": 117900,
+      "bytes": 134796,
       "lodDistances": [
         75,
         145
@@ -1746,7 +1746,7 @@
       "seed": 33,
       "district": "west-north",
       "url": "/assets/curated-buildings/expansion-shop-34.glb",
-      "bytes": 283480,
+      "bytes": 284992,
       "lodDistances": [
         75,
         145
@@ -1798,7 +1798,7 @@
       "seed": 34,
       "district": "west-south",
       "url": "/assets/curated-buildings/expansion-shop-35.glb",
-      "bytes": 121468,
+      "bytes": 122476,
       "lodDistances": [
         75,
         145
@@ -1850,7 +1850,7 @@
       "seed": 35,
       "district": "west-south",
       "url": "/assets/curated-buildings/expansion-shop-36.glb",
-      "bytes": 259924,
+      "bytes": 276796,
       "lodDistances": [
         75,
         145
@@ -1902,7 +1902,7 @@
       "seed": 36,
       "district": "east-north",
       "url": "/assets/curated-buildings/expansion-shop-37.glb",
-      "bytes": 121468,
+      "bytes": 134964,
       "lodDistances": [
         75,
         145
@@ -2006,7 +2006,7 @@
       "seed": 38,
       "district": "east-south",
       "url": "/assets/curated-buildings/expansion-shop-39.glb",
-      "bytes": 121468,
+      "bytes": 126152,
       "lodDistances": [
         75,
         145
@@ -2058,7 +2058,7 @@
       "seed": 39,
       "district": "east-south",
       "url": "/assets/curated-buildings/expansion-shop-40.glb",
-      "bytes": 259924,
+      "bytes": 276796,
       "lodDistances": [
         75,
         145
