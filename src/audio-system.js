@@ -9,7 +9,7 @@ export function createAudioSystem() {
   let unlocked = false;
   let destroyed = false;
   let lastFootstepAt = -Infinity;
-  const played = { footstep: 0, jump: 0, landing: 0, parkour: 0, vehicleStart: 0, vehicleSkid: 0, vehicleImpact: 0 };
+  const played = { footstep: 0, jump: 0, landing: 0, parkour: 0, vehicleStart: 0, vehicleSkid: 0, vehicleImpact: 0, gearEquip: 0, utilityPing: 0, repairReady: 0 };
   let engineOscillator = null, engineFilter = null, engineGain = null;
   const playedSurfaces = { asphalt:0, concrete:0, grass:0, metal:0, wet:0 };
   const now = () => context?.currentTime || 0;
@@ -98,6 +98,15 @@ export function createAudioSystem() {
     } else if (type === 'parkour') {
       noise({ duration: 0.2, frequency: 1500, endFrequency: 260, gain: 0.075, q: 0.45 });
       tone({ frequency: 135, endFrequency: 78, duration: 0.16, type: 'triangle', gain: 0.08, delay: 0.035 });
+    } else if (type === 'gearEquip') {
+      tone({ frequency: 390, endFrequency: 620, duration: 0.075, type: 'triangle', gain: 0.045 });
+      tone({ frequency: 720, endFrequency: 520, duration: 0.055, type: 'sine', gain: 0.025, delay: 0.065 });
+    } else if (type === 'utilityPing') {
+      tone({ frequency: 520, endFrequency: 760, duration: 0.12, type: 'sine', gain: 0.055 });
+      tone({ frequency: 780, endFrequency: 880, duration: 0.10, type: 'sine', gain: 0.035, delay: 0.11 });
+    } else if (type === 'repairReady') {
+      noise({ duration: 0.045, frequency: 1700, endFrequency: 850, gain: 0.025 });
+      tone({ frequency: 260, endFrequency: 390, duration: 0.09, type: 'triangle', gain: 0.045, delay: 0.045 });
     }
     played[type]++;
     return true;
@@ -157,5 +166,5 @@ export function createAudioSystem() {
     noiseBuffer = null;
   }
 
-  return { play, unlock, startVehicleEngine, updateVehicleEngine, stopVehicleEngine, playVehicleSkid, playVehicleImpact, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour', 'vehicle-engine', 'vehicle-skid', 'vehicle-impact'], played: { ...played }, playedSurfaces: { ...playedSurfaces }, mode: 'procedural-web-audio', surfaceProfiles: ['asphalt','concrete','grass','metal','wet'] }) };
+  return { play, unlock, startVehicleEngine, updateVehicleEngine, stopVehicleEngine, playVehicleSkid, playVehicleImpact, destroy, getState: () => ({ available: !!AudioContextClass, unlocked, state: context?.state || 'locked-until-user-gesture', effects: ['footstep', 'jump', 'landing', 'parkour', 'vehicle-engine', 'vehicle-skid', 'vehicle-impact', 'gear-equip', 'utility-ping', 'repair-ready'], played: { ...played }, playedSurfaces: { ...playedSurfaces }, mode: 'procedural-web-audio', surfaceProfiles: ['asphalt','concrete','grass','metal','wet'] }) };
 }
