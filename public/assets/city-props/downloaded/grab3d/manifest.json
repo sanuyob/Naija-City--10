@@ -1,0 +1,17 @@
+{
+  "collection": "Naija City downloaded street assets",
+  "source": "Grab3D",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "notes": "Originals retained. Mobile variants use maximum 512px textures; geometry unchanged. Not yet integrated into runtime.",
+  "assets": [
+    {"name":"Utility Pole","slug":"utility-pole","sourcePage":"https://grab3d.com/models/city/utility-pole/","original":"utility-pole.glb","licenseFile":"utility-pole.LICENSE.txt","mobile":"mobile/utility-pole.glb","mobileUse":"Use sparingly; 10m pole, inspect polycount and instance cost."},
+    {"name":"Street Light","slug":"street-light","sourcePage":"https://grab3d.com/models/city/street-light/","original":"street-light.glb","licenseFile":"street-light.LICENSE.txt","mobile":"mobile/street-light.glb"},
+    {"name":"Bus Stop Shelter","slug":"bus-stop-shelter","sourcePage":"https://grab3d.com/models/city/bus-stop-shelter/","original":"bus-stop-shelter.glb","licenseFile":"bus-stop-shelter.LICENSE.txt","mobile":"mobile/bus-stop-shelter.glb","mobileUse":"Review style before placing in Yaba; may be better for formal transit areas."},
+    {"name":"Billboard","slug":"billboard","sourcePage":"https://grab3d.com/models/city/billboard/","original":"billboard.glb","licenseFile":"billboard.LICENSE.txt","mobile":"mobile/billboard.glb"},
+    {"name":"Curb and Sidewalk","slug":"curb-sidewalk-segment","sourcePage":"https://grab3d.com/models/city/curb-sidewalk-segment/","original":"curb-sidewalk-segment.glb","licenseFile":"curb-sidewalk-segment.LICENSE.txt","mobile":"mobile/curb-sidewalk-segment.glb","mobileUse":"Check compatibility with existing road/terrain elevation before use."},
+    {"name":"Dumpster","slug":"dumpster","sourcePage":"https://grab3d.com/models/city/dumpster/","original":"dumpster.glb","licenseFile":"dumpster.LICENSE.txt","mobile":"mobile/dumpster.glb"},
+    {"name":"Bollard","slug":"bollard","sourcePage":"https://grab3d.com/models/city/bollard/","original":"bollard.glb","licenseFile":"bollard.LICENSE.txt","mobile":"mobile/bollard.glb"},
+    {"name":"Advertising Column","slug":"advertising-column","sourcePage":"https://grab3d.com/models/city/advertising-column/","original":"advertising-column.glb","licenseFile":"advertising-column.LICENSE.txt","mobile":"mobile/advertising-column.glb"}
+  ]
+}

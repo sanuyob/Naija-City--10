@@ -1,0 +1,17 @@
+{
+  "collection": "Naija City building and facade candidates",
+  "source": "Grab3D",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "notes": "Originals retained; mobile variants use maximum 512px textures; geometry unchanged; not runtime-integrated.",
+  "assets": [
+    {"name":"Awning","sourcePage":"https://grab3d.com/models/buildings/awning/","original":"original/awning.glb","licenseFile":"original/awning.LICENSE.txt","mobile":"mobile/awning.glb","use":"Façade detail candidate; recolor and resize to fit shopfronts."},
+    {"name":"Balcony","sourcePage":"https://grab3d.com/models/buildings/balcony/","original":"original/balcony.glb","licenseFile":"original/balcony.LICENSE.txt","mobile":"mobile/balcony.glb","use":"Façade detail candidate for mixed-use/residential buildings."},
+    {"name":"Entrance Porch","sourcePage":"https://grab3d.com/models/buildings/porch/","original":"original/porch.glb","licenseFile":"original/porch.LICENSE.txt","mobile":"mobile/porch.glb"},
+    {"name":"Sliding Door","sourcePage":"https://grab3d.com/models/buildings/sliding-door/","original":"original/sliding-door.glb","licenseFile":"original/sliding-door.LICENSE.txt","mobile":"mobile/sliding-door.glb"},
+    {"name":"Fire Escape","sourcePage":"https://grab3d.com/models/city/fire-escape/","original":"original/fire-escape.glb","licenseFile":"original/fire-escape.LICENSE.txt","mobile":"mobile/fire-escape.glb"},
+    {"name":"Apartment Building","sourcePage":"https://grab3d.com/models/buildings/apartment-building/","original":"original/apartment-building.glb","licenseFile":"original/apartment-building.LICENSE.txt","mobile":"mobile/apartment-building.glb","use":"Full building candidate; inspect silhouette and materials before district use."},
+    {"name":"Office Building","sourcePage":"https://grab3d.com/models/buildings/office-building/","original":"original/office-building.glb","licenseFile":"original/office-building.LICENSE.txt","mobile":"mobile/office-building.glb","use":"Possible distant skyline filler after silhouette review."},
+    {"name":"Skyscraper","sourcePage":"https://grab3d.com/models/buildings/skyscraper/","original":"original/skyscraper.glb","licenseFile":"original/skyscraper.LICENSE.txt","mobile":"mobile/skyscraper.glb","use":"Possible skyline filler after silhouette and mobile review."}
+  ]
+}
