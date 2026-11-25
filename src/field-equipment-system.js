@@ -176,10 +176,23 @@ export function createFieldEquipmentSystem({
   const stats = { equips: 0, stows: 0, uses: 0, drops: 0, pickups: 0, physicsSteps: 0, groundContacts: 0 };
   const maximumDrops = lowMemoryDevice ? 3 : 6;
   const droppedProps = [];
+  function findRightHandBone(root) {
+    const wanted = ['righthand', 'handr', 'righthandindex1', 'mixamorigrighthand'];
+    const stack = [...(root.children || [])];
+    while (stack.length) {
+      const node = stack.pop();
+      const normalized = String(node.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (wanted.some(name => normalized === name || normalized.endsWith(name))) return node;
+      stack.push(...(node.children || []));
+    }
+    return null;
+  }
+
+  const rightHandBone = findRightHandBone(player);
   const carrier = new pc.Entity('field-equipment-carry-anchor');
-  carrier.setLocalPosition(0.32, 1.02, 0.20);
-  carrier.setLocalEulerAngles(8, 8, 0);
-  player.addChild(carrier);
+  carrier.setLocalPosition(rightHandBone ? 0.01 : 0.32, rightHandBone ? 0.015 : 1.02, rightHandBone ? 0.035 : 0.20);
+  carrier.setLocalEulerAngles(rightHandBone ? 0 : 8, rightHandBone ? 0 : 8, 0);
+  (rightHandBone || player).addChild(carrier);
 
   const equippedModels = new Map();
   for (const item of FIELD_EQUIPMENT_DEFINITIONS) {
@@ -268,6 +281,7 @@ export function createFieldEquipmentSystem({
       inventory[itemId] = Math.max(0, inventory[itemId] - 1);
       message = 'FIRST AID · health restored by ' + Math.round(result.health - before) + '.';
       persist();
+      if (inventory[itemId] <= 0 && activeItemId === itemId) stow();
     } else if (itemId === 'repair-kit') {
       vfxSystem?.emit?.('arrival', position, 0.45, 'metal');
       audioSystem?.play?.('repairReady');
