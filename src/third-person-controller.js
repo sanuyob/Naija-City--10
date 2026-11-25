@@ -13,6 +13,7 @@ import { classifyRecoverySide, deriveRecoveryYaw, estimateBoneVelocities, smooth
 export function createThirdPersonController(app, camera, canvas, {
   onInteract, onTraversal, tryTraversal, resolveMovement, heroCharacter, physics, onEffect, onCharacterEvent = () => {}
 } = {}) {
+  const fallbackGroundBounds=physics?.getState?.().fallbackGroundBounds??null;
   // The player root owns movement, camera follow and collision. The visible
   // body must be the imported Ara female rig; Hero 01 is now a separate NPC.
   const player = new pc.Entity('player-character');
@@ -926,7 +927,8 @@ export function createThirdPersonController(app, camera, canvas, {
         ? resolveMovement(currentPosition,proposedPosition)
         : proposedPosition;
     p.set(resolvedPosition[0],resolvedPosition[1],resolvedPosition[2]);
-    if(p.y<=0){p.y=0;velocity.y=0;grounded=true;}
+    const insideFallbackGround=!fallbackGroundBounds || (p.x>=fallbackGroundBounds.minX && p.x<=fallbackGroundBounds.maxX && p.z>=fallbackGroundBounds.minZ && p.z<=fallbackGroundBounds.maxZ);
+    if(p.y<=0 && insideFallbackGround){p.y=0;velocity.y=0;grounded=true;}
     if(resolvedPosition[0]!==proposedPosition[0])velocity.x=0;
     if(resolvedPosition[2]!==proposedPosition[2])velocity.z=0;
     if(physics?.teleport&&(resolvedPosition[0]!==proposedPosition[0]||resolvedPosition[1]!==proposedPosition[1]||resolvedPosition[2]!==proposedPosition[2])){

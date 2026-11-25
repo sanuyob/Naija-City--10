@@ -303,7 +303,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   const gidiManifestResponse=await fetch(new URL('assets/gidi/manifest.json',publicBase),{cache:'force-cache'});
   if(!gidiManifestResponse.ok)throw new Error('GIDI district manifest could not be loaded for Stage 08N.');
   const gidiManifest=await gidiManifestResponse.json();
-  const stage08N=createStage08NDistrictNeighbourhoods({app,box,material,manifest:gidiManifest});
+  const stage08N=createStage08NDistrictNeighbourhoods({app,box,material,manifest:gidiManifest,surfaceMaterials:stage08J.surfaceMaterials});
 
   // A small, bounded tutorial traversal lane beside the Yaba spawn route.
   const ladderFrame=new pc.Entity('traversal-ladder-assembly');
@@ -579,6 +579,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
 
   const gidiStreamer=createGidiWorldStreamer({
     app, playerPhysics, vehicleSystem, statusLabel: assetStatusLabel,
+    surfaceMaterials: stage08J.surfaceMaterials,
     fullDetailRadius: lowDataMode ? 85 : (lowMemoryDevice ? 105 : 160),
     mediumDetailRadius: lowDataMode ? 145 : (lowMemoryDevice ? 220 : 360),
     unloadRadius: lowDataMode ? 320 : (lowMemoryDevice ? 620 : 900),
@@ -1019,7 +1020,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       let node=entity, blocked=false;
       while(node){
         const normalizedName=String(node.name||'').replace(/([a-z0-9])([A-Z])/g,'$1 $2').replace(/[^a-z0-9]+/gi,' ').toLowerCase();
-        if(dynamicPattern.test(normalizedName)||node.script||node.anim||node.animation||node.rigidbody||node.collision){blocked=true;break;}
+        // Interior roof parts carry this tag so they remain individually hideable
+        // when the player enters; never merge them into static batches.
+        if(node.tags?.has('stage08n-hide-inside')||dynamicPattern.test(normalizedName)||node.script||node.anim||node.animation||node.rigidbody||node.collision){blocked=true;break;}
         node=node.parent;
       }
       const instance=instances[0],mat=instance.material;

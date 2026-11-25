@@ -5,7 +5,7 @@ import { createCharacterRagdoll } from './character-ragdoll.js';
  * Bullet-backed player capsule. Visible character geometry is separate from
  * the collision body. The lighter kinematic solver remains available to crowds.
  */
-export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity = 18 } = {}) {
+export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity = 18, fallbackGroundBounds = { minX: -60, maxX: 60, minZ: -215, maxZ: 425 }, supportProbeDepth = 6, supportProbeRise = 1.5 } = {}) {
   const Ammo = await loadAmmo();
   const owned = [];
   const own = value => { owned.push(value); return value; };
@@ -233,28 +233,31 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
     const origin = transform.getOrigin();
     const p = [origin.x(), origin.y() - halfHeight, origin.z()];
     const linear = body.getLinearVelocity();
-    // Probe farther above and below the capsule feet. The old 12 cm / 20 cm
-    // ray only detected support; it never corrected penetration on elevated
-    // surfaces, so the capsule could settle visibly inside rooftop colliders.
-    const supportHit = raycast([p[0], p[1] + .42, p[2]], [p[0], p[1] - .26, p[2]]);
+    // The prototype's y=0 fallback floor exists only inside the original
+    // Yaba/Ikeja blockout. GIDI's surveyed terrain sits both below and above
+    // that datum, so applying the fallback globally pins the player above the
+    // remote landscape. Probe a bounded vertical span for streamed terrain,
+    // while retaining the old fallback only over its actual finite footprint.
+    const supportHit = raycast([p[0], p[1] + supportProbeRise, p[2]], [p[0], p[1] - supportProbeDepth, p[2]]);
     const supportDelta = supportHit ? p[1] - supportHit.point[1] : Infinity;
-    const raySupport = Boolean(supportHit && supportHit.normal[1] > .55 && supportDelta >= -.22 && supportDelta <= .22);
+    const raySupport = Boolean(supportHit && supportHit.normal[1] > .55 && supportDelta >= -Math.max(.22, supportProbeRise - .15) && supportDelta <= supportProbeDepth);
+    const insideFallbackGround = Boolean(fallbackGroundBounds && p[0] >= fallbackGroundBounds.minX && p[0] <= fallbackGroundBounds.maxX && p[2] >= fallbackGroundBounds.minZ && p[2] <= fallbackGroundBounds.maxZ);
     // Ladder traversal must be allowed to rise through the ground probe's
     // support tolerance. Otherwise a slow first rung is repeatedly snapped
     // back to Y=0 and looks like the character is on an invisible elevator.
     const ignoreGroundSupport=actor.ignoreGroundSupport===true;
     let grounded = !ignoreGroundSupport && (hasSupportContact() || raySupport) && linear.y() <= 1.2;
-    if (!ignoreGroundSupport && p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
-    if (!ignoreGroundSupport && p[1] < groundY) grounded = true;
-    // Snap the feet to the actual support hit, including rooftops, platforms,
-    // and raised walkways. This is deliberately disabled during ladder ascent
-    // and other authored traversal so it cannot pull the character off a rung.
+    if (!ignoreGroundSupport && insideFallbackGround && p[1] <= groundY + 0.075 && linear.y() <= 0.85) grounded = true;
+    if (!ignoreGroundSupport && insideFallbackGround && p[1] < groundY) grounded = true;
+    // Snap to the nearest surveyed upward-facing surface, even when its
+    // height differs from the old prototype datum. Do not use the fallback
+    // plane outside its bounded Yaba/Ikeja footprint.
     if (!ignoreGroundSupport && grounded && raySupport && linear.y() <= 1.2) {
       if (Math.abs(supportDelta) > .005) {
         p[1] = supportHit.point[1];
         teleport(p, [linear.x(), 0, linear.z()]);
       }
-    } else if (grounded && p[1] <= groundY + 0.075) {
+    } else if (grounded && insideFallbackGround && p[1] <= groundY + 0.075) {
       p[1] = groundY;
       teleport(p, [linear.x(), 0, linear.z()]);
     }
@@ -482,7 +485,7 @@ export async function createPlayerPhysics({ colliders = [], groundY = 0, gravity
       crouched: capsuleHeight < 1.8,
       worldColliderCount: Math.max(0, colliderBodies.filter(Boolean).length - colliders.slice(0, 8).length),
       solverIterations: Number(world.getSolverInfo?.()?.get_m_numIterations?.() ?? world.getSolverInfo?.()?.m_numIterations) || null,
-      gravity: activeGravity, groundY
+      gravity: activeGravity, groundY, fallbackGroundBounds: fallbackGroundBounds ? { ...fallbackGroundBounds } : null, supportProbeDepth, supportProbeRise
     })
   };
 }

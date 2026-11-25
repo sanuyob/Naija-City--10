@@ -54,7 +54,7 @@ function obbOverlap(a,b,margin=0){
   return true;
 }
 
-export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,onDoorAction=()=>{}}={}){
+export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,surfaceMaterials={},onDoorAction=()=>{}}={}){
   if(!app||!box||!material||!manifest?.cells?.length)throw new Error('Stage 08N requires PlayCanvas helpers and the surveyed GIDI manifest.');
   const manifestColliders=manifest.cells.flatMap(cell=>cell.colliders||[]);
   const environmentObstacles=manifestColliders.filter(item=>item.kind==='road'||item.kind==='building');
@@ -65,12 +65,17 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
   const districtEntities=new Map(),districtActive=new Map(),districtBatchGroups=new Map();
   let activeDistrictId=null,playerPhysicsRef=null;
   const roadColliders=manifestColliders.filter(item=>item.kind==='road');
-  const shared={floor:material([.35,.31,.26]),interior:material([.7,.65,.57]),glass:material([.1,.24,.28],.3),wood:material([.3,.19,.12]),metal:material([.2,.24,.25],.5),dark:material([.055,.065,.07]),white:material([.84,.82,.75]),concrete:material([.49,.47,.42])};
+  const shared={floor:material([.35,.31,.26]),interior:material([.7,.65,.57]),glass:material([.1,.24,.28],.3),wood:material([.3,.19,.12]),metal:material([.2,.24,.25],.5),dark:material([.055,.065,.07]),white:material([.84,.82,.75]),concrete:surfaceMaterials.concrete||material([.49,.47,.42]),paving:surfaceMaterials.paving||material([.52,.51,.46]),foliage:material([.12,.27,.14]),dryGrass:material([.34,.31,.18])};
+  const roofProfileCounts={'flat-parapet':0,'sheet-pitch':0,'service-roof':0,'pergola':0};
+  let weatheredBuildings=0,vegetationPlanters=0;
   const addBox=(name,parent,position,scale,mat,{collide=false,batch=true}={})=>{
     const entity=box(name,position,scale,mat,parent);
     if(activeDistrictId)districtEntities.get(activeDistrictId)?.push(entity);
     entity.tags.add('stage08n-neighbourhood');
-    if(batch&&entity.render&&parent?.batchGroupId!=null)entity.render.batchGroupId=parent.batchGroupId;
+    if(entity.render){
+      if(batch&&parent?.batchGroupId!=null)entity.render.batchGroupId=parent.batchGroupId;
+      else if(!batch)entity.render.batchGroupId=-1;
+    }
     details++;
     const parentYaw=Number.isFinite(parent.stage08nYaw)?parent.stage08nYaw:parent.getEulerAngles().y;
     if(collide)collisionProxies.push({id:'stage08n:'+name,position:worldPoint(parent.getPosition().toArray(),position,parentYaw),halfExtents:scale.map(v=>Math.abs(v)/2),rotationY:parentYaw,source:'stage08n-neighbourhood',districtId:activeDistrictId});
@@ -88,11 +93,12 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
   const makeFurnishing=(root,id,position,scale,mat,solid=false)=>addBox(id,root,position,scale,mat,{collide:solid});
 
   for(const district of DISTRICTS){
+    const districtIndex=DISTRICTS.indexOf(district);
     activeDistrictId=district.id;
     districtEntities.set(district.id,[]);districtActive.set(district.id,false);
     const group=app.batcher?.addGroup('stage08n-'+district.id+'-neighbourhood',false,40)||null;
     if(group){batchGroupIds.push(group.id);districtBatchGroups.set(district.id,group.id);}
-    const mats={wall:material(district.colours.wall),trim:material(district.colours.trim),accent:material(district.colours.accent),roof:material(district.colours.roof),sign:material([.1,.13,.15])};
+    const mats={wall:material(district.colours.wall),trim:material(district.colours.trim),accent:material(district.colours.accent),roof:material(district.colours.roof),sign:material([.1,.13,.15]),weather:material([.25,.23,.2]),brick:material([.38,.2,.13]),metalRoof:material([.23,.25,.24])};
     for(let index=0;index<district.lots.length;index++){
       const lot=district.lots[index];
       const yaw=Math.atan2(district.hub[0]-lot.x,district.hub[2]-lot.z)*180/Math.PI;
@@ -102,10 +108,12 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
       const enterable=true;
       const width=lot.role==='home'?14:13,depth=lot.role==='home'?12:11,height=lot.role==='home'?3.9:4.25;
       const hx=width/2,hz=depth/2;
+      const roofProfile=['flat-parapet','sheet-pitch','service-roof','pergola'][(districtIndex+index)%4];
+      const weathered=(districtIndex*4+index)%3===0;
       if(enterable){
         addBox(lot.name+'-interior-floor',root,[0,.08,0],[width,.16,depth],shared.floor,{collide:true});
-        addBox(lot.name+'-front-entry-step',root,[0,.09,hz+.62],[2.45,.18,1.24],shared.concrete,{collide:true});
-        addBox(lot.name+'-pedestrian-entry-path',root,[0,.07,hz+2.35],[2.2,.14,2.2],shared.concrete,{collide:true});
+        addBox(lot.name+'-front-entry-step',root,[0,.09,hz+.62],[2.45,.18,1.24],shared.paving,{collide:true});
+        addBox(lot.name+'-pedestrian-entry-path',root,[0,.07,hz+2.35],[2.2,.14,2.2],shared.paving,{collide:true});
         addBox(lot.name+'-rear-wall',root,[0,height/2,-hz],[width,height,.24],mats.wall,{collide:true});
         addBox(lot.name+'-left-wall',root,[-hx,height/2,0],[.24,height,depth],mats.wall,{collide:true});
         addBox(lot.name+'-right-wall',root,[hx,height/2,0],[.24,height,depth],mats.wall,{collide:true});
@@ -113,12 +121,56 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
         addBox(lot.name+'-front-left',root,[-(gap/2+segment/2),height/2,hz],[segment,height,.24],mats.wall,{collide:true});
         addBox(lot.name+'-front-right',root,[(gap/2+segment/2),height/2,hz],[segment,height,.24],mats.wall,{collide:true});
         addBox(lot.name+'-door-lintel',root,[0,height-.16,hz],[gap,.32,.24],mats.wall,{collide:true});
-        const roof=addBox(lot.name+'-roof',root,[0,height+.18,0],[width+.42,.36,depth+.42],mats.roof);
-        roof.tags.add('stage08n-hide-inside');
+        roofProfileCounts[roofProfile]++;
+        const roofElements=[];
+        const roof=addBox(lot.name+'-roof',root,[0,height+.18,0],[width+.42,.36,depth+.42],mats.roof,{batch:false});
+        roof.tags.add('stage08n-hide-inside');roofElements.push(roof);
+        const roofDetail=(name,position,scale,mat,rotation=null)=>{const entity=addBox(lot.name+'-'+name,root,position,scale,mat,{batch:false});entity.tags.add('stage08n-hide-inside');if(rotation)entity.setLocalEulerAngles(...rotation);roofElements.push(entity);return entity;};
+        if(roofProfile==='flat-parapet'){
+          roofDetail('parapet-front',[0,height+.64,hz+.12],[width+.48,.55,.16],mats.trim);
+          roofDetail('parapet-rear',[0,height+.64,-hz-.12],[width+.48,.55,.16],mats.trim);
+          roofDetail('parapet-left',[-hx-.12,height+.64,0],[.16,.55,depth+.45],mats.trim);
+          roofDetail('parapet-right',[hx+.12,height+.64,0],[.16,.55,depth+.45],mats.trim);
+        }else if(roofProfile==='sheet-pitch'){
+          roofDetail('corrugated-sheet-front',[0,height+.49,hz*.245],[width+.55,.14,depth*.53],mats.metalRoof,[15,0,0]);
+          roofDetail('corrugated-sheet-rear',[0,height+.49,-hz*.245],[width+.55,.14,depth*.53],mats.metalRoof,[-15,0,0]);
+          roofDetail('sheet-ridge-cap',[0,height+.98,0],[width+.6,.16,.22],mats.trim);
+        }else if(roofProfile==='service-roof'){
+          roofDetail('raised-service-room',[0,height+.82,-.55],[4.1,1.12,3.4],mats.wall);
+          roofDetail('service-room-cap',[0,height+1.43,-.55],[4.35,.16,3.65],mats.trim);
+          roofDetail('rooftop-water-tank-base',[3.65,height+.55,-2.8],[2.05,.3,1.85],mats.metalRoof);
+          roofDetail('rooftop-water-tank',[3.65,height+1.24,-2.8],[1.65,1.12,1.45],shared.dark);
+          roofDetail('water-tank-lid',[3.65,height+1.84,-2.8],[1.8,.12,1.58],mats.trim);
+        }else{
+          for(const [px,pz] of [[-4.8,-3.5],[4.8,-3.5],[-4.8,3.5],[4.8,3.5]])roofDetail('pergola-post-'+px+'-'+pz,[px,height+.95,pz],[.13,1.55,.13],shared.wood);
+          roofDetail('pergola-beam-front',[0,height+1.68,3.5],[10,.14,.16],shared.wood);
+          roofDetail('pergola-beam-rear',[0,height+1.68,-3.5],[10,.14,.16],shared.wood);
+          for(let slat=-3;slat<=3;slat+=2)roofDetail('pergola-slat-'+slat,[slat,height+1.7,0],[.12,.12,6.9],shared.wood);
+        }
         addBox(lot.name+'-fascia',root,[0,height-.03,hz+.17],[width+.28,.28,.34],mats.trim);
         addBox(lot.name+'-front-sign',root,[0,height-.62,hz+.2],[3.8,.65,.13],mats.sign);
+        // Front glazing, mullions and a small entry canopy break up the plain blockout shell.
+        for(const side of [-1,1]){
+          const wx=side*2.9;
+          addBox(lot.name+'-front-window-glass-'+side,root,[wx,2.18,hz+.135],[2.45,1.28,.065],shared.glass);
+          addBox(lot.name+'-front-window-head-'+side,root,[wx,2.86,hz+.21],[2.58,.09,.12],mats.trim);
+          addBox(lot.name+'-front-window-sill-'+side,root,[wx,1.49,hz+.21],[2.58,.10,.14],mats.trim);
+          addBox(lot.name+'-front-window-mullion-'+side,root,[wx,2.18,hz+.22],[.075,1.25,.12],mats.trim);
+        }
+        addBox(lot.name+'-entry-frame-left',root,[-gap/2-.08,1.55,hz+.2],[.13,3.1,.16],mats.trim);
+        addBox(lot.name+'-entry-frame-right',root,[gap/2+.08,1.55,hz+.2],[.13,3.1,.16],mats.trim);
+        const canopyMaterial=lot.role==='shop'?mats.accent:mats.trim;
+        const canopy=addBox(lot.name+'-entry-canopy',root,[0,height-.82,hz+.76],[lot.role==='shop'?5.6:3.8,.14,1.5],canopyMaterial);
+        canopy.setLocalEulerAngles(6,0,0);
+        addBox(lot.name+'-canopy-bracket-left',root,[-(lot.role==='shop'?2.55:1.65),height-1.25,hz+.67],[.11,.78,.12],shared.metal);
+        addBox(lot.name+'-canopy-bracket-right',root,[(lot.role==='shop'?2.55:1.65),height-1.25,hz+.67],[.11,.78,.12],shared.metal);
         addBox(lot.name+'-window-left',root,[-hx-.02,2.15,1.3],[.08,1.05,2.35],shared.glass);
         addBox(lot.name+'-window-right',root,[hx+.02,2.15,1.3],[.08,1.05,2.35],shared.glass);
+        if(weathered){
+          weatheredBuildings++;
+          addBox(lot.name+'-localized-damp-streak',root,[-hx-.15,1.3,-1.8],[.035,1.55,.56],mats.weather);
+          addBox(lot.name+'-exposed-brick-repair-patch',root,[-hx-.15,.48,-.25],[.045,.72,1.42],mats.brick);
+        }
         // A real hinge hierarchy: the panel rotates around its left edge, not its centre.
         const pivot=new pc.Entity(lot.name+'-hinged-door-pivot');
         pivot.setLocalPosition(-gap/2,0,hz-.16);root.addChild(pivot);
@@ -130,7 +182,7 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
         const doorIndex=doorProxies.length;
         doorProxies.push({id:'stage08n-door:'+district.id+':'+index,position:doorWorld,halfExtents:[gap/2,1.52,.075],rotationY:yaw,source:'stage08n-door',districtId:district.id});
         const entrance=worldPoint(root.getPosition().toArray(),[0,0,hz+1.1],yaw);
-        const door={id:'stage08n-door-'+district.id+'-'+index,district:district.district,districtId:district.id,name:lot.name,root,pivot,panel,roof,doorIndex,doorProxy:doorProxies[doorIndex],entrance,open:false,angle:0,targetAngle:0,manual:false,autoUntil:0,position:[lot.x,lot.y,lot.z],yaw,halfExtents:[hx,depth/2],};
+        const door={id:'stage08n-door-'+district.id+'-'+index,district:district.district,districtId:district.id,name:lot.name,root,pivot,panel,roof,roofElements,roofProfile,weathered,doorIndex,doorProxy:doorProxies[doorIndex],entrance,open:false,angle:0,targetAngle:0,manual:false,autoUntil:0,position:[lot.x,lot.y,lot.z],yaw,halfExtents:[hx,depth/2],};
         doors.push(door);
         if(lot.role==='shop'){
           makeFurnishing(root,lot.name+'-service-counter',[0,.58,-1.8],[6.3,1.05,1.0],mats.accent,true);
@@ -178,16 +230,25 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
         }
       }
       const facadeFront=worldPoint(root.getPosition().toArray(),[0,0,hz+1.8],yaw);
-      buildings.push({id:district.id+'-'+index,name:lot.name,district:district.district,districtId:district.id,root,kind:lot.kind,role:lot.role,enterable,position:[lot.x,lot.y,lot.z],yaw,obb:{position:[lot.x,lot.y+height/2,lot.z],halfExtents:[width/2,height/2,depth/2],rotationY:yaw},doorId:enterable?doors[doors.length-1].id:null,facadeFront});
+      buildings.push({id:district.id+'-'+index,name:lot.name,district:district.district,districtId:district.id,root,kind:lot.kind,role:lot.role,enterable,roofProfile,weathered,position:[lot.x,lot.y,lot.z],yaw,obb:{position:[lot.x,lot.y+height/2,lot.z],halfExtents:[width/2,height/2,depth/2],rotationY:yaw},doorId:enterable?doors[doors.length-1].id:null,facadeFront});
     }
     // A small neighbourhood forecourt ties the four plots together without adding road obstacles.
     const hub=district.hub;
-    const plaza=box('stage08n-'+district.id+'-shared-plaza',[hub[0]-18,hub[1]+.035,hub[2]-19],[13,.07,5.5],shared.concrete);
+    const plaza=box('stage08n-'+district.id+'-shared-plaza',[hub[0]-18,hub[1]+.035,hub[2]-19],[13,.07,5.5],shared.paving);
     plaza.tags.add('stage08n-neighbourhood');
     if(group&&plaza.render)plaza.render.batchGroupId=group.id;districtEntities.get(district.id).push(plaza);
     for(let bench=0;bench<2;bench++){
       const e=box('stage08n-'+district.id+'-plaza-bench-'+bench,[hub[0]-20+bench*4,hub[1]+.48,hub[2]-19],[2.2,.16,.55],shared.wood);
       if(group&&e.render)e.render.batchGroupId=group.id;districtEntities.get(district.id).push(e);details++;
+    }
+    for(let planterIndex=0;planterIndex<2;planterIndex++){
+      const px=hub[0]-(planterIndex===0?22.5:13),pz=hub[2]-19.2;
+      const planter=box('stage08n-'+district.id+'-plaza-planter-'+planterIndex,[px,hub[1]+.28,pz],[2.15,.56,.86],shared.concrete);
+      planter.tags.add('stage08n-neighbourhood');if(group&&planter.render)planter.render.batchGroupId=group.id;districtEntities.get(district.id).push(planter);details++;vegetationPlanters++;
+      for(let leaf=0;leaf<3;leaf++){
+        const foliage=box('stage08n-'+district.id+'-plaza-plant-'+planterIndex+'-'+leaf,[px+(leaf-1)*.36,hub[1]+.78,pz],[.16,.98,.16],leaf===1?shared.foliage:shared.dryGrass);
+        foliage.setEulerAngles(0,leaf*38-30,(leaf-1)*24);foliage.tags.add('stage08n-neighbourhood');if(group&&foliage.render)foliage.render.batchGroupId=group.id;districtEntities.get(district.id).push(foliage);details++;
+      }
     }
     for(const entity of districtEntities.get(district.id))entity.enabled=false;
   }
@@ -301,12 +362,12 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
     }
     if(player){
       for(const building of buildings){
-        const door=doors.find(item=>item.id===building.doorId),roof=door?.roof;
-        if(!roof||!building.enterable)continue;
+        const door=doors.find(item=>item.id===building.doorId),roofElements=door?.roofElements||[door?.roof].filter(Boolean);
+        if(!roofElements.length||!building.enterable)continue;
         const dx=player[0]-building.position[0],dz=player[2]-building.position[2];
         const local=rotateXZ(dx,dz,-building.yaw);
         const inside=Math.abs(local[0])<building.obb.halfExtents[0]-.65&&Math.abs(local[1])<building.obb.halfExtents[2]-.65&&Math.abs(player[1]-building.position[1])<4.8;
-        roof.enabled=!inside;
+        for(const roofPart of roofElements)roofPart.enabled=!inside;
       }
     }
   }
@@ -350,6 +411,6 @@ export function createStage08NDistrictNeighbourhoods({app,box,material,manifest,
     districtNpcs.push({id:spawn.id,role:spawn.role,district:spawn.district,districtId,root,position:[spawn.x,spawn.y,spawn.z],y:spawn.y,route:spawn.route.map(p=>p.slice()),waypoint:1,speed:spawn.role==='Shopkeeper'||spawn.role==='Tailor'||spawn.role==='Grocer'||spawn.role==='Produce Seller'?.62:.9,wait:0,waitDuration:1.4,schedule:spawn.schedule,returningHome:false});details+=4;
   }
   function destroy(){for(const remove of interactionRemovers.splice(0))remove();for(const actor of districtNpcs)actor.root.destroy();for(const vehicle of trafficVehicles)vehicle.root.destroy();for(const door of doors)door.root.destroy();if(playerPhysicsRef?.removeStaticColliders){for(const owner of collisionOwnerIds.values())playerPhysicsRef.removeStaticColliders(owner);for(const owner of doorOwnerIds.values())playerPhysicsRef.removeStaticColliders(owner);}}
-  function getState(){return {stage:'08N',districts:DISTRICTS.map(d=>d.district),buildingCount:buildings.length,enterableInteriors:buildings.filter(b=>b.enterable).length,doorCount:doors.length,shops:shops.map(s=>({...s,position:s.position.slice()})),npcSpawns:npcSpawns.length,npcCount:districtNpcs.length,activeDistrictNpcs:districtNpcs.filter(actor=>districtActive.get(actor.districtId)).length,trafficVehicles:trafficVehicles.length,activeTrafficVehicles:trafficVehicles.filter(vehicle=>districtActive.get(vehicle.districtId)).length,trafficStates:trafficVehicles.reduce((out,v)=>{out[v.state]=(out[v.state]||0)+1;return out;},{}),activeDistricts:[...districtActive].filter(([,active])=>active).map(([id])=>id),detailMeshes:details,collisionProxies:collisionProxies.length,doorCollisionProxies:doorProxies.length,batchGroups:batchGroupIds.length,openDoors:doors.filter(d=>d.open).length,buildings:buildings.map(b=>({id:b.id,name:b.name,district:b.district,kind:b.kind,role:b.role,enterable:b.enterable,position:b.position.slice(),doorId:b.doorId})),doors:doors.map(d=>({id:d.id,district:d.district,name:d.name,open:d.open,angle:+d.angle.toFixed(1),entrance:d.entrance.slice()}))};}
+  function getState(){return {stage:'08N',districts:DISTRICTS.map(d=>d.district),buildingCount:buildings.length,enterableInteriors:buildings.filter(b=>b.enterable).length,doorCount:doors.length,shops:shops.map(s=>({...s,position:s.position.slice()})),npcSpawns:npcSpawns.length,npcCount:districtNpcs.length,activeDistrictNpcs:districtNpcs.filter(actor=>districtActive.get(actor.districtId)).length,trafficVehicles:trafficVehicles.length,activeTrafficVehicles:trafficVehicles.filter(vehicle=>districtActive.get(vehicle.districtId)).length,trafficStates:trafficVehicles.reduce((out,v)=>{out[v.state]=(out[v.state]||0)+1;return out;},{}),activeDistricts:[...districtActive].filter(([,active])=>active).map(([id])=>id),roofProfiles:{...roofProfileCounts},weatheredBuildings,vegetationPlanters,detailMeshes:details,collisionProxies:collisionProxies.length,doorCollisionProxies:doorProxies.length,batchGroups:batchGroupIds.length,openDoors:doors.filter(d=>d.open).length,buildings:buildings.map(b=>({id:b.id,name:b.name,district:b.district,kind:b.kind,role:b.role,enterable:b.enterable,roofProfile:b.roofProfile,weathered:b.weathered,position:b.position.slice(),doorId:b.doorId})),doors:doors.map(d=>({id:d.id,district:d.district,name:d.name,open:d.open,angle:+d.angle.toFixed(1),entrance:d.entrance.slice()}))};}
   return {stage:'08N',districts:DISTRICTS,buildings,doors,shops,npcSpawns,districtNpcs,trafficVehicles,collisionProxies,doorProxies,batchGroupIds,detailMeshes:details,attachRuntime,registerInteractions,update,destroy,getState};
 }

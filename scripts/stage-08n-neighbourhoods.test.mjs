@@ -21,6 +21,10 @@ assert.equal(state.activeDistrictNpcs,0,'distant district NPCs start inactive');
 assert.equal(state.trafficVehicles,20,'four lane-following cars per district');
 assert.equal(state.shops.length,5);
 assert.equal(state.batchGroups,5);
+assert.deepEqual(state.roofProfiles,{'flat-parapet':5,'sheet-pitch':5,'service-roof':5,'pergola':5},'each district should contain all four distinct roof profiles');
+assert.equal(state.weatheredBuildings,7,'only a minority of the neighbourhood buildings should receive localized weathering');
+assert.equal(state.vegetationPlanters,10,'each district gets two restrained planted forecourt planters');
+assert.ok(state.buildings.every(building=>building.roofProfile&&typeof building.weathered==='boolean'));
 assert.ok(state.collisionProxies>=220,'interior floors, entry steps and paths need collision support');
 assert.equal(state.doorCollisionProxies,20);
 assert.ok(state.detailMeshes>=400);
@@ -78,6 +82,7 @@ const building=stage.buildings[0];
 const roof=firstDoor.roof;
 stage.update(.016,{position:[building.position[0],building.position[1]+.2,building.position[2]]},{roster:[]});
 assert.equal(roof.enabled,false);
+assert.ok(firstDoor.roofElements.every(part=>part.enabled===false),'all roof accessories should hide with the base roof inside an interior');
 
 stage.destroy();
 assert.equal(owners.size,0,'district collision owners should be removed during cleanup');

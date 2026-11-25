@@ -315,6 +315,9 @@ export async function createStage08JYabaIkejaNetworkAndStreets({ app, box, mater
     dataSaver: { enabled: lowDataMode, textureDownloadsSkipped: lowDataMode, importedPropDownloadsSkipped: skipOptionalDownloads },
     optionalAssetsSkipped: skipOptionalDownloads,
     pbrMaterials: Object.fromEntries(Object.entries(maps).map(([name, set]) => [name, Object.keys(set)])),
+    // Shared material objects are passed into later GIDI streaming stages so
+    // imported district roads reuse these maps instead of loading duplicates.
+    surfaceMaterials: { asphalt: pbr.asphalt, concrete: pbr.concrete, paving: pbr.paving },
     utilityPoles,
     signboards,
     roadDrainCovers,

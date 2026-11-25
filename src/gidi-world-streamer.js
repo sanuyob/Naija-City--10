@@ -56,6 +56,7 @@ export function createGidiWorldStreamer({
   maxLoadsPerUpdate = 2,
   activationPoint = [100, 0, -445],
   activationRadius = 220,
+  surfaceMaterials = {},
   applyShadowPolicy = () => {}
 } = {}) {
   if (!app) throw new Error('GIDI streamer requires a PlayCanvas application.');
@@ -70,6 +71,7 @@ export function createGidiWorldStreamer({
   const cellBatchGroup = null;
   const infrastructureBatchGroup = null;
   let materialRefractionDowngrades = 0;
+  const surfaceMaterialReplacements = { asphalt: 0, concrete: 0, paving: 0 };
   let infrastructureRenderComponents = 0;
   let manifest = null;
   let infrastructureAsset = null;
@@ -110,6 +112,16 @@ export function createGidiWorldStreamer({
     for (const component of components) {
       for (const instance of component.meshInstances || []) {
         const material = instance.material;
+        const materialName = String(material?.name || '').toLowerCase();
+        let replacement = null;
+        let surface = null;
+        if (/(?:gidi[_ ]bridge[_ ]asphalt|mat[_ ]gidi[_ ]asphalt[_ ](?:pilot|blockout)|mat[_ ]yaba[_ ]local[_ ]asphalt)/i.test(materialName)) { surface = 'asphalt'; replacement = surfaceMaterials.asphalt; }
+        else if (/(?:sidewalk[_ ](?:blockout|stone)|waterfront[_ ]paving|waterfront[_ ]cut[_ ]stone)/i.test(materialName)) { surface = 'paving'; replacement = surfaceMaterials.paving; }
+        else if (/(?:bridge[_ ]concrete|bridge[_ ]approach|roundabout[_ ]concrete|concrete[_ ]pilot)/i.test(materialName)) { surface = 'concrete'; replacement = surfaceMaterials.concrete; }
+        if (surface && replacement && material !== replacement) {
+          instance.material = replacement;
+          surfaceMaterialReplacements[surface]++;
+        }
         if (material?.useDynamicRefraction) {
           // Keep the imported tinted glass colour, but remove per-frame scene
           // colour grab-pass refraction for the low-memory mobile renderer.
@@ -409,6 +421,7 @@ export function createGidiWorldStreamer({
       infrastructureBatchCount: 0,
       infrastructureRenderComponents,
       materialRefractionDowngrades,
+      surfaceMaterialReplacements: { ...surfaceMaterialReplacements },
       streamedRenderComponents,
       staticImportsBatched: false,
       loadedCells: records.size,
