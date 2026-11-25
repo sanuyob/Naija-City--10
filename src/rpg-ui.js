@@ -205,14 +205,12 @@ export function mountRPGInterface() {
       const action = gearAction.dataset.gearAction;
       const itemId = gearAction.dataset.gearId;
       const result = system?.[action]?.(itemId);
-      if (result?.message) showToast(result.message);
       refreshEquipmentUI();
       return;
     }
     const slot = event.target.closest('[data-slot]');
     if (slot) {
       const result = window.__NAIJA_FIELD_EQUIPMENT__?.equipSlot?.(slot.dataset.slot);
-      if (result?.message) showToast(result.message);
       refreshEquipmentUI();
       return;
     }
@@ -249,13 +247,14 @@ export function mountRPGInterface() {
       ? equipment.items.map(item => {
           const cooldown = item.cooldownRemaining > 0 ? 'READY IN ' + item.cooldownRemaining.toFixed(1) + 'S' : 'READY';
           const equipped = item.equipped ? ' · EQUIPPED' : '';
-          const disabled = item.count <= 0 ? ' disabled' : '';
+          const cannotEquip = item.count <= 0 && !item.equipped ? ' disabled' : '';
+          const unavailable = item.count <= 0 ? ' disabled' : '';
           const equipLabel = item.equipped ? 'STOW' : 'EQUIP';
           return '<article class="gear-card"><div class="gear-card-heading"><b>' + escapeMarkup(item.shortName) + '</b><strong>' + escapeMarkup(item.name) + '</strong></div>' +
             '<small>' + escapeMarkup(item.description) + '</small><small>QTY · ' + item.count + ' · ' + cooldown + equipped + '</small>' +
-            '<div class="gear-actions"><button type="button" data-gear-action="equip" data-gear-id="' + escapeMarkup(item.id) + '"' + disabled + '>' + equipLabel + '</button>' +
-            '<button type="button" data-gear-action="activate" data-gear-id="' + escapeMarkup(item.id) + '"' + disabled + '>USE</button>' +
-            '<button type="button" data-gear-action="drop" data-gear-id="' + escapeMarkup(item.id) + '"' + disabled + '>DROP</button></div></article>';
+            '<div class="gear-actions"><button type="button" data-gear-action="equip" data-gear-id="' + escapeMarkup(item.id) + '"' + cannotEquip + '>' + equipLabel + '</button>' +
+            '<button type="button" data-gear-action="activate" data-gear-id="' + escapeMarkup(item.id) + '"' + unavailable + '>USE</button>' +
+            '<button type="button" data-gear-action="drop" data-gear-id="' + escapeMarkup(item.id) + '"' + unavailable + '>DROP</button></div></article>';
         }).join('')
       : '<article><strong>Field equipment is loading</strong><small>Start the game to initialise the field kit.</small></article>';
     return '<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦' + Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG') + '</b></div>' +
