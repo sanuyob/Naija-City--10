@@ -667,7 +667,6 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
       const [district,region]=(()=>{const [x,,z]=worldActorState.position;if(x>3200)return ['Ekiti Highlands','Ekiti'];if(x>2700)return ['Lekki','Lagos'];if(x>1800)return ['Ikoyi','Lagos'];if(x>1450)return ['Victoria Island','Lagos'];if(x>1000)return ['Eko CBD','Lagos'];if(x>300)return ['Yaba','Lagos'];if(x>=-120&&x<=120&&z>=165&&z<=500)return ['Ikeja','Lagos'];return ['Yaba','Lagos'];})();
       window.__NAIJA_RPG_UI__?.setDistrictLabel?.(district,region);
       window.__NAIJA_RPG_UI__?.setVitals(playerState);
-      window.__NAIJA_RPG_UI__?.refreshEquipmentUI?.(fieldEquipment?.getState?.());
       window.__NAIJA_RPG_UI__?.setWorldActivity?.({pedestrians:10,companions:companionSystem.getState().activeCount});
       window.__NAIJA_RPG_UI__?.setInteractionPrompt?.(interactionSystem?.findNearest(playerState)||null);
       window.__NAIJA_RPG_UI__?.setWorldMapPlayerPosition?.(worldActorState.position,Math.atan2(camera.forward.x,-camera.forward.z));
