@@ -4,7 +4,7 @@ This is a curated source library for Yaba's street businesses, market activity, 
 
 ## Source and permissions
 
-The downloaded models are from Grab3D and are published under CC0 1.0 Universal. Each model's own `LICENSE.txt` has been saved beside the source GLB. Grab3D's CC0 licence permits commercial use and does not require attribution. The project should still keep this provenance record.
+The downloaded models are from Grab3D and are published under CC0 1.0 Universal. Each model's own `LICENSE.txt` has been saved beside the source GLB. Grab3D's CC0 licence permits commercial use and does not require attribution. The project keeps this provenance record.
 
 General licence: https://grab3d.com/license/
 CC0 1.0: https://creativecommons.org/publicdomain/zero/1.0/

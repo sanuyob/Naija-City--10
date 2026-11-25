@@ -30,6 +30,7 @@ async function checkFile(relative, label, glb = false) {
 for (const asset of manifest.assets ?? []) {
   await checkFile(asset.original, `${asset.id} original`, true);
   await checkFile(asset.mobile, `${asset.id} mobile`, true);
+  if (asset.mobileLite) await checkFile(asset.mobileLite, `${asset.id} mobile-lite`, true);
   await checkFile(asset.licenseFile, `${asset.id} licence`);
   if (asset.alternateOriginal) await checkFile(asset.alternateOriginal, `${asset.id} alternate original`, true);
 }
