@@ -435,7 +435,7 @@ export function createFieldEquipmentSystem({
       activeItemId,
       quickSlots: slots,
       droppedProps: droppedProps.length,
-      visuals: { proceduralModels: equippedModels.size, carryAnchor: 'player-root offset; no hand-bone socket required', transition: 'procedural equip/stow scale and position blend' },
+      visuals: { proceduralModels: equippedModels.size, carryAnchor: rightHandBone ? 'right-hand bone attachment' : 'player-root offset fallback', transition: 'procedural equip/stow scale and position blend' },
       physics: { mode: 'raycast-supported arcade rigid-body drops', gravity: 15.5, maxDroppedProps: maximumDrops, liveDrops: droppedProps.length, groundContacts: stats.groundContacts },
       stats: { ...stats }
     };
