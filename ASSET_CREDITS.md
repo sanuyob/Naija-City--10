@@ -1,28 +1,16 @@
-# Naija City — external game asset register
+# Naija City — local and external game asset register
 
-## Grab3D: Police Officer
-- Model page: https://grab3d.com/models/characters/police-officer/
-- Runtime file: https://grab3d.com/dl/police-officer-rigged/police-officer-rigged.glb
-- Format: GLB, rigged variant
-- Published animation clips: Walk and Run
-- License: CC0 1.0 (public domain; no attribution required)
-- Runtime policy: streamed only on the standard-memory profile; the low-memory profile uses a lightweight procedural placeholder instead.
-- Important: the model is a generic stylised police officer, not verified as an authentic Nigeria Police Force uniform.
-
-## Grab3D: Police Car
-- Model page: https://grab3d.com/models/vehicles/police-car/
-- Runtime file: https://grab3d.com/dl/police-car/police-car.glb
-- Format: GLB
-- Published size: 1.4 MB
-- Published geometry: 34,797 triangles
-- License: CC0 1.0 (public domain; no attribution required)
-- Runtime policy: streamed as a parked visual vehicle; it is not yet connected to the driving physics system.
+## Police patrol visuals — procedural local version
+- Officer: generated from lightweight PlayCanvas primitives in `src/police-patrol-system.js`.
+- Parked patrol car: generated from lightweight PlayCanvas primitives in `src/police-patrol-system.js`.
+- External Grab3D officer and car GLBs are not requested at runtime. Their previous URLs failed cross-origin checks in browser testing, so they have been removed from the default game path.
+- These are ambience-only visuals. The car is parked scenery, not a drivable vehicle; no enforcement or combat interactions are connected.
+- The officer uses a procedural walking loop and a four-waypoint neighbourhood patrol.
 
 ## Mobile asset policy
-- Keep the low-memory character fallback procedural and lightweight.
-- Do not load the high-polygon police character on the low-memory profile.
-- Profile texture memory, draw calls, animation cost and frame time on actual Android devices before increasing NPC counts.
-- Keep external model loading optional and fail gracefully when the host blocks cross-origin downloads or the asset host is unavailable.
+- Keep patrol visuals lightweight and fully local so they work offline and do not depend on third-party CORS headers.
+- Profile draw calls, memory and frame time on actual Android devices before increasing NPC counts.
+- External character and vehicle downloads should only be reintroduced after their hosting origin provides a verified CORS-safe distribution path.
 
 ## Weapon and explosive content
-This asset register intentionally excludes real weapon and explosive downloads. Naija City can use clearly fictional, non-functional props and abstract visual effects instead.
+This asset register intentionally excludes real weapon and explosive downloads. Naija City can use clearly fictional, non-functional props only where supplied and explicitly requested as static cosmetic assets.

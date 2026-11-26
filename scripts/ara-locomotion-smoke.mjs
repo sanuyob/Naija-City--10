@@ -111,6 +111,11 @@ try {
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
   await page.goto(`${origin}?smoke=ara-locomotion`, { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready && window.__NAIJA_GAME__?.playerCharacterReady, null, { timeout: 120000 });
+  const patrolState = await page.evaluate(() => window.__NAIJA_GAME__?.getPolicePatrolState?.());
+  if (patrolState?.state !== 'active' || !patrolState.officerLoaded || !patrolState.carLoaded ||
+      patrolState.assetMode !== 'offline-procedural' || patrolState.externalRequests !== 0) {
+    throw new Error('Local police patrol must initialise without third-party model requests: ' + JSON.stringify(patrolState));
+  }
 
   async function sampleGait(mode) {
     await page.evaluate(() => window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0, 0, 0], 0));
