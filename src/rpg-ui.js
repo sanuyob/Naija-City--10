@@ -50,6 +50,10 @@ export function mountRPGInterface() {
     </section>
     <button id="camera-view-toggle" class="camera-view-toggle" type="button" data-mode="third-person" aria-pressed="false" aria-label="Switch to first-person view">VIEW · 3P</button><div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
     <div class="fps-reticle" aria-hidden="true"><i></i></div>
+    <div class="fps-hands" aria-hidden="true">
+      <span class="fps-arm fps-arm-left"><i class="fps-forearm"></i><b class="fps-palm"></b><em class="fps-thumb"></em></span>
+      <span class="fps-arm fps-arm-right"><i class="fps-forearm"></i><b class="fps-palm"></b><em class="fps-thumb"></em></span>
+    </div>
     <div class="touch" aria-label="Mobile game controls">
       <div class="stick" id="move-joystick" role="application" aria-label="Movement joystick"><i id="move-knob"></i><small>MOVE</small></div>
       <div class="actions">

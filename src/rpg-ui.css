@@ -356,3 +356,24 @@
 @media(orientation:landscape) and (max-height:560px){
   .camera-view-toggle{top:calc(48px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px))}
 }
+
+/* Camera-space unarmed hands: CSS-only so first-person adds no runtime meshes. */
+.fps-hands{position:absolute;inset:0;z-index:2;display:none;overflow:hidden;pointer-events:none}
+.camera-first-person .fps-hands{display:block}
+.fps-arm{position:absolute;bottom:-38px;width:190px;height:250px;transform-origin:50% 100%;filter:drop-shadow(0 7px 5px #0008)}
+.fps-arm-left{left:calc(50% - 360px);transform:rotate(25deg)}
+.fps-arm-right{right:calc(50% - 360px);transform:rotate(-25deg)}
+.fps-forearm{position:absolute;left:60px;bottom:0;width:76px;height:205px;
+  border-radius:38px 38px 14px 14px;clip-path:polygon(12% 0,88% 0,100% 100%,0 100%);
+  background:linear-gradient(90deg,#0b211a 0%,#25493a 48%,#102b21 100%);
+  box-shadow:inset 7px 0 11px #ffffff12,inset -8px 0 10px #0005}
+.fps-palm{position:absolute;left:69px;bottom:183px;width:61px;height:67px;
+  border-radius:47% 48% 42% 42%;background:linear-gradient(100deg,#4a2b20,#87523a 52%,#5a3022);
+  box-shadow:inset 4px 2px 6px #ffffff22,inset -5px -5px 8px #0004}
+.fps-thumb{position:absolute;left:48px;bottom:185px;width:28px;height:54px;
+  border-radius:20px;background:linear-gradient(90deg,#4a2b20,#89563d);transform:rotate(-30deg)}
+@media(max-width:700px) and (orientation:landscape){
+ .fps-arm{bottom:-54px;transform-origin:50% 100%;scale:.78}
+ .fps-arm-left{left:calc(50% - 370px);transform:rotate(24deg)}
+ .fps-arm-right{right:calc(50% - 370px);transform:rotate(-24deg)}
+}
