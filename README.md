@@ -35,6 +35,12 @@ Naija City is a Nigerian-inspired open-world FPS/RPG prototype built with PlayCa
 - Uses generated shared textures and bounded static batching rather than downloading 48 separate high-resolution material sets.
 - This is a semi-photoreal procedural facade/PBR pass, not photogrammetry or 48 individually authored high-detail GLB building models. Unique building interiors, custom 2K/4K materials, final collision and physical Android performance checks remain future work.
 
+## Current playable world footprint
+- The active city is the compact Yaba starter area connected to the Ikeja neighbourhood extension.
+- GIDI 02 REBUILD and its streamed Yaba/ Lekki / Eko / Ikoyi / Ekiti world, imported terrain/road cells, gateway, district hubs and authored interiors have been removed from the runtime and asset package.
+- The original Yaba starter blockout and the separate Yaba‚ÄìIkeja street connection remain. Stage 08E regenerates lightweight procedural building GLBs for the retained local map.
+- The build no longer downloads or initializes the GIDI cell manifest, terrain/infrastructure GLB, or GIDI district collision proxies.
+
 ## Landscape HUD
 - Landscape-first mobile layout with a portrait rotation notice and web-app manifest orientation hint.
 - Left thumb zone: camera-relative movement joystick.
@@ -67,16 +73,7 @@ Naija City is a Nigerian-inspired open-world FPS/RPG prototype built with PlayCa
 - Downloaded the modern sports-car body through Ara 3D Gen's vehicle builder and exported its separate driver-side vehicle prop with the driving/boarding/alighting action set.
 - Built a phone-oriented GLB from that export: about 3.72 MB and 47,799 triangles, retaining the named chassis, four wheel joints, steering wheel, two doors and two windows. The exported character animation payload was removed; Bullet drives the wheels and a small local door animation handles the visible entry/exit cue.
 - The game aligns all four rendered wheel joints to the Bullet raycast-wheel transforms and checks the maximum positional difference in the vehicle smoke test.
-- Uses an 820 kg Bullet chassis, four raycast wheel/suspension probes, building/street collision proxies and kinematic traffic colliders. This is a hybrid arcade-driving implementation: Bullet handles the rigid-body chassis, suspension probes and collisions, while speed/steering response includes game-tuned control logic. It is not a calibrated tire/engine simulation.
-- Entering disables Ara's on-foot controller/body, enables the driving HUD and chase camera, and starts engine audio. Exiting restores the player controller/body and on-foot camera. Driver door and window animate open/closed on entry and exit; a full visible character boarding/alighting animation is still future work.
-- Vehicle telemetry includes speed, estimated fuel and engine temperature. Fuel/temperature are stylized gameplay variables, not a thermochemical engine simulation or calibrated real-world vehicle model.
-- Procedural Web Audio provides engine tone, skid and impact feedback; pooled VFX add exhaust, skid and collision particles.
-- The original Blender-made Naija City sedan remains available as the load fallback. Physical Android tuning, collision damage, gear ratios, drivetrain layouts, deformable bodywork and a high-fidelity tire/suspension model remain future work.
-
-## Stage 10B ‚Äî original ATL Sandbox hatchback prototype
-- Created a second, original compact hatchback in Blender 5.2.2 LTS inside the ATL Sandbox. The exported GLB is about 1.14 MB, with 117 nodes, 109 mesh nodes and 14 materials.
-- The model has a teal metallic body, glasshouse, mirrors, lights, grille, dashboard, seats, steering wheel, four separately grouped wheels and named driver/passenger door hinge objects.
-- Its Blender generator is preserved at scripts/vehicles/generate-compact-hatchback.py, and the GLB is staged at public/assets/vehicles/naija-city-compact-hatchback.glb.
+- U€vo+^≤â¢∂◊ù public/assets/vehicles/naija-city-compact-hatchback.glb.
 - This hatchback is an asset prototype only; it is not yet wired as a second drivable car. It will need its own pivot alignment, wheel physics setup, entry/exit handling and mobile render optimisation before it enters gameplay.
 
 ## UX polish
@@ -97,9 +94,7 @@ Naija City is a Nigerian-inspired open-world FPS/RPG prototype built with PlayCa
 - src/vehicle-system.js / src/vehicle-physics.js: Ara vehicle loading, enter/exit handoff, vehicle controls, Bullet chassis/raycast wheels, telemetry, engine audio and vehicle VFX.
 - scripts/vehicles/generate-compact-hatchback.py: repeatable Blender source for the separate ATL Sandbox compact hatchback prototype.
 - `src/third-person-controller.js`: locomotion, sprint/stamina, jump, crouch, touch/keyboard input and camera.
-- `src/game.js`: PlayCanvas scene, traffic, contextual interact feedback, Stage 08A expansion and the GIDI gateway/streamer integration.
-- `src/gidi-world-streamer.js`: 500m GIDI cell streaming, shared external texture loading, LOD switching, far-building visibility cutoff and dual Bullet collision lifecycle.
-- `scripts/generate-gidi-world.mjs`: source GLB processing into shared textures, spatial cell GLTFs, medium-detail LOD files and simplified collision proxies.
+- `src/game.js`: PlayCanvas scene, traffic, contextual interaction, the Yaba starter area and connected Ikeja district.
 - `src/stage-08a-city-expansion.js`: expanded terrain, connected roads, neighbourhood building blocks and pocket parks.
 - `src/stage-08b-building-detail.js`: Nigerian-inspired commercial and residential facade detail, balconies, security grilles, AC units and rooftop tanks.
 - `src/stage-08c-street-infrastructure.js`: static kerbs, drainage, utility poles/wires, streetlights, signs, park furniture, bus shelters and roadside stalls.
@@ -108,7 +103,7 @@ Naija City is a Nigerian-inspired open-world FPS/RPG prototype built with PlayCa
 - `scripts/browser-smoke.mjs`: landscape Chromium interaction smoke test plus portrait rotation notice check.
 
 ## Verify
-`npm install` ‚Üí `npm run verify` ‚Üí `npm run build` ‚Üí `npm run analyze:bundle` ‚Üí `npm run test:browser` (includes the GIDI runtime/gateway smoke test)
+`npm install` ‚Üí `npm run verify` ‚Üí `npm run build` ‚Üí `npm run analyze:bundle` ‚Üí `npm run test:browser`
 
 Linux build environments also need the Khronos KTX-Software 4.4.2 command-line tool (`ktx`) on `PATH` for the Stage 08F UASTC/ETC1S texture compression step. The GitHub Actions verify and deploy workflows install the official release and verify its SHA-256 checksum automatically.
 
@@ -172,25 +167,6 @@ Player feedback currently includes pooled lightweight dust/jump/landing/parkour 
 Professional implementation references: [glTF Transform simplification options](https://gltf-transform.dev/modules/functions/interfaces/SimplifyOptions), [glTF Transform simplify](https://gltf-transform.dev/modules/functions/functions/simplify), [Meshoptimizer simplifier](https://github.com/zeux/meshoptimizer/blob/master/js/README.md#simplifier), [PlayCanvas vehicle physics](https://developer.playcanvas.com/tutorials/vehicle-physics/), [PlayCanvas ray casting](https://developer.playcanvas.com/user-manual/physics/ray-casting/), [PlayCanvas animation blend trees](https://developer.playcanvas.com/user-manual/animation/blend-trees/), [PlayCanvas collision shapes](https://developer.playcanvas.com/user-manual/physics/collision-shapes/), [PlayCanvas optimization guidelines](https://developer.playcanvas.com/user-manual/optimization/guidelines/), and [Ara 3D Gen vehicle animation/export guide](https://ara3dgen.com/docs/animations/).
 
 
-## GIDI region ‚Äî streamed Yaba and connected districts
-
-The Revision 106 GIDI world is integrated as a separate region attached to the original city by a physical road gateway. The original Naija City map geometry and its spawn remain in place. The connector branches from the existing Yaba road and joins the authored GIDI Yaba southern/east transition at approximately world position `(100, 0, -450)`.
-
-The source GLB is processed offline into **42 spatial building/detail cells on a 500m grid**. The global road, water, terrain and landscape foundation is a separate approximately 1.6 MB GLTF; building and district detail streams as cell assets. All 42 source textures (about 6.8 MB total) are stored once under `public/assets/gidi/shared/textures/` and referenced by relative URI from each cell. Cell geometry is Meshopt-compressed and streamed by cell. The 42 shared textures are stored separately and fetched only once. Across the generated cell meshes, the medium LOD removes about 18.6% of triangles and 7.9% of vertices. The Yaba core cell (0,-4) drops from 57,396 to 26,114 triangles after simplifying and removing seven distant text/micro-detail nodes.
-
-Runtime distance policy:
-- Full-detail buildings within 160m.
-- Simplified medium-detail buildings from 160m to 360m.
-- Building geometry is hidden beyond 360m; the road, terrain and landscape foundation remains visible farther away.
-- Cell visuals unload beyond 900m.
-- Simplified collision cells prefetch within 220m and remain through a 460m unload buffer.
-
-The generator emits 3,872 low-cost collision proxies across the region: road/bridge surface tiles, terrain support tiles and grouped building footprint proxies. The streamer activates only nearby cell proxies in both Ara's Bullet capsule world and the sedan's separate Bullet vehicle world, then removes them when the cell moves beyond its collision buffer. The current Yaba spawn test activates about 360 region proxies per physics world, rather than the entire region's collision set.
-
-Regenerate the GIDI assets from the original source file with `GIDI_SOURCE=/path/to/GIDI_R106_BUILDING_WORLD.glb npm run assets:gidi`. The generated `public/assets/gidi/` output is committed so normal builds do not need the source file or a Blender installation. `npm run test:gidi` launches Chromium and checks infrastructure loading, full/medium LOD, the distant-building cutoff, collision activation/removal, cell unload/reload, the gateway asphalt raycast, Ara walking contact and sedan driving into the GIDI gateway.
-
-**Validation note:** GIDI's own Revision 106 metadata marks geography approval and some bridge/shoreline visual checks as pending. The connector and Yaba road junction are runtime-tested, but the other authored internal bridges and every shoreline still need visual review and a physical Android playthrough. Browser tests are not a substitute for real-device FPS, memory, battery, touch and audio measurements.
-
 ## Stage 08I ‚Äî connected Ikeja neighbourhood expansion
 - Extended the existing Stage 08G/08H commercial corridor with two collector roads, two outer residential streets and four cross streets, forming 20 intersections (12 principal junctions at the avenue and collector roads).
 - Added nine low-rise residential compounds, four mixed-use commercial blocks and a six-stall neighbourhood market.
@@ -209,18 +185,8 @@ Detailed stage notes: [Stage 08I Ikeja Neighbourhood Expansion](docs/STAGE-08I-I
 - Downloaded three CC0 ambientCG PBR families (Road 008 B, Concrete 044 D and Paving Stones 152). Original 1K source maps are retained; the runtime loads 512px colour, OpenGL normal and inverted-roughness/gloss maps.
 - Added 22 local collision proxies. The connector and imported props join player, pedestrian navigation and vehicle collision systems.
 
-## Stage 08K ‚Äî GIDI districts, bridges and junctions
-- Retained the existing 42-cell GIDI road network. A topology check found the 3,049 road collision rectangles in the analysis formed one connected component; this stage adds streetscape and approach treatments without duplicating macro road slabs.
-- Added safety/wayfinding treatments to all four existing named bridges (Yaba Spine, Eko Canal, Canal Link and Lekki Connector), plus five major primary-road junctions with zebra crossings, stop lines, tactile pads and drain inlets.
-- Added local streetlights and wayfinding for Yaba Spine/Market Loop/Tech Hub Link/South Connector, Eko CBD, Victoria Island, Ikoyi Waterfront, Lekki and the Ekiti Highlands approach.
-- Added Ikoyi waterfront seating, bins, paving/drain detail and Lekki/Ekiti approach reflectors. Stage08K currently adds 496 detail meshes and 145 collision proxies under bounded static batching.
-
-Detailed implementation and asset provenance: [Stage 08J](docs/STAGE-08J-YABA-IKEJA-CONNECTION.md), [Stage 08K](docs/STAGE-08K-GIDI-DISTRICTS-BRIDGES-JUNCTIONS.md), [asset register](docs/CITY-ASSET-REGISTER.md).
-
-Verification: `npm run test:city:jk`, `npm run test:city:jk:runtime`, `npm run test:gidi`, `npm run verify`, and `npm run build`. Browser tests are not a replacement for the required Android playthrough and FPS/memory profiling.
-
-
 ## Stage 11 ‚Äî field equipment and patrol ambience
 - Three non-combat utility items: field radio, repair kit and survey beacon, with inventory counts, quick slots, equip/stow, local visual/audio feedback and bounded drop/pickup props.
 - A lightweight four-waypoint police-patrol character route and parked patrol-car visual. The low-memory profile uses a procedural officer placeholder; the generic streamed character and car remain optional external assets and require Android/CORS checks.
 - Police patrol is ambient scenery only: no combat, enforcement or weapon-use interaction is wired.
+{≠≤÷≠∫Õ

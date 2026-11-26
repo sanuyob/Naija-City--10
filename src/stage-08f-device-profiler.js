@@ -67,7 +67,6 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
     const stats = app.stats || {};
     const stage = stage08E?.getState?.() || {};
     const game = window.__NAIJA_GAME__ || {};
-    const gidi = game.getGidiState?.() || {};
     const vehicle = game.getVehicleState?.() || {};
     const batches = game.getStaticBatchState?.() || {};
     const traffic = game.getTrafficPositions?.() || [];
@@ -107,22 +106,6 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
           available: vehicle.available ?? null,
           occupied: vehicle.occupied ?? null,
           speedKmh: vehicle.speedKmh ?? null
-        },
-        gidi: {
-          ready: gidi.ready ?? null,
-          totalCells: gidi.totalCells ?? null,
-          loadedCells: gidi.loadedCells ?? null,
-          desiredCells: gidi.desiredCells ?? null,
-          fullCells: gidi.fullCells ?? null,
-          mediumCells: gidi.mediumCells ?? null,
-          visibleMeshInstances: gidi.visibleMeshInstances ?? null,
-          playerCollisionProxies: gidi.playerCollisionProxies ?? null,
-          streamedRenderComponents: gidi.streamedRenderComponents ?? null,
-          infrastructureRenderComponents: gidi.infrastructureRenderComponents ?? null,
-          totalCellLoads: gidi.totalCellLoads ?? null,
-          totalCellUnloads: gidi.totalCellUnloads ?? null,
-          inFlightLoads: gidi.inFlightLoads ?? null,
-          errors: gidi.errors ?? []
         },
         staticBatches: batches
       },
@@ -177,3 +160,4 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
     get sampleCount() { return sampleCount; }
   };
 }
+{­²Ö­ºÍ

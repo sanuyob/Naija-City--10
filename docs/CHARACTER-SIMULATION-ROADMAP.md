@@ -1,8 +1,8 @@
-# GIDI Character Simulation Stack
+# Naija City Character Simulation Stack
 
 ## Goal
 
-A modular, mobile-conscious character simulation system for Ara, companions, and city pedestrians. Systems communicate through small state contracts: input, animation, physics, senses, decisions, navigation, interactions, vitals, feedback, and persistence. GIDI remains on its current PlayCanvas + Ammo/Bullet runtime; no engine migration is required.
+A modular, mobile-conscious character simulation system for Ara, companions, and city pedestrians. Systems communicate through small state contracts: input, animation, physics, senses, decisions, navigation, interactions, vitals, feedback, and persistence. Naija City remains on its PlayCanvas + Ammo/Bullet runtime; no engine migration is required.
 
 ## Current implementation status
 

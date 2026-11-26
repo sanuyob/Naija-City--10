@@ -25,7 +25,7 @@ At the time of the Stage 01A commit:
 
 ## Subsequent character and simulation integration — November 20, 2026
 
-The later GIDI character-simulation integration builds on that foundation. The current game tree now includes:
+The connected Naija City character-simulation stack builds on that foundation. The current game tree now includes:
 
 - The bundled Ara 3D Female Executive playable GLB, with a 70-bone rig, 25 skinned meshes, 32,346 weighted vertices and 22 available animation states.
 - A PlayCanvas animation controller that selects locomotion, jump, traversal, vehicle transition and recovery states.

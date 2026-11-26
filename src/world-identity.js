@@ -27,7 +27,7 @@ function safePosition(value) {
     ? value.slice(0, 3) : null;
 }
 
-export function buildWorldIdentityRecords({ stage08EState = {}, stage08NState = {}, stage08LState = {}, interiors = [] } = {}) {
+export function buildWorldIdentityRecords({ stage08EState = {} } = {}) {
   const records = [];
   const add = record => {
     if (!record?.id || !record.name || !safePosition(record.position)) return;
@@ -56,60 +56,6 @@ export function buildWorldIdentityRecords({ stage08EState = {}, stage08NState = 
       signPosition:(()=>{const yaw=(Number(building.rotationY)||0)*Math.PI/180,depth=Number(building.size?.[2])||6.8;return [building.position[0]+Math.sin(yaw)*depth*.52,building.position[1]+(Number(building.size?.[1])||5)*.78,building.position[2]-Math.cos(yaw)*depth*.52];})(),
       district:'Yaba', enterable:false, source:'stage08E',
       description:'Exterior building · no enterable interior is currently authored for this structure.'
-    });
-  }
-
-  for (const building of stage08NState.buildings || []) {
-    const name = String(building.name || '').toLowerCase();
-    const category = /restaurant|kitchen|eatery|cafe|café|grill|canteen/.test(name) ? 'restaurant'
-      : /bank|microfinance/.test(name) ? 'bank'
-      : /hospital|clinic|medical centre|medical center/.test(name) ? 'hospital'
-      : /pharmacy|chemist/.test(name) ? 'pharmacy'
-      : /mechanic|auto repair|workshop/.test(name) ? 'mechanic'
-      : /petrol|fuel station|filling station/.test(name) ? 'fuel'
-      : /bus stop|terminal|station/.test(name) ? 'transport'
-      : /school|library|civic|government|police|fire station/.test(name) ? 'public'
-      : building.role === 'shop' ? 'shop'
-      : building.kind === 'office' ? 'office'
-      : building.role === 'home' || building.kind === 'residential' ? 'home' : 'landmark';
-    add({
-      id: 'building-' + building.id, name: building.name, category,
-      position: building.position, district: building.district,
-      enterable: building.enterable, source: 'stage08N',
-      description: building.enterable ? 'Enter through the marked doorway.' : 'Exterior location.'
-    });
-  }
-
-  for (const activity of stage08LState.activities || []) {
-    add({
-      id: 'activity-' + activity.id, name: activity.title, category: 'activity',
-      position: activity.center || activity.position, district: activity.district,
-      enterable: true, source: 'stage08L',
-      description: activity.name + ' · local district activity'
-    });
-  }
-
-  for (const interior of interiors) {
-    // Guest Room 01 is an interior destination inside Grand Hotel, not a
-    // second street-facing building or a duplicate map pin.
-    if (interior.id === 'grand-hotel-guestroom-01') continue;
-    const bounds = interior.bounds || {};
-    const x = (Number(bounds.minX) + Number(bounds.maxX)) / 2;
-    const z = (Number(bounds.minZ) + Number(bounds.maxZ)) / 2;
-    const category = interior.id === 'fresh-cut' ? 'barber'
-      : interior.id === 'mide-tech-hub' ? 'office'
-      : interior.id === 'grand-hotel-lobby' ? 'hotel' : 'home';
-    add({
-      id: 'interior-' + interior.id, name: interior.label, category,
-      position: [x, Number(interior.floorY) || 0, z],
-      signPosition: interior.id === 'fresh-cut' ? [314.7,3.15,-1810]
-        : interior.id === 'mide-tech-hub' ? [550.8,4.65,-1830]
-        : interior.id === 'grand-hotel-lobby' ? [870,5.1,-2054]
-        : [299,3.5,-2110],
-      district: 'Yaba', enterable: true, source: 'GIDI 02 REBUILD r106',
-      description: interior.id === 'grand-hotel-lobby'
-        ? 'Enter the lobby; Guest Room 01 is accessed from inside.'
-        : 'Authored interior with a walk-through entrance.'
     });
   }
 

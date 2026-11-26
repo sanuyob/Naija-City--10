@@ -2,7 +2,7 @@
 
 **Specification:** Hero Character & Crew System v0.1
 **Target runtime:** PlayCanvas 2.24, browser and Android
-**Current integration status:** Animation runtime, Ara player rig and the first connected character-simulation stack are present in the GIDI integration candidate for `main` (November 20, 2026). The original staged roadmap remains the plan for completing the custom hero and crew.
+**Current integration status:** Animation runtime, Ara player rig and the first connected character-simulation stack are integrated in the Naija City main release (November 2026). The original staged roadmap remains the plan for completing the custom hero and crew.
 
 ## Delivery rule
 
@@ -52,7 +52,6 @@ All clips must target a stable humanoid hierarchy and consistent rest pose, scal
 - `src/character-recovery.js` contains pose blending, face-up/face-down classification, recovery yaw and per-bone motion estimation.
 - `src/two-bone-ik.js` and `src/asset-loader.js` support live Ara leg IK and foot-normal alignment.
 - `scripts/character-ragdoll-stress-smoke.mjs` exercises eight horizontal impact directions, airborne rising/falling impacts, vertical up/down knockback, wall and corner barriers, hinge limits and five-step/slope recovery.
-- `scripts/gidi-world-smoke.mjs` checks streamed city cells, LOD/collider lifecycle, connector walking and the sedan's physical gateway crossing.
 
 ## Deferred work / explicit dependencies
 

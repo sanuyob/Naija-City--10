@@ -40,7 +40,7 @@
       "seed": 0,
       "district": "west-north",
       "url": "/assets/buildings/yaba-core-01.glb",
-      "bytes": 143172,
+      "bytes": 143180,
       "lodDistances": [
         75,
         145
@@ -81,41 +81,13 @@
       ],
       "seed": 1,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-02.glb",
-      "bytes": 112656,
+      "url": "/assets/buildings/yaba-core-02.glb",
+      "bytes": 80592,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-02 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-03",
@@ -133,41 +105,13 @@
       ],
       "seed": 2,
       "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-03.glb",
-      "bytes": 121536,
+      "url": "/assets/buildings/yaba-core-03.glb",
+      "bytes": 80540,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-03 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-04",
@@ -185,41 +129,13 @@
       ],
       "seed": 3,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-04.glb",
-      "bytes": 223280,
+      "url": "/assets/buildings/yaba-core-04.glb",
+      "bytes": 97644,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-04 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-05",
@@ -237,41 +153,13 @@
       ],
       "seed": 4,
       "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-05.glb",
-      "bytes": 226956,
+      "url": "/assets/buildings/yaba-core-05.glb",
+      "bytes": 96444,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-05 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-06",
@@ -289,41 +177,13 @@
       ],
       "seed": 5,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-06.glb",
-      "bytes": 112620,
+      "url": "/assets/buildings/yaba-core-06.glb",
+      "bytes": 80556,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-06 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-07",
@@ -341,41 +201,13 @@
       ],
       "seed": 6,
       "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-07.glb",
-      "bytes": 121480,
+      "url": "/assets/buildings/yaba-core-07.glb",
+      "bytes": 81776,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-07 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-08",
@@ -393,41 +225,13 @@
       ],
       "seed": 7,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-08.glb",
-      "bytes": 117900,
+      "url": "/assets/buildings/yaba-core-08.glb",
+      "bytes": 80592,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-08 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-09",
@@ -445,41 +249,13 @@
       ],
       "seed": 8,
       "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-09.glb",
-      "bytes": 229392,
+      "url": "/assets/buildings/yaba-core-09.glb",
+      "bytes": 141928,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-09 mixed-use retail and office block",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-10",
@@ -497,41 +273,13 @@
       ],
       "seed": 9,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-10.glb",
-      "bytes": 191100,
+      "url": "/assets/buildings/yaba-core-10.glb",
+      "bytes": 97644,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-10 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-11",
@@ -549,41 +297,13 @@
       ],
       "seed": 10,
       "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-11.glb",
-      "bytes": 175528,
+      "url": "/assets/buildings/yaba-core-11.glb",
+      "bytes": 96444,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-11 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-12",
@@ -601,41 +321,13 @@
       ],
       "seed": 11,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-12.glb",
-      "bytes": 117864,
+      "url": "/assets/buildings/yaba-core-12.glb",
+      "bytes": 80556,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-12 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-13",
@@ -653,41 +345,13 @@
       ],
       "seed": 12,
       "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-13.glb",
-      "bytes": 121488,
+      "url": "/assets/buildings/yaba-core-13.glb",
+      "bytes": 81776,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-13 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-14",
@@ -705,41 +369,13 @@
       ],
       "seed": 13,
       "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-14.glb",
-      "bytes": 112656,
+      "url": "/assets/buildings/yaba-core-14.glb",
+      "bytes": 80592,
       "lodDistances": [
         75,
         145
       ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-14 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
+      "collision": "COLLISION_PROXY"
     },
     {
       "id": "yaba-core-15",
@@ -756,1566 +392,5 @@
         6.8
       ],
       "seed": 14,
-      "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-15.glb",
-      "bytes": 121540,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-15 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-16",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        -17.5
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        6.7,
-        6.8
-      ],
-      "seed": 15,
-      "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-16.glb",
-      "bytes": 223280,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-16 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-17",
-      "kind": "mixed-use",
-      "position": [
-        -9.2,
-        0,
-        -6
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        7.4,
-        6.8
-      ],
-      "seed": 16,
-      "district": "west-north",
-      "url": "/assets/curated-buildings/yaba-core-17.glb",
-      "bytes": 229396,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-17 mixed-use retail and office block",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-18",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        -8
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        4.5,
-        6.8
-      ],
-      "seed": 17,
-      "district": "east-north",
-      "url": "/assets/curated-buildings/yaba-core-18.glb",
-      "bytes": 112620,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-18 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-19",
-      "kind": "commercial",
-      "position": [
-        -9.2,
-        0,
-        3.5
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        4,
-        6.8
-      ],
-      "seed": 18,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-19.glb",
-      "bytes": 121480,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-19 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-20",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        1.5
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        5.6,
-        6.8
-      ],
-      "seed": 19,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-20.glb",
-      "bytes": 117900,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-20 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-21",
-      "kind": "commercial",
-      "position": [
-        -9.2,
-        0,
-        13
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        5.3,
-        6.8
-      ],
-      "seed": 20,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-21.glb",
-      "bytes": 121548,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-21 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-22",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        11
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        6.7,
-        6.8
-      ],
-      "seed": 21,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-22.glb",
-      "bytes": 191100,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-22 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-23",
-      "kind": "commercial",
-      "position": [
-        -9.2,
-        0,
-        22.5
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        6.6,
-        6.8
-      ],
-      "seed": 22,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-23.glb",
-      "bytes": 175528,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-23 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-24",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        20.5
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        4.5,
-        6.8
-      ],
-      "seed": 23,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-24.glb",
-      "bytes": 117864,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-24 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-25",
-      "kind": "mixed-use",
-      "position": [
-        -9.2,
-        0,
-        32
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        7.4,
-        6.8
-      ],
-      "seed": 24,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-25.glb",
-      "bytes": 229396,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-25 mixed-use retail and office block",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-26",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        30
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        5.6,
-        6.8
-      ],
-      "seed": 25,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-26.glb",
-      "bytes": 112656,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-26 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-27",
-      "kind": "commercial",
-      "position": [
-        -9.2,
-        0,
-        41.5
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        5.3,
-        6.8
-      ],
-      "seed": 26,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-27.glb",
-      "bytes": 121540,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-27 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-28",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        39.5
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        6.7,
-        6.8
-      ],
-      "seed": 27,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-28.glb",
-      "bytes": 223280,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-28 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-29",
-      "kind": "commercial",
-      "position": [
-        -9.2,
-        0,
-        51
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        6.6,
-        6.8
-      ],
-      "seed": 28,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-29.glb",
-      "bytes": 226956,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-29 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-30",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        49
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        4.5,
-        6.8
-      ],
-      "seed": 29,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-30.glb",
-      "bytes": 112620,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-30 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-31",
-      "kind": "commercial",
-      "position": [
-        -9.2,
-        0,
-        60.5
-      ],
-      "rotationY": 180,
-      "size": [
-        5.2,
-        4,
-        6.8
-      ],
-      "seed": 30,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/yaba-core-31.glb",
-      "bytes": 121480,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-31 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "yaba-core-32",
-      "kind": "commercial",
-      "position": [
-        9.2,
-        0,
-        58.5
-      ],
-      "rotationY": 0,
-      "size": [
-        5.2,
-        5.6,
-        6.8
-      ],
-      "seed": 31,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/yaba-core-32.glb",
-      "bytes": 117900,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba yaba-core-32 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-33",
-      "kind": "commercial",
-      "position": [
-        -20.5,
-        0,
-        -160
-      ],
-      "rotationY": 180,
-      "size": [
-        8.4,
-        5.2,
-        13.5
-      ],
-      "seed": 32,
-      "district": "west-north",
-      "url": "/assets/curated-buildings/expansion-shop-33.glb",
-      "bytes": 121468,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-33 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-34",
-      "kind": "mixed-use",
-      "position": [
-        -20.5,
-        0,
-        -65
-      ],
-      "rotationY": 180,
-      "size": [
-        8.4,
-        7.4,
-        13.5
-      ],
-      "seed": 33,
-      "district": "west-north",
-      "url": "/assets/curated-buildings/expansion-shop-34.glb",
-      "bytes": 283480,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-34 mixed-use retail and office block",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-35",
-      "kind": "commercial",
-      "position": [
-        -20.5,
-        0,
-        62
-      ],
-      "rotationY": 180,
-      "size": [
-        8.4,
-        5.2,
-        13.5
-      ],
-      "seed": 34,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/expansion-shop-35.glb",
-      "bytes": 121468,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-35 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-36",
-      "kind": "commercial",
-      "position": [
-        -20.5,
-        0,
-        153
-      ],
-      "rotationY": 180,
-      "size": [
-        8.4,
-        6.300000000000001,
-        13.5
-      ],
-      "seed": 35,
-      "district": "west-south",
-      "url": "/assets/curated-buildings/expansion-shop-36.glb",
-      "bytes": 259924,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-36 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-37",
-      "kind": "commercial",
-      "position": [
-        20.5,
-        0,
-        -160
-      ],
-      "rotationY": 0,
-      "size": [
-        8.4,
-        5.2,
-        13.5
-      ],
-      "seed": 36,
-      "district": "east-north",
-      "url": "/assets/curated-buildings/expansion-shop-37.glb",
-      "bytes": 121468,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-37 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-38",
-      "kind": "mixed-use",
-      "position": [
-        20.5,
-        0,
-        -65
-      ],
-      "rotationY": 0,
-      "size": [
-        8.4,
-        7.4,
-        13.5
-      ],
-      "seed": 37,
-      "district": "east-north",
-      "url": "/assets/curated-buildings/gidi-yaba-mixeduse-upgrade-01.glb",
-      "bytes": 2514308,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "name": "Yaba Two-Storey Mixed-Use Electronics & Services Building",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "textureCompression": "KHR_texture_basisu",
-      "textureMipmaps": true,
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-39",
-      "kind": "commercial",
-      "position": [
-        20.5,
-        0,
-        62
-      ],
-      "rotationY": 0,
-      "size": [
-        8.4,
-        5.2,
-        13.5
-      ],
-      "seed": 38,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/expansion-shop-39.glb",
-      "bytes": 121468,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-39 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "expansion-shop-40",
-      "kind": "commercial",
-      "position": [
-        20.5,
-        0,
-        153
-      ],
-      "rotationY": 0,
-      "size": [
-        8.4,
-        6.300000000000001,
-        13.5
-      ],
-      "seed": 39,
-      "district": "east-south",
-      "url": "/assets/curated-buildings/expansion-shop-40.glb",
-      "bytes": 259924,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY",
-      "architectureStandard": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-      "authoring": "Naija City curated Yaba architecture batch 02",
-      "textureCompression": "KHR_texture_basisu",
-      "textureLibrary": "/assets/curated-buildings/textures/",
-      "textureMipmaps": true,
-      "materialResolution": {
-        "hero": 2048,
-        "trim": 1024
-      },
-      "normalEncoding": "OpenGL tangent-space normals with MikkTSpace tangents",
-      "sourceMaterials": [
-        "ambientCG PaintedPlaster017 (CC0-1.0)",
-        "ambientCG Concrete034 (CC0-1.0)",
-        "ambientCG CorrugatedSteel009 (CC0-1.0)"
-      ],
-      "materialFamilies": [
-        "MAT_YABA_WARM_CONCRETE",
-        "MAT_YABA_CREAM_PLASTER",
-        "MAT_YABA_DARK_METAL",
-        "MAT_YABA_ROOF_COOL_GREY",
-        "MAT_YABA_SIGNBOARD",
-        "MAT_YABA_TERRACOTTA",
-        "MAT_YABA_TINTED_GLASS",
-        "MAT_YABA_WATER_TANK_BLUE"
-      ],
-      "name": "Yaba expansion-shop-40 street commercial building",
-      "materialEncoding": "Eight shared PBR material families; 24 external KTX2 maps referenced once by the shared library",
-      "pbrMapCount": 24
-    },
-    {
-      "id": "neighbourhood-home-41",
-      "kind": "residential",
-      "position": [
-        -42.5,
-        0,
-        -155
-      ],
-      "rotationY": 180,
-      "size": [
-        9.5,
-        4.1,
-        14.5
-      ],
-      "seed": 40,
-      "district": "west-north",
-      "url": "/assets/buildings/neighbourhood-home-41.glb",
-      "bytes": 89096,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-42",
-      "kind": "residential",
-      "position": [
-        -42.5,
-        0,
-        -72
-      ],
-      "rotationY": 180,
-      "size": [
-        9.5,
-        4.55,
-        14.5
-      ],
-      "seed": 41,
-      "district": "west-north",
-      "url": "/assets/buildings/neighbourhood-home-42.glb",
-      "bytes": 89116,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-43",
-      "kind": "residential",
-      "position": [
-        -42.5,
-        0,
-        65
-      ],
-      "rotationY": 180,
-      "size": [
-        9.5,
-        5,
-        14.5
-      ],
-      "seed": 42,
-      "district": "west-south",
-      "url": "/assets/buildings/neighbourhood-home-43.glb",
-      "bytes": 90304,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-44",
-      "kind": "residential",
-      "position": [
-        -42.5,
-        0,
-        150
-      ],
-      "rotationY": 180,
-      "size": [
-        9.5,
-        4.1,
-        14.5
-      ],
-      "seed": 43,
-      "district": "west-south",
-      "url": "/assets/buildings/neighbourhood-home-44.glb",
-      "bytes": 89132,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-45",
-      "kind": "residential",
-      "position": [
-        42.5,
-        0,
-        -155
-      ],
-      "rotationY": 0,
-      "size": [
-        9.5,
-        4.1,
-        14.5
-      ],
-      "seed": 44,
-      "district": "east-north",
-      "url": "/assets/buildings/neighbourhood-home-45.glb",
-      "bytes": 89144,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-46",
-      "kind": "residential",
-      "position": [
-        42.5,
-        0,
-        -72
-      ],
-      "rotationY": 0,
-      "size": [
-        9.5,
-        4.55,
-        14.5
-      ],
-      "seed": 45,
-      "district": "east-north",
-      "url": "/assets/buildings/neighbourhood-home-46.glb",
-      "bytes": 90296,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-47",
-      "kind": "residential",
-      "position": [
-        42.5,
-        0,
-        65
-      ],
-      "rotationY": 0,
-      "size": [
-        9.5,
-        5,
-        14.5
-      ],
-      "seed": 46,
-      "district": "east-south",
-      "url": "/assets/buildings/neighbourhood-home-47.glb",
-      "bytes": 89056,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    },
-    {
-      "id": "neighbourhood-home-48",
-      "kind": "residential",
-      "position": [
-        42.5,
-        0,
-        150
-      ],
-      "rotationY": 0,
-      "size": [
-        9.5,
-        4.1,
-        14.5
-      ],
-      "seed": 47,
-      "district": "east-south",
-      "url": "/assets/buildings/neighbourhood-home-48.glb",
-      "bytes": 89120,
-      "lodDistances": [
-        75,
-        145
-      ],
-      "collision": "COLLISION_PROXY"
-    }
-  ],
-  "yabaArchitectureStandard": {
-    "id": "GIDI-YABA-ARCHITECTURE-STANDARD-V1",
-    "curatedPlacementCount": 39,
-    "newlyUpgradedPlacementCount": 38,
-    "anchorPlacement": "expansion-shop-38",
-    "textureMapCount": 24,
-    "uniqueSharedTexturePayloadBytes": 12031694,
-    "mapDirectory": "/assets/curated-buildings/textures/",
-    "compression": "KTX2 Basis; UASTC normal/roughness, ETC1S base colour; mipmaps"
-  },
-  "heroPilot": {
-    "id": "yaba-core-01",
-    "name": "Computer Village Electronics Plaza",
-    "textureEncoding": "KTX2 Basis Universal (KHR_texture_basisu)",
-    "resolution": 2048,
-    "materials": [
-      "weathered-plaster",
-      "corrugated-roofing",
-      "tinted-shopfront-glass",
-      "painted-steel",
-      "cast-concrete",
-      "painted-facade",
-      "signage"
-    ],
-    "sourceIds": [
-      "Concrete034",
-      "CorrugatedSteel009",
-      "PaintedPlaster017"
-    ],
-    "license": "CC0-1.0",
-    "collisionProxy": "separate simplified envelope; physics runtime integration pending"
-  }
-}
+     ï]›Ê×¬¢h­µçMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLMÈ‹ˆšÚ[™ˆ›Z^Y]\ÙH‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆM‚ˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆËˆ‹ˆKˆœÙYYˆM‹ˆ™\İšXİˆÙ\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLMË™Ûˆ‹ˆ˜]\ÈˆMNMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLN‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆNˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆKˆ‹ˆKˆœÙYYˆMËˆ™\İšXİˆ™X\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLN™Ûˆ‹ˆ˜]\ÈˆMM‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLNH‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆËBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆˆ‹ˆKˆœÙYYˆNˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLNK™Ûˆ‹ˆ˜]\ÈˆMÍÍ‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLŒ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆKBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆK‹ˆ‹ˆKˆœÙYYˆNKˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLŒ™Ûˆ‹ˆ˜]\ÈˆNL‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLŒH‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆLÂˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆKŒËˆ‹ˆKˆœÙYYˆŒˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLŒK™Ûˆ‹ˆ˜]\ÈˆMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLŒˆ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆLBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆ‹Ëˆ‹ˆKˆœÙYYˆŒKˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLŒ‹™Ûˆ‹ˆ˜]\ÈˆMÍˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLŒÈ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆŒ‹BˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆ‹‹ˆ‹ˆKˆœÙYYˆŒ‹ˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLŒË™Ûˆ‹ˆ˜]\ÈˆMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KL‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆŒBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆKˆ‹ˆKˆœÙYYˆŒËˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KL™Ûˆ‹ˆ˜]\ÈˆMM‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLH‹ˆšÚ[™ˆ›Z^Y]\ÙH‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆÌ‚ˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆËˆ‹ˆKˆœÙYYˆˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLK™Ûˆ‹ˆ˜]\ÈˆMÌNˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLˆ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆÌˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆK‹ˆ‹ˆKˆœÙYYˆKˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KL‹™Ûˆ‹ˆ˜]\ÈˆNL‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLÈ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆKBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆKŒËˆ‹ˆKˆœÙYYˆ‹ˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLË™Ûˆ‹ˆ˜]\ÈˆMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KL‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆÎKBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆ‹Ëˆ‹ˆKˆœÙYYˆËˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KL™Ûˆ‹ˆ˜]\ÈˆMÍˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLH‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆLBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆ‹‹ˆ‹ˆKˆœÙYYˆˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLK™Ûˆ‹ˆ˜]\ÈˆMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLÌ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆKˆ‹ˆKˆœÙYYˆKˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLÌ™Ûˆ‹ˆ˜]\ÈˆMM‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLÌH‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆNKŒ‹ˆˆŒBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKŒ‹ˆˆ‹ˆKˆœÙYYˆÌˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLÌK™Ûˆ‹ˆ˜]\ÈˆMÍÍ‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆXX˜KXÛÜ™KLÌˆ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆKŒ‹ˆˆNBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKŒ‹ˆK‹ˆ‹ˆKˆœÙYYˆÌKˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËŞXX˜KXÛÜ™KLÌ‹™Ûˆ‹ˆ˜]\ÈˆNL‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÌÈ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆLŒKˆˆLMŒˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆˆKŒ‹ˆLËBˆKˆœÙYYˆÌ‹ˆ™\İšXİˆÙ\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÌË™Ûˆ‹ˆ˜]\Èˆˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÍ‹ˆšÚ[™ˆ›Z^Y]\ÙH‹ˆœÜÚ][ÛˆˆÂˆLŒKˆˆMBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆˆËˆLËBˆKˆœÙYYˆÌËˆ™\İšXİˆÙ\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÍ™Ûˆ‹ˆ˜]\ÈˆMÌˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÍH‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆLŒKˆˆŒ‚ˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆˆKŒ‹ˆLËBˆKˆœÙYYˆÍˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÍK™Ûˆ‹ˆ˜]\ÈˆM‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÍˆ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆLŒKˆˆMLÂˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆˆ‹ŒÌKˆLËBˆKˆœÙYYˆÍKˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÍ‹™Ûˆ‹ˆ˜]\ÈˆMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÍÈ‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆŒKˆˆLMŒˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆˆKŒ‹ˆLËBˆKˆœÙYYˆÍ‹ˆ™\İšXİˆ™X\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÍË™Ûˆ‹ˆ˜]\ÈˆMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÎ‹ˆšÚ[™ˆ›Z^Y]\ÙH‹ˆœÜÚ][ÛˆˆÂˆŒKˆˆMBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆˆËˆLËBˆKˆœÙYYˆÍËˆ™\İšXİˆ™X\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÎ™Ûˆ‹ˆ˜]\ÈˆMNˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜLÎH‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆŒKˆˆŒ‚ˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆˆKŒ‹ˆLËBˆKˆœÙYYˆÎˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜLÎK™Ûˆ‹ˆ˜]\Èˆˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ™^[œÚ[Û‹\ÚÜM‹ˆšÚ[™ˆ˜ÛÛ[Y\˜ÚX[‹ˆœÜÚ][ÛˆˆÂˆŒKˆˆMLÂˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆˆ‹ŒÌKˆLËBˆKˆœÙYYˆÎKˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÙ^[œÚ[Û‹\ÚÜM™Ûˆ‹ˆ˜]\ÈˆMÍˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKMH‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆM‹KˆˆLMMBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKKˆŒKˆMBˆKˆœÙYYˆˆ™\İšXİˆÙ\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKMK™Ûˆ‹ˆ˜]\ÈˆLLˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKMˆ‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆM‹KˆˆMÌ‚ˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKKˆMKˆMBˆKˆœÙYYˆKˆ™\İšXİˆÙ\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKM‹™Ûˆ‹ˆ˜]\ÈˆLLˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKMÈ‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆM‹KˆˆBˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKKˆKˆMBˆKˆœÙYYˆ‹ˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKMË™Ûˆ‹ˆ˜]\ÈˆLÌM‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKM‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆM‹KˆˆMLˆKˆœ›İ][Û–HˆNˆœÚ^™HˆÂˆKKˆŒKˆMBˆKˆœÙYYˆËˆ™\İšXİˆÙ\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKM™Ûˆ‹ˆ˜]\ÈˆLMˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKMH‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆ‹KˆˆLMMBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKKˆŒKˆMBˆKˆœÙYYˆˆ™\İšXİˆ™X\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKMK™Ûˆ‹ˆ˜]\ÈˆLMM‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKMˆ‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆ‹KˆˆMÌ‚ˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKKˆMKˆMBˆKˆœÙYYˆKˆ™\İšXİˆ™X\İ[›Ü‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKM‹™Ûˆ‹ˆ˜]\ÈˆLÌˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKMÈ‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆ‹KˆˆBˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKKˆKˆMBˆKˆœÙYYˆ‹ˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKMË™Ûˆ‹ˆ˜]\ÈˆLˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆKˆÂˆšYˆ›™ZYÚ›İ\šÛÙZÛYKM‹ˆšÚ[™ˆœ™\ÚY[X[‹ˆœÜÚ][ÛˆˆÂˆ‹KˆˆMLˆKˆœ›İ][Û–HˆˆœÚ^™HˆÂˆKKˆŒKˆMBˆKˆœÙYYˆËˆ™\İšXİˆ™X\İ\Ûİ]‹ˆ\›ˆ‹Ø\ÜÙ]ËØZ[[™ÜËÛ™ZYÚ›İ\šÛÙZÛYKM™Ûˆ‹ˆ˜]\ÈˆLLÌ‹ˆ›Ù\İ[˜Ù\ÈˆÂˆÍKˆMBˆKˆ˜ÛÛ\Ú[ÛˆˆÓÓTÒSÓ—Ô“ÖH‚ˆBˆKˆš\›Ô[İˆÂˆšYˆXX˜KXÛÜ™KLH‹ˆ›˜[YHˆÛÛ\]\ˆš[YÙH[Xİ›ÛšXÜÈ^˜H‹ˆ^\™Q[˜ÛÙ[™Èˆ’Õˆ˜\Ú\È[š]™\œØ[
+Ò—İ^\™WØ˜\Ú\İJH‹ˆœ™\ÛÛ][ÛˆˆŒˆ›X]\šX[ÈˆÂˆÙX]\™Y\\İ\ˆ‹ˆ˜ÛÜœYØ]Y\›ÛÙš[™È‹ˆ[Y\ÚÜœ›ÛYÛ\ÜÈ‹ˆœZ[Y\İY[‹ˆ˜Ø\İXÛÛ˜Ü™]H‹ˆœZ[YY˜XØYH‹ˆœÚYÛ˜YÙH‚ˆKˆœÛİ\˜ÙRYÈˆÂˆÛÛ˜Ü™]LÍ‹ˆÛÜœYØ]YİY[H‹ˆ”Z[Y\İ\ŒMÈ‚ˆKˆ›XÙ[œÙHˆĞÌLKŒ‹ˆ˜ÛÛ\Ú[Û”›ŞHˆœÙ\\˜]HÚ[\YšYY[™[ÜNÈ\ÚXÜÈ[[YH[YÜ˜][Ûˆ[™[™È‚ˆBŸBÆ+lµ«n³

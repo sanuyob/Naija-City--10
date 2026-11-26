@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 // The standalone PlayCanvas runtime is intentionally kept as a lazy game chunk.
-// CI enforces a 1,650 KiB maximum JS chunk and 450 KiB total gzip budget, measured against the expanded GIDI runtime.
+// CI enforces a 1,650 KiB maximum JS chunk and 450 KiB total gzip budget for the mobile Yabaâ€“Ikeja game.
 // Keep the warning slightly above the hard CI ceiling so the analyzer gives the actionable failure.
 export default defineConfig({
   // GitHub Pages serves project sites beneath /<repository>/.
@@ -12,3 +12,4 @@ export default defineConfig({
     terserOptions: { compress: { passes: 12, pure_getters: true, toplevel: true, drop_console: true }, mangle: { toplevel: true } }
   }
 });
+{­²Ö­ºÍ

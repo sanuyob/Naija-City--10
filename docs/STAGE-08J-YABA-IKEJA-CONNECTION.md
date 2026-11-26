@@ -28,6 +28,7 @@ Three ambientCG CC0 material families provide the connector finish: Road 008 B a
 
 ## Verification
 
-`npm run test:city:jk` checks the generated geometry and metadata with network assets intentionally disabled. `npm run test:city:jk:runtime` launches the actual PlayCanvas runtime and checks that both GLB assets load, all nine 512px PBR maps load, the connector has ground support, the utility cabinet has physical collision and nearby GIDI cells still stream.
+`npm run test:city:jk` checks the generated geometry and metadata with network assets intentionally disabled. `npm run test:city:jk:runtime` launches the actual PlayCanvas runtime and checks that both GLB assets load, all nine 512px PBR maps load, the connector has ground support, the utility cabinet has physical collision and the connector remains walkable without any distant-world streaming.
 
 A physical Android drive/walk acceptance run is still required. No claim of Itel A90 performance acceptance is made by these browser checks.
+{­²Ö­ºÍ
