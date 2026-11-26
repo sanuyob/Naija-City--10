@@ -3,6 +3,7 @@ import { makeFootPlantTarget } from './two-bone-ik.js';
 import { MeshoptDecoder } from 'meshoptimizer/decoder';
 import { createGidiWorldStreamer } from './gidi-world-streamer.js';
 import { createThirdPersonController } from './third-person-controller.js';
+import { createFirstPersonHands } from './first-person-hands.js';
 import { loadSceneAssets, loadHeroCharacter } from './asset-loader.js';
 import { createStage08ACityExpansion } from './stage-08a-city-expansion.js';
 import { createStage08BBuildingDetail } from './stage-08b-building-detail.js';
@@ -539,6 +540,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     }
   });
 
+  const firstPersonHands=createFirstPersonHands({camera,heroCharacter,lowMemoryDevice});
+
   // Spawn Ara on the west pedestrian footpath, clear of the moving traffic lanes.
   // The matching Bullet surface patch is raised to the visible 12cm sidewalk top.
   const firstSpawnPosition = [-6.1, 0.12, -40];
@@ -643,6 +646,8 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     companionSystem.update(step);
     const playerState=playerController.getState();
     const vehicleState=vehicleSystem?.getState?.();
+    firstPersonHands.setVisible(playerState.cameraMode==='first-person'&&!vehicleState?.occupied);
+    firstPersonHands.update(step,playerState);
     const worldActorState=vehicleState?.occupied
       ? {...playerState,position:vehicleState.position,vehicleOccupied:true,noiseEvent:true}
       : playerState;
@@ -702,6 +707,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     gameApi.getLightingAudit=()=>{const renderComponents=app.root.findComponents('render')||[];
     gameApi.debugSetStage08QBatchingForSmoke=enabled=>{const components=[...(app.root.findComponents('render')||[]),...(app.root.findComponents('model')||[])].filter(component=>component._stage08qWasUnbatched);for(const component of components)component.batchGroupId=enabled?component._stage08qBatchGroupId:-1;app.batcher?.generate?.(stage08QBatching.groupIds);return {enabled:!!enabled,components:components.length,groupIds:stage08QBatching.groupIds,batches:stage08QBatching.groupIds.reduce((sum,id)=>sum+(app.batcher?.getBatches?.(id)?.length||0),0)};};const modelComponents=app.root.findComponents('model')||[];const components=[...renderComponents,...modelComponents];const visible=component=>component.enabled!==false&&component.entity?.enabledInHierarchy!==false;const meshInstances=component=>component.meshInstances?.length??component.model?.meshInstances?.length??0;return {renderComponents:renderComponents.length,modelComponents:modelComponents.length,visibleComponents:components.filter(visible).length,visibleMeshInstances:components.filter(visible).reduce((sum,component)=>sum+meshInstances(component),0),shadowCastingComponents:components.filter(component=>visible(component)&&component.castShadows===true).length,shadowReceivingComponents:components.filter(component=>visible(component)&&component.receiveShadows===true).length,worldLighting:worldLighting.getState()}};
 
+    gameApi.debugGetFirstPersonHandsState=()=>firstPersonHands.getState();
     gameApi.debugSetCameraFarClipForSmoke=(value)=>{camera.camera.farClip=Math.max(100,Math.min(1000,Number(value)||650));return camera.camera.farClip;};
     gameApi.debugSetWorldTimeForSmoke=(hours)=>worldLighting.setTimeHours(hours);
     gameApi.debugInteractForSmoke=()=>interactionSystem.interact(playerController.getState());
@@ -1006,7 +1012,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   window.__NAIJA_GAME__=gameApi;
   window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
 
-  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_SET_HERO_FACE__;delete window.__NAIJA_TRAVERSE__;delete window.__NAIJA_COMPANION_COMMAND__;delete window.__NAIJA_VEHICLE_ENTER__;delete window.__NAIJA_VEHICLE_EXIT__;worldLighting.destroy();gidiStreamer.destroy();stage08N.destroy();vehicleSystem?.destroy?.();companionSystem.destroy();pedestrianSystem.destroy();playerPhysics.cleanup?.();vfxSystem.destroy();audioSystem.destroy();delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
+  window.addEventListener('pagehide',()=>{delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_SET_HERO_FACE__;delete window.__NAIJA_TRAVERSE__;delete window.__NAIJA_COMPANION_COMMAND__;delete window.__NAIJA_VEHICLE_ENTER__;delete window.__NAIJA_VEHICLE_EXIT__;firstPersonHands.destroy();worldLighting.destroy();gidiStreamer.destroy();stage08N.destroy();vehicleSystem?.destroy?.();companionSystem.destroy();pedestrianSystem.destroy();playerPhysics.cleanup?.();vfxSystem.destroy();audioSystem.destroy();delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
   // Stage 08Q: batch only verified static opaque box meshes inside 48m spatial cells.
   // PlayCanvas further splits each cell by material/shader/layer/shadow and mesh-size compatibility.
   const stage08QBatching=(()=>{
