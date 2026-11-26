@@ -647,7 +647,6 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     const playerState=playerController.getState();
     const vehicleState=vehicleSystem?.getState?.();
     firstPersonHands.setVisible(playerState.cameraMode==='first-person'&&!vehicleState?.occupied);
-    firstPersonHands.update(step,playerState);
     const worldActorState=vehicleState?.occupied
       ? {...playerState,position:vehicleState.position,vehicleOccupied:true,noiseEvent:true}
       : playerState;
