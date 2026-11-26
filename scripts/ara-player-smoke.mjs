@@ -15,7 +15,7 @@ try{
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:90000});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.playerCharacterReady===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:30000});
- const state=await page.evaluate(()=>{const g=window.__NAIJA_GAME__;return {ready:g.ready,playerCharacterReady:g.playerCharacterReady,characterSource:g.characterSource,characterGeometry:g.characterGeometry,characterLoadError:g.characterLoadError,animations:g.heroAnimations,defaults:g.heroDefaultClips,rig:g.getHeroRigSnapshot?.(),mainCharacterId:g.mainCharacterId,mainCharacterName:g.mainCharacterName,hero01Role:g.hero01Role,heroNpc:g.getHeroNpcState?.(),traversal:g.getTraversalState?.(),physics:g.getPhysicsState?.(),vfx:g.getVfxState?.(),audio:g.getAudioState?.(),drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount,canvas:{w:document.querySelector('#application')?.width,h:document.querySelector('#application')?.height},gate:document.querySelector('#rpg-interface')?.classList.contains('character-required'),picker:!!document.querySelector('#player-character-file'),panel:document.querySelector('#panel-content')?.innerText,status:document.querySelector('#status')?.textContent,assetStatus:document.querySelector('#asset-status')?.textContent,
+ const state=await page.evaluate(()=>{const g=window.__NAIJA_GAME__;return {ready:g.ready,playerCharacterReady:g.playerCharacterReady,characterSource:g.characterSource,characterGeometry:g.characterGeometry,characterLoadError:g.characterLoadError,animations:g.heroAnimations,defaults:g.heroDefaultClips,rig:g.getHeroRigSnapshot?.(),meshes:g.getHeroMeshSnapshot?.(),mainCharacterId:g.mainCharacterId,mainCharacterName:g.mainCharacterName,hero01Role:g.hero01Role,heroNpc:g.getHeroNpcState?.(),traversal:g.getTraversalState?.(),physics:g.getPhysicsState?.(),vfx:g.getVfxState?.(),audio:g.getAudioState?.(),drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount,canvas:{w:document.querySelector('#application')?.width,h:document.querySelector('#application')?.height},gate:document.querySelector('#rpg-interface')?.classList.contains('character-required'),picker:!!document.querySelector('#player-character-file'),panel:document.querySelector('#panel-content')?.innerText,status:document.querySelector('#status')?.textContent,assetStatus:document.querySelector('#asset-status')?.textContent,
   startupPreload:g.startupPreload,dataOptimization:g.dataOptimization,gidi:g.getGidiState?.(),characterForwardCorrection:g.characterForwardCorrection,
   objective:!!document.querySelector('.objective'),parkourButton:!!document.querySelector('#parkour-button'),
   loadingHidden:document.querySelector('#city-loading')?.hidden,
@@ -41,7 +41,11 @@ try{
  const initialCameraMode=await page.evaluate(()=>window.__NAIJA_GAME__?.getCameraMode?.());
  if(initialCameraMode!=='third-person'||state.cameraMode==='first-person')throw Error('Third-person must remain the default camera mode: '+JSON.stringify({initialCameraMode,state:state.cameraMode}));
  const cameraToggle=page.locator('#camera-view-toggle');
- if(!(await cameraToggle.isVisible()))throw Error('Mobile camera-view toggle is not visible');
+ const cameraToggleGeometry=await cameraToggle.evaluate(node=>({
+  exists:true,display:getComputedStyle(node).display,visibility:getComputedStyle(node).visibility,
+  rect:(()=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})()
+ }));
+ if(!(await cameraToggle.isVisible()))throw Error('Mobile camera-view toggle is not visible: '+JSON.stringify(cameraToggleGeometry));
  await cameraToggle.click();
  const firstPersonState=await page.evaluate(()=>({
   mode:window.__NAIJA_GAME__?.getCameraMode?.(),

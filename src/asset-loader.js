@@ -642,6 +642,17 @@ export async function loadHeroCharacter(app, {
     // bind-pose correction when the model itself extends below its floor plane.
     const visualGroundOffset=bindPoseBounds?.min?.[1]<0?Math.max(0,-bindPoseBounds.min[1]+.015):0;
 
+    const getRenderMeshSnapshot = () => renderMeshInstances.map((meshInstance, index) => ({
+      index,
+      entityName: meshInstance.node?.name || meshInstance.mesh?.name || 'unnamed-render-node',
+      meshName: meshInstance.mesh?.name || null,
+      materialName: meshInstance.material?.name || null,
+      skinned: Boolean(meshInstance.skinInstance),
+      vertexCount: meshInstance.mesh?.vertexBuffer?.numVertices || 0,
+      armBoneNames: (meshInstance.skinInstance?.bones || [])
+        .map(bone => bone?.name).filter(name => name && /(arm|hand|wrist|shoulder|finger)/i.test(name))
+    }));
+
     const getRigSnapshot = () => {
       const boneMap = new Map();
       let skinnedMeshCount = 0, weightedVertexCount = 0;
@@ -886,7 +897,7 @@ export async function loadHeroCharacter(app, {
       root, asset, characterId, displayName: characterId === 'ara-female' ? 'Ara 3D Female' : 'Hero 01', clipNames, clipDurations, defaultClips, source, metadata,
       renderMeshCount: renderMeshInstances.length, skinnedMeshCount, visualGroundOffset,
       morphNames: Array.from(morphNames).sort(),
-      setFaceExpression, getRigSnapshot, getVisualBounds, getFootPositions, getLimbPositions, getSoleMarkerInfo, applyHipsWorldOffset, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
+      setFaceExpression, getRigSnapshot, getRenderMeshSnapshot, getVisualBounds, getFootPositions, getLimbPositions, getSoleMarkerInfo, applyHipsWorldOffset, getFacingDirection, forwardAxisCorrectionDegrees, createInstance: createAnimatedInstance,
       setProceduralPose, applyLimbIK, getFootSoleNormal, getRagdollPose, getRagdollBones: ragdollBoneNodes, applyRagdollPose, applyBlendedRagdollPose, hasAnimation: name => clipNames.includes(name),
       proceduralPoseNames: [], semanticBoneCount: 0
     };

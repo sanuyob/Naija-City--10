@@ -48,7 +48,7 @@ export function mountRPGInterface() {
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
       <small class="compass">N　·　NE　·　E　·　SE</small><small class="gps-readout" id="hud-gps-label">NO GPS DESTINATION</small>
     </section>
-    <div class="tools"><button id="camera-view-toggle" type="button" data-mode="third-person" aria-pressed="false" aria-label="Switch to first-person view">VIEW · 3P</button><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
+    <button id="camera-view-toggle" class="camera-view-toggle" type="button" data-mode="third-person" aria-pressed="false" aria-label="Switch to first-person view">VIEW · 3P</button><div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
     <div class="fps-reticle" aria-hidden="true"><i></i></div>
     <div class="touch" aria-label="Mobile game controls">
       <div class="stick" id="move-joystick" role="application" aria-label="Movement joystick"><i id="move-knob"></i><small>MOVE</small></div>
