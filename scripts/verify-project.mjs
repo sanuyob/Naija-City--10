@@ -305,7 +305,7 @@ assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerH
 assert.doesNotMatch(game,/render-diagnostic-marker|diagnosticMarker/,'The large centre-screen debug blocker must not be present');
 assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
 assert.match(game,/createFirstPersonHands/,'First-person mode must mount its camera-local arm viewmodel');
-assert.match(firstPersonHands,/camera\\.addChild\\(root\\)/,'First-person arms must follow the camera');
+assert.ok(firstPersonHands.includes('camera.addChild(root)'), 'First-person arms must follow the camera');
 assert.match(game,/createTraversalSystem\(\{playerController,physics:playerPhysics/,'The traversal system must control the real Bullet obstacle colliders');
 assert.match(traversal,/timer=0;completed\+\+/,'Traversal lock must be cleared exactly once when an action ends');
 assert.ok(smoke.includes("jumpActionClip!=='Climb up ledge'") && smoke.includes("parkour.traversal.traversalsCompleted<1"),
