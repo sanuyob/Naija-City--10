@@ -1,6 +1,6 @@
-# Naija City — Landscape Mobile HUD & Gameplay UX
+# Naija City — Nigerian Open-World FPS/RPG
 
-Naija City is a Nigerian-inspired third-person open-world RPG prototype built with PlayCanvas.
+Naija City is a Nigerian-inspired open-world FPS/RPG prototype built with PlayCanvas, supporting first- and third-person camera views.
 
 ## Stage 08A — City expansion
 - Expanded the environment footprint to approximately 96 m wide by 374 m long, including the original Yaba blockout.
@@ -46,9 +46,13 @@ Naija City is a Nigerian-inspired third-person open-world RPG prototype built wi
 - Bottom centre: three compact quick-access slots with visible selected-slot feedback.
 - Safe-area-aware layout for display cutouts and gesture areas.
 
+## Camera modes
+- Tap `VIEW · 3P` / `VIEW · 1P` in the landscape HUD to switch perspectives. Desktop users can press `V`.
+- Both perspectives share the same player controller, movement, collision, traversal, health and animation systems.
+
 ## Controls
 - Desktop: WASD / arrows drive Ara, Shift sprint, Space jump, C crouch, E interact, Escape pause, drag scene to orbit.
-- Mobile landscape: the left joystick is a pressure-sensitive movement/steering stick. Drag up/down to move forward/reverse along Ara's facing direction; drag left/right to turn in place or while moving. The chase camera recentres behind her after a turn, while a manual right-side drag keeps camera orbit under player control.
+- Mobile landscape: the left joystick is a pressure-sensitive movement/steering stick. Drag up/down to move forward/reverse along Ara's facing direction; drag left/right to turn in place or while moving. The third-person chase camera recentres behind her after a turn; first-person uses an eye-level view. A manual right-side drag controls camera orbit.
 - Near the parked Naija City sedan, tap INTERACT to enter. Inside, the left stick steers, hold GAS to accelerate, hold BRAKE to slow down or reverse, drag the right side to orbit the car camera, and tap EXIT to get out.
 - Tap the pause control to open menus. Quick slots currently provide selection feedback but do not contain persistent items.
 
@@ -214,3 +218,9 @@ Detailed stage notes: [Stage 08I Ikeja Neighbourhood Expansion](docs/STAGE-08I-I
 Detailed implementation and asset provenance: [Stage 08J](docs/STAGE-08J-YABA-IKEJA-CONNECTION.md), [Stage 08K](docs/STAGE-08K-GIDI-DISTRICTS-BRIDGES-JUNCTIONS.md), [asset register](docs/CITY-ASSET-REGISTER.md).
 
 Verification: `npm run test:city:jk`, `npm run test:city:jk:runtime`, `npm run test:gidi`, `npm run verify`, and `npm run build`. Browser tests are not a replacement for the required Android playthrough and FPS/memory profiling.
+
+
+## Stage 11 — field equipment and patrol ambience
+- Three non-combat utility items: field radio, repair kit and survey beacon, with inventory counts, quick slots, equip/stow, local visual/audio feedback and bounded drop/pickup props.
+- A lightweight four-waypoint police-patrol character route and parked patrol-car visual. The low-memory profile uses a procedural officer placeholder; the generic streamed character and car remain optional external assets and require Android/CORS checks.
+- Police patrol is ambient scenery only: no combat, enforcement or weapon-use interaction is wired.

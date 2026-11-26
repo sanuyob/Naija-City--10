@@ -15,7 +15,7 @@ try{
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.ready===true,null,{timeout:90000});
  await page.waitForFunction(()=>window.__NAIJA_GAME__?.playerCharacterReady===true,null,{timeout:60000});
  await page.waitForFunction(()=>window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount>0,null,{timeout:30000});
- const state=await page.evaluate(()=>{const g=window.__NAIJA_GAME__;return {ready:g.ready,playerCharacterReady:g.playerCharacterReady,characterSource:g.characterSource,characterGeometry:g.characterGeometry,characterLoadError:g.characterLoadError,animations:g.heroAnimations,defaults:g.heroDefaultClips,rig:g.getHeroRigSnapshot?.(),mainCharacterId:g.mainCharacterId,mainCharacterName:g.mainCharacterName,hero01Role:g.hero01Role,heroNpc:g.getHeroNpcState?.(),traversal:g.getTraversalState?.(),physics:g.getPhysicsState?.(),vfx:g.getVfxState?.(),audio:g.getAudioState?.(),drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount,canvas:{w:document.querySelector('#application')?.width,h:document.querySelector('#application')?.height},gate:document.querySelector('#rpg-interface')?.classList.contains('character-required'),picker:!!document.querySelector('#player-character-file'),panel:document.querySelector('#panel-content')?.innerText,status:document.querySelector('#status')?.textContent,assetStatus:document.querySelector('#asset-status')?.textContent,
+ const state=await page.evaluate(()=>{const g=window.__NAIJA_GAME__;return {ready:g.ready,playerCharacterReady:g.playerCharacterReady,characterSource:g.characterSource,characterGeometry:g.characterGeometry,characterLoadError:g.characterLoadError,animations:g.heroAnimations,defaults:g.heroDefaultClips,rig:g.getHeroRigSnapshot?.(),meshes:g.getHeroMeshSnapshot?.(),mainCharacterId:g.mainCharacterId,mainCharacterName:g.mainCharacterName,hero01Role:g.hero01Role,heroNpc:g.getHeroNpcState?.(),traversal:g.getTraversalState?.(),physics:g.getPhysicsState?.(),vfx:g.getVfxState?.(),audio:g.getAudioState?.(),drawCalls:window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount,canvas:{w:document.querySelector('#application')?.width,h:document.querySelector('#application')?.height},gate:document.querySelector('#rpg-interface')?.classList.contains('character-required'),picker:!!document.querySelector('#player-character-file'),panel:document.querySelector('#panel-content')?.innerText,status:document.querySelector('#status')?.textContent,assetStatus:document.querySelector('#asset-status')?.textContent,
   startupPreload:g.startupPreload,dataOptimization:g.dataOptimization,gidi:g.getGidiState?.(),characterForwardCorrection:g.characterForwardCorrection,
   objective:!!document.querySelector('.objective'),parkourButton:!!document.querySelector('#parkour-button'),
   loadingHidden:document.querySelector('#city-loading')?.hidden,
@@ -38,6 +38,37 @@ try{
  if(state.gidi?.infrastructureLoaded||state.gidi?.totalCells!==0)throw Error('Distant GIDI infrastructure should not be downloaded at Yaba startup: '+JSON.stringify(state.gidi));
  if(state.objective||state.parkourButton)throw Error('Obstructive objective HUD or duplicate parkour button remains in active controls');
  if(!(state.cameraActualDistance>0&&state.cameraActualDistance<4.6))throw Error('Third-person camera did not initialize at the closer chase distance: '+state.cameraActualDistance);
+ const initialCameraMode=await page.evaluate(()=>window.__NAIJA_GAME__?.getCameraMode?.());
+ if(initialCameraMode!=='third-person'||state.cameraMode==='first-person')throw Error('Third-person must remain the default camera mode: '+JSON.stringify({initialCameraMode,state:state.cameraMode}));
+ const cameraToggle=page.locator('#camera-view-toggle');
+ const cameraToggleGeometry=await cameraToggle.evaluate(node=>({
+  exists:true,display:getComputedStyle(node).display,visibility:getComputedStyle(node).visibility,
+  rect:(()=>{const r=node.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height}})()
+ }));
+ if(!(await cameraToggle.isVisible()))throw Error('Mobile camera-view toggle is not visible: '+JSON.stringify(cameraToggleGeometry));
+ await cameraToggle.click();
+ const firstPersonState=await page.evaluate(()=>({
+  mode:window.__NAIJA_GAME__?.getCameraMode?.(),
+  playerMode:window.__NAIJA_GAME__?.getPlayerState?.().cameraMode,
+  characterVisible:window.__NAIJA_GAME__?.getPlayerState?.().visible,
+  reticle:getComputedStyle(document.querySelector('.fps-reticle')).display,
+  button:document.querySelector('#camera-view-toggle')?.textContent?.trim(),
+  pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed')
+ }));
+ if(firstPersonState.mode!=='first-person'||firstPersonState.playerMode!=='first-person'||firstPersonState.characterVisible!==false||firstPersonState.reticle==='none'||firstPersonState.button!=='VIEW · 1P'||firstPersonState.pressed!=='true') {
+  throw Error('First-person mode did not hide the full-body rig and enable the FPS HUD: '+JSON.stringify(firstPersonState));
+ }
+ await page.keyboard.press('v');
+ const thirdPersonState=await page.evaluate(()=>({
+  mode:window.__NAIJA_GAME__?.getCameraMode?.(),
+  characterVisible:window.__NAIJA_GAME__?.getPlayerState?.().visible,
+  button:document.querySelector('#camera-view-toggle')?.textContent?.trim(),
+  pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed'),
+  reticle:getComputedStyle(document.querySelector('.fps-reticle')).display
+ }));
+ if(thirdPersonState.mode!=='third-person'||thirdPersonState.characterVisible!==true||thirdPersonState.button!=='VIEW · 3P'||thirdPersonState.pressed!=='false'||thirdPersonState.reticle!=='none') {
+  throw Error('V hotkey did not restore third-person view and its character model: '+JSON.stringify(thirdPersonState));
+ }
  if(JSON.stringify(state.surfaceProbes)!==JSON.stringify({asphalt:'asphalt',concrete:'concrete',grass:'grass',wet:'wet'}))throw Error('Surface raycasts failed: '+JSON.stringify(state.surfaceProbes));
  if((state.rig?.boneCount??0)<50||(state.rig?.skinnedMeshCount??0)<1)throw Error('Ara rig invalid: '+JSON.stringify(state.rig));
  if(!state.audio?.available||!state.audio.effects.includes('footstep')||state.audio.mode!=='procedural-web-audio')throw Error('Player audio system unavailable: '+JSON.stringify(state.audio));

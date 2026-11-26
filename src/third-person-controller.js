@@ -11,7 +11,7 @@ import { classifyRecoverySide, deriveRecoveryYaw, estimateBoneVelocities, smooth
  * Hero 01 is created separately as a moving city NPC by pedestrian-system.js.
  */
 export function createThirdPersonController(app, camera, canvas, {
-  onInteract, onTraversal, tryTraversal, resolveMovement, heroCharacter, physics, onEffect, onCharacterEvent = () => {}
+  onInteract, onTraversal, tryTraversal, resolveMovement, heroCharacter, physics, onEffect, onCameraModeChange = () => {}, onCharacterEvent = () => {}
 } = {}) {
   // The player root owns movement, camera follow and collision. The visible
   // body must be the imported Ara female rig; Hero 01 is now a separate NPC.
@@ -42,6 +42,9 @@ export function createThirdPersonController(app, camera, canvas, {
   let orbitPointer = null;
   let orbitLastX = 0, orbitLastY = 0;
   let cameraYaw = 0, cameraPitch = 0.23;
+  let cameraMode = 'third-person';
+  let heroVisibleRequested = true;
+  const defaultCameraFov = Number(camera.camera?.fov) || 65;
   let manualCameraHold = 0;
   let facingYaw = 0;
   let smoothedMoveSpeed = 0;
@@ -686,6 +689,7 @@ export function createThirdPersonController(app, camera, canvas, {
     keys[key] = true;
     if (key === ' ' || key === 'space') { event.preventDefault(); input.jumpQueued = true; }
     if (key === 'c' && !event.repeat) toggleCrouch(event);
+    if (key === 'v' && !event.repeat) setCameraMode(cameraMode === 'first-person' ? 'third-person' : 'first-person');
     if (key === 'e' && !event.repeat) onInteract?.(getState());
   };
   const onKeyUp = event => { keys[event.key.toLowerCase()] = false; };
@@ -711,7 +715,9 @@ export function createThirdPersonController(app, camera, canvas, {
     const dx = event.clientX - orbitLastX, dy = event.clientY - orbitLastY;
     orbitLastX = event.clientX; orbitLastY = event.clientY;
     cameraYaw -= dx * 0.006;
-    cameraPitch = pc.math.clamp(cameraPitch + dy * 0.004, -0.02, 0.72);
+    cameraPitch = pc.math.clamp(cameraPitch + dy * 0.004,
+      cameraMode === 'first-person' ? -1.05 : -0.02,
+      cameraMode === 'first-person' ? 1.05 : 0.72);
     manualCameraHold = 2.1;
   };
   const onPointerUp = event => { if (event.pointerId === orbitPointer) orbitPointer = null; };
@@ -769,7 +775,13 @@ export function createThirdPersonController(app, camera, canvas, {
     // Ara turns toward the direction the stick is actually moving. The old
     // controller played a forward walk while sliding sideways/backwards, which
     // made her feet and torso look disconnected from the travel direction.
-    if (hasMoveInput && moveLength > 0.12) {
+    if (cameraMode === 'first-person') {
+      // In FPS mode the camera heading is the player's heading. Horizontal
+      // movement remains camera-relative, while lateral movement does not
+      // rotate the visible first-person avatar independently of the view.
+      facingYaw = ((cameraYaw * 180 / Math.PI + 540) % 360) - 180;
+      player.setEulerAngles(0, facingYaw, 0);
+    } else if (hasMoveInput && moveLength > 0.12) {
       const targetFacing = Math.atan2(-moveX, -moveZ) * 180 / Math.PI;
       const yawDelta = ((targetFacing - facingYaw + 540) % 360) - 180;
       facingYaw += yawDelta * (1 - Math.exp(-15 * step));
@@ -1053,37 +1065,53 @@ export function createThirdPersonController(app, camera, canvas, {
       lastFootstepProgress = null;
     }
     const yaw = cameraYaw;
-    const horizontal = Math.cos(cameraPitch) * cameraDistance;
-    const cameraHeight = input.crouch ? 1.02 : 1.28;
-    cameraTarget.set(p.x, p.y + cameraHeight, p.z);
-    desiredCamera.set(
-      p.x + Math.sin(yaw) * horizontal,
-      p.y + cameraHeight + Math.sin(cameraPitch) * cameraDistance + 0.35,
-      p.z + Math.cos(yaw) * horizontal
-    );
-    const cameraHit = physics?.raycast?.(
-      [cameraTarget.x, cameraTarget.y, cameraTarget.z],
-      [desiredCamera.x, desiredCamera.y, desiredCamera.z]
-    );
-    if (cameraHit) {
-      const hitPoint = cameraHit.point;
-      const dx = desiredCamera.x - cameraTarget.x, dy = desiredCamera.y - cameraTarget.y, dz = desiredCamera.z - cameraTarget.z;
-      const length = Math.hypot(dx, dy, dz) || 1;
-      const safeDistance = Math.max(.72, Math.hypot(hitPoint[0]-cameraTarget.x,hitPoint[1]-cameraTarget.y,hitPoint[2]-cameraTarget.z)-.24);
-      const ratio = Math.min(1, safeDistance / length);
-      cameraProbe.set(cameraTarget.x + dx * ratio, cameraTarget.y + dy * ratio, cameraTarget.z + dz * ratio);
-      desiredCamera.copy(cameraProbe);
-    }
-    // Start at the authored chase position instead of showing the old wide
-    // startup camera for several seconds. Later movement remains damped.
-    if (!cameraInitialized) {
-      smoothedCamera.copy(desiredCamera);
+    if (cameraMode === 'first-person') {
+      // Keep the eye camera on the shared physics-controlled player root.
+      // The player mesh is hidden in this mode so it cannot clip into the view.
+      const eyeHeight = input.crouch ? 1.18 : 1.58;
+      const lookDistance = 5;
+      cameraTarget.set(p.x, p.y + eyeHeight, p.z);
+      desiredCamera.set(
+        p.x - Math.sin(yaw) * Math.cos(cameraPitch) * lookDistance,
+        p.y + eyeHeight - Math.sin(cameraPitch) * lookDistance,
+        p.z - Math.cos(yaw) * Math.cos(cameraPitch) * lookDistance
+      );
+      camera.setPosition(cameraTarget);
+      camera.lookAt(desiredCamera);
+      smoothedCamera.copy(cameraTarget);
       cameraInitialized = true;
     } else {
-      smoothedCamera.lerp(smoothedCamera, desiredCamera, Math.min(1, step * (cameraHit ? 18 : 14)));
+      const horizontal = Math.cos(cameraPitch) * cameraDistance;
+      const cameraHeight = input.crouch ? 1.02 : 1.28;
+      cameraTarget.set(p.x, p.y + cameraHeight, p.z);
+      desiredCamera.set(
+        p.x + Math.sin(yaw) * horizontal,
+        p.y + cameraHeight + Math.sin(cameraPitch) * cameraDistance + 0.35,
+        p.z + Math.cos(yaw) * horizontal
+      );
+      const cameraHit = physics?.raycast?.(
+        [cameraTarget.x, cameraTarget.y, cameraTarget.z],
+        [desiredCamera.x, desiredCamera.y, desiredCamera.z]
+      );
+      if (cameraHit) {
+        const hitPoint = cameraHit.point;
+        const dx = desiredCamera.x - cameraTarget.x, dy = desiredCamera.y - cameraTarget.y, dz = desiredCamera.z - cameraTarget.z;
+        const length = Math.hypot(dx, dy, dz) || 1;
+        const safeDistance = Math.max(.72, Math.hypot(hitPoint[0]-cameraTarget.x,hitPoint[1]-cameraTarget.y,hitPoint[2]-cameraTarget.z)-.24);
+        const ratio = Math.min(1, safeDistance / length);
+        cameraProbe.set(cameraTarget.x + dx * ratio, cameraTarget.y + dy * ratio, cameraTarget.z + dz * ratio);
+        desiredCamera.copy(cameraProbe);
+      }
+      // Keep the existing collision-aware, smoothed third-person follow view.
+      if (!cameraInitialized) {
+        smoothedCamera.copy(desiredCamera);
+        cameraInitialized = true;
+      } else {
+        smoothedCamera.lerp(smoothedCamera, desiredCamera, Math.min(1, step * (cameraHit ? 18 : 14)));
+      }
+      camera.setPosition(smoothedCamera);
+      camera.lookAt(cameraTarget);
     }
-    camera.setPosition(smoothedCamera);
-    camera.lookAt(cameraTarget);
   }
 
   function destroy() {
@@ -1120,8 +1148,33 @@ export function createThirdPersonController(app, camera, canvas, {
   }
 
   function setVisible(visible) {
-    if (heroVisual) heroVisual.enabled = Boolean(visible);
+    heroVisibleRequested = Boolean(visible);
+    if (heroVisual) heroVisual.enabled = heroVisibleRequested && cameraMode === 'third-person';
     return Boolean(heroVisual);
+  }
+
+  function setCameraMode(mode) {
+    const normalized = mode === 'first-person' || mode === 'fps'
+      ? 'first-person'
+      : mode === 'third-person' || mode === 'tps'
+        ? 'third-person'
+        : null;
+    if (!normalized) return false;
+    if (cameraMode === normalized) return cameraMode;
+
+    cameraMode = normalized;
+    if (heroVisual) heroVisual.enabled = heroVisibleRequested && cameraMode === 'third-person';
+    if (cameraMode === 'first-person') {
+      facingYaw = ((cameraYaw * 180 / Math.PI + 540) % 360) - 180;
+      player.setEulerAngles(0, facingYaw, 0);
+      if (camera.camera) camera.camera.fov = Math.max(defaultCameraFov, 72);
+    } else if (camera.camera) {
+      camera.camera.fov = defaultCameraFov;
+    }
+
+    cameraInitialized = false;
+    onCameraModeChange?.(cameraMode);
+    return cameraMode;
   }
 
 
@@ -1158,6 +1211,10 @@ export function createThirdPersonController(app, camera, canvas, {
     const value = Number(degrees);
     if (!Number.isFinite(value)) return false;
     cameraYaw = value * Math.PI / 180;
+    if (cameraMode === 'first-person') {
+      facingYaw = ((value + 540) % 360) - 180;
+      player.setEulerAngles(0, facingYaw, 0);
+    }
     manualCameraHold = 0.85;
     return cameraYaw;
   }
@@ -1177,6 +1234,20 @@ export function createThirdPersonController(app, camera, canvas, {
     manualCameraHold = 0;
     cameraPitch = 0.23;
     const p=player.getPosition();
+    if (cameraMode === 'first-person') {
+      const eyeHeight = input.crouch ? 1.18 : 1.58;
+      cameraTarget.set(p.x, p.y + eyeHeight, p.z);
+      desiredCamera.set(
+        p.x - Math.sin(cameraYaw) * 5 * Math.cos(cameraPitch),
+        p.y + eyeHeight - 5 * Math.sin(cameraPitch),
+        p.z - Math.cos(cameraYaw) * 5 * Math.cos(cameraPitch)
+      );
+      camera.setPosition(cameraTarget);
+      camera.lookAt(desiredCamera);
+      smoothedCamera.copy(cameraTarget);
+      cameraInitialized = true;
+      return true;
+    }
     const height=input.crouch?1.02:1.28;
     const horizontal=Math.cos(cameraPitch)*cameraDistance;
     cameraTarget.set(p.x,p.y+height,p.z);
@@ -1225,7 +1296,7 @@ export function createThirdPersonController(app, camera, canvas, {
     return true;
   }
 
-  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration,groundY:recoverySequence.groundY,groundNormal:recoverySequence.groundNormal,supportSamples:recoverySequence.supportSamples,supportSurface:recoverySequence.supportSurface,supportHeightRange:recoverySequence.supportHeightRange,supportMinY:recoverySequence.supportMinY,supportMaxY:recoverySequence.supportMaxY,centerGroundY:recoverySequence.centerGroundY}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
+  const getState=()=>({recovery:recoverySequence?{active:true,variant:recoverySequence.variant,clip:recoverySequence.clip,phase:recoverySequence.phase,elapsed:recoverySequence.elapsed,duration:recoverySequence.clipDuration,groundY:recoverySequence.groundY,groundNormal:recoverySequence.groundNormal,supportSamples:recoverySequence.supportSamples,supportSurface:recoverySequence.supportSurface,supportHeightRange:recoverySequence.supportHeightRange,supportMinY:recoverySequence.supportMinY,supportMaxY:recoverySequence.supportMaxY,centerGroundY:recoverySequence.centerGroundY}: {active:false},position:[player.getPosition().x,player.getPosition().y,player.getPosition().z],grounded,moving,running,traversing:!!traversalMotion,traversalMode:traversalMotion?.mode||null,traversalProgress:traversalMotion?Math.min(1,traversalMotion.elapsed/traversalMotion.duration):1,visible:heroVisual?.enabled!==false,verticalVelocity:velocity.y,horizontalSpeed:Math.hypot(velocity.x,velocity.z),targetMoveSpeed:smoothedMoveSpeed,cameraDistance:cameraDistance,facingYaw,turnInput:smoothedTurnInput,turning:Math.abs(smoothedTurnInput)>.04,controlEnabled,crouched:input.crouch,sprintEnabled:sprintToggled,...vitals.getState(),cameraYaw,cameraPitch,cameraMode,cameraFollowActive:manualCameraHold<=0,cameraManualHold:manualCameraHold,footstepContacts,footPlacementHits,cameraActualDistance:Math.hypot(camera.getPosition().x-cameraTarget.x,camera.getPosition().y-cameraTarget.y,camera.getPosition().z-cameraTarget.z),inputX:input.x,inputY:input.y});
   const queueJumpForSmoke=()=>{input.jumpQueued=true;return true;};
   return {
     player, update, destroy, applyGroundedFootLock, resetFootLock,
@@ -1249,6 +1320,7 @@ export function createThirdPersonController(app, camera, canvas, {
     getControlInput,
     resetCameraAfterVehicle,
     setCameraViewYaw,
+    setCameraMode,
     performTraversal,
     setPositionForSmoke,
     setMotionForSmoke,
