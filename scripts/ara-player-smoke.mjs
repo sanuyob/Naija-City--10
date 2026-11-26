@@ -47,26 +47,30 @@ try{
  }));
  if(!(await cameraToggle.isVisible()))throw Error('Mobile camera-view toggle is not visible: '+JSON.stringify(cameraToggleGeometry));
  await cameraToggle.click();
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.debugGetFirstPersonHandsState?.().enabled===true,null,{timeout:5000});
  const firstPersonState=await page.evaluate(()=>({
   mode:window.__NAIJA_GAME__?.getCameraMode?.(),
+  hands:window.__NAIJA_GAME__?.debugGetFirstPersonHandsState?.(),
   playerMode:window.__NAIJA_GAME__?.getPlayerState?.().cameraMode,
   characterVisible:window.__NAIJA_GAME__?.getPlayerState?.().visible,
   reticle:getComputedStyle(document.querySelector('.fps-reticle')).display,
   button:document.querySelector('#camera-view-toggle')?.textContent?.trim(),
   pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed')
  }));
- if(firstPersonState.mode!=='first-person'||firstPersonState.playerMode!=='first-person'||firstPersonState.characterVisible!==false||firstPersonState.reticle==='none'||firstPersonState.button!=='VIEW · 1P'||firstPersonState.pressed!=='true') {
+ if(firstPersonState.mode!=='first-person'||firstPersonState.playerMode!=='first-person'||firstPersonState.characterVisible!==false||firstPersonState.reticle==='none'||firstPersonState.button!=='VIEW · 1P'||firstPersonState.pressed!=='true'||!firstPersonState.hands?.enabled||firstPersonState.hands.partCount<6) {
   throw Error('First-person mode did not hide the full-body rig and enable the FPS HUD: '+JSON.stringify(firstPersonState));
  }
  await page.keyboard.press('v');
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.debugGetFirstPersonHandsState?.().enabled===false,null,{timeout:5000});
  const thirdPersonState=await page.evaluate(()=>({
+  hands:window.__NAIJA_GAME__?.debugGetFirstPersonHandsState?.(),
   mode:window.__NAIJA_GAME__?.getCameraMode?.(),
   characterVisible:window.__NAIJA_GAME__?.getPlayerState?.().visible,
   button:document.querySelector('#camera-view-toggle')?.textContent?.trim(),
   pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed'),
   reticle:getComputedStyle(document.querySelector('.fps-reticle')).display
  }));
- if(thirdPersonState.mode!=='third-person'||thirdPersonState.characterVisible!==true||thirdPersonState.button!=='VIEW · 3P'||thirdPersonState.pressed!=='false'||thirdPersonState.reticle!=='none') {
+ if(thirdPersonState.mode!=='third-person'||thirdPersonState.characterVisible!==true||thirdPersonState.button!=='VIEW · 3P'||thirdPersonState.pressed!=='false'||thirdPersonState.reticle!=='none'||thirdPersonState.hands?.enabled!==false) {
   throw Error('V hotkey did not restore third-person view and its character model: '+JSON.stringify(thirdPersonState));
  }
  if(JSON.stringify(state.surfaceProbes)!==JSON.stringify({asphalt:'asphalt',concrete:'concrete',grass:'grass',wet:'wet'}))throw Error('Surface raycasts failed: '+JSON.stringify(state.surfaceProbes));

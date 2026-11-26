@@ -46,6 +46,7 @@ const curatedYabaBatchEntries=stage08eManifest.models.filter(model=>model.archit
 const curatedYabaSharedTextureDirectory=new URL('../public/assets/curated-buildings/textures/',import.meta.url);
 const curatedYabaSharedTextureFiles=(await readdir(curatedYabaSharedTextureDirectory)).filter(name=>name.endsWith('.ktx2')).sort();
 const controller=await readFile(new URL('../src/third-person-controller.js',import.meta.url),'utf8');
+const firstPersonHands=await readFile(new URL('../src/first-person-hands.js',import.meta.url),'utf8');
 const gidiStreamer=await readFile(new URL('../src/gidi-world-streamer.js',import.meta.url),'utf8');
 const gidiGenerator=await readFile(new URL('./generate-gidi-world.mjs',import.meta.url),'utf8');
 const gidiManifest=JSON.parse(await readFile(new URL('../public/assets/gidi/manifest.json',import.meta.url),'utf8'));
@@ -303,6 +304,8 @@ assert.match(game,/stats\.vramTotalBytes/);
 assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerHandler\]/,'GLB and texture resource handlers must be registered');
 assert.doesNotMatch(game,/render-diagnostic-marker|diagnosticMarker/,'The large centre-screen debug blocker must not be present');
 assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
+assert.match(game,/createFirstPersonHands/,'First-person mode must mount its camera-local arm viewmodel');
+assert.ok(firstPersonHands.includes('camera.addChild(root)'), 'First-person arms must follow the camera');
 assert.match(game,/createTraversalSystem\(\{playerController,physics:playerPhysics/,'The traversal system must control the real Bullet obstacle colliders');
 assert.match(traversal,/timer=0;completed\+\+/,'Traversal lock must be cleared exactly once when an action ends');
 assert.ok(smoke.includes("jumpActionClip!=='Climb up ledge'") && smoke.includes("parkour.traversal.traversalsCompleted<1"),
