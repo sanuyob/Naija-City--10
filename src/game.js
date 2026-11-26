@@ -108,7 +108,7 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   camera.addComponent('camera',{clearColor:new pc.Color(0.22,0.38,0.54),fov:62,farClip:lowMemoryDevice?650:850});
   camera.camera.toneMapping = pc.TONEMAP_ACES2;
   camera.setPosition(0,7,13); camera.lookAt(0,0,0); app.root.addChild(camera);
-  const firstPersonHands=createFirstPersonHands({camera,heroCharacter,lowMemoryDevice});
+  let firstPersonHands=null;
   const sun = new pc.Entity('sun');
   sun.addComponent('light',{type:'directional',color:new pc.Color(1,0.82,0.66),intensity:1.65});
   sun.setEulerAngles(48,28,0); app.root.addChild(sun);
@@ -276,6 +276,9 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
     console.error('Ara female player could not load:',error);
     if(assetStatusLabel){assetStatusLabel.textContent='Ara 3D Female failed to load · '+araLoadError;assetStatusLabel.dataset.state='warning';}
   }
+  // Build the camera-local hands only after the Ara load attempt has finished;
+  // the material resolver reads her rig and must not run in the TDZ above.
+  firstPersonHands=createFirstPersonHands({camera,heroCharacter,lowMemoryDevice});
   if(heroCharacter) {window.__NAIJA_RPG_UI__?.setPlayerCharacterReady?.();window.__NAIJA_RPG_UI__?.updateLoading?.({percent:61,label:'Player ready · loading nearby Yaba buildings…'});}
   else window.__NAIJA_RPG_UI__?.requirePlayerCharacter?.('Ara 3D Female could not load: '+araLoadError);
 
