@@ -32,7 +32,7 @@ export function mountRPGInterface() {
       <span id="city-loading-count">Loading environment assets</span>
     </section>
     <header class="topbar">
-      <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small data-genre="third-person open-world action RPG">THIRD-PERSON OPEN-WORLD ACTION RPG</small></div></div>
+      <div class="brand"><span class="mark">N</span><div><b>NAIJA CITY</b><small data-genre="open-world FPS/RPG">OPEN-WORLD FPS / RPG</small></div></div>
       <div class="district"><small>CURRENT DISTRICT</small><b id="current-district-label">YABA · LAGOS</b></div>
       <button class="menu" data-open="pause" aria-label="Pause game">Ⅱ<small>PAUSE</small></button>
     </header>
@@ -48,7 +48,8 @@ export function mountRPGInterface() {
       <div class="mini-map"><i></i><span></span><strong>◆</strong></div>
       <small class="compass">N　·　NE　·　E　·　SE</small><small class="gps-readout" id="hud-gps-label">NO GPS DESTINATION</small>
     </section>
-    <div class="tools"><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
+    <div class="tools"><button id="camera-view-toggle" type="button" data-mode="third-person" aria-pressed="false" aria-label="Switch to first-person view">VIEW · 3P</button><button id="assets-toggle" aria-expanded="false" aria-controls="assets-panel">ASSETS</button><button id="perf-toggle" aria-expanded="false" aria-controls="perf-panel">PERF</button></div>
+    <div class="fps-reticle" aria-hidden="true"><i></i></div>
     <div class="touch" aria-label="Mobile game controls">
       <div class="stick" id="move-joystick" role="application" aria-label="Movement joystick"><i id="move-knob"></i><small>MOVE</small></div>
       <div class="actions">
@@ -167,6 +168,13 @@ export function mountRPGInterface() {
     pause.hidden = true;
   };
   root.addEventListener('click', async event => {
+    const viewToggle = event.target.closest('#camera-view-toggle');
+    if (viewToggle) {
+      const nextMode = viewToggle.dataset.mode === 'first-person' ? 'third-person' : 'first-person';
+      const accepted = window.__NAIJA_SET_CAMERA_MODE__?.(nextMode);
+      if (!accepted) showToast('Camera view is not available yet.');
+      return;
+    }
     const companionButton = event.target.closest('[data-companion-command]');
     if (companionButton) {
       const command = companionButton.dataset.companionCommand;
@@ -309,8 +317,21 @@ export function mountRPGInterface() {
     }
     if (fuel) fuel.textContent = 'FUEL ' + Math.round(state.fuelPercent ?? 100) + '%';
   }
+  function setCameraMode(mode) {
+    const firstPerson = mode === 'first-person';
+    const button = root.querySelector('#camera-view-toggle');
+    if (button) {
+      button.dataset.mode = firstPerson ? 'first-person' : 'third-person';
+      button.textContent = firstPerson ? 'VIEW · 1P' : 'VIEW · 3P';
+      button.setAttribute('aria-pressed', String(firstPerson));
+      button.setAttribute('aria-label', firstPerson ? 'Switch to third-person view' : 'Switch to first-person view');
+    }
+    root.classList.toggle('camera-first-person', firstPerson);
+    return true;
+  }
+
   return window.__NAIJA_RPG_UI__ = {
-    stage: 7, ready: true, panels: Object.keys(views), setVitals, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, setEconomy, showToast,
+    stage: 7, ready: true, panels: Object.keys(views), setVitals, setCameraMode, setDistrictLabel, setWorldActivity, setInteractionPrompt, setVehicleMode, setEconomy, showToast,
     open, close, requirePlayerCharacter, setPlayerCharacterReady, updateLoading, finishLoading,
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     setWorldMapData:worldMapUI.setData, setWorldMapPlayerPosition:worldMapUI.setPlayerPosition, getWorldMapState:worldMapUI.getState,
