@@ -52,10 +52,11 @@ try{
   playerMode:window.__NAIJA_GAME__?.getPlayerState?.().cameraMode,
   characterVisible:window.__NAIJA_GAME__?.getPlayerState?.().visible,
   reticle:getComputedStyle(document.querySelector('.fps-reticle')).display,
+  hands:getComputedStyle(document.querySelector('.fps-hands')).display,
   button:document.querySelector('#camera-view-toggle')?.textContent?.trim(),
   pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed')
  }));
- if(firstPersonState.mode!=='first-person'||firstPersonState.playerMode!=='first-person'||firstPersonState.characterVisible!==false||firstPersonState.reticle==='none'||firstPersonState.button!=='VIEW · 1P'||firstPersonState.pressed!=='true') {
+ if(firstPersonState.mode!=='first-person'||firstPersonState.playerMode!=='first-person'||firstPersonState.characterVisible!==false||firstPersonState.reticle==='none'||firstPersonState.hands==='none'||firstPersonState.button!=='VIEW · 1P'||firstPersonState.pressed!=='true') {
   throw Error('First-person mode did not hide the full-body rig and enable the FPS HUD: '+JSON.stringify(firstPersonState));
  }
  await page.keyboard.press('v');
@@ -64,9 +65,10 @@ try{
   characterVisible:window.__NAIJA_GAME__?.getPlayerState?.().visible,
   button:document.querySelector('#camera-view-toggle')?.textContent?.trim(),
   pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed'),
-  reticle:getComputedStyle(document.querySelector('.fps-reticle')).display
+  reticle:getComputedStyle(document.querySelector('.fps-reticle')).display,
+  hands:getComputedStyle(document.querySelector('.fps-hands')).display
  }));
- if(thirdPersonState.mode!=='third-person'||thirdPersonState.characterVisible!==true||thirdPersonState.button!=='VIEW · 3P'||thirdPersonState.pressed!=='false'||thirdPersonState.reticle!=='none') {
+ if(thirdPersonState.mode!=='third-person'||thirdPersonState.characterVisible!==true||thirdPersonState.button!=='VIEW · 3P'||thirdPersonState.pressed!=='false'||thirdPersonState.reticle!=='none'||thirdPersonState.hands!=='none') {
   throw Error('V hotkey did not restore third-person view and its character model: '+JSON.stringify(thirdPersonState));
  }
  if(JSON.stringify(state.surfaceProbes)!==JSON.stringify({asphalt:'asphalt',concrete:'concrete',grass:'grass',wet:'wet'}))throw Error('Surface raycasts failed: '+JSON.stringify(state.surfaceProbes));
