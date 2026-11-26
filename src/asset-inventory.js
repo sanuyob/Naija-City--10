@@ -1,12 +1,4 @@
 const INVENTORY = [
-  { title: 'STAGE 08P GIDI AUTHORED INTERIORS · SOURCE REVISION 106', items: [
-    ['Fresh Cut barber shop · original three-station interior', 'Enterable'],
-    ['Mide Tech Hub · open office and meeting room', 'Enterable'],
-    ['Grand Hotel · lobby and Guest Room 01', 'Enterable'],
-    ['Player Home · original living, kitchen, bedroom and bathroom layout', 'Enterable'],
-    ['Source geometry reused from GIDI 02 REBUILD', 'Revision 106'],
-    ['Player wall/floor collision proxies', '70']
-  ]},
   { title: 'STAGE 08D SEMI-PHOTOREAL BUILDING REALISM', items: [
     ['Original Yaba shopfronts upgraded', '32'], ['Expansion commercial buildings upgraded', '8'],
     ['Residential buildings upgraded', '8'], ['Shared PBR material families', '10'],
@@ -73,8 +65,8 @@ export function mountAssetInventory() {
       `).join('')}
     </section>
   `).join('') + `
-    <p class="asset-note">Stage 08D adds shared procedural PBR surface maps and modular architectural dressing across all 48 building bodies: 32 original Yaba shops, 8 expansion shops and 8 homes. The pass adds weathered plaster, painted concrete, tinted glazing, metal finishes, business signs, rainwater details and residential entry/window treatment. Buildings remain replaceable procedural plot assets rather than scanned or individually authored high-detail GLBs.</p>
-    <p class="asset-note asset-missing"><strong>Still not in this build:</strong> dense crowds with fully rigged walk-cycle animation, the remaining Yaba and Ikeja façade buildings as enterable spaces, multi-storey stairs/elevators, lane-changing city-wide traffic and junction/gridlock AI, keke/motorcycle/bus fleets, individually authored high-detail building GLBs, and unique baked 2K/4K PBR texture sets for every building. Stage 08L/08N add 25 enterable GIDI spaces, and Stage 08P adds five authored spaces from GIDI 02 REBUILD r106 (30 enterable spaces total), 20 district NPCs, five working shops, local traffic AI and persistent activity/shop progress.</p>
+    <p class="asset-note">Stage 08D adds compact procedural surface maps and modular architectural dressing across the retained Yaba/Ikeja building set. Buildings remain replaceable mobile-friendly procedural plot assets rather than scanned or individually authored high-detail GLBs.</p>
+    <p class="asset-note asset-missing"><strong>Still not in this build:</strong> dense crowds with fully rigged walk-cycle animation, the remaining Yaba and Ikeja façade buildings as enterable spaces, multi-storey stairs/elevators, lane-changing city-wide traffic and junction/gridlock AI, keke/motorcycle/bus fleets, individually authored high-detail building GLBs, and unique baked 2K/4K PBR texture sets for every building. The retained Yaba and Ikeja building sets are exterior-only; authored building interiors, multi-storey stairs/elevators and enterable shop interiors remain future work.</p>
   `;
 
   const setOpen = open => {

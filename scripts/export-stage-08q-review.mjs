@@ -33,10 +33,8 @@ const exportAudit = async (district, capture) => {
   });
   await writeFile(resolve(out, `${district.toLowerCase()}-unbatched-component-audit.csv`), [headers.map(quote).join(','), ...rows].join('\n') + '\n');
   const batch = capture.audit.staticBatchState?.stage08Q || {};
-  const stage08N = capture.audit.renderBreakdown?.groups?.find(group => group.name === 'stage08n-neighbourhood');
-  const separateDoorHandles = Number(stage08N?.batchGroupIds?.['-1'] || 0);
   const baselineUnbatched = audit.unbatchedComponents - (batch.assignedComponents ?? 0);
-  const targetObjectsStillUnbatched = baselineUnbatched - separateDoorHandles;
+  const targetObjectsStillUnbatched = baselineUnbatched;
   const targetObjectsAssignedToStage08Q = batch.assignedComponents ?? 0;
   const reconciledTarget = targetObjectsStillUnbatched + targetObjectsAssignedToStage08Q;
   const batchIds = new Set(batch.groupIds || []);
@@ -46,7 +44,6 @@ const exportAudit = async (district, capture) => {
     district,
     auditedRowsIncludingStage08Q: audit.unbatchedComponents,
     currentUnbatchedAfterStage08Q: baselineUnbatched,
-    separateStage08NDoorHandles: separateDoorHandles,
     original551Target: { stillUnbatched: targetObjectsStillUnbatched, assignedToStage08Q: targetObjectsAssignedToStage08Q, reconciledTotal: reconciledTarget, delta: reconciledTarget - 551, reconciled: reconciledTarget === 551 },
     classification: categories(audit),
     renderBreakdownTotal: capture.audit.renderBreakdown?.components ?? null,
@@ -131,6 +128,6 @@ const summary = {
   limitations: ['SwiftShader browser timings are comparative smoke measurements, not physical Android performance.', 'The actual Itel A90 sustained-performance and memory check still requires a device run.']
 };
 await writeFile(resolve(out, 'review-summary.json'), JSON.stringify(summary, null, 2) + '\n');
-const scope = `# Stage 08Q audit scope\n\nThe original target of 551 components is fully reconciled: ${yabaSummary.original551Target.stillUnbatched} remain unbatched and ${yabaSummary.original551Target.assignedToStage08Q} are assigned to Stage 08Q static batches. The separate ${yabaSummary.separateStage08NDoorHandles} Stage 08N moving door handles remain unbatched outside the 551 target. The CSV includes all ${yabaSummary.auditedRowsIncludingStage08Q} rows: the 551 target group plus those separate door handles.\n\nThe full scene accounts for ${yabaSummary.renderBreakdownTotal} render components: ${yabaSummary.preExistingBatchedBeforeStage08Q} already in earlier batch groups, ${yabaSummary.stage08QBatching.assignedComponents} assigned by Stage 08Q, and ${yabaSummary.currentUnbatchedAfterStage08Q} still unbatched. The full pre-existing batch index is included in the Yaba audit JSON for review.\n\nEvery Stage 08Q-assigned row is checked against the same material, opacity, movement, animation, physics and static-candidate rules. The exporter fails if a dynamic or incompatible component appears in a Stage 08Q batch.\n\nThe Yaba and Ikeja benchmark uses matched 844×390 viewports, camera height, target vector, 62° FOV and 650 m far clip. Each district/mode has three trials, each with 20 warm-up and 60 measured animation frames.\n\nFrame-time numbers from Box's SwiftShader renderer are only useful for same-environment comparisons; they are not claims about physical Android FPS.\n`;
+const scope = `# Stage 08Q audit scope\n\nThe original target of 551 retained static components is fully reconciled: ${yabaSummary.original551Target.stillUnbatched} remain unbatched and ${yabaSummary.original551Target.assignedToStage08Q} are assigned to Stage 08Q static batches. The CSV includes all ${yabaSummary.auditedRowsIncludingStage08Q} audited rows.\n\nThe full scene accounts for ${yabaSummary.renderBreakdownTotal} render components: ${yabaSummary.preExistingBatchedBeforeStage08Q} already in earlier batch groups, ${yabaSummary.stage08QBatching.assignedComponents} assigned by Stage 08Q, and ${yabaSummary.currentUnbatchedAfterStage08Q} still unbatched. The full pre-existing batch index is included in the Yaba audit JSON for review.\n\nEvery Stage 08Q-assigned row is checked against the same material, opacity, movement, animation, physics and static-candidate rules. The exporter fails if a dynamic or incompatible component appears in a Stage 08Q batch.\n\nThe Yaba and Ikeja benchmark uses matched 844×390 viewports, camera height, target vector, 62° FOV and 650 m far clip. Each district/mode has three trials, each with 20 warm-up and 60 measured animation frames.\n\nFrame-time numbers from Box's SwiftShader renderer are only useful for same-environment comparisons; they are not claims about physical Android FPS.\n`;
 await writeFile(resolve(out, 'audit-scope-note.md'), scope);
 console.log(JSON.stringify({ output: out, yaba: yabaSummary, ikeja: ikejaSummary, benchmark: summary.benchmark.results }, null, 2));

@@ -34,11 +34,9 @@ export function mountWorldMapUI(root) {
   const canvas=overlay.querySelector('#city-world-map'),ctx=canvas.getContext('2d');
   const search=overlay.querySelector('#world-map-search');
   let records=[],player=[-6.1,.12,-40],heading=0,filter='all',query='',zoom=1,pan={x:0,y:0},selected=null,waypoint=null,drag=null;
-  const bounds={minX:-120,maxX:4200,minZ:-3900,maxZ:480},districts=[
-    {name:'YABA',x:77,z:-1350,rx:260,rz:440},{name:'IKEJA',x:0,z:330,rx:170,rz:190},
-    {name:'EKO CBD',x:1140,z:-935,rx:190,rz:190},{name:'VICTORIA ISLAND',x:1615,z:-1395,rx:210,rz:200},
-    {name:'IKOYI',x:2175,z:-925,rx:210,rz:190},{name:'LEKKI',x:2955,z:-1335,rx:260,rz:230},
-    {name:'EKITI HIGHLANDS',x:3420,z:-540,rx:210,rz:190}
+  const bounds={minX:-120,maxX:120,minZ:-200,maxZ:500},districts=[
+    {name:'YABA',x:0,z:-5,rx:68,rz:155},
+    {name:'IKEJA',x:0,z:320,rx:110,rz:150}
   ];
   function visible(){return records.filter(r=>(filter==='all'||r.category===filter)&&(!query||(r.name+' '+r.district+' '+r.category).toLowerCase().includes(query)));}
   function transform(){

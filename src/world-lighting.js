@@ -109,25 +109,18 @@ export function createWorldLighting({ app, camera, sun, lowMemoryDevice = false 
 
   const importantArchitecture = /residential-house-shell|residential-house-roof|mixed-use-commercial-shell|commercial-roof-parapet|transport-hall-main-shell|transport-hall-roof|bridge-(deck|pier|abutment|girder|support)|streetlight-pole|utility-pole|bus-shelter-roof|shelter-roof/i;
   const detailArchitecture = /roof|tank|canopy|parapet|plinth/i;
-  const neighbourhoodStructure = /-(rear-wall|left-wall|right-wall|front-left|front-right|door-lintel|roof)$/i;
-  const gidiBuildingName = /building|house|tower|mall|office|apartment|warehouse|shop|structure|facade|residential|commercial/i;
 
   function shouldCastShadow(component) {
     if (component.meshInstances?.some(instance => Boolean(instance.skinInstance))) return true;
-    const pathNames = [];
     let node = component.entity;
     while (node) {
       const lowerName = String(node.name || '').toLowerCase();
-      pathNames.push(lowerName);
       const tags = node.tags;
       if (lowerName.startsWith('stage08e-')) return true;
       if (tags?.has('stage08a-building') || tags?.has('stage08a-roof') || tags?.has('stage08d-building')) return true;
       if (tags?.has('stage08d-architecture') && detailArchitecture.test(lowerName)) return true;
       if (tags?.has('stage08i-ikeja-district') && importantArchitecture.test(lowerName)) return true;
-      if (tags?.has('stage08n-neighbourhood') && neighbourhoodStructure.test(lowerName)) return true;
       if (tags?.has('stage08c-street-detail') && importantArchitecture.test(lowerName)) return true;
-      if (tags?.has('stage08k-gidi-road-detail') && /bridge-(deck|pier|abutment|girder|support)/i.test(lowerName)) return true;
-      if (lowerName.startsWith('gidi-cell-') && gidiBuildingName.test(pathNames.join(' '))) return true;
       node = node.parent;
     }
     return false;

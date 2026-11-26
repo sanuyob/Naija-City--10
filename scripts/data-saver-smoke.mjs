@@ -33,7 +33,6 @@ try {
   const snapshot = async () => page.evaluate(() => ({
     optimization: window.__NAIJA_GAME__?.dataOptimization,
     preload: window.__NAIJA_GAME__?.startupPreload,
-    gidi: window.__NAIJA_GAME__?.getGidiState?.(),
     heroNpc: window.__NAIJA_GAME__?.getHeroNpcState?.() || null,
     stage08J: window.__NAIJA_GAME__?.stage08J || null,
     loadingHidden: document.querySelector('#city-loading')?.hidden ?? true,
@@ -68,7 +67,6 @@ try {
   assert.equal(saverOn.stage08J?.optionalAssetsSkipped, true, 'The runtime records the skipped optional assets');
   assert.equal(saverOn.stage08J?.pbrRuntimeResolution, 'procedural-fallback', 'Data Saver uses lightweight procedural street materials');
   assert.ok(saverOn.stage08J?.importedAssets?.every(item => item.skipped === 'data-saver'), 'Data Saver skips optional downloaded street prop GLBs');
-  assert.ok(!saverOn.gidi.infrastructureLoaded && saverOn.gidi.totalCells === 0, 'Distant GIDI remains unloaded during Yaba startup');
   assert.ok(saverOn.loadingHidden, 'The game becomes playable while optional assets are deferred');
   assert.notEqual(saverOn.heroNpc?.rigged, true, 'Optional Hero 01 stays out of the Data Saver startup path');
 
@@ -89,11 +87,10 @@ try {
   assert.equal(saverOff.optimization.startupBuildingRadiusMetres, 20, 'Low-memory mobile devices retain the compact startup radius even with Data Saver OFF');
   assert.equal(saverOff.optimization.startupBuildings, 8, 'Low-memory mobile devices preload only the eight closest buildings');
   assert.equal(saverOff.optimization.optionalStreetDownloadsSkipped, true, 'Low-memory devices avoid optional street downloads without enabling Data Saver');
-  assert.ok(!saverOff.gidi.infrastructureLoaded && saverOff.gidi.totalCells === 0, 'Normal Yaba startup also defers distant GIDI infrastructure');
   assert.ok(saverOff.loadingHidden, 'The game starts with Data Saver disabled too');
   assert.deepEqual(errors, [], 'No browser errors occur while changing and restoring Data Saver');
 
-  console.log(JSON.stringify({ pass: true, saverOn: { lowDataMode: saverOn.optimization.lowDataMode, radiusMetres: saverOn.optimization.progressiveBuildingRadiusMetres, startupBytes: saverOn.preload.bytes, optionalHeroDeferred: saverOn.heroNpc?.rigged !== true }, saverOff: { lowDataMode: saverOff.optimization.lowDataMode, manualOverride: saverOff.optimization.manualDataSaverOverride }, gidiDeferredAtSpawn: true, browserErrors: errors }, null, 2));
+  console.log(JSON.stringify({ pass: true, saverOn: { lowDataMode: saverOn.optimization.lowDataMode, radiusMetres: saverOn.optimization.progressiveBuildingRadiusMetres, startupBytes: saverOn.preload.bytes, optionalHeroDeferred: saverOn.heroNpc?.rigged !== true }, saverOff: { lowDataMode: saverOff.optimization.lowDataMode, manualOverride: saverOff.optimization.manualDataSaverOverride }, browserErrors: errors }, null, 2));
   await context.close();
 } catch (error) {
   console.error(error.stack || error);

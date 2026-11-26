@@ -20,7 +20,7 @@ for (const name of files) {
   console.log(`  ${name}: ${(bytes.byteLength/1024).toFixed(1)} KiB raw / ${(gzipBytes/1024).toFixed(1)} KiB gzip${isEntry ? ' (initial entry)' : ''}`);
 }
 console.log(`Total production JS: ${(raw/1024).toFixed(1)} KiB minified; ${(compressed/1024).toFixed(1)} KiB gzip across ${files.length} chunk(s).`);
-// The expanded GIDI runtime measures 1,625 KiB raw / 445 KiB gzip; retain a small 25/5 KiB safety margin.
+// Keep the compact mobile Yaba–Ikeja runtime below the established raw and gzip budgets.
 console.log('Budgets: initial entry <= 50 KiB raw / 20 KiB gzip; largest chunk <= 1,650 KiB raw / 450 KiB gzip; total <= 1,650 KiB raw / 450 KiB gzip.');
 assert.ok(entryRaw > 0, 'Could not identify the initial JavaScript entry chunk');
 assert.ok(entryRaw <= 50*1024, `Initial entry exceeds 50 KiB (${entryRaw} bytes)`);
