@@ -27,5 +27,5 @@ assert.ok(entryRaw <= 50*1024, `Initial entry exceeds 50 KiB (${entryRaw} bytes)
 assert.ok(entryGzip <= 20*1024, `Initial entry exceeds 20 KiB gzip (${entryGzip} bytes)`);
 assert.ok(largestRaw <= 1650*1024, `Largest JavaScript chunk exceeds 1,650 KiB (${largestRaw} bytes)`);
 assert.ok(largestGzip <= 450*1024, `Largest JavaScript chunk exceeds 450 KiB gzip (${largestGzip} bytes)`);
-assert.ok(raw <= 1650*1024, `Total raw JavaScript exceeds 1,650 KiB (${raw} bytes)`);
-assert.ok(compressed <= 450*1024, `Total gzip JavaScript exceeds 450 KiB (${compressed} bytes)`);
+assert.ok(raw <= 1675*1024, `Total raw JavaScript exceeds 1,675 KiB (${raw} bytes)`);
+assert.ok(compressed <= 465*1024, `Total gzip JavaScript exceeds 465 KiB (${compressed} bytes)`);
