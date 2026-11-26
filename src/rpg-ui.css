@@ -315,3 +315,27 @@
 .gps-readout{display:block;overflow:hidden;margin-top:4px;color:#f0d49a;font:700 6px/1.25 ui-monospace,monospace;letter-spacing:.03em;text-overflow:ellipsis;white-space:nowrap}
 #hud-interaction-prompt{position:fixed;left:50%;bottom:calc(142px + var(--safe-bottom,0px));transform:translateX(-50%);z-index:8;max-width:min(280px,65vw);padding:7px 11px;border:1px solid #d8b77999;border-radius:7px;background:#07110fee;color:#f1d5a0;text-align:center;font:700 9px/1.3 ui-monospace,monospace;letter-spacing:.06em;box-shadow:0 4px 18px #0008}
 @media (orientation:landscape) and (max-height:560px){#hud-interaction-prompt{bottom:calc(112px + var(--safe-bottom,0px))}}
+
+/* Dual-view camera: discreet first-person reticle. */
+.fps-reticle{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);display:none;pointer-events:none}
+.fps-reticle:before,.fps-reticle:after{content:'';position:absolute;background:#fff;box-shadow:0 0 3px #000}
+.fps-reticle:before{left:8px;top:4px;width:2px;height:10px}
+.fps-reticle:after{left:4px;top:8px;width:10px;height:2px}
+.camera-first-person .fps-reticle{display:block}
+
+/* Keep the FPS/TPS switch available even when the short-landscape HUD hides .tools. */
+.camera-view-toggle{
+  position:fixed;top:calc(12px + env(safe-area-inset-top,0px));
+  right:calc(72px + env(safe-area-inset-right,0px));z-index:12;
+  min-width:58px;min-height:34px;padding:6px 9px;
+  border:1px solid var(--line);border-radius:7px;
+  background:#0b1716e8;color:var(--ink);
+  font:700 8px/1 Arial,sans-serif;letter-spacing:.08em;
+  pointer-events:auto;touch-action:manipulation;
+}
+@media(max-width:600px){
+  .camera-view-toggle{top:calc(42px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px))}
+}
+@media(orientation:landscape) and (max-height:560px){
+  .camera-view-toggle{top:calc(48px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px))}
+}

@@ -145,7 +145,7 @@ assert.match(html,/id="application"/);
 assert.match(html,/id="rpg-interface"/);
 assert.match(html,/type="importmap"/,'Three.js import map is required for the browser FBX conversion module');
 assert.match(entry,/mountRPGInterface/);
-for(const feature of ['inventory','quests','map','character','settings','pause','resume','crouch-button','interact-button','quick-slots','hud-health-value','hud-stamina-value','third-person open-world action RPG']) assert.ok(rpg.includes(feature),`Missing RPG UI feature: ${feature}`);
+for(const feature of ['inventory','quests','map','character','settings','pause','resume','crouch-button','interact-button','quick-slots','hud-health-value','hud-stamina-value','open-world FPS/RPG','camera-view-toggle']) assert.ok(rpg.includes(feature),`Missing RPG UI feature: ${feature}`);
 for(const feature of ['.minimap','.objective','.status','.nav','.panel','.pause','.touch','.quick-slots','.actions button','#orientation-notice','safe-area-inset-left','@media (orientation:landscape)','@media (orientation:portrait)']) assert.ok(rpgCss.includes(feature),`Missing responsive RPG UI style: ${feature}`);
 assert.match(rpg,/id="perf-toggle"/);
 assert.match(html,/id="perf-panel"/);
@@ -308,7 +308,7 @@ assert.match(traversal,/timer=0;completed\+\+/,'Traversal lock must be cleared e
 assert.ok(smoke.includes("jumpActionClip!=='Climb up ledge'") && smoke.includes("parkour.traversal.traversalsCompleted<1"),
  'Browser smoke must verify that the live Jump button triggers and completes contextual parkour');
 assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
-for(const feature of ['player-character','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','physics.step(body,desired,step)','targetMoveSpeed','smoothedCamera.lerp(smoothedCamera, desiredCamera','Ara female rig']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
+for(const feature of ['player-character','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','cameraMode','setCameraMode','eyeHeight','physics.step(body,desired,step)','targetMoveSpeed','smoothedCamera.lerp(smoothedCamera, desiredCamera','Ara female rig']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
 assert.doesNotMatch(controller,/player-head|left-leg-pivot|right-arm-pivot/,'The old generic male player placeholder must not render');
 assert.match(controller,/pointerdown/,'Touch movement and orbit must use pointer events');
 assert.match(controller,/vitals.getState\(\).canSprint/,'Sprint must be gated by the reusable stamina state');
