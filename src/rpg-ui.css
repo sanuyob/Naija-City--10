@@ -333,6 +333,23 @@
 #rpg-interface .quick-slots button:disabled{opacity:.42}
 @media(max-width:560px){#rpg-interface .gear-grid{grid-template-columns:1fr}}
 
+/* Supplied M4/MAC-10 assets are display-only props, loaded on selection. */
+#rpg-interface .cosmetic-prop-list{margin:18px 0}
+#rpg-interface .cosmetic-prop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+#rpg-interface .cosmetic-prop-card{min-width:0;padding:10px;border:1px solid var(--hud-stroke);border-radius:11px;background:rgba(255,255,255,.035);display:flex;flex-direction:column;gap:8px}
+#rpg-interface .cosmetic-prop-card.is-selected{border-color:var(--hud-accent);background:rgba(215,184,120,.09)}
+#rpg-interface .cosmetic-prop-card-heading{display:flex;align-items:center;gap:9px;min-width:0}
+#rpg-interface .cosmetic-prop-card-heading strong{display:block;color:var(--ink);font-size:12px}
+#rpg-interface .cosmetic-prop-card-heading small,#rpg-interface .cosmetic-prop-meta{display:block;color:var(--muted);font-size:8px;line-height:1.4}
+#rpg-interface .cosmetic-prop-icon{width:50px;height:38px;flex:0 0 50px;display:grid;place-items:center;border-radius:8px;background:rgba(215,184,120,.10);color:var(--hud-accent)}
+#rpg-interface .cosmetic-prop-icon svg{width:42px;height:28px;fill:currentColor}
+#rpg-interface .cosmetic-prop-state{color:var(--hud-accent);font-size:8px;letter-spacing:.08em}
+#rpg-interface .cosmetic-prop-card button{min-height:34px;padding:7px 8px;border:1px solid var(--hud-stroke);border-radius:6px;background:rgba(255,255,255,.055);color:var(--ink);font-size:9px;font-weight:700;letter-spacing:.08em}
+#rpg-interface .cosmetic-prop-card button[aria-pressed=true]{border-color:var(--hud-accent);background:rgba(215,184,120,.15);color:var(--hud-accent)}
+#rpg-interface .cosmetic-prop-card button:disabled{opacity:.45}
+@media(max-width:560px){#rpg-interface .gear-grid,#rpg-interface .cosmetic-prop-grid{grid-template-columns:1fr}}
+
+
 /* Dual-view camera: discreet first-person reticle. */
 .fps-reticle{position:absolute;left:50%;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);display:none;pointer-events:none}
 .fps-reticle:before,.fps-reticle:after{content:'';position:absolute;background:#fff;box-shadow:0 0 3px #000}

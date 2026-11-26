@@ -224,3 +224,13 @@ Verification: `npm run test:city:jk`, `npm run test:city:jk:runtime`, `npm run t
 - Three non-combat utility items: field radio, repair kit and survey beacon, with inventory counts, quick slots, equip/stow, local visual/audio feedback and bounded drop/pickup props.
 - A lightweight four-waypoint police-patrol character route and parked patrol-car visual. The low-memory profile uses a procedural officer placeholder; the generic streamed character and car remain optional external assets and require Android/CORS checks.
 - Police patrol is ambient scenery only: no combat, enforcement or weapon-use interaction is wired.
+
+
+## Stage 12 — cosmetic display props
+- Added the user-supplied M4 and MAC-10 models as static, non-functional cosmetic display props.
+- The M4 runtime prop excludes source animation clips, skin data, hand/glove geometry, duplicate magazine and ammunition meshes. The MAC-10 skin data is stripped. Both runtime GLBs contain static meshes only, with no animation clips or skinned rigs.
+- The two optimized runtime GLBs total approximately 0.81 MB and 21,697 triangles combined. The M4 texture maps are reduced to 256×256; models are loaded only when selected and released when hidden.
+- Selecting a prop displays it at Ara's right-hand attachment in third-person. In first-person, the same static mesh is attached to the camera as a view prop. The inventory shows simple prop icons, asset-size/triangle metadata and selected-state feedback.
+- This stage adds no firing, aiming, reloading, projectile, ammunition-use or combat mechanics. The supplied `fbx.glb` is a .45-calibre ammunition model, not a third firearm, and is not included.
+- **Asset installation:** extract the supplied `naija-city-cosmetic-props-asset-pack.zip` at the repository root and merge its `public/` folder. This places both GLBs at `public/assets/cosmetic-props/`. Then run `npm run test:cosmetic-props`.
+- The props are intended for the existing mobile-first renderer. Confirm final hand alignment and visual placement on-device; static asset checks do not replace real Android FPS/memory and camera-view testing.

@@ -41,3 +41,16 @@ ambientCG publisher credit statements:
 - Created using Paving Stones 152 from ambientCG.com, licensed under CC0 1.0 Universal.
 
 Publisher licence pages: https://polyhaven.com/license and https://docs.ambientcg.com/license/.
+
+
+## Stage 12 — user-supplied cosmetic display props
+
+| Asset | Source | Runtime derivative | Runtime treatment |
+|---|---|---|---|
+| M4 display prop | User-supplied `m4_animations.glb` | `public/assets/cosmetic-props/m4-cosmetic.glb` | Static mesh subset; embedded animation clips, skin data, hand/glove meshes, duplicate magazine and ammunition meshes excluded; two 256×256 texture maps |
+| MAC-10 display prop | User-supplied `mac10.glb` | `public/assets/cosmetic-props/mac10-cosmetic.glb` | Static mesh geometry; skin data removed; original materials retained |
+| .45-calibre ammunition model | User-supplied `fbx.glb` | Not included | Identified as ammunition rather than a firearm; not needed for cosmetic character display |
+
+These are user-supplied assets. Their upstream authorship/licensing was not independently established here; no third-party licence is asserted by this register. The runtime derivatives are display-only props with no animation, rig, firing, aiming, reload, projectile or ammunition-use behaviour. Models are loaded on demand, attached to Ara's right hand in third-person, or attached to the camera in first-person, and unloaded when hidden. The optimized M4 and MAC-10 derivatives total 808,064 bytes and 21,697 triangles combined.
+
+The binary files are delivered in the companion asset pack and must be copied into the listed runtime paths before testing the display models.
