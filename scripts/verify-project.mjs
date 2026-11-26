@@ -73,4 +73,476 @@ const expectedAraClips=['Idle','Walk','Run','Jump','Jump start','Jump (in air)',
 const araValidation=await validator.validateBytes(new Uint8Array(araGlb),{uri:'Ara_Female_Executive_Animated_Ladder.glb',format:'glb',writeTimestamp:false,maxIssues:100});
 assert.equal(vehicleGlb.readUInt32LE(0),0x46546c67,'Naija City sedan must be a valid GLB container');
 assert.equal(vehicleGlb.readUInt32LE(4),2,'Naija City sedan must use GLB 2.0');
-asçuÙ¼­zÊ&ŠÛ^uÐµÕÍÐÉ•½É…±°Ñ¡É•”É•…°A	HÍ½ÕÉ”…ÍÍ•ÑÌœ¤ì)…ÍÍ•ÉÐ¹½¬¡ÍÑ…”Àá™5…Ñ•É¥…±Ì¹¡•É½A¥±½Ð¹Í½ÕÉ•5…Ñ•É¥…±Ì¹Í½µ”¡Í½ÕÉ”ôùÍ½ÕÉ”¹¥ôôôA…¥¹Ñ•‘A±…ÍÑ•ÈÀÄÜœ˜™Í½ÕÉ”¹±¥•¹Í”ôôôÀ´Ä¸Àœ˜™Í½ÕÉ”¹µ…ÁÌ¹¥¹±Õ‘•Ì 9½Éµ…°œ¤˜™Í½ÕÉ”¹µ…ÁÌ¹¥¹±Õ‘•Ì I½Õ¡¹•ÍÌœ¤¤°A¡½Ñ½É…µµ•ÑÉäÁ…¥¹Ñ•µÁ±…ÍÑ•ÈÍ½ÕÉ”ÁÉ½Ù•¹…¹”µÕÍÐ‰”½µÁ±•Ñ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½ÍÑ…”Àáp¹ÕÁ‘…Ñ”¼°MÑ…”€ÀáµÕÍÐÕÁ‘…Ñ”‘¥ÍÑ…¹”µ‰…Í•1=…¹ÍÑÉ•…µ¥¹œœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½=11%M%=9}AI=ad¼°1½±±¥Í¥½¸ÁÉ½á¥•ÌµÕÍÐÉ•µ…¥¸Í•Á…É…Ñ”™É½´Ù¥ÍÕ…°•½µ•ÑÉäœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½1=À¼°MÑ…”€ÀáµÕÍÐÍ•±•Ð1=À¼Ä¼È‰ä…µ•É„‘¥ÍÑ…¹”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½ÍÑ…”Àá”µÍÑ…Ñ¥Œµ‰Õ¥±‘¥¹Ì¼°½µÁ…Ñ¥‰±”ÍÑ…Ñ¥Œ‰Õ¥±‘¥¹œ•½µ•ÑÉäµÕÍÐÕÍ”„‘•‘¥…Ñ•‰…Ñ É½ÕÀœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½µ…á½¹ÕÉÉ•¹Ðõ±½Ý5•µ½Éå•Ù¥•püÄèÈ¼°AÉ½É•ÍÍ¥Ù”‰Õ¥±‘¥¹œÍÑÉ•…µ¥¹œµÕÍÐÉ•‘Õ”½¹ÕÉÉ•¹ä½¸±½Üµµ•µ½Éä‘•Ù¥•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½½¹ÍÐ…Ñ¥Ù•1½…‘I…‘¥ÕÌõ‘¥ÍÑ…¹•É½µMÁ…Ý¸ðÄÁpüÌÔ¼°AÉ½É•ÍÍ¥Ù”‰Õ¥±‘¥¹œ‘½Ý¹±½…‘ÌÍ¡½Õ±•áÁ…¹½¹±ä…ÌÑ¡”Á±…å•È•áÁ±½É•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½¡•É½Ñ¥Ù…Ñ¥½¹I…‘¥ÕÌõ±½Ý…Ñ…5½‘•püÐà¼°Q¡”±…É”¡•É¼‰Õ¥±‘¥¹œµÕÍÐÝ…¥ÐÕ¹Ñ¥°Ñ¡”Á±…å•È…ÁÁÉ½…¡•Ì¥Ð°•ÍÁ•¥…±±ä¥¸…Ñ„M…Ù•Èµ½‘”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½½ÁÑ¥½¹…±MÑÉ••Ñ½Ý¹±½…‘ÍM­¥ÁÁ•éÍ­¥Á=ÁÑ¥½¹…±MÑÉ••Ñ½Ý¹±½…‘Ì¼°…Ñ„M…Ù•È…¹±½Üµµ•µ½ÉäÁ¡½¹•ÌµÕÍÐÍ­¥À½ÁÑ¥½¹…°ÍÑÉ••Ð‘½Ý¹±½…‘Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá¨°½¥˜p …Í­¥Á=ÁÑ¥½¹…±½Ý¹±½…‘Íp¤¼°=ÁÑ¥½¹…°MÑ…”€Àá(A	HÑ•áÑÕÉ•ÌµÕÍÐ‰”Í­¥ÁÁ•¥¸…Ñ„M…Ù•È…¹±½Üµµ•µ½Éäµ½‘•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá¨°½Í­¥ÁÁ•è±½Ý…Ñ…5½‘”pü€‘…Ñ„µÍ…Ù•Èœ€è€±½Üµµ•µ½Éäµ‘•Ù¥”œ¼°I•‘Õ•µ‘…Ñ„µ½‘•ÌµÕÍÐÕÍ”ÁÉ½•‘ÕÉ…°ÍÕ‰ÍÑ¥ÑÕÑ•Ì™½È½ÁÑ¥½¹…°¥µÁ½ÉÑ•ÍÑÉ••ÐÁÉ½ÁÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÍÑ…”Àá”°½p¹Õ¹±½…‘p¡p¤¼°¥ÍÑ…¹Ð1½¹Ñ…¥¹•ÉÌµÕÍÐ‰”•Ù¥Ñ•™É½´µ•µ½Éäœ¤ì)…ÍÍ•ÉÐ¹½¬¡ÍÑ…”Àá•5…¹¥™•ÍÐ¹µ½‘•±Ì¹•Ù•Éä¡µ½‘•°ôùÑåÁ•½˜µ½‘•°¹‘¥ÍÑÉ¥ÐôôôÍÑÉ¥¹œœ¤°Ù•Éä‰Õ¥±‘¥¹œµÕÍÐ‰”…ÍÍ¥¹•Ñ¼„ÍÁ…Ñ¥…°ÍÑÉ•…µ¥¹œ‘¥ÍÑÉ¥Ðœ¤ì)…ÍÍ•ÉÐ¹‘½•Í9½Ñ5…Ñ ¡•¹•É…Ñ½È°½%%ñÕÉ…Ñ•µ‰Õ¥±‘¥¹Íñ-!I}Ñ•áÑÕÉ•}‰…Í¥ÍÔ¼°Q¡”‰…Í”MÑ…”€Àá•¹•É…Ñ½ÈµÕÍÐÉ•µ…¥¸ÁÉ½•‘ÕÉ…°…¹Í•±˜µ½¹Ñ…¥¹•¸Q¡”Í•Á…É…Ñ”MÑ…”€Àá½µÁÕÑ•ÈY¥±±…”¡•É¼½Ý¹Ì¥ÑÌ-Q`ÈÁ¥Á•±¥¹”¸œ¤ì)…ÍÍ•ÉÐ¹•ÅÕ…°¡ÍÑ…”Àá•5…¹¥™•ÍÐ¹µ½‘•±Ì¹±•¹Ñ °Ðà°MÑ…”€ÀáµÕÍÐÁÉ½‘Õ”…¸¥¹‘¥Ù¥‘Õ…°1Á±…•µ•¹Ð™½È…±°€Ðà•á¥ÍÑ¥¹œ‰Õ¥±‘¥¹Ìœ¤ì)…ÍÍ•ÉÐ¹•ÅÕ…°¡‰Õ¥±‘¥¹¥±•Ì¹±•¹Ñ °Ðà°±°€Ðà•¹•É…Ñ•‰Õ¥±‘¥¹œ1	ÌµÕÍÐ•á¥ÍÐœ¤ì)…ÍÍ•ÉÐ¹•ÅÕ…°¡ÍÑ…”Àá•5…¹¥™•ÍÐ¹µ½‘•±Ì¹™¥±Ñ•È¡µ½‘•°ôùµ½‘•°¹­¥¹ôôôÉ•Í¥‘•¹Ñ¥…°œ¤¹±•¹Ñ °à¤ì)…ÍÍ•ÉÐ¹•ÅÕ…°¡ÍÑ…”Àá•5…¹¥™•ÍÐ¹µ½‘•±Ì¹™¥±Ñ•È¡µ½‘•°ôùµ½‘•°¹­¥¹ôôôµ¥á•µÕÍ”œ¤¹±•¹Ñ °Ø¤ì)™½È¡½¹ÍÐ™¥±•¹…µ”½˜‰Õ¥±‘¥¹¥±•Ì¥ì(½¹ÍÐ…ÍÍ•Ðõ…Ý…¥ÐÉ•…‘¥±”¡¹•ÜUI0 œ¸¸½ÁÕ‰±¥Œ½…ÍÍ•ÑÌ½‰Õ¥±‘¥¹Ì¼œ­™¥±•¹…µ”±¥µÁ½ÉÐ¹µ•Ñ„¹ÕÉ°¤¤ì(…ÍÍ•ÉÐ¹•ÅÕ…°¡…ÍÍ•Ð¹É•…‘U%¹ÐÌÉ1 À¤°ÁàÐØÔÐÙŒØÜ±™¥±•¹…µ”¬œµÕÍÐ‰”„1€È¸À½¹Ñ…¥¹•Èœ¤ì(½¹ÍÐÉ•Á½ÉÐõ…Ý…¥ÐÙ…±¥‘…Ñ½È¹Ù…±¥‘…Ñ•	åÑ•Ì¡¹•ÜU¥¹ÐáÉÉ…ä¡…ÍÍ•Ð¤±íÕÉ¤é™¥±•¹…µ”±™½Éµ…Ðè±ˆœ±ÝÉ¥Ñ•Q¥µ•ÍÑ…µÀé™…±Í”±µ…á%ÍÍÕ•ÌèÄÀÁô¤ì(…ÍÍ•ÉÐ¹•ÅÕ…°¡É•Á½ÉÐ¹¥ÍÍÕ•Ì¹¹ÕµÉÉ½ÉÌ°À±™¥±•¹…µ”¬œ-¡É½¹½Ì±QÙ…±¥‘…Ñ¥½¸•ÉÉ½ÉÌè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡É•Á½ÉÐ¹¥ÍÍÕ•Ì¹µ•ÍÍ…•Ì¤¤ì(½¹ÍÐ©Í½¹1•¹Ñ õ…ÍÍ•Ð¹É•…‘U%¹ÐÌÉ1 ÄÈ¤±©Í½¸õ)M=8¹Á…ÉÍ”¡…ÍÍ•Ð¹ÍÕ‰…ÉÉ…ä ÈÀ°ÈÀ­©Í½¹1•¹Ñ ¤¹Ñ½MÑÉ¥¹œ ÕÑ˜àœ¤¹ÑÉ¥´ ¤¤ì(…ÍÍ•ÉÐ¹½¬¡©Í½¸¹¹½‘•Ì¹Í½µ”¡¹½‘”ôù¹½‘”¹¹…µ”ôôô1=Àœ¤˜™©Í½¸¹¹½‘•Ì¹Í½µ”¡¹½‘”ôù¹½‘”¹¹…µ”ôôô1=Äœ¤˜™©Í½¸¹¹½‘•Ì¹Í½µ”¡¹½‘”ôù¹½‘”¹¹…µ”ôôô1=Èœ¤±™¥±•¹…µ”¬œµÕÍÐ½¹Ñ…¥¸Ñ¡É•”1=±•Ù•±Ìœ¤ì(…ÍÍ•ÉÐ¹½¬¡©Í½¸¹¹½‘•Ì¹Í½µ”¡¹½‘”ôù¹½‘”¹¹…µ”ôôô=11%M%=9}AI=adœ¤±™¥±•¹…µ”¬œµÕÍÐ½¹Ñ…¥¸„Í•Á…É…Ñ”½±±¥Í¥½¸ÁÉ½áäœ¤ì(¥˜¡™¥±•¹…µ”ôôôå…‰„µ½É”´ÀÄ¹±ˆœ¤ì(€…ÍÍ•ÉÐ¹½¬¡©Í½¸¹¥µ…•Ì¹™¥±Ñ•È¡¥µ…”ôù¥µ…”¹µ¥µ•QåÁ”ôôô¥µ…”½­ÑàÈœ¤¹±•¹Ñ ôôôÄÀ±™¥±•¹…µ”¬œµÕÍÐ•µ‰•Ñ•¸-Q`È	…Í¥ÌÑ•áÑÕÉ•Ìœ¤ì(€…ÍÍ•ÉÐ¹½¬¡©Í½¸¹•áÑ•¹Í¥½¹ÍUÍ•ü¹¥¹±Õ‘•Ì -!I}Ñ•áÑÕÉ•}‰…Í¥ÍÔœ¤±™¥±•¹…µ”¬œµÕÍÐ‘•±…É”Ñ¡”-Q`È	…Í¥Ì•áÑ•¹Í¥½¸œ¤ì(€…ÍÍ•ÉÐ¹½¬¡©Í½¸¹¥µ…•Ì¹±•¹Ñ øôÜ˜™©Í½¸¹¥µ…•Ì¹±•¹Ñ ðôÄÐ±™¥±•¹…µ”¬œµÕÍÐ­••ÀÑ¡”•áÁ•Ñ••µ‰•‘‘•-Q`È¥µ…”Í•Ð…¹½ÁÑ¥½¹…°A9™…±±‰…­Ìœ¤ì(ô•±Í”ì(€…ÍÍ•ÉÐ¹•ÅÕ…°¡©Í½¸¹¥µ…•Ì¹±•¹Ñ °Ü±™¥±•¹…µ”¬œµÕÍÐ•µ‰•¥ÑÌA	HÑ•áÑÕÉ”¥µ…•Ìœ¤ì(ô(…ÍÍ•ÉÐ¹½¬¡©Í½¸¹…•ÍÍ½ÉÌ¹Í½µ”¡…•ÍÍ½Èôù…•ÍÍ½È¹ÑåÁ”ôôôYÈœ¤±™¥±•¹…µ”¬œµÕÍÐ¥¹±Õ‘”UX½½É‘¥¹…Ñ•Ìœ¤ì(…ÍÍ•ÉÐ¹½¬¡©Í½¸¹…•ÍÍ½ÉÌ¹Í½µ”¡…•ÍÍ½Èôù…•ÍÍ½È¹ÑåÁ”ôôôYÐœ¤±™¥±•¹…µ”¬œµÕÍÐ¥¹±Õ‘”Ñ…¹•¹ÐÙ•Ñ½ÉÌ™½È¹½Éµ…°µ…ÁÁ¥¹œœ¤ì(…ÍÍ•ÉÐ¹½¬¡©Í½¸¹‰Õ™™•ÉY¥•ÝÌ¹•Ù•Éä¡Ù¥•ÜôùÙ¥•Ü¹‰Õ™™•ÈôôôÀ¤±™¥±•¹…µ”¬œ‰Õ™™•ÈÙ¥•ÝÌµÕÍÐÉ•™•É•¹”Ñ¡”•µ‰•‘‘•1‰Õ™™•Èœ¤ì(…ÍÍ•ÉÐ¹½¬¡©Í½¸¹µ•Í¡•Ì¹•Ù•Éä¡µ•Í ôùµ•Í ¹ÁÉ¥µ¥Ñ¥Ù•Ì¹•Ù•Éä¡ÁÉ¥µ¥Ñ¥Ù”ôùÁÉ¥µ¥Ñ¥Ù”¹…ÑÑÉ¥‰ÕÑ•Ì¹Q99P„ôõÕ¹‘•™¥¹•¤¤±™¥±•¹…µ”¬œµ•Í ÁÉ¥µ¥Ñ¥Ù•ÌµÕÍÐ¥¹±Õ‘”Ñ…¹•¹Ð…ÑÑÉ¥‰ÕÑ•Ìœ¤ì(…ÍÍ•ÉÐ¹•ÅÕ…°¡©Í½¸¹µ…Ñ•É¥…±Ì¹±•¹Ñ ±™¥±•¹…µ”ôôôå…‰„µ½É”´ÀÄ¹±ˆœüÜèØ±™¥±•¹…µ”¬œµÕÍÐÕÍ”Ñ¡”•áÁ•Ñ•µ…Ñ•É¥…°µ™…µ¥±ä½Õ¹Ð€¡Í•Ù•¸™½ÈÑ¡”MÑ…”€Àá¡•É¼°Í¥à™½ÈMÑ…”€Àá‰Õ¥±‘¥¹Ì¤œ¤ì)ô()½¹ÍÐÁÕ‰±¥ÍÍ•Ñ¥É•Ñ½É¥•Ìõ…Ý…¥ÐÉ•…‘‘¥È¡¹•ÜUI0 œ¸¸½ÁÕ‰±¥Œ½…ÍÍ•ÑÌ¼œ±¥µÁ½ÉÐ¹µ•Ñ„¹ÕÉ°¤¤ì)…ÍÍ•ÉÐ¹½¬ …ÁÕ‰±¥ÍÍ•Ñ¥É•Ñ½É¥•Ì¹¥¹±Õ‘•Ì ¥‘¤œ¤°%$…ÍÍ•Ð™½±‘•ÈµÕÍÐ‰”…‰Í•¹Ð™É½´Ñ¡”Í¡¥ÁÁ•…µ”¸œ¤ì)…ÍÍ•ÉÐ¹½¬ …ÁÕ‰±¥ÍÍ•Ñ¥É•Ñ½É¥•Ì¹¥¹±Õ‘•Ì ÕÉ…Ñ•µ‰Õ¥±‘¥¹Ìœ¤°%$ÕÉ…Ñ•…É¡¥Ñ•ÑÕÉ”…¹Í¡…É•Ñ•áÑÕÉ”™½±‘•ÈµÕÍÐ‰”…‰Í•¹Ð¸œ¤ì)…ÍÍ•ÉÐ¹•ÅÕ…°¡ÍÑ…”Àá•5…¹¥™•ÍÐ¹µ½‘•±Ì¹±•¹Ñ °Ðà°Q¡”É•Ñ…¥¹•½µÁ…Ð¥ÑäµÕÍÐ­••À¥ÑÌ€Ðà½É¥¥¹…°e…‰„½%­•©„ÁÉ½•‘ÕÉ…°‰Õ¥±‘¥¹œÁ±…•µ•¹ÑÌ¸œ¤ì)…ÍÍ•ÉÐ¹½¬¡ÍÑ…”Àá•5…¹¥™•ÍÐ¹µ½‘•±Ì¹•Ù•Éä¡µ½‘•°ôùÑåÁ•½˜µ½‘•°¹ÕÉ°ôôôÍÑÉ¥¹œœ˜™µ½‘•°¹ÕÉ°¹ÍÑ…ÉÑÍ]¥Ñ  œ½…ÍÍ•ÑÌ½‰Õ¥±‘¥¹Ì¼œ¤¤°(€€±°É•Ñ…¥¹•MÑ…”€Àá‰Õ¥±‘¥¹ÌµÕÍÐÕÍ”Ñ¡”±¥¡ÑÝ•¥¡ÐÁÉ½•‘ÕÉ…°…ÍÍ•Ð™½±‘•È¸œ¤ì)…ÍÍ•ÉÐ¹‘½•Í9½Ñ5…Ñ ¡…µ”°½%%ñ¥‘¥ñÍÑ…”Àá-ñÍÑ…”Àá1ñÍÑ…”Àá9ñ…Ñ•Ý…åA…Ñ ¼°(€€Q¡”±¥Ù”…µ”Í½ÕÉ”µÕÍÐ¹½Ð¥¹ÍÑ…¹Ñ¥…Ñ”Ñ¡”É•µ½Ù•%$É•¥½¸½È…Ñ•Ý…ä¸œ¤ì)…ÍÍ•ÉÐ¹‘½•Í9½Ñ5…Ñ ¡ÍÑ…”Àá™AÉ½™¥±•È°½¥‘¤½¤°Q¡”‘•Ù¥”ÁÉ½™¥±•ÈµÕÍÐ¹½ÐÉ•Á½ÉÐÉ•µ½Ù•%$ÍÑÉ•…µ¥¹œÍÑ…Ñ”¸œ¤ì()…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½É•…Ñ•Ñ½ÉA¡åÍ¥Ì¼°MÑ…”€Àäµ½Õ¹ÑÌÍ¡…É•­¥¹•µ…Ñ¥ŒÁ¡åÍ¥Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½É•…Ñ•A•‘•ÍÑÉ¥…¹MåÍÑ•´¼°MÑ…”€Àäµ½Õ¹ÑÌ±¥Ù”Á•‘•ÍÑÉ¥…¹Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½É•…Ñ•Y™áMåÍÑ•´¼°MÑ…”€Àäµ½Õ¹ÑÌÁ½½±•Y`œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½Á•‘•ÍÑÉ¥…¹MåÍÑ•µp¹ÕÁ‘…Ñ”¼°A•‘•ÍÑÉ¥…¹ÌÕÁ‘…Ñ”‘ÕÉ¥¹œ…µ•Á±…äœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½Ù™áMåÍÑ•µp¹ÕÁ‘…Ñ”¼°Y`ÕÁ‘…Ñ”‘ÕÉ¥¹œ…µ•Á±…äœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½‘•‰ÕQÉ…Ù•ÉÍ•QåÁ•½ÉMµ½­”¼°	É½ÝÍ•ÈÍµ½­”•á•É¥Í•ÌÁ…É­½ÕÈÑåÁ•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½•Ñ!•É½I¥M¹…ÁÍ¡½Ð¼°IÕ¹Ñ¥µ”±½Ñ¡¥¹œ½É¥œ‘¥…¹½ÍÑ¥Ì…É”•áÁ½Í•œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…Ñ½ÉA¡åÍ¥Ì°½­¥¹•µ…Ñ¥Œµ…ÁÍÕ±”¼°M¡…É•…Ñ½ÈÍ½±Ù•È¥‘•¹Ñ¥™¥•Ì¥ÑÌÁ¡åÍ¥Ìµ½‘”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…Ñ½ÉA¡åÍ¥Ì°½…•¹ÑM•Á…É…Ñ¥½¹Ì¼°M¡…É•…Ñ½ÈÍ½±Ù•ÈÍ•Á…É…Ñ•Ì9A…•¹ÑÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Á•‘•ÍÑÉ¥…¹Ì°½¹½Ñ¥¥¹œµÁ±…å•È¼°µ‰¥•¹ÐÁ•‘•ÍÑÉ¥…¹ÌÉ•ÍÁ½¹Ñ¼Á±…å•ÈÁÉ½á¥µ¥Ñäœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Á•‘•ÍÑÉ¥…¹Ì°½É½ÕÑ•¡…¹•Ì¼°µ‰¥•¹ÐÁ•‘•ÍÑÉ¥…¹ÌÕÍ”Ý…åÁ½¥¹ÐÉ½ÕÑ•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Ù™à°½Á½½±M¥é”¼°Y`ÍåÍÑ•´ÕÍ•Ì„‰½Õ¹‘•É•ÕÍ…‰±”Á½½°œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÑÉ…Ù•ÉÍ…°°½!•É¼ÀÅ}1•‘•AÕ±±UÀ¼°A…É­½ÕÈ¥¹±Õ‘•Ì±•‘”ÑÉ…Ù•ÉÍ…°œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÑÉ…Ù•ÉÍ…°°½É…}1…‘‘•É±¥µˆ¼°É„¡…Ì„‘•‘¥…Ñ•±…‘‘•È±¥µ‰¥¹œ…¹¥µ…Ñ¥½¸œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÑÉ…Ù•ÉÍ…°°½!•É¼ÀÅ}]…±±!½À¼°A…É­½ÕÈ¥¹±Õ‘•ÌÝ…±°µ¡½ÀÑÉ…Ù•ÉÍ…°œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½µÁ…¹¥½¹Ì°½Í½±Ù•Ép¹ÍÑ•À¼°½µÁ…¹¥½¹ÌÕÍ”Í¡…É•½±±¥Í¥½¸µ…Ý…É”Á¡åÍ¥Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½©ÕµÁ	Õ™™•È¼°A±…å•È¡…Ì‰Õ™™•É•…¹½å½Ñ”µÑ¥µ”©ÕµÁ¥¹œœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½½¹™™•Ñpýp¹p ‰±…¹‘¥¹œˆ¼°A±…å•È±…¹‘¥¹Ì•µ¥ÐY`œ¤ì)½¹ÍÐ…µ•M½ÕÉ”õ…µ”ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½‰Õ¥±‘¥¹I½ÕÑ•=‰ÍÑ…±•Íp¹±•¹Ñ ¼°Ù•Éä‰Õ¥±‘¥¹œµÕÍÐÉ••¥Ù”•áÑÉ„Á…É­½ÕÈ…•ÍÌÁ½¥¹ÑÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½…‘‘	Õ¥±‘¥¹I½ÕÑ•p¡ÁÉ½áä±¤°±…‘‘•Èœ¼°… ‰Õ¥±‘¥¹œµÕÍÐÉ••¥Ù”„±…‘‘•ÈÉ½ÕÑ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½…‘‘	Õ¥±‘¥¹I½ÕÑ•p¡ÁÉ½áä±¤°µ…¹Ñ±”œ¼°… ‰Õ¥±‘¥¹œµÕÍÐÉ••¥Ù”„µ…¹Ñ±”É½ÕÑ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½…‘‘	Õ¥±‘¥¹I½ÕÑ•p¡ÁÉ½áä±¤°±•‘”œ¼°… ‰Õ¥±‘¥¹œµÕÍÐÉ••¥Ù”„±•‘”É½ÕÑ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½É•…Ñ•Y•¡¥±•MåÍÑ•´¼°Q¡”±¥Ù”…µ”µÕÍÐµ½Õ¹ÐÑ¡”•¹Ñ•É…‰±”Í•‘…¸œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½Ù•¡¥±•MåÍÑ•µpýp¹ÕÁ‘…Ñ”¼°Q¡”±¥Ù”ÕÁ‘…Ñ”±½½ÀµÕÍÐ…‘Ù…¹”Ñ¡”Ù•¡¥±”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ•M½ÕÉ”°½}}9%)}Y!%1}9QI}|¼°Q¡”…µ”µÕÍÐ•áÁ½Í”Ñ¡”½¹Ñ•áÑÕ…°•¹Ñ•É…‰±”Ù•¡¥±”…Ñ¥½¸œ¤ì()…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½É•…Ñ•¡…É…Ñ•ÉY¥Ñ…±Ì¼°A±…å•È¡•…±Ñ …¹ÍÑ…µ¥¹„µÕÍÐ‰”µ…¹…•‰ä„É•ÕÍ…‰±”Ù¥Ñ…±Ì½µÁ½¹•¹Ðœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½…ÁÁ±å…µ…”¼°A±…å•È‘…µ…”µÕÍÐÁÉ½‘Õ”„½¹ÑÉ½±±•¡¥ÐÉ•…Ñ¥½¸…¹‘½Ý¹•ÍÑ…Ñ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½É•½Ù•ÉÉ½µ½Ý¹•¼°A±…å•ÈÉ•½Ù•ÉäµÕÍÐÉ•ÍÑ½É”µ½Ù•µ•¹Ð…¹Ù¥Ñ…±Ì…™Ñ•ÈÑ¡”‘½Ý¹•ÍÑ…Ñ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½É•…Ñ•…¥…±¹¥µ…Ñ¥½¸¼°Q¡”Á±…å•ÈÉ¥œµÕÍÐÕÍ”Ñ¡”É•ÕÍ…‰±”™…¥…°…¹¥µ…Ñ¥½¸±…å•Èœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉY¥Ñ…±Ì°½‘…µ…•%¹ÙÕ±¹•É…‰¥±¥Ñä¼°…µ…”µÕÍÐ¥¹±Õ‘”„Í¡½ÉÐ¥¹ÙÕ±¹•É…‰¥±¥ÑäÝ¥¹‘½Üœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉY¥Ñ…±Ì°½ÍÑ…µ¥¹…I••¹•±…ä¼°MÑ…µ¥¹„µÕÍÐ¡…Ù”„É•½Ù•Éä‘•±…äœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉY¥Ñ…±Ì°½ÍÑ…Ñ”€ô€‘½Ý¹•œ¼°1•Ñ¡…°‘…µ…”µÕÍÐÁÉ½‘Õ”„‘½Ý¹•ÍÑ…Ñ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡‰•¡…Ù¥½ÕÉQÉ•”°½•áÁ½ÉÐ™Õ¹Ñ¥½¸Í•±•Ñ½È¼°9A‘•¥Í¥½¹ÌµÕÍÐÍÕÁÁ½ÉÐÁÉ¥½É¥ÑäÍ•±•Ñ½ÉÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡‰•¡…Ù¥½ÕÉQÉ•”°½•áÁ½ÉÐ™Õ¹Ñ¥½¸Í•ÅÕ•¹”¼°9A‘•¥Í¥½¹ÌµÕÍÐÍÕÁÁ½ÉÐÍ•ÅÕ•¹•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Á•‘•ÍÑÉ¥…¹Ì°½É•…Ñ•	•¡…Ù¥½ÕÉQÉ•”¼°A•‘•ÍÑÉ¥…¸…Ñ½ÉÌµÕÍÐ‰”‘É¥Ù•¸‰ä‰•¡…Ù¥½ÕÈÑÉ••Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Á•‘•ÍÑÉ¥…¹Ì°½É•…Ñ•¡…É…Ñ•ÉA•É•ÁÑ¥½¸¼°A•‘•ÍÑÉ¥…¹ÌµÕÍÐ¡…Ù”„Í•Á…É…Ñ”Á•É•ÁÑ¥½¸½µÁ½¹•¹Ðœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Á•‘•ÍÑÉ¥…¹Ì°½É•…Ñ•9…Ù¥…Ñ¥½¹É¥¼°A•‘•ÍÑÉ¥…¹ÌµÕÍÐÉ½ÕÑ”Ñ¡É½Õ Ñ¡”µÍÑ…È¹…Ù¥…Ñ¥½¸É¥œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉA•É•ÁÑ¥½¸°½¡…Í±•…É1¥¹•=™M¥¡Ð¼°Y¥Í¥½¸µÕÍÐ‰”‰±½­•‰ä½±Õ‘¥¹œ•½µ•ÑÉäœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉA•É•ÁÑ¥½¸°½Ù•¡¥±•!•…É¥¹¥ÍÑ…¹”¼°9A¡•…É¥¹œµÕÍÐÉ•…ÐÑ¼Ù•¡¥±”½¹½¥Í”•Ù•¹ÑÌ…Ð„Í•Á…É…Ñ”É…¹”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¹…Ù¥…Ñ¥½¹É¥°½™¥¹‘A…Ñ ¼°9…Ù¥…Ñ¥½¸µÕÍÐ•áÁ½Í”„É½ÕÑ”ÅÕ•Éäœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¹…Ù¥…Ñ¥½¹É¥°½•áÁ…¹‘•‘9½‘•Ì¼°9…Ù¥…Ñ¥½¸µÕÍÐ•áÁ½Í”¥ÑÌÍ•…É µ½ÍÐ‘¥…¹½ÍÑ¥Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½É•…Ñ•]½É±‘%¹Ñ•É…Ñ¥½¹MåÍÑ•´¼°Q¡”…µ”µÕÍÐÕÍ”Ñ¡”É•ÕÍ…‰±”Ý½É±¥¹Ñ•É…Ñ¥½¸É•¥ÍÑÉäœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½å…‰„µÍÑÉ••Ðµ­¥½Í¬¼°Q¡”e…‰„­¥½Í¬µÕÍÐ‰”É•¥ÍÑ•É•…Ì…¸¥¹Ñ•É…Ñ…‰±”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÉÁœ°½Í•Ñ%¹Ñ•É…Ñ¥½¹AÉ½µÁÐ¼°Q¡”!UµÕÍÐ‘¥ÍÁ±…ä½¹Ñ•áÑÕ…°¥¹Ñ•É…Ñ¥½¸ÁÉ½µÁÑÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡™…¥…±¹¥µ…Ñ¥½¸°½•å•	±¥¹­1•™Ð¼°…¥…°…¹¥µ…Ñ¥½¸µÕÍÐ¥¹±Õ‘”…ÕÑ½¹½µ½ÕÌ‰±¥¹­¥¹œœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡™…¥…±¹¥µ…Ñ¥½¸°½Ù¥Í•µ•}…„¼°…¥…°…¹¥µ…Ñ¥½¸µÕÍÐ¥¹±Õ‘”ÍÁ•• Ù¥Í•µ•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡ÑÝ½	½¹•%,°½Í½±Ù•QÝ½	½¹•%,¼°Q¡”…¹¥µ…Ñ¥½¸Ñ½½±Í•ÐµÕÍÐ¥¹±Õ‘”„Ù…±¥‘…Ñ•ÑÝ¼µ‰½¹”%,Í½±Ù•Èœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡±½…‘•È°½…ÁÁ±å1¥µ‰%,¼°Q¡”%,Í½±Ù•ÈµÕÍÐ‰”½¹¹•Ñ•Ñ¼É„±¥Ù”±•œ‰½¹•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½…ÁÁ±å1¥µ‰%,¼°É½Õ¹‘•™½½ÐÁ±…•µ•¹ÐµÕÍÐ‰”…‰±”Ñ¼…±°É„Í­•±•Ñ½¸%,œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½µ…­•½½ÑA±…¹ÑQ…É•Ð¼°½½ÐÁ±…•µ•¹ÐµÕÍÐ‘•É¥Ù”„Í½±”Ñ…É•Ð™É½´Ñ¡”µ•…ÍÕÉ•ÍÕÁÁ½ÉÐÁ±…¹”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡±½…‘•È°½ÍÕÉ™…•9½Éµ…°¼°É„%,µÕÍÐ½É¥•¹ÐÑ¡”Í½±”Ñ¼Ñ¡”…ÑÕ…°ÍÕÁÁ½ÉÐ¹½Éµ…°œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Á±…å•ÉA¡åÍ¥Ì°½ÍÑ…ÉÑI…‘½±°¼°Q¡”Á±…å•È	Õ±±•ÐÝ½É±µÕÍÐ•áÁ½Í”„É…‘½±°¡…¹‘½™˜œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI…‘½±°°½‰Ñ½¹•QÝ¥ÍÑ½¹ÍÑÉ…¥¹Ð¼°Q¡”Á¡åÍ¥…°É…‘½±°µÕÍÐÕÍ”½¹ÍÑÉ…¥¹•…ÉÑ¥Õ±…Ñ•©½¥¹ÑÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI…‘½±°°½‰Ñ!¥¹•½¹ÍÑÉ…¥¹Ð¼°Q¡”Á¡åÍ¥…°É…‘½±°µÕÍÐÕÍ”¡¥¹•±¥µˆ©½¥¹ÑÌœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI…‘½±°°½…ÁÁ±åI…‘½±±A½Í”¼°Q¡”É…‘½±°µÕÍÐÍå¹¡É½¹¥é”‰½‘äÑÉ…¹Í™½ÉµÌ‰…¬Ñ¼É„‰½¹•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI…‘½±°°½¥¹Ñ•ÉÁ½±…Ñ•¡…É…Ñ•ÉA½Í”¼°Q¡”É…‘½±°¡…¹‘½™˜µÕÍÐ‰±•¹…ÁÑÕÉ•…¹¥µ…Ñ¥½¸Á½Í”¥¹Ñ¼Á¡åÍ¥ÌÁ½Í”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI…‘½±°°½‰½¹•Y•±½¥Ñ¥•Ì¼°I…‘½±°‰½‘¥•ÌµÕÍÐ¥¹¡•É¥ÐÁ•Èµ‰½¹”…¹¥µ…Ñ¥½¸µ½Ñ¥½¸œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI…‘½±°°½•Ñ!¥¹•á¥Ì¼°1¥µˆ¡¥¹”…á•ÌµÕÍÐ‰”‘•É¥Ù•™É½´•… …¹¥µ…Ñ•±¥µˆ‰•¹Á±…¹”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡±½…‘•È°½É•…Ñ•É…•ÑUÁQÉ…­Ì¼°É„µÕÍÐ¡…Ù”•¹•É…Ñ•™É½¹Ð½‰…¬•ÐµÕÀ…¹¥µ…Ñ¥½¸ÑÉ…­Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡±½…‘•È°½É…}•ÑUÁ}…•UÀ¼°É„µÕÍÐ¥¹±Õ‘”„™…”µÕÀ•ÐµÕÀ…¹¥µ…Ñ¥½¸œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡±½…‘•È°½É…}•ÑUÁ}…•½Ý¸¼°É„µÕÍÐ¥¹±Õ‘”„™…”µ‘½Ý¸•ÐµÕÀ…¹¥µ…Ñ¥½¸œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½±…ÍÍ¥™åI•½Ù•ÉåM¥‘”¼°I•½Ù•ÉäµÕÍÐ±…ÍÍ¥™ä™…”µÕÀÙ•ÉÍÕÌ™…”µ‘½Ý¸Á½ÍÑÕÉ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡½¹ÑÉ½±±•È°½ÕÁ‘…Ñ•I•½Ù•ÉåM•ÅÕ•¹”¼°I•½Ù•ÉäµÕÍÐ‰±•¹Ñ¡É½Õ „½¹ÑÉ½±±••ÐµÕÀÍ•ÅÕ•¹”‰•™½É”•¹…‰±¥¹œ¥¹ÁÕÐœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½‘•‰ÕIÕ¹U¹•Ù•¹Q•ÉÉ…¥¹%-½ÉMµ½­”¼°	É½ÝÍ•ÈÍµ½­”µÕÍÐ…ÁÁ±ä%,Ñ¼ÑÝ¼±¥Ù”Õ¹•Ù•¸	Õ±±•ÐÍÕÁÁ½ÉÐÍÕÉ™…•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI•½Ù•Éä°½•ÍÑ¥µ…Ñ•	½¹•Y•±½¥Ñ¥•Ì¼°I•½Ù•Éä±…å•ÈµÕÍÐ•ÍÑ¥µ…Ñ”¥¹‘¥Ù¥‘Õ…°…¹¥µ…Ñ•‰½¹”Ù•±½¥Ñ¥•Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡¡…É…Ñ•ÉI•½Ù•ÉåQ•ÍÐ°½™…”µ‘½Ý¸¼°I•½Ù•Éäµ…Ñ Ñ•ÍÑÌµÕÍÐ½Ù•È™É½¹Ð½‰…¬Á½ÍÑÕÉ”‘•Ñ•Ñ¥½¸œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…É…%-I…‘½±±Mµ½­”°½‰½‘å½Õ¹Ð€ôôô€ÄÄ¼°	É½ÝÍ•ÈÍµ½­”µÕÍÐÙ•É¥™äÑ¡”±¥Ù”€ÄÄµ‰½‘äÉ„É…‘½±°œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…É…%-I…‘½±±Mµ½­”°½•¹‘™™•Ñ½ÉÉÉ½È¼°	É½ÝÍ•ÈÍµ½­”µÕÍÐµ•…ÍÕÉ”±¥Ù”Í­•±•Ñ½¸%,•ÉÉ½Èœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…É…%-I…‘½±±Mµ½­”°½Á…ÉÑ¥…±!…¹‘½™˜¼°	É½ÝÍ•ÈÍµ½­”µÕÍÐÙ•É¥™äÑ¡”ÑÉ…¹Í¥Ñ¥½¹…°É…‘½±°‰±•¹œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…É…%-I…‘½±±Mµ½­”°½É…}•ÑUÁ|¼°	É½ÝÍ•ÈÍµ½­”µÕÍÐÙ•É¥™ä„Á½ÍÑÕÉ”µÍÁ•¥™¥Œ•ÐµÕÀ±¥Àœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…É…%-I…‘½±±Mµ½­”°½Ñ•ÉÉ…¥¸¹Á…ÍÌ¼°	É½ÝÍ•ÈÍµ½­”µÕÍÐÁ…ÍÌÑ¡”Õ¹•Ù•¸µÑ•ÉÉ…¥¸%,…•ÁÑ…¹”…Ñ”œ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡µ½Ñ¥½¹5…Ñ¡¥¹œ°½Í½É•5½Ñ¥½¹…¹‘¥‘…Ñ•Ì¼°Q¡”…¹¥µ…Ñ¥½¸Ñ½½±Í•ÐµÕÍÐ¥¹±Õ‘”µ½Ñ¥½¸µ™•…ÑÕÉ”…¹‘¥‘…Ñ”Í½É¥¹œœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡…µ”°½‘•‰Õ‘Ù…¹•¡…É…Ñ•ÉM¥µÕ±…Ñ¥½¹½ÉMµ½­”¼°Q¡”¡…É…Ñ•ÈÍ¥µÕ±…Ñ¥½¸µÕÍÐ•áÁ½Í”‘•Ñ•Éµ¥¹¥ÍÑ¥Œ™¥á•µÍÑ•ÀÑ•ÍÑ¥¹œœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Í¥µÕ±…Ñ¥½¹½É•Q•ÍÐ°½É•…Ñ•¡…É…Ñ•ÉY¥Ñ…±Ì¼°¡…É…Ñ•ÈÍ¥µÕ±…Ñ¥½¸½É”É•É•ÍÍ¥½¸Ñ•ÍÐµÕÍÐ½Ù•ÈÙ¥Ñ…±Ìœ¤ì)…ÍÍ•ÉÐ¹µ…Ñ ¡Í¥µÕ±…Ñ¥½¹	É½ÝÍ•ÉQ•ÍÐ°½‘•‰ÕÁÁ±åA±…å•É…µ…•½ÉMµ½­”¼°¡…É…Ñ•ÈÍ¥µÕ±…Ñ¥½¸¥¹Ñ•É…Ñ¥½¸Ñ•ÍÐµÕÍÐ½Ù•È‘…µ…”…¹É•½Ù•Éäœ¤ì()½¹Í½±”¹±½œ ¡…É…Ñ•ÈÍ¥µÕ±…Ñ¥½¸¡•­ÌÁ…ÍÍ•èÙ¥Ñ…±Ì°‰•¡…Ù¥½ÕÈÑÉ••Ì°Ù¥Í¥½¸½¡•…É¥¹œ°µÍÑ…ÈÉ½ÕÑ¥¹œ°¥¹Ñ•É…Ñ…‰±•Ì°™…¥…°µ½ÉÁ¡Ì°±¥Ù”É„‰½¹”%,°‰±•¹‘•	Õ±±•ÐÉ…‘½±°°Á½ÍÑÕÉ”µ…Ý…É”É•½Ù•Éä…¹µ½Ñ¥½¸µ™•…ÑÕÉ”Í½É¥¹œ¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€Àá¡•­ÌÁ…ÍÍ•è€Ðà½µÁ…ÐÁÉ½•‘ÕÉ…°‰Õ¥±‘¥¹œÁ±…•µ•¹ÑÌì•¥¡Ð¹•¥¡‰½ÕÉ¡½½¡½µ•ÌìUYÌ°Ñ¡É•”1=Ì…¹Í•Á…É…Ñ”½±±¥Í¥½¸ÁÉ½á¥•ÌÙ•É¥™¥•¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€Àá¡•­ÌÁ…ÍÍ•è•áÁ…¹‘•Ñ•ÉÉ…¥¸°½¹¹•Ñ•É½…É¥°€ÄØ¹•¥¡‰½ÕÉ¡½½‰Õ¥±‘¥¹Ì…¹Á½­•ÐÁ…É­Ì¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€Àá¡•­ÌÁ…ÍÍ•è9¥•É¥…¸Í¡½Á™É½¹ÑÌ°…Ý¹¥¹Ì°É½±±•ÈÍ¡ÕÑÑ•ÉÌ°‰…±½¹¥•Ì°Í•ÕÉ¥ÑäÉ¥±±•Ì°Õ¹¥ÑÌ…¹É½½™Ñ½ÀÝ…Ñ•ÈÑ…¹­Ì¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€Àá¡•­ÌÁ…ÍÍ•èÍÑ…Ñ¥Œ­•É‰Ì°ÍÑ½É´‘É…¥¹Ì°ÕÑ¥±¥ÑäÁ½±•Ì…¹Ý¥É•Ì°ÍÑÉ••Ñ±¥¡ÑÌ°É½…Í¥¹Ì°Á…É¬™ÕÉ¹¥ÑÕÉ”°‰ÕÌÍ¡•±Ñ•ÉÌ…¹É½…‘Í¥‘”ÍÑ…±±ÌÝ¥Ñ ‰½Õ¹‘•ÍÑ…Ñ¥Œ‰…Ñ¡¥¹œ¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€Àá¡•­ÌÁ…ÍÍ•è…±°€Ðà‰Õ¥±‘¥¹œ‰½‘¥•ÌÕÍ”Í¡…É•A	HÍÕÉ™…”µ…ÁÌ°½É¥¥¹…°e…‰„Í¡½Á™É½¹ÐÕÁÉ…‘•Ì°±½…°‰ÕÍ¥¹•ÍÌÍ¥¹Ì…¹É•Í¥‘•¹Ñ¥…°™……‘”ÑÉ•…Ñµ•¹Ð¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€ÀØ¡•­ÌÁ…ÍÍ•èÁÉ½•‘ÕÉ…°¡Õµ…¸°±½½µ½Ñ¥½¸°ÍÁÉ¥¹Ð°©ÕµÀ°…¥Ð…¹¥µ…Ñ¥½¸°½É‰¥Ð…µ•É„…¹Ñ½Õ ½¹ÑÉ½±Ì¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€ÀÜ¡•­ÌÁ…ÍÍ•è±…¹‘Í…Á”!U°Í…™”…É•…Ì°ÍÑ…µ¥¹„™••‘‰…¬°É½Õ ½¥¹Ñ•É…Ð½¹ÑÉ½±Ì…¹ÅÕ¥¬Í±½ÑÌ¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€ÀÔIAU$¡•­ÌÁ…ÍÍ•èÉ•ÍÁ½¹Í¥Ù”!U°µ•¹ÕÌ°Ñ½Õ ±…å½ÕÐ…¹Í•ÑÑ¥¹Ì¸œ¤ì)½¹Í½±”¹±½œ MÑ…”€ÀÐ•¹Ù¥É½¹µ•¹Ð¡•­ÌÁ…ÍÍ•èÙ¥•ÝÁ½ÉÐ…¹Ù…Ì°…µ•É„‘¥É•Ñ¥½¸°É•¹‘•ÈÝ¥Ñ¹•ÍÌ°1½Ñ•áÑÕÉ”¡…¹‘±•ÉÌ°ÍÉ••¹Í¡½Ð…ÍÍ•ÉÑ¥½¹Ì…¹Í¥¹…°µ½¹ÑÉ½±±•ÑÉ…™™¥Œ¸1•…äÙ•¡¥±”Á¡åÍ¥ÌÉ•µ…¥¹Ì…Ù…¥±…‰±”‰ÕÐ¥Ì¹¼±½¹•ÈÑ¡”Á±…å•È½¹ÑÉ½±±•È¸œ¤ì)ìb¶ËZ¶ë4
+assert.equal(vehicleGlb.readUInt32LE(8),vehicleGlb.length,'Sedan GLB declared length must match the file');
+assert.ok(['wheel_FL','wheel_FR','wheel_RL','wheel_RR'].every(name=>vehicleGltf.nodes.some(node=>node.name===name)),'Sedan GLB must preserve four separately named wheel nodes');
+assert.ok(vehicleGltf.materials.length>=8,'Sedan GLB must have a readable multi-material vehicle finish');
+assert.equal(araGlb.readUInt32LE(0),0x46546c67,'Ara must be a valid GLB container');
+assert.equal(araGlb.readUInt32LE(4),2,'Ara must use GLB 2.0');
+assert.equal(araGlb.readUInt32LE(8),araGlb.length,'Ara GLB declared length must match the file');
+assert.equal(araGltf.skins?.length,1,'Ara must contain one humanoid skin');
+assert.equal(araGltf.skins[0].joints.length,70,'Ara must retain the 70-bone humanoid rig');
+assert.equal(araGltf.meshes.flatMap(mesh=>mesh.primitives||[]).length,25,'Ara must retain all 25 skinned mesh parts');
+assert.deepEqual(araGltf.animations.map(animation=>animation.name).sort(),expectedAraClips.slice().sort(),'Ara must retain all 12 original clips plus three Blender-authored ladder clips');
+const ladderClips=araGltf.animations.filter(animation=>animation.name.startsWith('Ara_Ladder'));
+assert.equal(ladderClips.length,3,'Ara must load three dedicated Blender-authored ladder actions');
+const ladderTargetBones=new Set(ladderClips.flatMap(animation=>animation.channels.map(channel=>araGltf.nodes[channel.target.node]?.name).filter(Boolean)));
+const requiredLadderBones=['Hips','Spine','Spine1','Spine2','LeftArm','LeftForeArm','LeftHand','RightArm','RightForeArm','RightHand','LeftUpLeg','LeftLeg','LeftFoot','RightUpLeg','RightLeg','RightFoot'];
+assert.ok(ladderClips.every(animation=>animation.channels.length>=180),'Ladder actions must be baked across the full humanoid skeleton, not isolated limb rotations');
+assert.ok(requiredLadderBones.every(name=>ladderTargetBones.has(name)),'Ladder actions must include torso, both hands and both feet: '+JSON.stringify([...ladderTargetBones]));
+assert.ok(ladderClips.every(animation=>animation.channels.some(channel=>channel.target.path==='rotation')&&animation.channels.every(channel=>channel.target.path!=='weights')),'Ladder actions must retain skeletal animation without unexpected morph-weight channels');
+assert.ok(araGltf.meshes.flatMap(mesh=>mesh.primitives||[]).every(primitive=>primitive.attributes?.JOINTS_0!==undefined&&primitive.attributes?.WEIGHTS_0!==undefined),'Every Ara skinned primitive must include joint indices and skin weights');
+assert.equal(araValidation.issues.numErrors,0,'Khronos glTF Validator rejected Ara: '+JSON.stringify(araValidation.issues.messages));
+assert.match(araLicense,/Ara 3D Gen/i,'Ara asset provenance/license notice must be included');
+const heroPayload=(await readFile(new URL('../public/assets/hero/NaijaCityHero01_60clips.glb.b64',import.meta.url),'utf8')).replace(/\\s+/g,'');
+const heroGlb=Buffer.from(heroPayload,'base64');
+const heroJsonLength=heroGlb.readUInt32LE(12);
+const heroGltf=JSON.parse(heroGlb.subarray(20,20+heroJsonLength).toString('utf8').trim());
+const expectedHeroClips=["Hero01_BalanceBeamIdle","Hero01_BalanceBeamWalk","Hero01_ClimbUp","Hero01_Crouch","Hero01_CrouchWalk","Hero01_DoorOpen","Hero01_DropDown","Hero01_EquipScanner","Hero01_GreetWave","Hero01_HoldTablet","Hero01_Idle","Hero01_InspectTablet","Hero01_Interact","Hero01_Jog","Hero01_Jump","Hero01_LadderClimb","Hero01_LadderDismount","Hero01_LadderMount","Hero01_Landing","Hero01_LedgeHang","Hero01_LedgePullUp","Hero01_LedgeShimmyLeft","Hero01_LedgeShimmyRight","Hero01_Mantle","Hero01_MissionSuccess","Hero01_ParkourLand","Hero01_PhoneUse","Hero01_Pickup","Hero01_RadioListen","Hero01_ReachToolPouch","Hero01_RollForward","Hero01_Run","Hero01_SitDown","Hero01_SitIdle","Hero01_Sprint","Hero01_SquadAgreeNod","Hero01_SquadAssistUp","Hero01_SquadBriefingListen","Hero01_SquadDisagreeShake","Hero01_SquadHandAcknowledgement","Hero01_SquadPointAhead","Hero01_SquadRadioCall","Hero01_SquadRegroup","Hero01_SquadSignalFollow","Hero01_SquadSignalHold","Hero01_StandUp","Hero01_StepUp","Hero01_StowScanner","Hero01_StowTool","Hero01_TiredIdle","Hero01_TurnLeft","Hero01_TurnRight","Hero01_UseScanner","Hero01_UseTool","Hero01_VaultHigh","Hero01_VaultLow","Hero01_Walk","Hero01_WalkStart","Hero01_WalkStop","Hero01_WallHop"];
+assert.equal(heroGlb.readUInt32LE(0),0x46546c67,'Hero 01 must be a GLB container');
+assert.equal(heroGlb.readUInt32LE(4),2,'Hero 01 must use GLB 2.0');
+assert.equal(heroGlb.readUInt32LE(8),heroGlb.length,'Hero 01 GLB declared length must match the file');
+assert.equal(heroGltf.animations.length,60,'Hero 01 must contain exactly 60 named animations');
+assert.deepEqual(heroGltf.animations.map(animation=>animation.name).sort(),expectedHeroClips.slice().sort(),'Hero 01 must retain all 60 named animations');
+assert.ok(heroGltf.animations.every(animation=>animation.channels.length===60&&animation.samplers.length===60),'Every Hero 01 clip must animate all 20 rig joints with 60 channels and samplers');
+assert.equal(heroGltf.skins.length,1,'Hero 01 must include one skinned humanoid');
+assert.equal(heroGltf.skins[0].joints.length,20,'Hero 01 must preserve the 20-joint rig');
+const heroChildNodes=new Set(heroGltf.nodes.flatMap(node=>node.children||[]));
+assert.ok(heroGltf.nodes.every((node,index)=>!(node.skin!==undefined&&node.mesh!==undefined&&heroChildNodes.has(index))),'Every skinned Hero 01 mesh must be a scene-root node so parent transforms cannot be ignored');
+const heroValidation=await validator.validateBytes(new Uint8Array(heroGlb),{
+ uri:'NaijaCityHero01_60clips.glb',format:'glb',writeTimestamp:false,maxIssues:100
+});
+assert.equal(heroValidation.issues.numErrors,0,'Khronos glTF Validator rejected Hero 01: '+JSON.stringify(heroValidation.issues.messages));
+const heroPrimitives=heroGltf.meshes.flatMap(mesh=>mesh.primitives||[]);
+assert.ok(heroPrimitives.some(primitive=>primitive.attributes?.JOINTS_0!==undefined&&primitive.attributes?.WEIGHTS_0!==undefined),'Hero 01 must contain vertex joint indices and skin weights');
+assert.ok(heroPrimitives.every(primitive=>primitive.attributes?.TEXCOORD_0!==undefined),'Every Hero 01 mesh primitive must contain UV coordinates');
+const heroSkinnedPrimitives=heroPrimitives.filter(primitive=>primitive.attributes?.JOINTS_0!==undefined&&primitive.attributes?.WEIGHTS_0!==undefined);
+assert.ok(heroSkinnedPrimitives.length>=9,'Hero 01 must include the body plus weighted clothing meshes');
+assert.ok(heroGltf.materials.length===11&&heroGltf.materials.every(material=>material.pbrMetallicRoughness?.baseColorTexture&&material.pbrMetallicRoughness?.metallicRoughnessTexture&&material.normalTexture&&material.occlusionTexture),'All Hero 01 materials must include embedded PBR texture channels');
+assert.ok(heroGltf.images.length>=20&&heroGltf.textures.length>=30,'Hero 01 must embed its PBR texture image set');
+const exportedMorphNames=heroGltf.meshes.flatMap(mesh=>mesh.extras?.targetNames||[]).sort();
+assert.deepEqual(exportedMorphNames,['Blink_L','Blink_R','BrowRaise','Frown','JawOpen','Smile'].sort(),'Hero 01 must contain four facial expression and two blink morph targets');
+assert.ok(heroGltf.animations.every(animation=>animation.channels.every(channel=>channel.target?.node!==undefined)),'Hero 01 animation channels must target named hierarchy nodes');
+const glb=await readFile(new URL('../public/assets/diagnostic-cube.glb',import.meta.url));
+const texture=await readFile(new URL('../public/assets/diagnostic-checker.png',import.meta.url));
+const css=await readFile(new URL('../src/style.css',import.meta.url),'utf8');
+const vite=await readFile(new URL('../vite.config.js',import.meta.url),'utf8');
+const pkg=JSON.parse(await readFile(new URL('../package.json',import.meta.url),'utf8'));
+assert.match(html,/id="application"/);
+assert.match(html,/id="rpg-interface"/);
+assert.match(html,/type="importmap"/,'Three.js import map is required for the browser FBX conversion module');
+assert.match(entry,/mountRPGInterface/);
+for(const feature of ['inventory','quests','map','character','settings','pause','resume','crouch-button','interact-button','quick-slots','hud-health-value','hud-stamina-value','open-world FPS/RPG','camera-view-toggle']) assert.ok(rpg.includes(feature),`Missing RPG UI feature: ${feature}`);
+for(const feature of ['.minimap','.objective','.status','.nav','.panel','.pause','.touch','.quick-slots','.actions button','#orientation-notice','safe-area-inset-left','@media (orientation:landscape)','@media (orientation:portrait)']) assert.ok(rpgCss.includes(feature),`Missing responsive RPG UI style: ${feature}`);
+assert.match(rpg,/id="perf-toggle"/);
+assert.match(html,/id="perf-panel"/);
+assert.match(html,/id="traffic-status"/);
+assert.match(html,/id="asset-status"/);
+assert.match(html,/id="assets-panel"/);
+assert.match(html,/id="asset-status"/);
+assert.match(entry,/import\('\.\/game\.js'\)/,'Engine module must be lazy-loaded');
+assert.doesNotMatch(entry,/from ['"]playcanvas['"]/,'Initial entry must not eagerly import PlayCanvas');
+assert.match(game,/createGraphicsDevice/);
+assert.match(game,/pc\.AnimComponentSystem/,'PlayCanvas animation component system must be registered before rigged hero integration');
+assert.match(game,/createStage08ACityExpansion/,'Stage 08A city expansion must be mounted in the live scene');
+assert.match(game,/createStage08BBuildingDetail/,'Stage 08B building detail must be mounted in the live scene');
+assert.match(game,/createStage08CStreetInfrastructure/,'Stage 08C street infrastructure must be mounted in the live scene');
+assert.match(game,/createStage08DBuildingRealism/,'Stage 08D PBR building realism must be mounted in the live scene');
+assert.match(game,/coreBuildings\.push/,'All original Yaba shop blocks must be registered for Stage 08D');
+assert.match(game,/findByTag\('stage08a-building'\)/,'All Stage 08A expansion buildings must be registered for Stage 08D');
+assert.match(realism,/stage08d-static-architecture/,'Stage 08D must use a dedicated static architecture batch group');
+assert.match(realism,/new pc\.Texture/,'Stage 08D must generate shared GPU texture assets');
+assert.match(realism,/makeSurfaceMaps/,'Stage 08D must generate distinct material-specific surface maps');
+assert.match(realism,/makeGlassMap/,'Stage 08D must add a tinted glazing surface map');
+assert.match(realism,/stage08d-core-roof-cap/,'Original Yaba shops must receive finished flat-roof geometry');
+assert.match(realism,/stage08d-side-window-recess/,'All buildings must have side-elevation depth');
+assert.match(expansion,/stage08a-roof/,'Expansion roofs must be upgraded to the Stage 08D PBR roof finish');
+assert.match(realism,/diffuseMap/,'Stage 08D must apply PBR albedo maps');
+assert.match(realism,/normalMap/,'Stage 08D must apply normal maps');
+assert.match(realism,/glossMap/,'Stage 08D must apply gloss maps');
+assert.match(realism,/stage08d-readable-business-sign/,'Stage 08D must create readable local business signs');
+assert.match(realism,/stage08d-home-window-lintel/,'Stage 08D must improve residential architecture');
+assert.match(realism,/buildingsTextured/,'Stage 08D must expose building coverage metadata');
+assert.match(realism,/commercialBuildingsDetailed/);
+assert.match(realism,/residentialBuildingsDetailed/);
+assert.match(realism,/textureResolution/);
+
+assert.match(street,/app\.batcher\?\.addGroup\('stage08c-static-street-infrastructure', false, 128\)/,'Stage 08C static street assets must use a bounded static batch group');
+assert.match(street,/entity\.render\.batchGroupId = batchGroup\.id/,'Stage 08C detail meshes must join the static batch group');
+for(const feature of ['stage08c-main-road-kerb','stage08c-main-drain-cover','stage08c-distributor-kerb','stage08c-speed-table-marking','stage08c-utility-pole','stage08c-overhead-service-wire','stage08c-streetlight-pole','stage08c-road-sign-board','stage08c-park-bench-seat','stage08c-bus-shelter-roof','stage08c-roadside-stall-canopy']) assert.ok(street.includes(feature),`Missing Stage 08C street feature: ${feature}`);
+assert.match(street,/dynamicActorsAdded: 0/,'Stage 08C must remain static with no new animated actors');
+assert.match(street,/busShelters: 2/);
+assert.match(street,/pocketParksFurnished: 3/);
+assert.match(game,/options\.batchManager = pc\.BatchManager/,'PlayCanvas static batching must be enabled before app initialization');
+assert.match(facade,/app\.batcher\?\.addGroup\('stage08b-static-facades', false, 96\)/,'Stage 08B static facades must use a spatially bounded static batch group');
+assert.match(facade,/entity\.render\.batchGroupId = batchGroup\.id/,'Stage 08B detail meshes must join the static batch group');
+for(const feature of ['stage08b-shop-sign-fascia','stage08b-shop-awning','stage08b-shop-roller-shutter','stage08b-shop-security-door','stage08b-home-balcony-slab','stage08b-home-balcony-baluster','stage08b-home-security-grille-bar','stage08b-home-external-ac','stage08b-home-roof-water-tank']) assert.ok(facade.includes(feature),`Missing Stage 08B facade feature: ${feature}`);
+assert.match(facade,/commercialFacades: 8/);
+assert.match(facade,/residentialFacades: 8/);
+assert.match(facade,/detailMeshes/);
+assert.match(facade,/entity\.tags\.add\('stage08b-detail'\)/);
+assert.ok(game.includes("bundledUrl:'assets/hero/Ara_Female_Executive_Animated_Ladder_Mobile.glb.gz'"),'The live game must load the Blender-authored Ara ladder GLB without a user upload');
+assert.match(game,/startupBuildingRadiusMetres=\(lowDataMode\|\|lowMemoryDevice\)\?20:35/,'Data Saver and low-memory phones must reduce the initial building download radius to 20m');
+assert.match(game,/preloadArea\(\[0,0,0\],startupBuildingRadiusMetres/,'The startup should preload only nearby Yaba buildings');
+assert.match(game,/dataOptimization/,'The live game must expose startup/data optimization diagnostics');
+assert.match(game,/manualDataSaver===null\?networkLowData:manualDataSaver/,'An explicit Data Saver preference must override the network suggestion');
+assert.match(rpg,/savedDataSaverPreference\s*\?\?\s*networkSuggestsDataSaver/,'Data Saver must remember both ON and OFF preferences');
+assert.match(rpg,/explicit: savedDataSaverPreference !== null/,'Saved Data Saver ON/OFF choices must override connection recommendations');
+assert.match(loader,/bundledUrl = null/,'The character loader must expose the bundled asset path option');
+assert.ok(loader.includes('response.arrayBuffer()'),'The bundled Ara GLB must be read as binary data');
+assert.ok(loader.includes("new DecompressionStream('gzip')"),'The optimized Ara player must be transparently decompressed before loading');
+assert.ok(game.includes("bundledFallbackUrl:'assets/hero/Ara_Female_Executive_Animated_Ladder.glb'"),'The original Ara GLB must remain a compatibility fallback');
+assert.match(entry,/__NAIJA_ARA_PRELOAD__=\{url:araPlayerBundle,promise:fetch/,'The required Ara player bundle must begin downloading as soon as the entry module starts');
+assert.match(loader,/earlyDownload\.promise/,'The character loader must reuse the early player download');
+assert.match(loader,/characterId === 'ara-female'/,'Runtime loader must distinguish the Ara player rig');
+assert.match(loader,/naija-city-ara-female/,'Ara must use a separate PlayCanvas player asset instance');
+assert.match(loader,/naija-city-hero-01/,'Hero 01 must remain independently loadable for NPCs');
+assert.match(controller,/Ara female rig/,'The player controller must use Ara as its visible player model');
+assert.match(controller,/player\.addChild\(heroVisual\)/,'Ara must mount under the persistent player physics root');
+assert.doesNotMatch(controller,/applyFootPlacement|applyClimbHandPlacement/,'Runtime IK must not overwrite the authored Ara walk and ladder poses');
+assert.match(playerPhysics,/supportDelta/,'Player physics must measure vertical distance to the actual support surface');
+assert.match(playerPhysics,/supportHit\.point\[1\]/,'Player physics must snap feet to elevated support surfaces, not only world Y=0');
+assert.match(game,/characterId:'ara-female'/,'The live game must load Ara as the main player');
+assert.match(game,/characterId:'hero01'/,'The live game must load Hero 01 independently');
+assert.match(game,/hero01Role:'city-npc'/,'Hero 01 must be assigned the city NPC role');
+assert.match(game,/heroCharacter,obstacles:traversalObstacles/,'The crew system must be able to start from the already-loaded Ara player rig');
+assert.match(game,/companionSystem\.setHeroCharacter\?\.\(hero01NpcCharacter\)/,'New squad actors should upgrade to the optional Hero 01 rig when it streams in');
+assert.match(game,/hero01NpcCharacter=await loadHeroCharacter/,'Hero 01 must remain a separately streamed optional city NPC');
+assert.match(pedestrians,/setHeroCharacter\(character\)/,'The pedestrian system must support upgrading its placeholder NPC to the streamed Hero 01 rig');
+assert.match(game,/getHeroNpcState/,'The game must expose Hero 01 NPC state for verification');
+assert.match(pedestrians,/hero01-city-npc/,'The pedestrian scene must tag Hero 01 as an NPC');
+assert.match(pedestrians,/isPlayer: false/,'Hero 01 must not be exposed as the player actor');
+assert.match(pedestrians,/Hero 01 Â· City NPC/,'Hero 01 must be named as a city NPC');
+assert.match(rpg,/ARA 3D FEMALE Â· MAIN PLAYER/,'The HUD must identify Ara as the main player');
+assert.match(rpg,/ONLY PLAYABLE CHARACTER/,'The Player panel must show Ara as the sole playable character');
+assert.doesNotMatch(rpg,/character-switch-button|data-player-action|SWITCH TO|SET AS MAIN|player-character-reset/,'The Player UI must not contain character switching or reset controls');
+assert.doesNotMatch(game,/switchPlayerCharacter|getCharacterRoster|__NAIJA_SWITCH_PLAYER__|diagnosticMarker|render-diagnostic-marker/,'The game must not expose character switching or the blocking diagnostic cube');
+assert.match(loader,/defaultClips/,'Runtime must detect actual animation clip names');
+assert.match(controller,/resolveHeroClip/,'Character controller must map semantic actions to available clips');
+assert.match(controller,/targetMoveSpeed = hasMoveInput \? maxSpeed \* Math\.pow\(stickStrength/,'Ground speed must scale with active analog joystick pressure');
+assert.match(controller,/moving = !traversalMotion && horizontalSpeed >/,'Walk and idle states must follow measured horizontal motion');
+assert.match(controller,/Math\.atan2\(-moveX, -moveZ\)/,'Ara must face her travel direction for forward, reverse and lateral movement');
+assert.match(controller,/smoothedMoveSpeed/,'Ground movement must accelerate and decelerate smoothly');
+assert.match(controller,/syncLocomotionPlaybackRates/,'Walk/run animation playback must track actual horizontal movement speed');
+assert.match(controller,/setPlayerEnabled\?\.\(false\)/,'Ladder animation must use one authored root-movement authority with the dynamic capsule detached');
+assert.match(controller,/cameraDistance = 3.85/,'The chase camera must sit closer to the character');
+assert.match(controller,/onSprintPointerDown/,'Sprint must toggle from a real mobile pointer-down event');
+assert.match(controller,/heroCharacterPose/,'Ara parkour fallback must apply distinct procedural action poses');
+assert.match(controller,/physics\.step\(body,horizontal,step\)/,'Parkour must run through the active physics solver');
+assert.match(controller,/traversalMotion\.clips\.length/,'Multi-stage parkour must play each clip phase in sequence');
+assert.match(controller,/traversalMotion\.duration-traversalMotion\.elapsed/,'Parkour movement must use remaining time, not a fixed slow interpolation');
+assert.match(playerPhysics,/btCapsuleShape/,'The player must use a Bullet capsule collision body');
+assert.match(playerPhysics,/hasSupportContact/,'Bullet grounding must detect support contacts on raised parkour platforms');
+assert.match(playerPhysics,/setGravity/,'Bullet gravity must be controllable during scripted ladder and mantle traversal');
+assert.match(traversal,/climbToTop/,'Step-up, mantle, ledge and ladder must target the top of their obstacle');
+assert.match(controller,/kinematicClimb/,'Raised traversal must use a controlled climbing path rather than a generic jump');
+assert.match(playerPhysics,/btDiscreteDynamicsWorld/,'The player must use a Bullet dynamics world');
+assert.match(playerPhysics,/function raycast/,'The player physics world must expose filtered surface and camera raycasts');
+assert.match(loader,/getFootPositions/,'Ara must expose rigged foot positions for support diagnostics');
+assert.match(game,/surfacePatches/,'Yaba must include real asphalt, concrete, grass and wet surface probe zones');
+assert.match(audio,/playedSurfaces/,'Footstep audio must expose per-surface feedback counters');
+assert.match(vfx,/bySurface/,'Footstep VFX must expose per-surface feedback counters');
+assert.match(traversal,/Math\.min\(1\.55/,'Vault and wall-hop trajectories must remain human-scale rather than superhero-height');
+
+assert.match(playerPhysics,/ammo-bullet-capsule/,'Bullet player physics mode must be exposed');
+assert.match(playerPhysics,/setColliderEnabled/,'Parkour must be able to release and restore the active obstacle collider');
+assert.match(traversal,/physics\?\.setColliderEnabled/,'Traversal must temporarily disable its own obstacle collider');
+assert.match(game,/createPlayerPhysics/,'The live game must attempt to mount Bullet player physics');
+assert.doesNotMatch(rpg,/player-character-form|player-character-file|importPlayerCharacter/,'The bundled-character Player panel must not require an FBX upload form');
+assert.match(controller,/pc\.math\.clamp\(body\.position\[0\],-120,120\)/,'Player physics solver must stay within the retained Yabaâ€“Ikeja city width');
+assert.match(controller,/pc\.math\.clamp\(body\.position\[2\],-200,500\)/,'Player physics solver must stay within the retained Yabaâ€“Ikeja city length');
+assert.match(game,/knownBounds:\{min:\[-120,-9,-200\],max:\[120,24,500\]\}/,'Runtime diagnostics must report the compact Yabaâ€“Ikeja bounds');
+assert.match(game,/farClip:lowMemoryDevice\?520:620/,'Camera far clip must use the compact mobile city range');
+for(const feature of ['stage08-ground-west','stage08-ground-east','stage08-main-road-extension','stage08-parallel-road','stage08-cross-street','stage08-commercial-building','stage08-residential-building','stage08-pocket-park']) assert.ok(expansion.includes(feature),`Missing Stage 08A city feature: ${feature}`);
+assert.match(expansion,/parallelRoads: 2/);
+assert.match(expansion,/crossStreets: 3/);
+assert.match(expansion,/commercialBuildings: 8/);
+assert.match(expansion,/residentialBuildings: 8/);
+assert.match(game,/RenderComponentSystem/);
+assert.match(game,/CameraComponentSystem/);
+assert.match(game,/app\.on\('update'/);
+assert.match(game,/app\.on\('frameend'/);
+assert.match(game,/stats\.frameTime/);
+assert.match(game,/stats\.drawCallCount/);
+assert.match(game,/stats\.vramTotalBytes/);
+assert.match(game,/resourceHandlers\s*=\s*\[pc\.TextureHandler,\s*pc\.ContainerHandler\]/,'GLB and texture resource handlers must be registered');
+assert.doesNotMatch(game,/render-diagnostic-marker|diagnosticMarker/,'The large centre-screen debug blocker must not be present');
+assert.match(game,/createThirdPersonController/,'Stage 06 must mount the human character controller');
+assert.match(game,/createTraversalSystem\(\{playerController,physics:playerPhysics/,'The traversal system must control the real Bullet obstacle colliders');
+assert.match(traversal,/timer=0;completed\+\+/,'Traversal lock must be cleared exactly once when an action ends');
+assert.ok(smoke.includes("jumpActionClip!=='Climb up ledge'") && smoke.includes("parkour.traversal.traversalsCompleted<1"),
+ 'Browser smoke must verify that the live Jump button triggers and completes contextual parkour');
+assert.match(game,/thirdPersonCharacter:true/,'Stage 06 must expose the human player at runtime');
+for(const feature of ['player-character','move-joystick','jump-button','sprint-button','crouch-button','cameraYaw','cameraPitch','cameraMode','setCameraMode','eyeHeight','physics.step(body,desired,step)','targetMoveSpeed','smoothedCamera.lerp(smoothedCamera, desiredCamera','Ara female rig']) assert.ok(controller.includes(feature),`Missing third-person feature: ${feature}`);
+assert.doesNotMatch(controller,/player-head|left-leg-pivot|right-arm-pivot/,'The old generic male player placeholder must not render');
+assert.match(controller,/pointerdown/,'Touch movement and orbit must use pointer events');
+assert.match(controller,/vitals.getState\(\).canSprint/,'Sprint must be gated by the reusable stamina state');
+assert.match(characterVitals,/staminaDrainPerSecond/,'The vitals component must drain stamina while sprinting');
+assert.match(controller,/input.crouch/,'Crouch must affect player movement');
+assert.match(game,/onInteract:state/,'Interact control must be connected to the game');
+assert.match(game,/hudStage:7/,'Stage 07 HUD must be exposed at runtime');
+assert.match(html,/viewport-fit=cover/,'Mobile viewport must respect safe-area insets');
+assert.match(controller,/transitionHeroClip/,'Ara player locomotion must use named skeletal animation clips');
+assert.match(game,/__NAIJA_RENDER_DIAGNOSTICS__/,'Runtime must expose canvas, camera and submitted geometry diagnostics');
+assert.match(loader,/new pc\.Asset\(name, type/,'Asset loader must use PlayCanvas assets');
+assert.match(loader,/instantiateRenderEntity/,'Loaded GLB containers must be instantiated into the scene');
+assert.match(loader,/Texture load failed/,'Texture failures must be reported explicitly');
+assert.match(loader,/Loading assets/,'Asset loader must report progress');
+assert.match(loader,/loadHeroCharacter/,'Hero 01 GLB loader must be present');
+assert.match(loader,/assignAnimation/,'Hero 01 animation clips must be assigned to PlayCanvas AnimComponent');
+assert.match(controller,/transitionHeroClip/,'Hero 01 locomotion must use named skeletal animation clips');
+assert.match(controller,/Hero01_Sprint/,'Sprint must map to the rigged Hero 01 animation');
+assert.match(game,/characterId:'ara-female'/,'The live game must load Ara as the only player character');
+assert.match(game,/characterId:'hero01'/,'Hero 01 must load separately for the NPC population');
+assert.match(game,/heroCharacter,obstacles:traversalObstacles/,'Companions must initially use the already-loaded Ara rig without blocking startup on Hero 01');
+assert.match(game,/companionSystem\.setHeroCharacter\?\.\(hero01NpcCharacter\)/,'Companions may upgrade to the optional Hero 01 rig after it streams in');
+assert.match(game,/characterGeometry:heroCharacter\?'rigged-glb'/,'Runtime metadata must distinguish the real rigged character from fallback geometry');
+assert.equal(manifest.models.length,1);
+assert.equal(manifest.textures.length,1);
+assert.equal(glb.readUInt32LE(0),0x46546c67,'Diagnostic model must be a valid GLB container');
+assert.deepEqual([...texture.subarray(0,8)],[137,80,78,71,13,10,26,10],'Diagnostic texture must be a PNG');
+assert.match(css,/height:\s*min\(100dvh,\s*1600px\)\s*!important/,'Canvas must fit the viewport and cap pathological tall browser dimensions');
+assert.match(css,/max-height:\s*1600px\s*!important/,'Canvas drawing surface must not allocate an enormous framebuffer');
+assert.match(smoke,/locator\('#application'\)\.screenshot/,'Browser smoke test must inspect a real canvas screenshot');
+assert.match(smoke,/browserErrors/,'Ara browser smoke must collect and reject runtime errors');
+assert.match(smoke,/walkState/,'Ara browser smoke must exercise real mobile joystick locomotion');
+assert.match(smoke,/reverseState/,'Ara browser smoke must verify clean reverse movement');
+assert.match(smoke,/strafeState/,'Ara browser smoke must verify camera-relative lateral movement without autonomous turning');
+assert.match(smoke,/cameraRelativeState/,'Ara browser smoke must verify forward movement follows the orbit camera');
+assert.match(smoke,/releasedState/,'Ara browser smoke must verify the player settles after joystick release');
+assert.match(smoke,/runState/,'Ara browser smoke must exercise sprint state and the run animation');
+assert.ok(smoke.includes('audio.played'),'Ara browser smoke must verify that gameplay audio events are scheduled');
+for(const feature of ['cross-street','north-crosswalk','bus-stop-sign','junction-bollard','traffic-main-','traffic-cross-','signal-red','updateSignal','trafficAI:true','stage:10','thirdPersonCharacter:true']) assert.ok(game.includes(feature),`Missing Stage 04 game feature: ${feature}`);
+for(const feature of ['WasmModule.setConfig','btDiscreteDynamicsWorld','btRaycastVehicle','addWheel','set_m_suspensionStiffness','set_m_wheelsDampingCompression','applyEngineForce','setSteeringValue','setBrake','stepSimulation','CF_KINEMATIC_OBJECT']) assert.ok(physics.includes(feature),`Missing physics feature: ${feature}`);
+assert.match(vehicleSystem,/createVehiclePhysics/,'The player vehicle system must create its Bullet physics body');
+assert.match(vehicleSystem,/function enter/,'The player must be able to enter the sedan');
+assert.match(vehicleSystem,/function exit/,'The player must be able to exit the sedan');
+assert.match(vehicleSystem,/drive-accelerate/,'The mobile vehicle HUD must include an accelerator');
+assert.match(vehicleSystem,/drive-brake/,'The mobile vehicle HUD must include braking/reverse');
+assert.match(vehicleSystem,/resetCameraAfterVehicle/,'Exiting the sedan must restore the character chase camera');
+assert.match(vehicleSystem,/ara-3d-gen-car\.glb/,'The vehicle loader must accept a ready-made Ara 3D Gen GLB');
+assert.match(vehicleSystem,/naija-city-sedan\.glb/,'The vehicle loader must retain the original Blender sedan fallback');
+assert.match(physics,/controlledSpeedMps/,'Vehicle speed must be driven through the Bullet chassis dynamics');
+assert.match(physics,/setAngularVelocity/,'Vehicle steering must turn the Bullet chassis');
+assert.match(physics,/getDynamicsState/,'Vehicle physics must expose wheel/contact diagnostics');
+assert.match(game,/buildingAccessPoints:buildingRouteObstacles\.length/,'All building traversal access points must be exposed for QA');
+assert.match(game,/debugTraverseBuildingForSmoke=\(buildingId,routeType/,'Browser smoke must be able to target ladder, mantle and ledge routes');
+assert.match(traversal,/targetObstacleId/,'Traversal tests must be able to select one specific authored route');
+assert.match(controller,/resetCameraAfterVehicle/,'Player controller must restore its close chase camera after driving');
+assert.match(playerPhysics,/ignoreGroundSupport/,'Ladder ascent must not be snapped back to the ground by the normal foot probe');
+assert.match(traversal,/ladderStandOff/,'Ladder mount and fallback top-out must stay on the approach side with capsule clearance');
+assert.match(traversal,/requestedColliderIndices\.slice\(0,1\)/,'Ladder traversal must keep the building wall/roof collider active');
+assert.match(controller,/physics\?\.setPlayerEnabled\?\.\(false\)/,'Ladder traversal must detach the dynamic capsule while the authored root path controls movement');
+assert.match(controller,/physics\?\.setPlayerEnabled\?\.\(true\)/,'Ladder traversal must reattach and synchronize the physics capsule after dismount');
+assert.match(controller,/syncLocomotionPlaybackRates/,'Walk/run playback rates must follow actual movement speed');
+assert.doesNotMatch(controller,/applyClimbHandPlacement/,'The rung climb must not overwrite Blender-authored limb rotations with runtime IK');
+assert.match(loader,/Ara_DoorOpen/,'Ara must have a dedicated door-opening animation');
+assert.match(loader,/Ara_EnterVehicle/,'Ara must have a dedicated seat-entry animation');
+assert.match(loader,/Ara_ExitVehicle/,'Ara must have a dedicated exit animation');
+assert.doesNotMatch(loader,/applyFootPlacement/,'Grounded foot support must not deform the rig with per-frame two-bone IK');
+assert.match(vehicleSystem,/samplePath/,'Sedan entry must route Ara around the vehicle before reaching the driver door');
+assert.match(vehicleSystem,/Ara_EnterVehicle/,'The seat-entry phase must use the dedicated Ara animation');
+assert.match(vehicleSystem,/Ara_ExitVehicle/,'Sedan exit must restore Ara with a dedicated exit animation');
+assert.match(rpg,/data-setting=\"vehicle-controls\"/,'Vehicle controls must be selectable in Settings');
+assert.match(rpgCss,/vehicle-controls-one-handed/,'One-Handed mode must swap the arrow controls for the thumb stick');
+assert.match(vehicleSmoke,/debugProbeVehicleBodyCollisionForSmoke/,'Vehicle smoke must test real player-vs-car collision');
+assert.match(vehicleSmoke,/Ara_DoorOpen/,'Vehicle smoke must verify the visible driver-door pose');
+assert.match(vehicleSmoke,/Ara_EnterVehicle/,'Vehicle smoke must verify the visible seat-entry pose');
+assert.match(vehicleSmoke,/pulseTrace/,'Vehicle smoke must reject elevator-like constant-rate ladder movement');
+assert.match(vehicleSmoke,/footErrors/,'Vehicle smoke must verify rooftop ankle contact is neither sinking nor floating');
+assert.ok(physics.includes('assets/wasm/ammo/'),'Ammo must load from locally bundled WASM/JS files');
+assert.match(game,/createAudioSystem/,'The live game must mount its player audio system');
+assert.ok(game.includes('audioSystem.play(sound,meta.surface||\'asphalt\')'),'Player movement and action feedback must call the audio system');
+assert.match(audio,/procedural-web-audio/,'The audio layer must expose its procedural Web Audio mode');
+assert.match(audio,/played: \{ \.\.\.played \}/,'The audio layer must expose effect-event counters for QA');
+assert.match(physics,/stepSimulation\(h,4,1\/60\)/,'Bullet vehicle world must use fixed 60 Hz substeps');
+assert.match(css,/touch-action:\s*none/);
+assert.match(vite,/chunkSizeWarningLimit:\s*1650/);
+assert.ok(pkg.dependencies?.playcanvas);
+assert.ok(pkg.devDependencies?.vite);
+assert.match(game,/createStage08EBuildings/,'Stage 08E GLB architecture must be mounted in the live scene');
+assert.match(game,/createStage08GIkejaStreetLife/,'Stage 08G Ikeja street life must be mounted in the live scene');
+assert.match(game,/createStage08HIkejaPropRealism/,'Stage 08H prop realism must be mounted in the live scene');
+assert.match(game,/stage08G,stage08H,stage08I,stage08J/,'Stages 08G through 08J city metadata must be exposed at runtime');
+assert.match(game,/createStage08JYabaIkejaNetworkAndStreets/,'Stage 08J Yaba-to-Ikeja road and local streets must be mounted in the live scene');
+assert.match(game,/stage08G,stage08H,stage08I,stage08J/,'Stages 08G through 08J metadata must be exposed in the live game API');
+assert.match(game,/yabaIkejaStreetProxies/,'Stage 08J collision proxy count must be exposed');
+assert.match(stage08j,/continuous-yaba-ikeja-arterial/,'Stage 08J must create the connecting Yabaâ€“Ikeja arterial');
+assert.match(stage08j,/runtime-512\/Road008B/,'Stage 08J must use 512px runtime asphalt maps');
+assert.match(stage08j,/utility_box_01\.glb/,'Stage 08J must import the downloaded utility box asset');
+assert.match(stage08j,/WetFloorSign_01\.glb/,'Stage 08J must import the downloaded road caution sign asset');
+assert.match(game,/createStage08ICityDistrictExpansion/,'Stage 08I connected Ikeja district geometry must be mounted in the live scene');
+assert.match(game,/ikejaDistrictProxies/,'Stage 08I collision proxy counts must be exposed for QA');
+assert.match(game,/\.\.\.\(stage08I\.groundColliders\|\|\[\]\)/,'Stage 08I outer district ground support must enter the player collision world');
+assert.match(game,/streetColliders:\[.*stage08I\.collisionProxies/,'Stage 08I street/building collision proxies must enter vehicle physics');
+assert.match(game,/debugSetCameraForSmoke/,'The browser smoke mode must be able to frame the Ikeja district for a real scene screenshot.');
+assert.match(stage08i,/stage08i-ikeja-neighbourhood-static/,'Stage 08I must use its own static, bounded batch group');
+assert.match(stage08i,/collectorRoads: 2/,'Stage 08I must add two collector roads');
+assert.match(stage08i,/outerResidentialRoads: 2/,'Stage 08I must add two outer residential streets');
+assert.match(stage08i,/crossStreets: crossStreetZ\.length/,'Stage 08I must add four connecting cross streets');
+assert.match(stage08i,/connectedJunctions: crossStreetZ\.length \* 5/,'Stage 08I must count all twenty intersections in the connected road grid');
+for(const feature of ['residential-house-shell','mixed-use-commercial-shell','market-stall-counter','transport-hall-main-shell','open-storm-drain','residential-rooftop-water-tank','zebra-crossing-stripe']) assert.ok(stage08i.includes(feature),`Missing Stage 08I district feature: ${feature}`);
+for(const feature of ['stage08h-ikeja-realistic-prop-details','createPbrMaterial','normalMap','glossMap','wearDistribution','addedDetailMeshes','umbrella-canopy','chair-seat','discarded-bottle-body','generator-vent','crate-side-rail','jerrycan-cap','jerrycan-handle-grip','wheelbarrow-handle','handcart-upright-frame','blue-market-crate','yellow-poly-jerrycan','green-pos-kiosk','red-vendor-canvas','matte-silhouette-skin','ochre-shop-plaster']) assert.ok(stage08h.includes(feature),`Missing Stage 08H realism feature: ${feature}`);
+assert.match(stage08h,/textureResolutions:\{asphalt:512,otherFamilies:256\}/,'Stage 08H texture resolution contract must remain mobile-conscious');
+assert.match(stage08h,/texturedMaterialFamilies:10/,'Stage 08H must report ten textured material families, including the drain-silt variant.');
+assert.match(stage08h,/textureMapSets:mapCache\.size/,'Stage 08H must expose its actual generated map-set count.');
+assert.match(stage08h,/generatedTextureCount:mapCache\.size \* 3/,'Stage 08H must expose all generated albedo, normal and gloss textures.');
+assert.match(stage08h,/08H-matte-silhouette-skin/,'Static pedestrian silhouettes must use a matte skin material, not plastic surface maps.');
+assert.match(stage08h,/glass\.blendType = pc\.BLEND_NORMAL/,'Shop and vehicle glass must use alpha blending.');
+assert.match(stage08h,/glass\.opacity = 0\.56/,'Smoked glass must remain translucent rather than opaque.');
+assert.match(stage08h,/glass\.depthWrite = false/,'Translucent glass must not occlude objects behind it in the depth buffer.');
+assert.match(stage08h,/detail\('chair-leg',[^\n]*seatMat\)/,'Plastic chair supports must use moulded-plastic material.');
+assert.match(stage08g,/parkedVehicles:0/,'Static parked vehicles must not obstruct the widened Ikeja avenue.');
+assert.match(stage08g,/laneObstructionsRemoved/,'Stage 08G must declare the removed lane-blocking parked vehicles.');
+assert.match(stage08h,/sourceAttribution:'Original procedural maps generated in project/,'Stage 08H material provenance must be explicit');
+
+assert.match(game,/farClip:lowMemoryDevice\?520:620/,'Camera range must adapt to the compact mobile city');
+assert.match(game,/knownBounds:\{min:\[-120,-9,-200\],max:\[120,24,500\]\}/,'Runtime diagnostics must include the retained Yaba and Ikeja world bounds');
+for(const feature of ['vendorStalls:stalls.length','parkedVehicles:0','staticPedestrianSilhouettes:people.length','laneObstructionsRemoved','litterHotspots:4','openDrainageRuns:2','liveNpcAI:false','liveTrafficSimulation:false','stage:\'08G\'','district:\'Ikeja\'']) assert.ok(stage08g.includes(feature),`Missing Stage 08G feature contract: ${feature}`);
+assert.match(game,/createStage08FDeviceProfiler/,'Stage 08F device profiler must be mounted in the live scene');
+assert.match(game,/getStage08FProfile/,'Stage 08F profile snapshot must be exposed at runtime');
+assert.match(stage08fProfiler,/p95Ms/,'Stage 08F must report p95 frame time');
+assert.match(stage08fProfiler,/firstBuildingMs/,'Stage 08F must report first building load time');
+assert.match(stage08fProfiler,/devicePixelRatio/,'Stage 08F must capture device pixel ratio');
+assert.match(stage08fProfiler,/physical-device test/,'Stage 08F must clearly distinguish browser automation from physical-device profiling');
+assert.ok(stage08fSpec.includes('KTX2 / Basis delivery') && stage08fSpec.includes('Collision and physics') && stage08fSpec.includes('Mobile performance acceptance'),'Stage 08F production gates are incomplete');
+assert.equal(stage08fMaterials.targetResolution.hero,2048,'Stage 08F hero PBR maps must target 2K');
+assert.equal(stage08fMaterials.materials.length,8,'Stage 08F material authoring contract must define eight surface families');
+assert.equal(stage08fMaterials.heroPilot.sourceMaterials.length,3,'Stage 08F hero pilot must record all three real PBR source assets');
+assert.ok(stage08fMaterials.heroPilot.sourceMaterials.some(source=>source.id==='PaintedPlaster017'&&source.license==='CC0-1.0'&&source.maps.includes('Normal')&&source.maps.includes('Roughness')),'Photogrammetry painted-plaster source provenance must be complete');
+assert.match(game,/stage08E\.update/,'Stage 08E must update distance-based LOD and streaming');
+assert.match(stage08e,/COLLISION_PROXY/,'GLB collision proxies must remain separate from visual geometry');
+assert.match(stage08e,/LOD0/,'Stage 08E must select LOD0/1/2 by camera distance');
+assert.match(stage08e,/stage08e-static-buildings/,'Compatible static building geometry must use a dedicated batch group');
+assert.match(stage08e,/maxConcurrent=lowMemoryDevice\?1:2/,'Progressive building streaming must reduce concurrency on low-memory devices');
+assert.match(stage08e,/const activeLoadRadius=distanceFromSpawn<10\?35/,'Progressive building downloads should expand only as the player explores');
+assert.match(stage08e,/heroActivationRadius=lowDataMode\?48/,'The large hero building must wait until the player approaches it, especially in Data Saver mode');
+assert.match(game,/optionalStreetDownloadsSkipped:skipOptionalStreetDownloads/,'Data Saver and low-memory phones must skip optional street downloads');
+assert.match(stage08j,/if \(!skipOptionalDownloads\)/,'Optional Stage 08J PBR textures must be skipped in Data Saver and low-memory modes');
+assert.match(stage08j,/skipped: lowDataMode \? 'data-saver' : 'low-memory-device'/,'Reduced-data modes must use procedural substitutes for optional imported street props');
+assert.match(stage08e,/\.unload\(\)/,'Distant GLB containers must be evicted from memory');
+assert.ok(stage08eManifest.models.every(model=>typeof model.district==='string'),'Every building must be assigned to a spatial streaming district');
+assert.doesNotMatch(generator,/GIDI|curated-buildings|KHR_texture_basisu/,'The base Stage 08E generator must remain procedural and self-contained. The separate Stage 08F Computer Village hero owns its KTX2 pipeline.');
+assert.equal(stage08eManifest.models.length,48,'Stage 08E must produce an individual GLB placement for all 48 existing buildings');
+assert.equal(buildingFiles.length,48,'All 48 generated building GLBs must exist');
+assert.equal(stage08eManifest.models.filter(model=>model.kind==='residential').length,8);
+assert.equal(stage08eManifest.models.filter(model=>model.kind==='mixed-use').length,6);
+for(const filename of buildingFiles){
+ const asset=await readFile(new URL('../public/assets/buildings/'+filename,import.meta.url));
+ assert.equal(asset.readUInt32LE(0),0x46546c67,filename+' must be a GLB 2.0 container');
+ const report=await validator.validateBytes(new Uint8Array(asset),{uri:filename,format:'glb',writeTimestamp:false,maxIssues:100});
+ assert.equal(report.issues.numErrors,0,filename+' Khronos glTF validation errors: '+JSON.stringify(report.issues.messages));
+ const jsonLength=asset.readUInt32LE(12),json=JSON.parse(asset.subarray(20,20+jsonLength).toString('utf8').trim());
+ assert.ok(json.nodes.some(node=>node.name==='LOD0')&&json.nodes.some(node=>node.name==='LOD1')&&json.nodes.some(node=>node.name==='LOD2'),filename+' must contain three LOD levels');
+ assert.ok(json.nodes.some(node=>node.name==='COLLISION_PROXY'),filename+' must contain a separate collision proxy');
+ if(filename==='yaba-core-01.glb') {
+  assert.ok(json.images.filter(image=>image.mimeType==='image/ktx2').length===10,filename+' must embed ten KTX2 Basis textures');
+  assert.ok(json.extensionsUsed?.includes('KHR_texture_basisu'),filename+' must declare the KTX2 Basis extension');
+  assert.ok(json.images.length>=7&&json.images.length<=14,filename+' must keep the expected embedded KTX2 image set and optional PNG fallbacks');
+ } else {
+  assert.equal(json.images.length,7,filename+' must embed its PBR texture images');
+ }
+ assert.ok(json.accessors.some(accessor=>accessor.type==='VEC2'),filename+' must include UV coordinates');
+ assert.ok(json.accessors.some(accessor=>accessor.type==='VEC4'),filename+' must include tangent vectors for normal mapping');
+ assert.ok(json.bufferViews.every(view=>view.buffer===0),filename+' buffer views must reference the embedded GLB buffer');
+ assert.ok(json.meshes.every(mesh=>mesh.primitives.every(primitive=>primitive.attributes.TANGENT!==undefined)),filename+' mesh primitives must include tangent attributes');
+ assert.equal(json.materials.length,filename==='yaba-core-01.glb'?7:6,filename+' must use the expected material-family count (seven for the Stage 08F hero, six for Stage 08E buildings)');
+}
+
+const publicAssetDirectories=await readdir(new URL('../public/assets/',import.meta.url));
+assert.ok(!publicAssetDirectories.includes('gidi'),'GIDI asset folder must be absent from the shipped game.');
+assert.ok(!publicAssetDirectories.includes('curated-buildings'),'GIDI curated architecture and shared texture folder must be absent.');
+assert.equal(stage08eManifest.models.length,48,'The retained compact city must keep its 48 original Yaba/Ikeja procedural building placements.');
+assert.ok(stage08eManifest.models.every(model=>typeof model.url==='string'&&model.url.startsWith('/assets/buildings/')),
+  'All retained Stage 08E buildings must use the lightweight procedural asset folder.');
+assert.doesNotMatch(game,/GIDI|gidi|stage08K|stage08L|stage08N|gatewayPath/,
+  'The live game source must not instantiate the removed GIDI region or gateway.');
+assert.doesNotMatch(stage08fProfiler,/gidi/i,'The device profiler must not report removed GIDI streaming state.');
+
+assert.match(game,/createActorPhysics/,'Stage 09 mounts shared kinematic physics');
+assert.match(game,/createPedestrianSystem/,'Stage 09 mounts live pedestrians');
+assert.match(game,/createVfxSystem/,'Stage 09 mounts pooled VFX');
+assert.match(game,/pedestrianSystem\.update/,'Pedestrians update during gameplay');
+assert.match(game,/vfxSystem\.update/,'VFX update during gameplay');
+assert.match(game,/debugTraverseTypeForSmoke/,'Browser smoke exercises parkour types');
+assert.match(game,/getHeroRigSnapshot/,'Runtime clothing/rig diagnostics are exposed');
+assert.match(actorPhysics,/kinematic-capsule/,'Shared actor solver identifies its physics mode');
+assert.match(actorPhysics,/agentSeparations/,'Shared actor solver separates NPC agents');
+assert.match(pedestrians,/noticing-player/,'Ambient pedestrians respond to player proximity');
+assert.match(pedestrians,/routeChanges/,'Ambient pedestrians use waypoint routes');
+assert.match(vfx,/poolSize/,'VFX system uses a bounded reusable pool');
+assert.match(traversal,/Hero01_LedgePullUp/,'Parkour includes ledge traversal');
+assert.match(traversal,/Ara_LadderClimb/,'Ara has a dedicated ladder climbing animation');
+assert.match(traversal,/Hero01_WallHop/,'Parkour includes wall-hop traversal');
+assert.match(companions,/solver\.step/,'Companions use shared collision-aware physics');
+assert.match(controller,/jumpBuffer/,'Player has buffered and coyote-time jumping');
+assert.match(controller,/onEffect\?\.\("landing"/,'Player landings emit VFX');
+const gameSource=game;
+assert.match(gameSource,/buildingRouteObstacles\.length/,'Every building must receive extra parkour access points');
+assert.match(gameSource,/addBuildingRoute\(proxy,i,'ladder'/,'Each building must receive a ladder route');
+assert.match(gameSource,/addBuildingRoute\(proxy,i,'mantle'/,'Each building must receive a mantle route');
+assert.match(gameSource,/addBuildingRoute\(proxy,i,'ledge'/,'Each building must receive a ledge route');
+assert.match(gameSource,/createVehicleSystem/,'The live game must mount the enterable sedan');
+assert.match(gameSource,/vehicleSystem\?\.update/,'The live update loop must advance the vehicle');
+assert.match(gameSource,/__NAIJA_VEHICLE_ENTER__/,'The game must expose the contextual enterable vehicle action');
+
+assert.match(controller,/createCharacterVitals/,'Player health and stamina must be managed by a reusable vitals component');
+assert.match(controller,/applyDamage/,'Player damage must produce a controlled hit reaction and downed state');
+assert.match(controller,/recoverFromDowned/,'Player recovery must restore movement and vitals after the downed state');
+assert.match(controller,/createFacialAnimation/,'The player rig must use the reusable facial animation layer');
+assert.match(characterVitals,/damageInvulnerability/,'Damage must include a short invulnerability window');
+assert.match(characterVitals,/staminaRegenDelay/,'Stamina must have a recovery delay');
+assert.match(characterVitals,/state = 'downed'/,'Lethal damage must produce a downed state');
+assert.match(behaviourTree,/export function selector/,'NPC decisions must support priority selectors');
+assert.match(behaviourTree,/export function sequence/,'NPC decisions must support sequences');
+assert.match(pedestrians,/createBehaviourTree/,'Pedestrian actors must be driven by behaviour trees');
+assert.match(pedestrians,/createCharacterPerception/,'Pedestrians must have a separate perception component');
+assert.match(pedestrians,/createNavigationGrid/,'Pedestrians must route through the A-star navigation grid');
+assert.match(characterPerception,/hasClearLineOfSight/,'Vision must be blocked by occluding geometry');
+assert.match(characterPerception,/vehicleHearingDistance/,'NPC hearing must react to vehicle/noise events at a separate range');
+assert.match(navigationGrid,/findPath/,'Navigation must expose a route query');
+assert.match(navigationGrid,/expandedNodes/,'Navigation must expose its search-cost diagnostics');
+assert.match(game,/createWorldInteractionSystem/,'The game must use the reusable world interaction registry');
+assert.match(game,/yaba-street-kiosk/,'The Yaba kiosk must be registered as an interactable');
+assert.match(rpg,/setInteractionPrompt/,'The HUD must display contextual interaction prompts');
+assert.match(facialAnimation,/eyeBlinkLeft/,'Facial animation must include autonomous blinking');
+assert.match(facialAnimation,/viseme_aa/,'Facial animation must include speech visemes');
+assert.match(twoBoneIK,/solveTwoBoneIK/,'The animation toolset must include a validated two-bone IK solver');
+assert.match(loader,/applyLimbIK/,'The IK solver must be connected to Ara live leg bones');
+assert.match(controller,/applyLimbIK/,'Grounded foot placement must be able to call Ara skeleton IK');
+assert.match(controller,/makeFootPlantTarget/,'Foot placement must derive a sole target from the measured support plane');
+assert.match(loader,/surfaceNormal/,'Ara IK must orient the sole to the actual support normal');
+assert.match(playerPhysics,/startRagdoll/,'The player Bullet world must expose a ragdoll handoff');
+assert.match(characterRagdoll,/btConeTwistConstraint/,'The physical ragdoll must use constrained articulated joints');
+assert.match(characterRagdoll,/btHingeConstraint/,'The physical ragdoll must use hinged limb joints');
+assert.match(characterRagdoll,/applyRagdollPose/,'The ragdoll must synchronize body transforms back to Ara bones');
+assert.match(characterRagdoll,/interpolateCharacterPose/,'The ragdoll handoff must blend captured animation pose into physics pose');
+assert.match(characterRagdoll,/boneVelocities/,'Ragdoll bodies must inherit per-bone animation motion');
+assert.match(characterRagdoll,/getHingeAxis/,'Limb hinge axes must be derived from each animated limb bend plane');
+assert.match(loader,/createAraGetUpTracks/,'Ara must have generated front/back get-up animation tracks');
+assert.match(loader,/Ara_GetUp_FaceUp/,'Ara must include a face-up get-up animation');
+assert.match(loader,/Ara_GetUp_FaceDown/,'Ara must include a face-down get-up animation');
+assert.match(controller,/classifyRecoverySide/,'Recovery must classify face-up versus face-down posture');
+assert.match(controller,/updateRecoverySequence/,'Recovery must blend through a controlled get-up sequence before enabling input');
+assert.match(game,/debugRunUnevenTerrainIKForSmoke/,'Browser smoke must apply IK to two live uneven Bullet support surfaces');
+assert.match(characterRecovery,/estimateBoneVelocities/,'Recovery layer must estimate individual animated bone velocities');
+assert.match(characterRecoveryTest,/face-down/,'Recovery math tests must cover front/back posture detection');
+assert.match(araIKRagdollSmoke,/bodyCount === 11/,'Browser smoke must verify the live 11-body Ara ragdoll');
+assert.match(araIKRagdollSmoke,/endEffectorError/,'Browser smoke must measure live skeleton IK error');
+assert.match(araIKRagdollSmoke,/partialHandoff/,'Browser smoke must verify the transitional ragdoll blend');
+assert.match(araIKRagdollSmoke,/Ara_GetUp_/,'Browser smoke must verify a posture-specific get-up clip');
+assert.match(araIKRagdollSmoke,/terrain.pass/,'Browser smoke must pass the uneven-terrain IK acceptance gate');
+assert.match(motionMatching,/scoreMotionCandidates/,'The animation toolset must include motion-feature candidate scoring');
+assert.match(game,/debugAdvanceCharacterSimulationForSmoke/,'The character simulation must expose deterministic fixed-step testing');
+assert.match(simulationCoreTest,/createCharacterVitals/,'Character simulation core regression test must cover vitals');
+assert.match(simulationBrowserTest,/debugApplyPlayerDamageForSmoke/,'Character simulation integration test must cover damage and recovery');
+
+console.log('Character simulation checks passed: vitals, behaviour trees, vision/hearing, A-star routing, interactables, facial morphs, live Ara bone IK, blended Bullet ragdoll, posture-aware recovery and motion-feature scoring.');
+console.log('Stage 08E checks passed: 48 compact procedural building placements; eight neighbourhood homes; UVs, three LODs and separate collision proxies verified.');
+console.log('Stage 08A checks passed: expanded terrain, connected road grid, 16 neighbourhood buildings and pocket parks.');
+console.log('Stage 08B checks passed: Nigerian shopfronts, awnings, roller shutters, balconies, security grilles, AC units and rooftop water tanks.');
+console.log('Stage 08C checks passed: static kerbs, storm drains, utility poles and wires, streetlights, road signs, park furniture, bus shelters and roadside stalls with bounded static batching.');
+console.log('Stage 08D checks passed: all 48 building bodies use shared PBR surface maps, original Yaba shopfront upgrades, local business signs and residential facade treatment.');
+console.log('Stage 06 checks passed: procedural human, locomotion, sprint, jump, gait animation, orbit camera and touch controls.');
+console.log('Stage 07 checks passed: landscape HUD, safe areas, stamina feedback, crouch/interact controls and quick slots.');
+console.log('Stage 05 RPG UI checks passed: responsive HUD, menus, touch layout and settings.');
+console.log('Stage 04 environment checks passed: viewport canvas, camera direction, render witness, GLB/texture handlers, screenshot assertions and signal-controlled traffic. Legacy vehicle physics remains available but is no longer the player controller.');

@@ -73,7 +73,16 @@ Naija City is a Nigerian-inspired open-world FPS/RPG prototype built with PlayCa
 - Downloaded the modern sports-car body through Ara 3D Gen's vehicle builder and exported its separate driver-side vehicle prop with the driving/boarding/alighting action set.
 - Built a phone-oriented GLB from that export: about 3.72 MB and 47,799 triangles, retaining the named chassis, four wheel joints, steering wheel, two doors and two windows. The exported character animation payload was removed; Bullet drives the wheels and a small local door animation handles the visible entry/exit cue.
 - The game aligns all four rendered wheel joints to the Bullet raycast-wheel transforms and checks the maximum positional difference in the vehicle smoke test.
-- U€vo+^≤â¢∂◊ù public/assets/vehicles/naija-city-compact-hatchback.glb.
+- Uses an 820 kg Bullet chassis, four raycast wheel/suspension probes, building/street collision proxies and kinematic traffic colliders. This is a hybrid arcade-driving implementation: Bullet handles the rigid-body chassis, suspension probes and collisions, while speed/steering response includes game-tuned control logic. It is not a calibrated tire/engine simulation.
+- Entering disables Ara's on-foot controller/body, enables the driving HUD and chase camera, and starts engine audio. Exiting restores the player controller/body and on-foot camera. Driver door and window animate open/closed on entry and exit; a full visible character boarding/alighting animation is still future work.
+- Vehicle telemetry includes speed, estimated fuel and engine temperature. Fuel/temperature are stylized gameplay variables, not a thermochemical engine simulation or calibrated real-world vehicle model.
+- Procedural Web Audio provides engine tone, skid and impact feedback; pooled VFX add exhaust, skid and collision particles.
+- The original Blender-made Naija City sedan remains available as the load fallback. Physical Android tuning, collision damage, gear ratios, drivetrain layouts, deformable bodywork and a high-fidelity tire/suspension model remain future work.
+
+## Stage 10B ‚Äî original ATL Sandbox hatchback prototype
+- Created a second, original compact hatchback in Blender 5.2.2 LTS inside the ATL Sandbox. The exported GLB is about 1.14 MB, with 117 nodes, 109 mesh nodes and 14 materials.
+- The model has a teal metallic body, glasshouse, mirrors, lights, grille, dashboard, seats, steering wheel, four separately grouped wheels and named driver/passenger door hinge objects.
+- Its Blender generator is preserved at scripts/vehicles/generate-compact-hatchback.py, and the GLB is staged at public/assets/vehicles/naija-city-compact-hatchback.glb.
 - This hatchback is an asset prototype only; it is not yet wired as a second drivable car. It will need its own pivot alignment, wheel physics setup, entry/exit handling and mobile render optimisation before it enters gameplay.
 
 ## UX polish
@@ -189,4 +198,3 @@ Detailed stage notes: [Stage 08I Ikeja Neighbourhood Expansion](docs/STAGE-08I-I
 - Three non-combat utility items: field radio, repair kit and survey beacon, with inventory counts, quick slots, equip/stow, local visual/audio feedback and bounded drop/pickup props.
 - A lightweight four-waypoint police-patrol character route and parked patrol-car visual. The low-memory profile uses a procedural officer placeholder; the generic streamed character and car remain optional external assets and require Android/CORS checks.
 - Police patrol is ambient scenery only: no combat, enforcement or weapon-use interaction is wired.
-{≠≤÷≠∫Õ

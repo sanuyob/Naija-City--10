@@ -160,4 +160,3 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
     get sampleCount() { return sampleCount; }
   };
 }
-{­²Ö­ºÍ

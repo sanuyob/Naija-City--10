@@ -107,4 +107,223 @@ try {
    }:null
   };
  });
- if(state.game?.stage08G?.stage!=='08G'||state.game?.stage08G?.district!=='Ikeja'||state.game?.stage08G?.roadLengthMetres!==150||state.game?.stage08G?.vendorStalls!==4||state.game?.stage08G?.parkedVehicles!==0||state.game?.stag×¾·Ù¼­zÊ&ŠÛ^uÑ•Èü¹…Ñ¥Ù•½Õ¹Ð„ôôÁññÍÑ…Ñ”¹…µ”ü¹Á•‘•ÍÑÉ¥…¹MÑ…Ñ”ü¹…Ñ¥Ù•½Õ¹Ð„ôôÄÁñð(€€€ÍÑ…Ñ”¹…µ”ü¹Á•‘•ÍÑÉ¥…¹MÑ…Ñ”ü¹¡•É½9ÁŒü¹¥ÍA±…å•È„ôõ™…±Í•ñð¡ÍÑ…Ñ”¹…µ”ü¹Á•‘•ÍÑÉ¥…¹MÑ…Ñ”ü¹¡•É½9ÁŒü¹É¥•„ôõÑÉÕ”˜˜…ÍÑ…Ñ”¹…µ”ü¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¸ü¹¡•É¼ÀÅ9ÁM­¥ÁÁ•¥ñð(€€€ÍÑ…Ñ”¹…µ”ü¹Á¡åÍ¥ÍMÑ…Ñ”ü¹Á±…å•Èü¹µ½‘”„ôô…µµ¼µ‰Õ±±•Ðµ…ÁÍÕ±”ñð(€€€ÍÑ…Ñ”¹…µ”ü¹Á¡åÍ¥ÍMÑ…Ñ”ü¹Á±…å•Èü¹½±±¥‘•É½Õ¹ÐðØÁñð(€€€ÍÑ…Ñ”¹…µ”ü¹Ý½É±‘½±±¥Í¥½¸ü¹‰Õ¥±‘¥¹AÉ½á¥•Ì„ôôÐáñð(€€€ÍÑ…Ñ”¹…µ”ü¹Á¡åÍ¥ÍMÑ…Ñ”ü¹…•¹ÑÌü¹µ½‘”„ôô­¥¹•µ…Ñ¥Œµ…ÁÍÕ±”ññÍÑ…Ñ”¹…µ”ü¹Ù™áMÑ…Ñ”ü¹Á½½±M¥é”ðÄÉñð(€€€€…ÍÑ…Ñ”¹…µ”ü¹µ½‰¥±•)½åÍÑ¥­ñð…ÍÑ…Ñ”¹…µ”ü¹…µ•É…=É‰¥Ð¤ì(€Ñ¡É½Ü¹•ÜÉÉ½È É„Á±…å•È°!•É¼€ÀÄ9A°ÑÉ…Ù•ÉÍ…°°Á¡åÍ¥Ì½È½µÁ…¹¥½¸ÍåÍÑ•´Ý…Ì¹½Ðµ½Õ¹Ñ•è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡ÍÑ…Ñ”¹…µ”¤¤ì(ô(…Ý…¥ÐÁ…”¹Ý…¥Ñ½ÉÕ¹Ñ¥½¸  ¤ôùí½¹ÍÐœõÝ¥¹‘½Ü¹}}9%)}5}|íÉ•ÑÕÉ¸œü¹•Ñ!•É½9ÁMÑ…Ñ”ü¸ ¤ü¹µ½Ù•ôôõÑÉÕ”˜˜¡œ¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¸ü¹¡•É¼ÀÅ9ÁM­¥ÁÁ•‘ññœ¹•Ñ!•É½9ÁMÑ…Ñ”ü¸ ¤ü¹É¥•ôôõÑÉÕ”¤íô±¹Õ±°±íÑ¥µ•½ÕÐèÄÀÀÀÁô¤ì(½¹ÍÐ¡•É½9ÁŒõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•Ñ!•É½9ÁMÑ…Ñ”ü¸ ¤¤ì(¥˜ …¡•É½9Áññ¡•É½9ÁŒ¹¹…µ”„ôô!•É¼€ÀÄññ¡•É½9ÁŒ¹¥ÍA±…å•È„ôõ™…±Í•ññ¡•É½9ÁŒ¹…Ñ¥Ù”„ôõÑÉÕ•ñð…¡•É½9ÁŒ¹µ½Ù•‘ñð¡¡•É½9ÁŒ¹É¥•˜˜€…¡•É½9ÁŒ¹…Ñ¥Ù•±¥Àü¹¥¹±Õ‘•Ì ]…±¬œ¤¥ñð …¡•É½9ÁŒ¹É¥•˜˜…ÍÑ…Ñ”¹…µ”ü¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¸ü¹¡•É¼ÀÅ9ÁM­¥ÁÁ•¤¥Ñ¡É½Ü¹•ÜÉÉ½È !•É¼€ÀÄ¥Ì¹½ÐÉÕ¹¹¥¹œ…Ì„Ù¥Í¥‰±”¥Ñä9A½È¥ÑÌ±½Üµµ•µ½Éä™…±±‰…¬¥Ì¹½Ð…Ñ¥Ù”è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡í¡•É½9ÁŒ±½ÁÑ¥µ¥é…Ñ¥½¸éÍÑ…Ñ”¹…µ”ü¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¹ô¤¤ì(¥˜¡…Ý…¥ÐÁ…”¹±½…Ñ½È œ¡…É…Ñ•ÈµÍÝ¥Ñ µ‰ÕÑÑ½¸œ¤¹½Õ¹Ð ¤„ôôÁññ…Ý…¥ÐÁ…”¹±½…Ñ½È m‘…Ñ„µÁ±…å•Èµ…Ñ¥½¹tœ¤¹½Õ¹Ð ¤„ôôÀ¥Ñ¡É½Ü¹•ÜÉÉ½È ¡…É…Ñ•ÈµÍÝ¥Ñ ½¹ÑÉ½±ÌµÕÍÐ‰”½µÁ±•Ñ•±äÉ•µ½Ù•™É½´Ñ¡”!U…¹A±…å•Èµ•¹Ôœ¤ì(¥˜¡…Ý…¥ÐÁ…”¹±½…Ñ½È œÁ±…å•Èµ¡…É…Ñ•Èµ™¥±”œ¤¹½Õ¹Ð ¤„ôôÀ¥Ñ¡É½Ü¹•ÜÉÉ½È 	Õ¹‘±•É„Í•ÑÕÀµÕÍÐ¹½ÐÉ•ÅÕ¥É”…¸	`ÕÁ±½…½¹ÑÉ½°¸œ¤ì((€¼¼Y•É¥™ä½¹Ñ•áÑÕ…°ÑÉ…Ù•ÉÍ…°…ÐÑ¡”­¹½Ý¸ÑÕÑ½É¥…°½‰ÍÑ…±”‰•Í¥‘”Ñ¡”ÍÁ…Ý¸É½ÕÑ”¸(…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹‘•‰ÕM•ÑA±…å•É½ÉMµ½­”ü¸¡lÀ°À°Át°À¤¤ì(½¹ÍÐÑÉ…Ù•ÉÍ…±½Õ¹Ñ	•™½É”õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•ÑQÉ…Ù•ÉÍ…±MÑ…Ñ”ü¸ ¤¹ÑÉ…Ù•ÉÍ…±ÍMÑ…ÉÑ•‘ñðÀ¤ì(½¹ÍÐÑÉ…Ù•ÉÍ…±MÑ…ÉÑ•õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}QIYIM}|ü¸ ¤ôôõÑÉÕ”¤ì(¥˜ …ÑÉ…Ù•ÉÍ…±MÑ…ÉÑ•¥Ñ¡É½Ü¹•ÜÉÉ½È !•É¼€ÀÄ½Õ±¹½ÐÍÑ…ÉÐ½¹Ñ•áÑÕ…°ÍÑ•ÀµÕÀÑÉ…Ù•ÉÍ…°œ¤ì(…Ý…¥ÐÁ…”¹Ý…¥Ñ½ÉÕ¹Ñ¥½¸¡‰•™½É”ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•ÑQÉ…Ù•ÉÍ…±MÑ…Ñ”ü¸ ¤¹ÑÉ…Ù•ÉÍ…±ÍMÑ…ÉÑ•ù‰•™½É”±ÑÉ…Ù•ÉÍ…±½Õ¹Ñ	•™½É”±íÑ¥µ•½ÕÐèÌÀÀÁô¤ì(½¹ÍÐÑÉ…Ù•ÉÍ…±‘Ù…¹”õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹‘•‰Õ‘Ù…¹•QÉ…Ù•ÉÍ…±½ÉMµ½­”ü¸ Ðà¤¤ì(¥˜ …ÑÉ…Ù•ÉÍ…±‘Ù…¹•ññÑÉ…Ù•ÉÍ…±‘Ù…¹”¹Á±…å•È¹ÑÉ…Ù•ÉÍ¥¹ññÑÉ…Ù•ÉÍ…±‘Ù…¹”¹ÑÉ…Ù•ÉÍ…°¹ÑÉ…Ù•ÉÍ…±ÍMÑ…ÉÑ•„ôõÑÉ…Ù•ÉÍ…±½Õ¹Ñ	•™½É”¬Ä¥Ñ¡É½Ü¹•ÜÉÉ½È QÉ…Ù•ÉÍ…°‘¥¹½Ð½µÁ±•Ñ”¥ÑÌ‰½Õ¹‘•µ½Ù•µ•¹ÐÍ•ÅÕ•¹”è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡í‰•™½É”éÑÉ…Ù•ÉÍ…±½Õ¹Ñ	•™½É”±É•ÍÕ±ÐéÑÉ…Ù•ÉÍ…±‘Ù…¹•ô¤¤ì((€¼¼Y…±¥‘…Ñ”Ñ¡”…ÑÕ…°‰Õ¹‘±•É„Á±…å•ÈÉ¥œì!•É¼€ÀÄÉ•µ…¥¹Ì„Í•Á…É…Ñ”9A¸(½¹ÍÐ¥¹¥Ñ¥…±A±…å•ÉI¥œõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•Ñ!•É½I¥M¹…ÁÍ¡½Ðü¸ ¤¤ì(¥˜¡¥¹¥Ñ¥…±A±…å•ÉI¥œü¹Í­¥¹¹•‘5•Í¡½Õ¹Ð„ôôÈÕññ¥¹¥Ñ¥…±A±…å•ÉI¥œü¹‰½¹•½Õ¹Ð„ôôÜÀ¤ì(€Ñ¡É½Ü¹•ÜÉÉ½È 	Õ¹‘±•É„Á±…å•ÈÉ¥œ¥Ì¹½Ð…ÑÑ…¡•Ñ¼Ñ¡”Á±…å•È½¹ÑÉ½±±•Èè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡¥¹¥Ñ¥…±A±…å•ÉI¥œ¤¤ì(ô(€¼¼½µÁ±•Ñ”…±°•¥¡Ð½¹Ñ•áÑÕ…°Á…É­½ÕÈ…Ñ¥½¹ÌÑ¡É½Õ Ñ¡”±¥Ù”Á±…å•È½¹ÑÉ½±±•È¸(½¹ÍÐÁ…É­½ÕÉI•Á½ÉÑÌõmtì(™½È¡½¹ÍÐÑåÁ”½˜lÍÑ•Àœ°±½ÜµÙ…Õ±Ðœ°¡¥ µÙ…Õ±Ðœ°µ…¹Ñ±”œ°±•‘”œ°±…‘‘•Èœ°Ý…±°µÉÕ¸œ°‘É½Àt¥ì(€½¹ÍÐÉ•ÍÕ±Ðõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”¡Ù…±Õ”ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹‘•‰ÕQÉ…Ù•ÉÍ•QåÁ•½ÉMµ½­”ü¸¡Ù…±Õ”¤±ÑåÁ”¤ì(€¥˜ …É•ÍÕ±Ðü¹ÍÑ…ÉÑ•‘ñð…É•ÍÕ±Ðü¹½µÁ±•Ñ•‘ññÉ•ÍÕ±Ðü¹ÑÉ…Ù•ÉÍ…°ü¹±…ÍÑQÉ…Ù•ÉÍ…°ü¹ÑåÁ”„ôõÑåÁ•ññÉ•ÍÕ±Ð¹‘¥ÍÑ…¹•QÉ…Ù•±±•ðÀ¸ÜÔ¥Ñ¡É½Ü¹•ÜÉÉ½È A…É­½ÕÈ‘¥¹½Ð…ÉÉäÑ¡”Á±…å•È…É½ÍÌ€œ­ÑåÁ”¬œè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ð¤¤ì(€€¼¼	Õ±±•ÐÌ…ÁÍÕ±”‰…Í”…¸Í•ÑÑ±”„™•Ü•¹Ñ¥µ•ÑÉ•Ì‰•±½ÜÑ¡”…ÕÑ¡½É•(€€¼¼±…‘‘•ÈÑ½ÀÍÕÉ™…”ìÉ•Ñ…¥¸„€ÄÔ´½¹Ñ…ÐÑ½±•É…¹”™½ÈÑ¡¥ÌÉ½ÕÑ”¸(€½¹ÍÐ•áÁ•Ñ•‘±•Ù…Ñ¥½¸õíÍÑ•Àè¸ÌÔ±µ…¹Ñ±”èÄ¸Ä±±•‘”èÄ¸ä±±…‘‘•ÈèÈ¸ØÕõmÑåÁ•uñðÀì(€¥˜¡É•ÍÕ±Ð¹Ù•ÉÑ¥…±QÉ…Ù•°ñ•áÁ•Ñ•‘±•Ù…Ñ¥½¸¥Ñ¡É½Ü¹•ÜÉÉ½È¡ÑåÁ”¬œ‘¥¹½ÐÉ•… ¥ÑÌ¥¹Ñ•¹‘•¡•¥¡Ðè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ð¤¤ì(€Á…É­½ÕÉI•Á½ÉÑÌ¹ÁÕÍ ¡íÑåÁ”±±¥ÀéÉ•ÍÕ±Ð¹ÑÉ…Ù•ÉÍ…°¹±…ÍÑQÉ…Ù•ÉÍ…°¹±¥À±‘¥ÍÑ…¹•QÉ…Ù•±±•éÉ•ÍÕ±Ð¹‘¥ÍÑ…¹•QÉ…Ù•±±•±Ù•ÉÑ¥…±QÉ…Ù•°éÉ•ÍÕ±Ð¹Ù•ÉÑ¥…±QÉ…Ù•±ô¤ì(ô(€¼¼Y•É¥™äÑ¡”Á±…å•È±•…Ù•ÌÑ¡”É½Õ¹°™…±±ÌÕ¹‘•ÈÉ…Ù¥Ñä…¹±…¹‘ÌÝ¥Ñ •™™•ÑÌ¸(½¹ÍÐ©ÕµÁA¡åÍ¥Ìõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹‘•‰Õ)ÕµÁA¡åÍ¥Í½ÉMµ½­”ü¸ ¤¤ì(¥˜ …©ÕµÁA¡åÍ¥Ìü¹…¥É‰½É¹•ññ©ÕµÁA¡åÍ¥Ì¹…¥É‰½É¹”¹Á½Í¥Ñ¥½¹lÅtð¸ÈÕññ©ÕµÁA¡åÍ¥Ì¹…¥É‰½É¹”¹Ù•ÉÑ¥…±Y•±½¥ÑäðôÁñð…©ÕµÁA¡åÍ¥Ì¹±…¹‘•¹É½Õ¹‘•‘ññ©ÕµÁA¡åÍ¥Ì¹±…¹‘•¹Á½Í¥Ñ¥½¹lÅt„ôôÁññ©ÕµÁA¡åÍ¥Ì¹Ù™à¹•µ¥ÑÑ•ðÌ¥Ñ¡É½Ü¹•ÜÉÉ½È A±…å•È©ÕµÀ½±…¹‘¥¹œÁ¡åÍ¥Ì½ÈY`™…¥±•è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡©ÕµÁA¡åÍ¥Ì¤¤ì(€¼¼Y•É¥™äÑ•¸™Õ±°9AÌ…É”É•¹‘•É•°µ½Ù”½¸Ñ¡•¥ÈÉ½ÕÑ•Ì…¹Í¡…É”…Ñ½ÈÁ¡åÍ¥Ì¸(½¹ÍÐÉ½Ýõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•ÑA•‘•ÍÑÉ¥…¹MÑ…Ñ”ü¸ ¤¤ì(½¹ÍÐ…Ñ½ÉA¡åÍ¥Ìõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•ÑA¡åÍ¥ÍMÑ…Ñ”ü¸ ¤¤ì(¥˜¡É½Ýü¹…Ñ¥Ù•½Õ¹Ð„ôôÄÁññÉ½Ýü¹Ù¥Í¥‰±•½Õ¹Ð„ôôÄÁññÉ½Ýü¹É•¹‘•É5•Í¡%¹ÍÑ…¹•ÌðØÁññÉ½Ýü¹µ½Ù•ðÅññ…Ñ½ÉA¡åÍ¥Ìü¹…•¹ÑÌü¹ÍÑ•ÁÌðÄ¥Ñ¡É½Ü¹•ÜÉÉ½È µ‰¥•¹Ð9AÁ½ÁÕ±…Ñ¥½¸½Á¡åÍ¥Ìµ¥ÍÍ¥¹œ½È¥‘±”è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡íÉ½Ý±…Ñ½ÉA¡åÍ¥Ì±¥¹¥Ñ¥…±A±…å•ÉI¥œ±Á…É­½ÕÉI•Á½ÉÑÍô¤¤ì(½¹Í½±”¹±½œ A±…å•È	Õ±±•ÐÁ¡åÍ¥Ìèœ±)M=8¹ÍÑÉ¥¹¥™ä¡…Ñ½ÉA¡åÍ¥Ìü¹Á±…å•È¤¤ì(½¹Í½±”¹±½œ A…É­½ÕÈÑÉ…Ù•ÉÍ…°Eèœ±)M=8¹ÍÑÉ¥¹¥™ä¡Á…É­½ÕÉI•Á½ÉÑÌ¤¤ì(€¼¼Y•É¥™äÉ•µ½Ñ”µ•¹ÑÉä½µÁ…¹¥½¹Ì°Ñ¡”ÑÝ¼µÁ•ÉÍ½¸…À…¹…ÁÁÉ½Ù•ÍÅÕ…½µµ…¹‘Ì¸(½¹ÍÐÑ•¡MÕµµ½¹•õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|ü¸ Ñ• œ°MÕµµ½¸œ¤ôôõÑÉÕ”¤ì(½¹ÍÐ‘É¥Ù•ÉMÕµµ½¹•õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|ü¸ ‘É¥Ù•Èœ°MÕµµ½¸œ¤ôôõÑÉÕ”¤ì(¥˜ …Ñ•¡MÕµµ½¹•‘ñð…‘É¥Ù•ÉMÕµµ½¹•¥Ñ¡É½Ü¹•ÜÉÉ½È QÝ¼½µÁ…¹¥½¸É½ÍÑ•ÈÍ±½ÑÌ½Õ±¹½Ð‰”ÍÕµµ½¹•œ¤ì(½¹ÍÐÉ½ÍÑ•Èõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•Ñ½µÁ…¹¥½¹MÑ…Ñ”ü¸ ¤¤ì(¥˜¡É½ÍÑ•Èü¹…Ñ¥Ù•½Õ¹Ð„ôôÉññÉ½ÍÑ•Èü¹µ…áÑ¥Ù”„ôôÉññÉ½ÍÑ•Èü¹½µµ…¹‘Ìü¹±•¹Ñ „ôôÜ¥Ñ¡É½Ü¹•ÜÉÉ½È ½µÁ…¹¥½¸…À½½µµ…¹Í•Ð™…¥±•è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡É½ÍÑ•È¤¤ì(¥˜¡É½ÍÑ•È¹É½ÍÑ•È¹Í½µ”¡…Ñ½Èôù…Ñ½È¹…Ñ¥Ù”˜™…Ñ½È¹ÍÁ…Ý¹¥ÍÑ…¹”ðÔ¤¥Ñ¡É½Ü¹•ÜÉÉ½È ½µÁ…¹¥½¹ÌµÕÍÐ•¹Ñ•È™É½´‘¥ÍÑÉ¥Ð±½…Ñ¥½¹Ì°¹½ÐÍÁ…Ý¸‰•Í¥‘”Ñ¡”Á±…å•Èœ¤ì(½¹ÍÐ¡½±õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|ü¸ Ñ• œ°!½±œ¤ôôõÑÉÕ”¤ì(½¹ÍÐÉ…‘¥¼õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|ü¸ ‘É¥Ù•Èœ°I…‘¥½…±°œ¤ôôõÑÉÕ”¤ì(¥˜ …¡½±‘ñð…É…‘¥¼¥Ñ¡É½Ü¹•ÜÉÉ½È ½µÁ…¹¥½¸!½±½ÈI…‘¥½…±°½µµ…¹‘¥¹½ÐÉ•¥ÍÑ•Èœ¤ì(½¹ÍÐ‘¥Íµ¥ÍÍ•õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|ü¸ Ñ• œ°¥Íµ¥ÍÌœ¤ôôõÑÉÕ”¤ì(¥˜ …‘¥Íµ¥ÍÍ•¥Ñ¡É½Ü¹•ÜÉÉ½È ½µÁ…¹¥½¸¥Íµ¥ÍÌ½µµ…¹™…¥±•œ¤ì(…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|ü¸ ‘É¥Ù•Èœ°¥Íµ¥ÍÌœ¤¤ì((½¹Í½±”¹±½œ É„EÁ…ÍÍ•è‰Õ¹‘±••µ…±”á•ÕÑ¥Ù”É¥œ¥ÌÑ¡”Á±…å…‰±”¡…É…Ñ•È°…¹!•É¼€ÀÄÉ•µ…¥¹Ì…¸¥¹‘•Á•¹‘•¹Ñ±äµ½Ù¥¹œ9A¸œ¤ì((¥˜¡ÍÑ…Ñ”¹…µ”ü¹…ÍÍ•ÑÌü¹µ½‘•±Í1½…‘•„ôôÅññÍÑ…Ñ”¹…µ”ü¹…ÍÍ•ÑÌü¹Ñ•áÑÕÉ•Í1½…‘•„ôôÅññÍÑ…Ñ”¹…µ”ü¹…ÍÍ•ÑÌü¹™…¥±ÕÉ•Ìü¹±•¹Ñ ¥Ñ¡É½Ü¹•ÜÉÉ½È 1½Ñ•áÑÕÉ”Á¥Á•±¥¹”‘¥¹½Ð½µÁ±•Ñ”è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡ÍÑ…Ñ”¹…µ”ü¹…ÍÍ•ÑÌ¤¤ì(½¹ÍÐÍÉ••¹Í¡½Ðõ…Ý…¥ÐÁ…”¹±½…Ñ½È œ…ÁÁ±¥…Ñ¥½¸œ¤¹ÍÉ••¹Í¡½Ð¡í…¹¥µ…Ñ¥½¹Ìè‘¥Í…‰±•ô¤ì(½¹ÍÐÙ¥ÍÕ…°õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”¡…Íå¹Œ•¹½‘•ôùì(€€½¹ÍÐ¥µ…”õ¹•Ü%µ…” ¤í¥µ…”¹ÍÉŒô‘…Ñ„é¥µ…”½Á¹œí‰…Í”ØÐ°œ­•¹½‘•í…Ý…¥Ð¥µ…”¹‘•½‘” ¤ì(€€½¹ÍÐ…¹Ù…Ìõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð …¹Ù…Ìœ¤í…¹Ù…Ì¹Ý¥‘Ñ õ¥µ…”¹¹…ÑÕÉ…±]¥‘Ñ í…¹Ù…Ì¹¡•¥¡Ðõ¥µ…”¹¹…ÑÕÉ…±!•¥¡Ðì(€€½¹ÍÐ½¹Ñ•áÐõ…¹Ù…Ì¹•Ñ½¹Ñ•áÐ œÉœ±íÝ¥±±I•…‘É•ÅÕ•¹Ñ±äéÑÉÕ•ô¤í½¹Ñ•áÐ¹‘É…Ý%µ…”¡¥µ…”°À°À¤ì(€€½¹ÍÐÁ¥á•±Ìõ½¹Ñ•áÐ¹•Ñ%µ…•…Ñ„ À°À±…¹Ù…Ì¹Ý¥‘Ñ ±…¹Ù…Ì¹¡•¥¡Ð¤¹‘…Ñ„ì(€€½¹ÍÐ½±½ÉÌõ¹•ÜM•Ð ¤í±•Ðµ…•¹Ñ„ôÀ±¹½¹	±Õ”ôÀì(€€™½È¡±•Ð¤ôÀí¤ñÁ¥á•±Ì¹±•¹Ñ í¤¬ôÐ¥í½¹ÍÐÈõÁ¥á•±Ím¥t±œõÁ¥á•±Ím¤¬Åt±ˆõÁ¥á•±Ím¤¬Ét±„õÁ¥á•±Ím¤¬Ítí¥˜ …„¥½¹Ñ¥¹Õ”í½±½ÉÌ¹…‘ ¡ÈøøÌ¤¬œ°œ¬¡œøøÌ¤¬œ°œ¬¡ˆøøÌ¤¤í¥˜¡ÈøÄÀÀ˜™ˆøÄÀÀ˜™œðÄÀÀ¥µ…•¹Ñ„¬¬í¥˜ „¡ˆùÈ¨Ä¸ÀÔ˜™ˆùœ¨Ä¸ÀÈ¤¥¹½¹	±Õ”¬¬íô(€€É•ÑÕÉ¸íÝ¥‘Ñ é…¹Ù…Ì¹Ý¥‘Ñ ±¡•¥¡Ðé…¹Ù…Ì¹¡•¥¡Ð±Õ¹¥ÅÕ•½±½É	Õ­•ÑÌé½±½ÉÌ¹Í¥é”±µ…•¹Ñ…A¥á•±Ìéµ…•¹Ñ„±¹½¹	±Õ•A¥á•±Ìé¹½¹	±Õ•ôì(ô±ÍÉ••¹Í¡½Ð¹Ñ½MÑÉ¥¹œ ‰…Í”ØÐœ¤¤ì(¥˜¡Ù¥ÍÕ…°¹Ý¥‘Ñ ðàÀÁññÙ¥ÍÕ…°¹¡•¥¡ÐðÌØÁññÙ¥ÍÕ…°¹Õ¹¥ÅÕ•½±½É	Õ­•ÑÌðÄÉññÙ¥ÍÕ…°¹¹½¹	±Õ•A¥á•±ÌðÄÀÀÁññÙ¥ÍÕ…°¹µ…•¹Ñ…A¥á•±ÌøÈÀ¥Ñ¡É½Ü¹•ÜÉÉ½È …¹Ù…ÌÍÉ••¹Í¡½ÐÙ¥ÍÕ…°…ÍÍ•ÉÑ¥½¸™…¥±•½ÈÑ¡”½±µ…•¹Ñ„‰±½­•ÈÉ•ÑÕÉ¹•è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡Ù¥ÍÕ…°¤¤ì(¥˜¡…Ý…¥ÐÁ…”¹±½…Ñ½È œÁ…É­½ÕÈµ‰ÕÑÑ½¸œ¤¹½Õ¹Ð ¤„ôôÀ¥Ñ¡É½Ü¹•ÜÉÉ½È ÕÁ±¥…Ñ”ÍÑ…¹‘…±½¹”Á…É­½ÕÈ‰ÕÑÑ½¸µÕÍÐ‰”É•µ½Ù•ì)ÕµÀ½Ý¹Ì½¹Ñ•áÑÕ…°ÑÉ…Ù•ÉÍ…°¸œ¤ì(¥˜¡…Ý…¥ÐÁ…”¹±½…Ñ½È œ¹½‰©•Ñ¥Ù”œ¤¹½Õ¹Ð ¤„ôôÀ¥Ñ¡É½Ü¹•ÜÉÉ½È •¹ÑÉ”µÍÉ••¸½‰©•Ñ¥Ù”½Á½ÁÕ±…Ñ¥½¸½Ù•É±…äµÕÍÐ‰”…‰Í•¹Ð‘ÕÉ¥¹œ…µ•Á±…ä¸œ¤ì(¥˜ „¡…Ý…¥ÐÁ…”¹±½…Ñ½È œ¹µ¥¹¥µ…Àœ¤¹¥ÍY¥Í¥‰±” ¤¥ñð„¡…Ý…¥ÐÁ…”¹±½…Ñ½È œ¹ÍÑ…ÑÕÌœ¤¹¥ÍY¥Í¥‰±” ¤¥ñð„¡…Ý…¥ÐÁ…”¹±½…Ñ½È œ¹ÅÕ¥¬µÍ±½ÑÌœ¤¹¥ÍY¥Í¥‰±” ¤¤¥Ñ¡É½Ü¹•ÜÉÉ½È ½É”±…¹‘Í…Á”IA!Ué½¹•Ì…É”¹½ÐÙ¥Í¥‰±”œ¤ì(½¹ÍÐÍÑ…ÉÑÕÀõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôø¡íÁÉ•±½…éÝ¥¹‘½Ü¹}}9%)}5}|ü¹ÍÑ…ÉÑÕÁAÉ•±½…±±½…‘¥¹!¥‘‘•¸é‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È œ¥Ñäµ±½…‘¥¹œœ¤ü¹¡¥‘‘•¹ô¤¤ì(½¹ÍÐÍµ…±±MÑ…ÉÑÕÀõ	½½±•…¸¡ÍÑ…Ñ”¹…µ”ü¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¸ü¹±½Ý5•µ½Éå•Ù¥•ññÍÑ…Ñ”¹…µ”ü¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¸ü¹±½Ý…Ñ…5½‘”¤ì(½¹ÍÐ•áÁ•Ñ•‘MÑ…ÉÑÕÁ	Õ¥±‘¥¹ÌõÍµ…±±MÑ…ÉÑÕÀüàèÄÐ±•áÁ•Ñ•‘MÑ…ÉÑÕÁ	åÑ•ÌõÍµ…±±MÑ…ÉÑÕÀüÄ¸ÔèÈ¸Ôì(¥˜¡ÍÑ…ÉÑÕÀ¹ÁÉ•±½…ü¹Ñ½Ñ…°„ôõ•áÁ•Ñ•‘MÑ…ÉÑÕÁ	Õ¥±‘¥¹ÍññÍÑ…ÉÑÕÀ¹ÁÉ•±½…ü¹±½…‘•„ôõ•áÁ•Ñ•‘MÑ…ÉÑÕÁ	Õ¥±‘¥¹ÍññÍÑ…ÉÑÕÀ¹ÁÉ•±½…ü¹‰åÑ•Ìù•áÁ•Ñ•‘MÑ…ÉÑÕÁ	åÑ•Ì¨ÄÀÈÐ¨ÄÀÈÑññÍÑ…ÉÑÕÀ¹ÁÉ•±½…ü¹™…¥±•„ôôÁñð…ÍÑ…ÉÑÕÀ¹ÁÉ•±½…ü¹É•…‘åñð…ÍÑ…ÉÑÕÀ¹±½…‘¥¹!¥‘‘•¸¥Ñ¡É½Ü¹•ÜÉÉ½È 9•…É‰äe…‰„ÍÑ…ÉÑÕÀÁÉ•±½…•á••‘•¥ÑÌ…‘…ÁÑ¥Ù”€œ­•áÁ•Ñ•‘MÑ…ÉÑÕÁ	Õ¥±‘¥¹Ì¬œµ‰Õ¥±‘¥¹œ¼œ­•áÁ•Ñ•‘MÑ…ÉÑÕÁ	åÑ•Ì¬œ5¥‰Õ‘•Ð½È‘¥¹½Ð™¥¹¥Í è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡ÍÑ…ÉÑÕÀ¤¤ì(½¹ÍÐ¡Õ‘	½á•Ìõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôù=‰©•Ð¹™É½µ¹ÑÉ¥•Ì¡lœµ½Ù”µ©½åÍÑ¥¬œ°œ¹…Ñ¥½¹Ìœ°œ¹ÅÕ¥¬µÍ±½ÑÌœ°œ¹¹…Øt¹µ…À¡Í•°ôùí½¹ÍÐ•°õ‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È¡Í•°¤±Èõ•°¹•Ñ	½Õ¹‘¥¹±¥•¹ÑI•Ð ¤íÉ•ÑÕÉ¸mÍ•°±íàéÈ¹à±äéÈ¹ä±ÜéÈ¹Ý¥‘Ñ ± éÈ¹¡•¥¡Ð±‘¥ÍÁ±…äé•Ñ½µÁÕÑ•‘MÑå±”¡•°¤¹‘¥ÍÁ±…åõuô¤¤¤ì(¥˜¡¡Õ‘	½á•Ílœµ½Ù”µ©½åÍÑ¥¬t¹àøÄÐÁññ¡Õ‘	½á•Ílœ¹…Ñ¥½¹Ìt¹àðØäÑññ¡Õ‘	½á•Ílœ¹¹…Øt¹‘¥ÍÁ±…ä„ôô¹½¹”œ¥Ñ¡É½Ü¹•ÜÉÉ½È !U½¹ÑÉ½±Ì…É”¹½ÐÉ½ÕÁ•¥¹Ñ¼±•…¸±•™Ð½É¥¡ÐÑ¡Õµˆé½¹•Ìè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡¡Õ‘	½á•Ì¤¤ì(¥˜¡…Ý…¥ÐÁ…”¹±½…Ñ½È œ¹¹…Øœ¤¹¥ÍY¥Í¥‰±” ¤¥Ñ¡É½Ü¹•ÜÉÉ½È 1•…ä‰½ÑÑ½´¹…Ù¥…Ñ¥½¸Í¡½Õ±‰”É•µ½Ù•™É½´…Ñ¥Ù”…µ•Á±…ä!Uœ¤ì(¥˜¡…Ý…¥ÐÁ…”¹±½…Ñ½È œÉÁœµÁ…¹•°œ¤¹¥ÍY¥Í¥‰±” ¤¥Ñ¡É½Ü¹•ÜÉÉ½È ¡…É…Ñ•ÈÁÉ½™¥±”Á…¹•°Í¡½Õ±¹½Ð½Ù•È…µ•Á±…ä½¸ÍÑ…ÉÑÕÀ¸œ¤ì(…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôù‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È œ…ÍÍ•ÑÌµÑ½±”œ¤¹±¥¬ ¤¤ì(…Ý…¥ÐÁ…”¹±½…Ñ½È œ…ÍÍ•ÑÌµÁ…¹•±m½Á•¹tœ¤¹Ý…¥Ñ½È¡íÍÑ…Ñ”èÙ¥Í¥‰±”ô¤ì(½¹ÍÐ¥¹Ù•¹Ñ½Éäõ…Ý…¥ÐÁ…”¹±½…Ñ½È œ…ÍÍ•ÑÌµÁ…¹•°œ¤¹Ñ•áÑ½¹Ñ•¹Ð ¤ì(¥˜ …¥¹Ù•¹Ñ½Éäü¹¥¹±Õ‘•Ì 1½ÜµÁ½±äÍ¡½À‰Õ¥±‘¥¹œ‰±½­Ìœ¥ñð…¥¹Ù•¹Ñ½Éä¹¥¹±Õ‘•Ì MQ€Àá9%I%8	U%1%9Q%0œ¥ñð…¥¹Ù•¹Ñ½Éä¹¥¹±Õ‘•Ì MQ€ÀáM5$µA!=Q=I0	U%1%9I1%M4œ¥ñð…¥¹Ù•¹Ñ½Éä¹¥¹±Õ‘•Ì MÑ¥±°¹½Ð¥¸Ñ¡¥Ì‰Õ¥±œ¤¥Ñ¡É½Ü¹•ÜÉÉ½È ÍÍ•Ð¥¹Ù•¹Ñ½Éä½¹Ñ•¹ÑÌ…É”¥¹½µÁ±•Ñ”œ¤ì(…Ý…¥ÐÁ…”¹±½…Ñ½È œ…ÍÍ•ÑÌµ±½Í”œ¤¹±¥¬ ¤ì(…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôù‘½Õµ•¹Ð¹ÅÕ•ÉåM•±•Ñ½È œÁ•É˜µÑ½±”œ¤¹±¥¬ ¤¤í…Ý…¥ÐÁ…”¹±½…Ñ½È œÁ•É˜µÁ…¹•°œ¤¹Ý…¥Ñ½È¡íÍÑ…Ñ”èÙ¥Í¥‰±”ô¤í…Ý…¥ÐÁ…”¹Ý…¥Ñ½ÉQ¥µ•½ÕÐ ÄÈÀÀ¤ì(¥˜ „½AL¼¹Ñ•ÍÐ ¡…Ý…¥ÐÁ…”¹±½…Ñ½È œÁ•É˜µÁ…¹•°œ¤¹Ñ•áÑ½¹Ñ•¹Ð ¤¤üüœœ¤¥Ñ¡É½Ü¹•ÜÉÉ½È A•É™½Éµ…¹”Ñ•±•µ•ÑÉä‘¥¹½ÐÕÁ‘…Ñ”œ¤ì(½¹ÍÐÁÉ½™¥±•™Ñ•É]…ÉµÕÀõ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùÝ¥¹‘½Ü¹}}9%)}5}|ü¹•ÑMÑ…”ÀáAÉ½™¥±”ü¸ ¤¤ì(¥˜ …ÁÉ½™¥±•™Ñ•É]…ÉµÕÁññÁÉ½™¥±•™Ñ•É]…ÉµÕÀ¹ÍÑ…”„ôôœÀáññÁÉ½™¥±•™Ñ•É]…ÉµÕÀ¹Í…µÁ±•½Õ¹ÐðÅñð…ÁÉ½™¥±•™Ñ•É]…ÉµÕÀ¹™É…µ•ñð„ ÀäÕ5Ìœ¥¸ÁÉ½™¥±•™Ñ•É]…ÉµÕÀ¹™É…µ”¤¥Ñ¡É½Ü¹•ÜÉÉ½È MÑ…”€Àá™É…µ”µÑ¥µ”Í…µÁ±¥¹œ‘¥¹½ÐÍÑ…ÉÐè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡ÁÉ½™¥±•™Ñ•É]…ÉµÕÀ¤¤ì(¥˜ „¡…Ý…¥ÐÁ…”¹±½…Ñ½È œÁÉ½™¥±”µ•áÁ½ÉÐœ¤¹¥ÍY¥Í¥‰±” ¤¤¥Ñ¡É½Ü¹•ÜÉÉ½È A¡åÍ¥…°µ‘•Ù¥”ÁÉ½™¥±”•áÁ½ÉÐ½¹ÑÉ½°¥Ì¹½ÐÙ¥Í¥‰±”Ý¡•¸Ñ¡”Á•É™½Éµ…¹”Á…¹•°¥Ì½Á•¸œ¤ì(…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùì(€Ý¥¹‘½Ü¹}}9%)}IA}AUM}|õÑÉÕ”ì(€Ý¥¹‘½Ü¹}}9%)}5}|¹‘•‰ÕM•Ñ…µ•É…½ÉMµ½­”¡lÀ°ÄÀ°ÌàÉt±lÀ°Ä¸Ô°ÌÄÁt¤ì(ô¤ì(…Ý…¥ÐÁ…”¹Ý…¥Ñ½ÉQ¥µ•½ÕÐ ÄØÀ¤ì(½¹ÍÐ¥­•©…MÉ••¹Í¡½Ðõ…Ý…¥ÐÁ…”¹±½…Ñ½È œ…ÁÁ±¥…Ñ¥½¸œ¤¹ÍÉ••¹Í¡½Ð¡í…¹¥µ…Ñ¥½¹Ìè‘¥Í…‰±•ô¤ì(…Ý…¥ÐÝÉ¥Ñ•¥±”¡¹•ÜUI0 ¥­•©„µ‘…å±¥¡Ðµ™Õ±°¹Á¹œœ±É•Ù¥•Ý¥È¤±¥­•©…MÉ••¹Í¡½Ð¤ì(½¹ÍÐ¥­•©…AÉ•Ù¥•Üõµ…­•I•Ù¥•ÝAÉ•Ù¥•Ü¡¥­•©…MÉ••¹Í¡½Ð¤ì(…Ý…¥ÐÝÉ¥Ñ•¥±”¡¹•ÜUI0 ¥­•©„µ‘…å±¥¡ÐµÁÉ•Ù¥•Ü¹Á¹œœ±É•Ù¥•Ý¥È¤±¥­•©…AÉ•Ù¥•Ü¤ì(½¹Í½±”¹±½œ %-)}e1%!Q}AIY%]}	MØÑ}	%8œ¤ì(½¹Í½±”¹±½œ¡¥­•©…AÉ•Ù¥•Ü¹Ñ½MÑÉ¥¹œ ‰…Í”ØÐœ¤¤ì(½¹Í½±”¹±½œ %-)}e1%!Q}AIY%]}	MØÑ}9œ¤ì(½¹ÍÐ¥­•©…Y¥ÍÕ…°õ…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”¡…Íå¹Œ•¹½‘•ôùì(€½¹ÍÐ¥µ…”õ¹•Ü%µ…” ¤í¥µ…”¹ÍÉŒô‘…Ñ„é¥µ…”½Á¹œí‰…Í”ØÐ°œ­•¹½‘•í…Ý…¥Ð¥µ…”¹‘•½‘” ¤ì(€½¹ÍÐ…¹Ù…Ìõ‘½Õµ•¹Ð¹É•…Ñ•±•µ•¹Ð …¹Ù…Ìœ¤í…¹Ù…Ì¹Ý¥‘Ñ õ¥µ…”¹¹…ÑÕÉ…±]¥‘Ñ í…¹Ù…Ì¹¡•¥¡Ðõ¥µ…”¹¹…ÑÕÉ…±!•¥¡Ðì(€½¹ÍÐ½¹Ñ•áÐõ…¹Ù…Ì¹•Ñ½¹Ñ•áÐ œÉœ±íÝ¥±±I•…‘É•ÅÕ•¹Ñ±äéÑÉÕ•ô¤í½¹Ñ•áÐ¹‘É…Ý%µ…”¡¥µ…”°À°À¤ì(€½¹ÍÐÁ¥á•±Ìõ½¹Ñ•áÐ¹•Ñ%µ…•…Ñ„ À°À±…¹Ù…Ì¹Ý¥‘Ñ ±…¹Ù…Ì¹¡•¥¡Ð¤¹‘…Ñ„ì(€½¹ÍÐ½±½ÉÌõ¹•ÜM•Ð ¤í±•Ð¹½¹	±Õ”ôÀì(€™½È¡±•Ð¤ôÀí¤ñÁ¥á•±Ì¹±•¹Ñ í¤¬ôÐ¥í½¹ÍÐÈõÁ¥á•±Ím¥t±œõÁ¥á•±Ím¤¬Åt±ˆõÁ¥á•±Ím¤¬Ét±„õÁ¥á•±Ím¤¬Ítí¥˜ …„¥½¹Ñ¥¹Õ”í½±½ÉÌ¹…‘ ¡ÈøøÌ¤¬œ°œ¬¡œøøÌ¤¬œ°œ¬¡ˆøøÌ¤¤í¥˜ „¡ˆùÈ¨Ä¸ÀÔ˜™ˆùœ¨Ä¸ÀÈ¤¥¹½¹	±Õ”¬¬íô(€É•ÑÕÉ¸íÝ¥‘Ñ é…¹Ù…Ì¹Ý¥‘Ñ ±¡•¥¡Ðé…¹Ù…Ì¹¡•¥¡Ð±Õ¹¥ÅÕ•½±½É	Õ­•ÑÌé½±½ÉÌ¹Í¥é”±¹½¹	±Õ•A¥á•±Ìé¹½¹	±Õ•ôì(ô±¥­•©…MÉ••¹Í¡½Ð¹Ñ½MÑÉ¥¹œ ‰…Í”ØÐœ¤¤ì(¥˜¡¥­•©…Y¥ÍÕ…°¹Ý¥‘Ñ ðàÀÁññ¥­•©…Y¥ÍÕ…°¹¡•¥¡ÐðÌØÁññ¥­•©…Y¥ÍÕ…°¹Õ¹¥ÅÕ•½±½É	Õ­•ÑÌðÄáññ¥­•©…Y¥ÍÕ…°¹¹½¹	±Õ•A¥á•±ÌðÄÀÀÀ¥Ñ¡É½Ü¹•ÜÉÉ½È %­•©„µ…Ñ•É¥…°½ÁÉ½À…µ•É„ÍÉ••¹Í¡½Ð™…¥±•è€œ­)M=8¹ÍÑÉ¥¹¥™ä¡¥­•©…Y¥ÍÕ…°¤¤ì(…Ý…¥ÐÁ…”¹•Ù…±Õ…Ñ”  ¤ôùíÝ¥¹‘½Ü¹}}9%)}IA}AUM}|õ™…±Í”íô¤ì(¥˜¡•ÉÉ½ÉÌ¹±•¹Ñ ¥Ñ¡É½Ü¹•ÜÉÉ½È 	É½ÝÍ•È•ÉÉ½ÉÌè€œ­•ÉÉ½ÉÌ¹©½¥¸ œð€œ¤¤ì(…Ý…¥ÐÁ…”¹Í•ÑY¥•ÝÁ½ÉÑM¥é”¡íÝ¥‘Ñ èÌäÀ±¡•¥¡ÐèàÐÑô¤í…Ý…¥ÐÁ…”¹±½…Ñ½È œ½É¥•¹Ñ…Ñ¥½¸µ¹½Ñ¥”œ¤¹Ý…¥Ñ½È¡íÍÑ…Ñ”èÙ¥Í¥‰±”ô¤í…Ý…¥ÐÁ…”¹Í•ÑY¥•ÝÁ½ÉÑM¥é”¡íÝ¥‘Ñ èàÐÐ±¡•¥¡ÐèÌäÁô¤í…Ý…¥ÐÁ…”¹±½…Ñ½È œ½É¥•¹Ñ…Ñ¥½¸µ¹½Ñ¥”œ¤¹Ý…¥Ñ½È¡íÍÑ…Ñ”è¡¥‘‘•¸ô¤ì(½¹Í½±”¹±½œ MÑ…”€ÀáÁ…ÍÍ•è•¥¡Ð½µµ•É¥…°…¹•¥¡ÐÉ•Í¥‘•¹Ñ¥…°™……‘•ÌÝ¥Ñ µ½‘Õ±…È9¥•É¥…¸µ¥¹ÍÁ¥É•‘•Ñ…¥°¸œ¤ì(½¹Í½±”¹±½œ MÑ…”€ÀáÁ…ÍÍ•è%­•©„½µµ•É¥…°½ÉÉ¥‘½È°Ù•¹‘½ÈÁÉ½ÁÌ°A=L­¥½Í¬°Ý¡••±‰…ÉÉ½Ü°¡…¹‘…ÉÐ°±¥ÑÑ•È¡½ÑÍÁ½ÑÌ°½Á•¸‘É…¥¹…”°±•…É•…ÉÉ¥…•Ý…ä°ÑÝ¼µ½Ù¥¹œÑÉ…™™¥ŒÙ•¡¥±•Ì…¹ÍÑ…Ñ¥ŒÁ•‘•ÍÑÉ¥…¸Í¥±¡½Õ•ÑÑ•Ì¸œ¤ì(½¹Í½±”¹±½œ MÑ…”€Àá Á…ÍÍ•èÁÉ½•‘ÕÉ…°A	HÍÕÉ™…•Ì°Ù…É¥•±•…¸½ÕÍ•½Ý•…Ñ¡•É•ÁÉ½ÁÌ°µ…Ñ•É¥…°…ÍÍ¥¹µ•¹Ð½Ù•É…”°ÑÉ…¹Í±Õ•¹Ð±…é¥¹œ°‘•Ñ…¥±•ÁÉ½ÁÌ…¹…¸%­•©„…µ•É„µÙ¥•ÜÍÉ••¹Í¡½Ð…ÍÍ•ÉÑ¥½¸¸œ¤ì(½¹Í½±”¹±½œ %­•©„ÍÉ••¹Í¡½Ðµ•ÑÉ¥Ìè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡¥­•©…Y¥ÍÕ…°¤¤ì(½¹Í½±”¹±½œ MÑ…”€ÀáÁ…ÍÍ•èÍÑ…Ñ¥Œ9¥•É¥…¸ÍÑÉ••Ð¥¹™É…ÍÑÉÕÑÕÉ”°ÕÑ¥±¥Ñ¥•Ì°‘É…¥¹…”°ÍÑÉ••Ð™ÕÉ¹¥ÑÕÉ”…¹‰ÕÌÍ¡•±Ñ•ÉÌÝ¥Ñ µ½‰¥±”µ½É¥•¹Ñ•ÍÑ…Ñ¥Œ‰…Ñ¡¥¹œ¸œ¤ì(½¹Í½±”¹±½œ MÑ…”€ÀáÁ…ÍÍ•èÍ•µ¤µÁ¡½Ñ½É•…°A	Hµ…Ñ•É¥…±Ì…¹µ½‘Õ±…È™……‘”ÕÁÉ…‘•Ì…É½ÍÌ…±°€Ðàe…‰„‘¥ÍÑÉ¥Ð‰Õ¥±‘¥¹Ì¸œ¤ì(½¹Í½±”¹±½œ MÑ…”€ÀØÁ¡åÍ¥Ì½ÑÉ…Ù•ÉÍ…°…¹•¹Ù¥É½¹µ•¹Ð¡•­ÌÁ…ÍÍ•Ý¥Ñ Ñ¡”‰Õ¹‘±•É„Á±…å•ÈÉ¥œ…Ñ¥Ù”¸œ¤ì(½¹Í½±”¹±½œ I•¹‘•È‘¥…¹½ÍÑ¥Ìè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡ÍÑ…Ñ”¹‘¥…œ¤¤ì(½¹Í½±”¹±½œ …¹Ù…ÌÍÉ••¹Í¡½Ðµ•ÑÉ¥Ìè€œ­)M=8¹ÍÑÉ¥¹¥™ä¡Ù¥ÍÕ…°¤¤ì(…Ý…¥Ð½¹Ñ•áÐ¹±½Í” ¤ì)ô™¥¹…±±äí¥˜¡‰É½ÝÍ•È¥…Ý…¥Ð‰É½ÝÍ•È¹±½Í” ¤íÍ•ÉÙ•È¹­¥±° M%QI4œ¤íô)ìb¶ËZ¶ë4
+ if(state.game?.stage08G?.stage!=='08G'||state.game?.stage08G?.district!=='Ikeja'||state.game?.stage08G?.roadLengthMetres!==150||state.game?.stage08G?.vendorStalls!==4||state.game?.stage08G?.parkedVehicles!==0||state.game?.stage08G?.laneObstructionsRemoved?.length!==3||state.game?.stage08G?.districtTraffic?.vehicles!==2||state.game?.stage08G?.staticPedestrianSilhouettes!==4||state.game?.stage08G?.litterHotspots!==4||state.game?.stage08G?.liveNpcAI!==false||state.game?.stage08G?.liveTrafficSimulation!==false)throw new Error('Stage 08G Ikeja street-life prototype metadata is incomplete: '+JSON.stringify(state.game?.stage08G));
+ if(state.game?.stage08H?.stage!=='08H'||state.game?.stage08H?.district!=='Ikeja'||state.game?.stage08H?.texturedProps<50||state.game?.stage08H?.wearDistribution?.clean<1||state.game?.stage08H?.wearDistribution?.used<1||state.game?.stage08H?.wearDistribution?.weathered<1||state.game?.stage08H?.materialFamilyCount!==11||state.game?.stage08H?.texturedMaterialFamilies!==10||state.game?.stage08H?.textureMapSets!==10||state.game?.stage08H?.generatedTextureCount!==30||state.game?.stage08H?.unrenderedTaggedProps!==0||state.game?.stage08H?.addedDetailMeshes<20||state.game?.stage08H?.staticBatching!==true||!Object.keys(state.game.stage08H.materialAssignmentCounts||{}).some(name=>name.includes('asphalt'))||!Object.keys(state.game.stage08H.materialAssignmentCounts||{}).some(name=>name.includes('plaster'))||Object.values(state.game.stage08H.materialAssignmentCounts||{}).reduce((sum,count)=>sum+count,0)!==state.game.stage08H.texturedProps)throw new Error('Stage 08H Ikeja prop realism/material audit is incomplete: '+JSON.stringify(state.game?.stage08H));
+ if(state.game?.stage08I?.stage!=='08I'||state.game?.stage08I?.district!=='Ikeja'||state.game?.stage08I?.residentialBuildings!==9||state.game?.stage08I?.commercialBuildings!==4||state.game?.stage08I?.marketStalls!==6||state.game?.stage08I?.roadNetwork?.collectorRoads!==2||state.game?.stage08I?.roadNetwork?.outerResidentialRoads!==2||state.game?.stage08I?.roadNetwork?.crossStreets!==4||state.game?.stage08I?.roadNetwork?.connectedJunctions!==20||state.game?.stage08I?.roadNetwork?.connectedToExistingIkejaCorridor!==true||state.game?.stage08I?.roadNetwork?.principalJunctions!==12||state.game?.stage08I?.groundColliders?.filter(collider=>collider.surface==='grass').length!==3||state.game?.stage08I?.groundColliders?.filter(collider=>collider.surface==='asphalt').length!==8||state.game?.stage08I?.collisionProxyCount<20||state.game?.stage08I?.staticBatching!==true||state.game?.worldCollision?.ikejaDistrictProxies<20||state.game?.worldCollision?.ikejaGroundColliders!==3)throw new Error('Stage 08I Ikeja district expansion is incomplete: '+JSON.stringify(state.game?.stage08I));
+ const skipOptionalStreetAssets=state.game?.dataOptimization?.optionalStreetDownloadsSkipped===true;
+ if(state.game?.stage08J?.stage!=='08J'||state.game?.stage08J?.connector?.lengthMetres!==79||state.game?.stage08J?.connector?.startZ!==168||state.game?.stage08J?.connector?.endZ!==247||state.game?.stage08J?.junction?.ikejaCrossStreetZ!==246||state.game?.stage08J?.importedAssets?.length!==2||(!skipOptionalStreetAssets&&state.game?.stage08J?.importedAssets?.some(item=>item.loaded!==true))||(skipOptionalStreetAssets&&state.game?.stage08J?.importedAssets?.some(item=>!item.skipped))||state.game?.stage08J?.assetFailures?.length!==0||state.game?.stage08J?.textureFailures?.length!==0||state.game?.stage08J?.pbrRuntimeResolution!==(skipOptionalStreetAssets?'procedural-fallback':512)||(!skipOptionalStreetAssets&&Object.values(state.game?.stage08J?.pbrMaterials||{}).some(names=>names.length!==3))||state.game?.stage08J?.collisionProxyCount<15||state.game?.worldCollision?.yabaIkejaStreetProxies<15)throw new Error('Stage 08J Yabaâ€“Ikeja connection or device-adaptive street assets failed: '+JSON.stringify(state.game?.stage08J));
+ if(state.game?.stage!==10||state.game?.stage08A?.stage!=='08A'||state.game?.stage08A?.parallelRoads!==2||state.game?.stage08A?.crossStreets!==3||state.game?.stage08A?.commercialBuildings!==8||state.game?.stage08A?.residentialBuildings!==8)throw new Error('Stage 08A expansion metadata is incomplete: '+JSON.stringify(state.game?.stage08A));
+ if(state.game?.stage08B?.stage!=='08B'||state.game?.stage08B?.commercialFacades!==8||state.game?.stage08B?.residentialFacades!==8||state.game?.stage08B?.detailMeshes<200||state.game?.stage08B?.batching!==true)throw new Error('Stage 08B facade detail metadata is incomplete: '+JSON.stringify(state.game?.stage08B));
+ if(state.game?.stage08C?.stage!=='08C'||state.game?.stage08C?.utilityPoles!==16||state.game?.stage08C?.busShelters!==2||state.game?.stage08C?.pocketParksFurnished!==3||state.game?.stage08C?.batching!==true||state.game?.stage08C?.dynamicActorsAdded!==0||state.game?.stage08C?.detailMeshes<150)throw new Error('Stage 08C street infrastructure metadata is incomplete: '+JSON.stringify(state.game?.stage08C));
+ if(state.game?.stage08D?.stage!=='08D'||state.game?.stage08D?.buildingsTextured!==48||state.game?.stage08D?.commercialBuildingsDetailed!==40||state.game?.stage08D?.residentialBuildingsDetailed!==8||state.game?.stage08D?.originalYabaBuildings!==32||state.game?.stage08D?.expansionBuildings!==16||state.game?.stage08D?.pbrMaterialFamilies!==10||state.game?.stage08D?.proceduralTextureMaps!==13||state.game?.stage08D?.signVariants!==4||state.game?.stage08D?.textureResolution!==512||state.game?.stage08D?.secondaryTextureResolution!==256||state.game?.stage08D?.batching!==true||state.game?.stage08D?.detailMeshes<550)throw new Error('Stage 08D building realism metadata is incomplete: '+JSON.stringify(state.game?.stage08D));
+ await page.waitForFunction(()=>{const s=window.__NAIJA_GAME__?.getStage08EState?.();return !!s&&(s.loadedBuildings>0||s.failedBuildings>0);},null,{timeout:30000});
+ try {
+  await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,-65],0));
+ await page.waitForFunction(()=>window.__NAIJA_GAME__?.getStage08EState?.()?.heroBuildingLoaded===true,null,{timeout:60000});
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ } catch(error) {
+  const diagnostic=await page.evaluate(()=>({
+   stage08E:window.__NAIJA_GAME__?.getStage08EState?.(),
+   status:document.querySelector('#status')?.textContent,
+   assetStatus:document.querySelector('#asset-status')?.textContent
+  }));
+  throw new Error('Computer Village KTX2 hero failed to load within 60 seconds: '+JSON.stringify({diagnostic,errors})+'; '+error.message);
+ }
+ await page.waitForTimeout(220);
+ await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=true;});
+ const daylightScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ const daylightAudit=await page.evaluate(()=>{
+  const game=window.__NAIJA_GAME__,diag=window.__NAIJA_RENDER_DIAGNOSTICS__||{};
+  return {capture:'Yaba spawn after nearby building load',viewport:{width:innerWidth,height:innerHeight},
+   visualSettings:game?.getVisualSettings?.()||null,lightingAudit:game?.getLightingAudit?.()||null,
+   renderDiagnostics:{drawCallCount:diag.drawCallCount??null,primitiveCount:diag.primitiveCount??null,
+    meshInstances:diag.scene?.meshInstances??null,frameTime:diag.frameTime??null,camera:diag.camera??null},
+   stage08E:game?.getStage08EState?.()||null,playerPosition:game?.getPlayerState?.().position||null};
+ });
+ const daylightPreview=makeReviewPreview(daylightScreenshot);
+ const daylightMetrics=measureDisplayLuminance(daylightScreenshot);
+ await writeFile(new URL('yaba-daylight-full.png',reviewDir),daylightScreenshot);
+ await writeFile(new URL('yaba-daylight-preview.png',reviewDir),daylightPreview);
+ await writeFile(new URL('yaba-daylight-audit.json',reviewDir),JSON.stringify({...daylightAudit,displayLuminance:daylightMetrics},null,2));
+ console.log('DAYLIGHT_BASELINE_AUDIT '+JSON.stringify({...daylightAudit,displayLuminance:daylightMetrics}));
+ console.log('DAYLIGHT_BASELINE_PREVIEW_BASE64_BEGIN');
+ console.log(daylightPreview.toString('base64'));
+ console.log('DAYLIGHT_BASELINE_PREVIEW_BASE64_END');
+ await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
+ const stage08EState=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08EState?.());
+ const collisionTest=await page.evaluate(()=>{
+  const state=window.__NAIJA_GAME__?.getStage08EState?.();
+  const resolve=window.__NAIJA_GAME__?.resolveBuildingMovement;
+  const current=[-5.3,0,-82],attempt=[-6.3,0,-82];
+  return {count:state?.collisionProxyCount,mode:state?.collisionMode,radius:state?.collisionRadius,result:resolve?.(current,attempt)};
+ });
+ if(collisionTest.count!==48||!collisionTest.mode?.includes('persistent')||Math.abs(collisionTest.result?.[0]-(-5.3))>0.001)throw new Error('Persistent building collision test failed: '+JSON.stringify(collisionTest));
+ const stage08FProfile=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
+ if(!stage08FProfile||stage08FProfile.stage!=='08F'||!Array.isArray(stage08FProfile.limitations)||!stage08FProfile.rendering)throw new Error('Stage 08F device profiling API is not exposed: '+JSON.stringify(stage08FProfile));
+ if(stage08EState?.stage!=='08E'||stage08EState.expectedBuildings!==48||stage08EState.legacyBodiesHidden<48||stage08EState.loadedBuildings<1||stage08EState.staticBatching!==true)throw new Error('Stage 08E GLB streaming did not replace blockout buildings: '+JSON.stringify(stage08EState));
+ if(stage08EState.heroBuildingId!=='yaba-core-01'||!stage08EState.heroTextureEncoding.includes('KHR_texture_basisu')||stage08EState.heroPbrMaterials.length!==7||stage08EState.heroLoadError)throw new Error('Computer Village hero GLB/KTX2 runtime load failed: '+JSON.stringify(stage08EState));
+ if(state.diag.scene.knownBounds.min[0]!==-120||state.diag.scene.knownBounds.max[0]!==120||state.diag.scene.knownBounds.min[2]!==-200||state.diag.scene.knownBounds.max[2]!==500)throw new Error('Compact Yabaâ€“Ikeja city bounds are not exposed correctly: '+JSON.stringify(state.diag.scene.knownBounds));
+ if(state.viewport.w!==844||state.viewport.h!==390)throw new Error('Test viewport is not landscape 844x390: '+JSON.stringify(state.viewport));
+ if(!state.canvas.webgl2||state.canvas.w<800||state.canvas.h<360||state.canvas.h>450||state.canvas.y>1)throw new Error('Canvas does not fit the mobile viewport: '+JSON.stringify(state.canvas));
+ if(state.diag.drawCallCount<=0||state.diag.scene.meshInstances<30||state.diag.scene.diagnosticMarker)throw new Error('No scene geometry or unexpected debug blocker remained in view: '+JSON.stringify(state.diag));
+ if(!Number.isFinite(state.game?.playerPosition?.[2])||state.diag.camera.position[2]<=state.game.playerPosition[2]+0.2||state.diag.camera.forward[2]>=-0.2)throw new Error('Third-person camera is not behind the player and facing the scene: '+JSON.stringify({camera:state.diag.camera,playerPosition:state.game?.playerPosition}));
+ const stick=await page.locator('#move-joystick').boundingBox();
+ if(!stick||!(await page.locator('#jump-button').isVisible())||!(await page.locator('#sprint-button').isVisible())||!(await page.locator('#crouch-button').isVisible())||!(await page.locator('#interact-button').isVisible()))throw new Error('Landscape movement/action controls are missing');
+ if(await page.locator('#orientation-notice').isVisible())throw new Error('Landscape orientation notice should be hidden in landscape');
+ if(state.game?.playerCharacterReady!==true||state.game?.characterSource!=='ara-3d-gen-female-preset'||
+    state.game?.characterGeometry!=='rigged-glb'||state.game?.mainCharacterId!=='ara-female'||
+    state.game?.hero01Role!=='city-npc'||state.characterGate||state.araFilePickerPresent) {
+  throw new Error('Bundled Ara player or Hero 01 NPC role is not active: '+JSON.stringify({
+   playerCharacterReady:state.game?.playerCharacterReady,characterSource:state.game?.characterSource,
+   characterGeometry:state.game?.characterGeometry,characterGate:state.characterGate,
+   araFilePickerPresent:state.araFilePickerPresent,mainCharacterId:state.game?.mainCharacterId,
+   hero01Role:state.game?.hero01Role
+  }));
+ }
+ if((state.game?.heroRigSnapshot?.boneCount??0)!==70||(state.game?.heroRigSnapshot?.skinnedMeshCount??0)!==25) {
+  throw new Error('Ara rig structure is not valid: '+JSON.stringify(state.game?.heroRigSnapshot));
+ }
+ if(!state.game?.thirdPersonCharacter||!state.game?.movement||!state.game?.sprint||!state.game?.jump||
+    state.game?.proceduralAnimations!==false||state.game?.characterGeometry!=='rigged-glb'||
+    state.game?.playerCharacterReady!==true||state.game?.characterSource!=='ara-3d-gen-female-preset'||
+    state.game?.heroAnimationState?.characterId!=='ara-female'||
+    state.game?.heroAnimationState?.displayName!=='Ara 3D Female'||
+    state.game?.heroAnimationState?.playable!==true||state.game?.heroAnimations?.length<14||
+    !['Ara_LadderMount','Ara_LadderClimb','Ara_LadderDismount','Ara_DoorOpen','Ara_EnterVehicle','Ara_ExitVehicle'].every(name=>state.game?.heroAnimations?.includes(name))||
+    state.game?.mainCharacterId!=='ara-female'||state.game?.hero01Role!=='city-npc'||
+    state.game?.traversalEnabled!==true||state.game?.traversal?.obstacleCount<152||state.game?.traversal?.buildingRouteCount!==48||state.game?.traversal?.buildingAccessPointCount!==192||
+    state.game?.companionRoster?.maxActive!==2||state.game?.companionRoster?.commands?.length!==7||
+    state.game?.companionRoster?.activeCount!==0||state.game?.pedestrianState?.activeCount!==10||
+    state.game?.pedestrianState?.heroNpc?.isPlayer!==false||(state.game?.pedestrianState?.heroNpc?.rigged!==true&&!state.game?.dataOptimization?.hero01NpcSkipped)||
+    state.game?.physicsState?.player?.mode!=='ammo-bullet-capsule'||
+    state.game?.physicsState?.player?.colliderCount<60||
+    state.game?.worldCollision?.buildingProxies!==48||
+    state.game?.physicsState?.agents?.mode!=='kinematic-capsule'||state.game?.vfxState?.poolSize<12||
+    !state.game?.mobileJoystick||!state.game?.cameraOrbit) {
+  throw new Error('Ara player, Hero 01 NPC, traversal, physics or companion system was not mounted: '+JSON.stringify(state.game));
+ }
+ await page.waitForFunction(()=>{const g=window.__NAIJA_GAME__;return g?.getHeroNpcState?.()?.moved===true&&(g.dataOptimization?.hero01NpcSkipped||g.getHeroNpcState?.()?.rigged===true);},null,{timeout:10000});
+ const heroNpc=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroNpcState?.());
+ if(!heroNpc||heroNpc.name!=='Hero 01'||heroNpc.isPlayer!==false||heroNpc.active!==true||!heroNpc.moved||(heroNpc.rigged&& !heroNpc.activeClip?.includes('Walk'))||(!heroNpc.rigged&&!state.game?.dataOptimization?.hero01NpcSkipped))throw new Error('Hero 01 is not running as a visible city NPC or its low-memory fallback is not active: '+JSON.stringify({heroNpc,optimization:state.game?.dataOptimization}));
+ if(await page.locator('#character-switch-button').count()!==0||await page.locator('[data-player-action]').count()!==0)throw new Error('Character-switch controls must be completely removed from the HUD and Player menu');
+ if(await page.locator('#player-character-file').count()!==0)throw new Error('Bundled Ara setup must not require an FBX upload control.');
+
+ // Verify contextual traversal at the known tutorial obstacle beside the spawn route.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ const traversalCountBefore=await page.evaluate(()=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted||0);
+ const traversalStarted=await page.evaluate(()=>window.__NAIJA_TRAVERSE__?.()===true);
+ if(!traversalStarted)throw new Error('Hero 01 could not start contextual step-up traversal');
+ await page.waitForFunction(before=>window.__NAIJA_GAME__?.getTraversalState?.().traversalsStarted>before,traversalCountBefore,{timeout:3000});
+ const traversalAdvance=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceTraversalForSmoke?.(48));
+ if(!traversalAdvance||traversalAdvance.player.traversing||traversalAdvance.traversal.traversalsStarted!==traversalCountBefore+1)throw new Error('Traversal did not complete its bounded movement sequence: '+JSON.stringify({before:traversalCountBefore,result:traversalAdvance}));
+
+ // Validate the actual bundled Ara player rig; Hero 01 remains a separate NPC.
+ const initialPlayerRig=await page.evaluate(()=>window.__NAIJA_GAME__?.getHeroRigSnapshot?.());
+ if(initialPlayerRig?.skinnedMeshCount!==25||initialPlayerRig?.boneCount!==70) {
+  throw new Error('Bundled Ara player rig is not attached to the player controller: '+JSON.stringify(initialPlayerRig));
+ }
+ // Complete all eight contextual parkour actions through the live player controller.
+ const parkourReports=[];
+ for(const type of ['step','low-vault','high-vault','mantle','ledge','ladder','wall-run','drop']){
+  const result=await page.evaluate(value=>window.__NAIJA_GAME__?.debugTraverseTypeForSmoke?.(value),type);
+  if(!result?.started||!result?.completed||result?.traversal?.lastTraversal?.type!==type||result.distanceTravelled<0.75)throw new Error('Parkour did not carry the player across '+type+': '+JSON.stringify(result));
+  // Bullet's capsule base can settle a few centimetres below the authored
+  // ladder top surface; retain a 15 cm contact tolerance for this route.
+  const expectedElevation={step:.35,mantle:1.1,ledge:1.9,ladder:2.65}[type]||0;
+  if(result.verticalTravel<expectedElevation)throw new Error(type+' did not reach its intended height: '+JSON.stringify(result));
+  parkourReports.push({type,clip:result.traversal.lastTraversal.clip,distanceTravelled:result.distanceTravelled,verticalTravel:result.verticalTravel});
+ }
+ // Verify the player leaves the ground, falls under gravity and lands with effects.
+ const jumpPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.debugJumpPhysicsForSmoke?.());
+ if(!jumpPhysics?.airborne||jumpPhysics.airborne.position[1]<.25||jumpPhysics.airborne.verticalVelocity<=0||!jumpPhysics.landed.grounded||jumpPhysics.landed.position[1]!==0||jumpPhysics.vfx.emitted<3)throw new Error('Player jump/landing physics or VFX failed: '+JSON.stringify(jumpPhysics));
+ // Verify ten full NPCs are rendered, move on their routes and share actor physics.
+ const crowd=await page.evaluate(()=>window.__NAIJA_GAME__?.getPedestrianState?.());
+ const actorPhysics=await page.evaluate(()=>window.__NAIJA_GAME__?.getPhysicsState?.());
+ if(crowd?.activeCount!==10||crowd?.visibleCount!==10||crowd?.renderMeshInstances<60||crowd?.moved<1||actorPhysics?.agents?.steps<1)throw new Error('Ambient NPC population/physics missing or idle: '+JSON.stringify({crowd,actorPhysics,initialPlayerRig,parkourReports}));
+ console.log('Player Bullet physics:',JSON.stringify(actorPhysics?.player));
+ console.log('Parkour traversal QA:',JSON.stringify(parkourReports));
+ // Verify remote-entry companions, the two-person cap and approved squad commands.
+ const techSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Summon')===true);
+ const driverSummoned=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Summon')===true);
+ if(!techSummoned||!driverSummoned)throw new Error('Two companion roster slots could not be summoned');
+ const roster=await page.evaluate(()=>window.__NAIJA_GAME__?.getCompanionState?.());
+ if(roster?.activeCount!==2||roster?.maxActive!==2||roster?.commands?.length!==7)throw new Error('Companion cap/command set failed: '+JSON.stringify(roster));
+ if(roster.roster.some(actor=>actor.active&&actor.spawnDistance<5))throw new Error('Companions must enter from district locations, not spawn beside the player');
+ const hold=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Hold')===true);
+ const radio=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','RadioCall')===true);
+ if(!hold||!radio)throw new Error('Companion Hold or RadioCall command did not register');
+ const dismissed=await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('tech','Dismiss')===true);
+ if(!dismissed)throw new Error('Companion Dismiss command failed');
+ await page.evaluate(()=>window.__NAIJA_COMPANION_COMMAND__?.('driver','Dismiss'));
+
+ console.log('Ara QA passed: bundled Female Executive rig is the playable character, and Hero 01 remains an independently moving NPC.');
+
+ if(state.game?.assets?.modelsLoaded!==1||state.game?.assets?.texturesLoaded!==1||state.game?.assets?.failures?.length)throw new Error('GLB/texture pipeline did not complete: '+JSON.stringify(state.game?.assets));
+ const screenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ const visual=await page.evaluate(async encoded=>{
+   const image=new Image();image.src='data:image/png;base64,'+encoded;await image.decode();
+   const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+   const context=canvas.getContext('2d',{willReadFrequently:true});context.drawImage(image,0,0);
+   const pixels=context.getImageData(0,0,canvas.width,canvas.height).data;
+   const colors=new Set();let magenta=0,nonBlue=0;
+   for(let i=0;i<pixels.length;i+=4){const r=pixels[i],g=pixels[i+1],b=pixels[i+2],a=pixels[i+3];if(!a)continue;colors.add((r>>3)+','+(g>>3)+','+(b>>3));if(r>100&&b>100&&g<100)magenta++;if(!(b>r*1.05&&b>g*1.02))nonBlue++;}
+   return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,magentaPixels:magenta,nonBluePixels:nonBlue};
+ },screenshot.toString('base64'));
+ if(visual.width<800||visual.height<360||visual.uniqueColorBuckets<12||visual.nonBluePixels<1000||visual.magentaPixels>20)throw new Error('Canvas screenshot visual assertion failed or the old magenta blocker returned: '+JSON.stringify(visual));
+ if(await page.locator('#parkour-button').count()!==0)throw new Error('Duplicate standalone parkour button must be removed; Jump owns contextual traversal.');
+ if(await page.locator('.objective').count()!==0)throw new Error('Centre-screen objective/population overlay must be absent during gameplay.');
+ if(!(await page.locator('.minimap').isVisible())||!(await page.locator('.status').isVisible())||!(await page.locator('.quick-slots').isVisible()))throw new Error('Core landscape RPG HUD zones are not visible');
+ const startup=await page.evaluate(()=>({preload:window.__NAIJA_GAME__?.startupPreload,loadingHidden:document.querySelector('#city-loading')?.hidden}));
+ const smallStartup=Boolean(state.game?.dataOptimization?.lowMemoryDevice||state.game?.dataOptimization?.lowDataMode);
+ const expectedStartupBuildings=smallStartup?8:14,expectedStartupBytes=smallStartup?1.5:2.5;
+ if(startup.preload?.total!==expectedStartupBuildings||startup.preload?.loaded!==expectedStartupBuildings||startup.preload?.bytes>expectedStartupBytes*1024*1024||startup.preload?.failed!==0||!startup.preload?.ready||!startup.loadingHidden)throw new Error('Nearby Yaba startup preload exceeded its adaptive '+expectedStartupBuildings+'-building/'+expectedStartupBytes+' MiB budget or did not finish: '+JSON.stringify(startup));
+ const hudBoxes=await page.evaluate(()=>Object.fromEntries(['#move-joystick','.actions','.quick-slots','.nav'].map(sel=>{const el=document.querySelector(sel),r=el.getBoundingClientRect();return [sel,{x:r.x,y:r.y,w:r.width,h:r.height,display:getComputedStyle(el).display}]})));
+ if(hudBoxes['#move-joystick'].x>140||hudBoxes['.actions'].x<694||hudBoxes['.nav'].display!=='none')throw new Error('HUD controls are not grouped into clean left/right thumb zones: '+JSON.stringify(hudBoxes));
+ if(await page.locator('.nav').isVisible())throw new Error('Legacy bottom navigation should be removed from active gameplay HUD');
+ if(await page.locator('#rpg-panel').isVisible())throw new Error('Character profile panel should not cover gameplay on startup.');
+ await page.evaluate(()=>document.querySelector('#assets-toggle').click());
+ await page.locator('#assets-panel[open]').waitFor({state:'visible'});
+ const inventory=await page.locator('#assets-panel').textContent();
+ if(!inventory?.includes('Low-poly shop building blocks')||!inventory.includes('STAGE 08B NIGERIAN BUILDING DETAIL')||!inventory.includes('STAGE 08D SEMI-PHOTOREAL BUILDING REALISM')||!inventory.includes('Still not in this build'))throw new Error('Asset inventory contents are incomplete');
+ await page.locator('#assets-close').click();
+ await page.evaluate(()=>document.querySelector('#perf-toggle').click());await page.locator('#perf-panel').waitFor({state:'visible'});await page.waitForTimeout(1200);
+ if(!/FPS/.test((await page.locator('#perf-panel').textContent())??''))throw new Error('Performance telemetry did not update');
+ const profileAfterWarmup=await page.evaluate(()=>window.__NAIJA_GAME__?.getStage08FProfile?.());
+ if(!profileAfterWarmup||profileAfterWarmup.stage!=='08F'||profileAfterWarmup.sampleCount<1||!profileAfterWarmup.frame||!('p95Ms' in profileAfterWarmup.frame))throw new Error('Stage 08F frame-time sampling did not start: '+JSON.stringify(profileAfterWarmup));
+ if(!(await page.locator('#profile-export').isVisible()))throw new Error('Physical-device profile export control is not visible when the performance panel is open');
+ await page.evaluate(()=>{
+  window.__NAIJA_RPG_PAUSED__=true;
+  window.__NAIJA_GAME__.debugSetCameraForSmoke([0,10,382],[0,1.5,310]);
+ });
+ await page.waitForTimeout(160);
+ const ikejaScreenshot=await page.locator('#application').screenshot({animations:'disabled'});
+ await writeFile(new URL('ikeja-daylight-full.png',reviewDir),ikejaScreenshot);
+ const ikejaPreview=makeReviewPreview(ikejaScreenshot);
+ await writeFile(new URL('ikeja-daylight-preview.png',reviewDir),ikejaPreview);
+ console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_BEGIN');
+ console.log(ikejaPreview.toString('base64'));
+ console.log('IKEJA_DAYLIGHT_PREVIEW_BASE64_END');
+ const ikejaVisual=await page.evaluate(async encoded=>{
+  const image=new Image();image.src='data:image/png;base64,'+encoded;await image.decode();
+  const canvas=document.createElement('canvas');canvas.width=image.naturalWidth;canvas.height=image.naturalHeight;
+  const context=canvas.getContext('2d',{willReadFrequently:true});context.drawImage(image,0,0);
+  const pixels=context.getImageData(0,0,canvas.width,canvas.height).data;
+  const colors=new Set();let nonBlue=0;
+  for(let i=0;i<pixels.length;i+=4){const r=pixels[i],g=pixels[i+1],b=pixels[i+2],a=pixels[i+3];if(!a)continue;colors.add((r>>3)+','+(g>>3)+','+(b>>3));if(!(b>r*1.05&&b>g*1.02))nonBlue++;}
+  return {width:canvas.width,height:canvas.height,uniqueColorBuckets:colors.size,nonBluePixels:nonBlue};
+ },ikejaScreenshot.toString('base64'));
+ if(ikejaVisual.width<800||ikejaVisual.height<360||ikejaVisual.uniqueColorBuckets<18||ikejaVisual.nonBluePixels<1000)throw new Error('Ikeja material/prop camera screenshot failed: '+JSON.stringify(ikejaVisual));
+ await page.evaluate(()=>{window.__NAIJA_RPG_PAUSED__=false;});
+ if(errors.length)throw new Error('Browser errors: '+errors.join(' | '));
+ await page.setViewportSize({width:390,height:844});await page.locator('#orientation-notice').waitFor({state:'visible'});await page.setViewportSize({width:844,height:390});await page.locator('#orientation-notice').waitFor({state:'hidden'});
+ console.log('Stage 08B passed: eight commercial and eight residential facades with modular Nigerian-inspired detail.');
+ console.log('Stage 08G passed: Ikeja commercial corridor, vendor props, POS kiosk, wheelbarrow, handcart, litter hotspots, open drainage, cleared carriageway, two moving traffic vehicles and static pedestrian silhouettes.');
+ console.log('Stage 08H passed: procedural PBR surfaces, varied clean/used/weathered props, material assignment coverage, translucent glazing, detailed props and an Ikeja camera-view screenshot assertion.');
+ console.log('Ikeja screenshot metrics: '+JSON.stringify(ikejaVisual));
+ console.log('Stage 08C passed: static Nigerian street infrastructure, utilities, drainage, street furniture and bus shelters with mobile-oriented static batching.');
+ console.log('Stage 08D passed: semi-photoreal PBR materials and modular facade upgrades across all 48 Yaba district buildings.');
+ console.log('Stage 06 physics/traversal and environment checks passed with the bundled Ara player rig active.');
+ console.log('Render diagnostics: '+JSON.stringify(state.diag));
+ console.log('Canvas screenshot metrics: '+JSON.stringify(visual));
+ await context.close();
+} finally {if(browser)await browser.close();server.kill('SIGTERM');}

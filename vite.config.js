@@ -12,4 +12,3 @@ export default defineConfig({
     terserOptions: { compress: { passes: 12, pure_getters: true, toplevel: true, drop_console: true }, mangle: { toplevel: true } }
   }
 });
-{­²Ö­ºÍ

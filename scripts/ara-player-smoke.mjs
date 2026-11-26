@@ -65,7 +65,49 @@ try{
   pressed:document.querySelector('#camera-view-toggle')?.getAttribute('aria-pressed'),
   reticle:getComputedStyle(document.querySelector('.fps-reticle')).display
  }));
- if(thirdPersonState.mode!=='third-person'||thirdPÎéºo+^≤â¢∂◊ùmouse.down();
+ if(thirdPersonState.mode!=='third-person'||thirdPersonState.characterVisible!==true||thirdPersonState.button!=='VIEW ¬∑ 3P'||thirdPersonState.pressed!=='false'||thirdPersonState.reticle!=='none') {
+  throw Error('V hotkey did not restore third-person view and its character model: '+JSON.stringify(thirdPersonState));
+ }
+ if(JSON.stringify(state.surfaceProbes)!==JSON.stringify({asphalt:'asphalt',concrete:'concrete',grass:'grass',wet:'wet'}))throw Error('Surface raycasts failed: '+JSON.stringify(state.surfaceProbes));
+ if((state.rig?.boneCount??0)<50||(state.rig?.skinnedMeshCount??0)<1)throw Error('Ara rig invalid: '+JSON.stringify(state.rig));
+ if(!state.audio?.available||!state.audio.effects.includes('footstep')||state.audio.mode!=='procedural-web-audio')throw Error('Player audio system unavailable: '+JSON.stringify(state.audio));
+ const joystickBox=await page.locator('#move-joystick').boundingBox();
+ if(!joystickBox)throw Error('Mobile movement joystick is not visible');
+ const joystickCenter={x:joystickBox.x+joystickBox.width/2,y:joystickBox.y+joystickBox.height/2};
+ await page.mouse.move(joystickCenter.x,joystickCenter.y);
+ await page.mouse.down();
+ await page.mouse.move(joystickCenter.x,joystickCenter.y-joystickBox.height*.30,{steps:8});
+ await page.waitForTimeout(1350);
+ const walkState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.(),animation:window.__NAIJA_GAME__?.getHeroAnimationState?.(),audio:window.__NAIJA_GAME__?.getAudioState?.(),feet:window.__NAIJA_GAME__?.getHeroFootPositions?.(),limbs:window.__NAIJA_GAME__?.getHeroLimbPositions?.()}));
+ if(!walkState.player?.moving||walkState.animation?.activeClip!=='Walk'||Math.hypot(walkState.player.position[0],walkState.player.position[2])<.001)throw Error('Touch joystick did not produce real Ara walking movement: '+JSON.stringify(walkState));
+ if(!walkState.feet?.left?.every(Number.isFinite)||!walkState.feet?.right?.every(Number.isFinite)||walkState.player.footPlacementHits<1)throw Error('Animated foot contact/foot-bone sampling did not register: '+JSON.stringify(walkState));
+ if(!['leftSoleToe','leftSoleHeel','rightSoleToe','rightSoleHeel'].every(key=>walkState.limbs?.[key]?.every(Number.isFinite)))throw Error('Blender sole-contact landmarks did not load into PlayCanvas: '+JSON.stringify(walkState.limbs));
+ const walkPlayback=walkState.animation?.locomotionPlaybackRates?.walk;
+ const walkEvaluatorSpeed=walkState.animation?.evaluatorClips?.find(clip=>clip.trackName==='Walk')?.speed;
+ if(!Number.isFinite(walkPlayback)||Math.abs(walkPlayback-walkState.player.horizontalSpeed/1.515)>.06||!Number.isFinite(walkEvaluatorSpeed)||Math.abs(walkEvaluatorSpeed-walkPlayback)>.06)throw Error('Walk clip playback is not synchronized to measured player speed: '+JSON.stringify({player:walkState.player,animation:walkState.animation}));
+ await page.mouse.up();
+ // Fixed-step locomotion check: normal walk should settle near the authored
+ // 1.515 m/s cadence, then return to Idle after the input is released.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ await page.keyboard.down('w');
+ const calibratedWalk=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceLocomotionForSmoke?.(90));
+ await page.keyboard.up('w');
+ const calibratedStop=await page.evaluate(()=>window.__NAIJA_GAME__?.debugAdvanceLocomotionForSmoke?.(30));
+ if(calibratedWalk?.player?.horizontalSpeed<1.3||calibratedWalk?.player?.horizontalSpeed>1.75||calibratedWalk?.trace?.at(-1)?.clip!=='Walk'||calibratedStop?.player?.horizontalSpeed>.12||calibratedStop?.trace?.at(-1)?.clip!=='Idle')throw Error('Ara normal walk cadence/start-stop response is outside its tuned range: '+JSON.stringify({walk:calibratedWalk?.player,walkClip:calibratedWalk?.trace?.at(-1)?.clip,stop:calibratedStop?.player,stopClip:calibratedStop?.trace?.at(-1)?.clip}));
+ // Reverse input moves backward along the current heading without sideways sliding.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ await page.mouse.move(joystickCenter.x,joystickCenter.y);
+ await page.mouse.down();
+ await page.mouse.move(joystickCenter.x,joystickCenter.y+joystickBox.height*.30,{steps:8});
+ await page.waitForTimeout(450);
+ const reverseState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));
+ await page.mouse.up();
+ if(!reverseState.player?.moving||reverseState.player.position[2]<=.001||Math.abs(Math.abs(reverseState.player.facingYaw)-180)>28)throw Error('Backward joystick movement must turn Ara to face her travel direction: '+JSON.stringify(reverseState));
+ // Horizontal drag must translate Ara sideways relative to the camera, not
+ // rotate her in place like an autonomous NPC.
+ await page.evaluate(()=>window.__NAIJA_GAME__?.debugSetPlayerForSmoke?.([0,0,0],0));
+ await page.mouse.move(joystickCenter.x,joystickCenter.y);
+ await page.mouse.down();
  await page.mouse.move(joystickCenter.x+joystickBox.width*.30,joystickCenter.y,{steps:8});
  await page.waitForTimeout(450);
  const strafeState=await page.evaluate(()=>({player:window.__NAIJA_GAME__?.getPlayerState?.()}));

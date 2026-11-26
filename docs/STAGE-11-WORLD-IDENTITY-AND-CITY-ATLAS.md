@@ -19,4 +19,3 @@ The atlas remains a schematic map. It supports pan/zoom, search, category filter
 ## Validation
 
 `npm run verify` includes the world-identity regression test. Browser verification confirms the live map loads from the compact asset set. Physical Android validation remains necessary for touch, performance and readability acceptance.
-{­²Ö­ºÍ

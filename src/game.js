@@ -119,6 +119,905 @@ export async function startGame({ statusLabel, perfToggle, perfPanel, assetStatu
   // Stage 02 four-way junction with side street, zebra crossings and stop lines.
   const junctionZ=-25;
   box('cross-street',[0,-0.055,junctionZ],[42,0.17,9],m.asphalt);
-  box('junction-left-kerb',[-21.2,0.02,ïÍûé¼­zÊ&ŠÛ^uÁ½Í¥Ñ¥½¸éÍÑ…ÉÐ¹Í±¥” ¤±Ù•±½¥ÑäélÀ°À°Át±É½Õ¹‘•éÑÉÕ•ôì(€€€€€™½È¡±•Ð¤ôÀí¤ðØÀí¤¬¬¥Á±…å•ÉA¡åÍ¥Ì¹ÍÑ•À¡…Ñ½È±lÌ°À°Át°¸ÀÔ¤ì(€€€€€Á±…å•É½¹ÑÉ½±±•È¹Í•ÑA½Í¥Ñ¥½¹½ÉMµ½­”¡lÀ°À°Át°À¤ì(€€€€€É•ÑÕÉ¸íÍÑ…ÉÑ`éÍÑ…ÉÑlÁt±•¹‘`é…Ñ½È¹Á½Í¥Ñ¥½¹lÁt±‰Õ¥±‘¥¹	½Õ¹‘…Éå`è´ÄÈ¸ÐÔ°(€€€€€€€ÍÑ½ÁÁ•‘	å	Õ¥±‘¥¹œé…Ñ½È¹Á½Í¥Ñ¥½¹lÁtð´ÄÈ¸Ô±Á¡åÍ¥ÌéÁ±…å•ÉA¡åÍ¥Ì¹•ÑMÑ…Ñ” ¥ôì(€€€ôì(€€€…µ•Á¤¹‘•‰Õ‘Ù…¹•QÉ…Ù•ÉÍ…±½ÉMµ½­”ô¡™É…µ•ÌôäÀ¤ôùì(€€€€€½¹ÍÐ½Õ¹Ðõ5…Ñ ¹µ…à Ä±5…Ñ ¹µ¥¸ ÄàÀ±5…Ñ ¹™±½½È¡9Õµ‰•È¡™É…µ•Ì¥ñðäÀ¤¤¤ì(€€€€€½¹ÍÐÍÑ•ÀôÄ¼ØÀì(€€€€€½¹ÍÐÑÉ…”õmtì(€€€€€½¹ÍÐ…¹¥µ…Ñ¥½¹MåÍÑ•´õ…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ì(€€€€€™½È¡±•Ð¤ôÀí¤ñ½Õ¹Ðí¤¬¬¥ì(€€€€€€€Á±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ”¡ÍÑ•À¤ì(€€€€€€€ÑÉ…Ù•ÉÍ…±MåÍÑ•´¹ÕÁ‘…Ñ”¡ÍÑ•À¤ì(€€€€€€€€¼¼MÑ•ÀA±…å…¹Ù…ÌÌ…ÑÕ…°¹¥µ½µÁ½¹•¹ÑMåÍÑ•´…±½¹Í¥‘”	Õ±±•Ð°Ñ¡•¸(€€€€€€€€¼¼Á¥¸Ñ¡”…Ñ¥Ù”Í¡½”µ…É­•È‰•™½É”½±±•Ñ¥¹œÑ¡¥Ì€ØÀ!èÍ…µÁ±”¸(€€€€€€€…¹¥µ…Ñ¥½¹MåÍÑ•´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”ü¸¡ÍÑ•À¤ì(€€€€€€€½¹ÍÐ™½½Ñ1½¬õÁ±…å•É½¹ÑÉ½±±•È¹…ÁÁ±åÉ½Õ¹‘•‘½½Ñ1½¬ü¸ ¥ññ¹Õ±°ì(€€€€€€€Ù™áMåÍÑ•´¹ÕÁ‘…Ñ”¡ÍÑ•À¤ì(€€€€€€€ì(€€€€€€€€€½¹ÍÐÁ±…å•ÈõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤ì(€€€€€€€€€½¹ÍÐÉ½½˜õÁ±…å•ÉA¡åÍ¥Ì¹É…å…ÍÐü¸¡mÁ±…å•È¹Á½Í¥Ñ¥½¹lÁt±Á±…å•È¹Á½Í¥Ñ¥½¹lÅt¬¸ÐÔ±Á±…å•È¹Á½Í¥Ñ¥½¹lÉut°(€€€€€€€€€€€mÁ±…å•È¹Á½Í¥Ñ¥½¹lÁt±Á±…å•È¹Á½Í¥Ñ¥½¹lÅt´¸ÐÔ±Á±…å•È¹Á½Í¥Ñ¥½¹lÉut¥ññ¹Õ±°ì(€€€€€€€€€ÑÉ…”¹ÁÕÍ ¡íÑ¥µ”é9Õµ‰•È  ¡¤¬Ä¤©ÍÑ•À¤¹Ñ½¥á• Ô¤¤±‘ÐéÍÑ•À±Á½Í¥Ñ¥½¸éÁ±…å•È¹Á½Í¥Ñ¥½¸±É½Õ¹‘•éÁ±…å•È¹É½Õ¹‘•±É½½™déÉ½½˜ü¹Á½¥¹Ðü¹lÅtüý¹Õ±°±É½Õ¹‘déÉ½½˜ü¹Á½¥¹Ðü¹lÅtüý¹Õ±°°(€€€€€€€€€€€±¥ÀéÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ” ¤ü¹…Ñ¥Ù•±¥Áñðœœ±…Ñ¥Ù•MÑ…Ñ•AÉ½É•ÍÌéÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ” ¤ü¹…Ñ¥Ù•MÑ…Ñ•AÉ½É•ÍÌüý¹Õ±°°(€€€€€€€€€€€±½½µ½Ñ¥½¹A±…å‰…­I…Ñ•ÌéÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ” ¤ü¹±½½µ½Ñ¥½¹A±…å‰…­I…Ñ•Íññ¹Õ±°±™½½Ñ1½¬°(€€€€€€€€€€€•Ù…±Õ…Ñ½É±¥ÁÌéÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ” ¤ü¹•Ù…±Õ…Ñ½É±¥ÁÍññmt±±¥µ‰Ìé¡•É½¡…É…Ñ•Èü¹•Ñ1¥µ‰A½Í¥Ñ¥½¹Ìü¸ ¥ññ¹Õ±±ô¤ì(€€€€€€€ô(€€€€€ô(€€€€€…ÁÀ¹É•¹‘•Èü¸ ¤ì(€€€€€É•ÑÕÉ¸íÁ±…å•ÈéÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤±ÑÉ…Ù•ÉÍ…°éÑÉ…Ù•ÉÍ…±MåÍÑ•´¹•ÑMÑ…Ñ” ¤±ÑÉ…”°(€€€€€€€…¹¥µ…Ñ¥½¹MåÍÑ•µÙ…¥±…‰±”è„……¹¥µ…Ñ¥½¹MåÍÑ•´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ•ôì(€€€ôì(€€€…µ•Á¤¹‘•‰Õ‘Ù…¹•1½½µ½Ñ¥½¹½ÉMµ½­”ô¡™É…µ•ÌôÄÈÀ±‘ÐôÄ¼ØÀ¤ôùì(€€€€€½¹ÍÐ½Õ¹Ðõ5…Ñ ¹µ…à Ä±5…Ñ ¹µ¥¸ ÌØÀ±5…Ñ ¹™±½½È¡9Õµ‰•È¡™É…µ•Ì¥ñðÄÈÀ¤¤¤ì(€€€€€½¹ÍÐÍÑ•Àõ5…Ñ ¹µ…à Ä¼ÄÈÀ±5…Ñ ¹µ¥¸ Ä¼ÌÀ±9Õµ‰•È¡‘Ð¥ñðÄ¼ØÀ¤¤ì(€€€€€½¹ÍÐÑÉ…”õmtì(€€€€€½¹ÍÐ…¹¥µ…Ñ¥½¹MåÍÑ•´õ…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ì(€€€€€¥˜ ……¹¥µ…Ñ¥½¹MåÍÑ•´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”¥Ñ¡É½Ü¹•ÜÉÉ½È A±…å…¹Ù…Ì¹¥µ½µÁ½¹•¹ÑMåÍÑ•´¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”¥ÌÕ¹…Ù…¥±…‰±”œ¤ì(€€€€€™½È¡±•Ð¤ôÀí¤ñ½Õ¹Ðí¤¬¬¥ì(€€€€€€€Á±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ”¡ÍÑ•À¤ì(€€€€€€€…¹¥µ…Ñ¥½¹MåÍÑ•´¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”¡ÍÑ•À¤ì(€€€€€€€½¹ÍÐ™½½Ñ1½¬õÁ±…å•É½¹ÑÉ½±±•È¹…ÁÁ±åÉ½Õ¹‘•‘½½Ñ1½¬ü¸ ¥ññ¹Õ±°ì(€€€€€€€½¹ÍÐÁ±…å•ÈõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤ì(€€€€€€€½¹ÍÐ±¥µ‰Ìõ¡•É½¡…É…Ñ•Èü¹•Ñ1¥µ‰A½Í¥Ñ¥½¹Ìü¸ ¥ññ¹Õ±°ì(€€€€€€€½¹ÍÐÉ½Õ¹õÁ±…å•ÉA¡åÍ¥Ì¹É…å…ÍÐü¸¡mÁ±…å•È¹Á½Í¥Ñ¥½¹lÁt±Á±…å•È¹Á½Í¥Ñ¥½¹lÅt¬¸Ü±Á±…å•È¹Á½Í¥Ñ¥½¹lÉut°(€€€€€€€€€mÁ±…å•È¹Á½Í¥Ñ¥½¹lÁt±Á±…å•È¹Á½Í¥Ñ¥½¹lÅt´¸ØÔ±Á±…å•È¹Á½Í¥Ñ¥½¹lÉut¥ññ¹Õ±°ì(€€€€€€€½¹ÍÐ…¹¥µ…Ñ¥½¸õÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ”ü¸ ¥ññíôì(€€€€€€€ÑÉ…”¹ÁÕÍ ¡íÑ¥µ”é9Õµ‰•È  ¡¤¬Ä¤©ÍÑ•À¤¹Ñ½¥á• Ô¤¤±‘ÐéÍÑ•À±Á½Í¥Ñ¥½¸éÁ±…å•È¹Á½Í¥Ñ¥½¸°(€€€€€€€€€É½Õ¹‘•éÁ±…å•È¹É½Õ¹‘•±É½Õ¹‘déÉ½Õ¹ü¹Á½¥¹Ðü¹lÅtüý¹Õ±°±¡½É¥é½¹Ñ…±MÁ••éÁ±…å•È¹¡½É¥é½¹Ñ…±MÁ••°(€€€€€€€€€ÉÕ¹¹¥¹œéÁ±…å•È¹ÉÕ¹¹¥¹œ±µ½Ù¥¹œéÁ±…å•È¹µ½Ù¥¹œ±™…¥¹e…ÜéÁ±…å•È¹™…¥¹e…Ü±±¥Àé…¹¥µ…Ñ¥½¸¹…Ñ¥Ù•±¥Áñðœœ±…Ñ¥Ù•MÑ…Ñ”é…¹¥µ…Ñ¥½¸¹…Ñ¥Ù•MÑ…Ñ•ñðœœ°(€€€€€€€€€…Ñ¥Ù•MÑ…Ñ•AÉ½É•ÍÌé…¹¥µ…Ñ¥½¸¹…Ñ¥Ù•MÑ…Ñ•AÉ½É•ÍÌüý¹Õ±°±…Ñ¥Ù•MÑ…Ñ•ÕÉÉ•¹ÑQ¥µ”é…¹¥µ…Ñ¥½¸¹…Ñ¥Ù•MÑ…Ñ•ÕÉÉ•¹ÑQ¥µ”üý¹Õ±°±…Ñ¥Ù•MÑ…Ñ•ÕÉ…Ñ¥½¸é…¹¥µ…Ñ¥½¸¹…Ñ¥Ù•MÑ…Ñ•ÕÉ…Ñ¥½¸üý¹Õ±°±±½½µ½Ñ¥½¹A±…å‰…­I…Ñ•Ìé…¹¥µ…Ñ¥½¸¹±½½µ½Ñ¥½¹A±…å‰…­I…Ñ•Íññ¹Õ±°°(€€€€€€€€€™½½Ñ1½¬±™½½Ñ1½­MÑ…Ñ”éÁ±…å•É½¹ÑÉ½±±•È¹•Ñ½½Ñ1½­MÑ…Ñ”ü¸ ¥ññ¹Õ±°±±¥µ‰Íô¤ì(€€€€€ô(€€€€€…ÁÀ¹É•¹‘•Èü¸ ¤ì(€€€€€É•ÑÕÉ¸íÁ±…å•ÈéÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤±ÑÉ…”±…¹¥µ…Ñ¥½¹MåÍÑ•µÙ…¥±…‰±”éÑÉÕ”±‘ÐéÍÑ•Áôì(€€€ôì(€€€…µ•Á¤¹‘•‰Õ½µÁ±•Ñ•QÉ…Ù•ÉÍ…±½ÉMµ½­”ô¡µ…áÉ…µ•ÌôäÀÀ¤ôùì(€€€€€½¹ÍÐ±¥µ¥Ðõ5…Ñ ¹µ…à Ä±5…Ñ ¹µ¥¸ ÄàÀÀ±5…Ñ ¹™±½½È¡9Õµ‰•È¡µ…áÉ…µ•Ì¥ñðäÀÀ¤¤¤ì(€€€€€½¹ÍÐÍ…µÁ±•Ìõmt±±¥Á¡…¹•Ìõmt±…¹¥µ…Ñ¥½¹QÉ…”õmtì(€€€€€½¹ÍÐ±¥µ‰M…µÁ±•Ìõí±•™Ñ!…¹‘Q¥Àémt±É¥¡Ñ!…¹‘Q¥Àémt±±•™Ñ½½Ðémt±É¥¡Ñ½½Ðémuôì(€€€€€½¹ÍÐ…¹¥µ…Ñ¥½¹MåÍÑ•´õ…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ì(€€€€€¥˜ ……¹¥µ…Ñ¥½¹MåÍÑ•´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”¥Ñ¡É½Ü¹•ÜÉÉ½È A±…å…¹Ù…Ì¹¥µ½µÁ½¹•¹ÑMåÍÑ•´¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”¥ÌÕ¹…Ù…¥±…‰±”œ¤ì(€€€€€±•ÐÁÉ•Ù¥½ÕÍdõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹Á½Í¥Ñ¥½¹lÅt±±…ÍÑ±¥Àôœœì(€€€€€±•ÐÍ¥µÕ±…Ñ•‘É…µ•ÌôÀ±…¹¥µ…Ñ¥½¹MÑ•ÁÌôÀì(€€€€€½¹ÍÐÍ…µÁ±•1¥µ‰Ìô ¤ôùì(€€€€€€€½¹ÍÐÁ±…å•ÈõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤±±¥µ‰Ìõ¡•É½¡…É…Ñ•Èü¹•Ñ1¥µ‰A½Í¥Ñ¥½¹Ìü¸ ¥ññíôì(€€€€€€€™½È¡½¹ÍÐ­•ä½˜=‰©•Ð¹­•åÌ¡±¥µ‰M…µÁ±•Ì¤¥¥˜¡±¥µ‰Ím­•åt¥±¥µ‰M…µÁ±•Ím­•åt¹ÁÕÍ ¡±¥µ‰Ím­•åulÅt¤ì(€€€€€ôì(€€€€€™½È¡±•Ð¤ôÀí¤ñ±¥µ¥Ðí¤¬¬¥ì(€€€€€€€Á±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€ÑÉ…Ù•ÉÍ…±MåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€…¹¥µ…Ñ¥½¹MåÍÑ•´¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€…¹¥µ…Ñ¥½¹MÑ•ÁÌ¬¬ì(€€€€€€€Ù™áMåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€½¹ÍÐÁ±…å•ÈõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤ì(€€€€€€€½¹ÍÐ‘•±Ñ„õÁ±…å•È¹Á½Í¥Ñ¥½¹lÅtµÁÉ•Ù¥½ÕÍdì(€€€€€€€Í…µÁ±•Ì¹ÁÕÍ ¡9Õµ‰•È¡‘•±Ñ„¹Ñ½¥á• Ô¤¤¤ì(€€€€€€€ÁÉ•Ù¥½ÕÍdõÁ±…å•È¹Á½Í¥Ñ¥½¹lÅtì(€€€€€€€½¹ÍÐ…¹¥µ…Ñ¥½¹MÑ…Ñ”õÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ” ¥ññíôì(€€€€€€€½¹ÍÐ±¥Àõ…¹¥µ…Ñ¥½¹MÑ…Ñ”¹…Ñ¥Ù•±¥Áñðœœì(€€€€€€€¥˜¡±¥À˜™±¥À„ôõ±…ÍÑ±¥À¥í±¥Á¡…¹•Ì¹ÁÕÍ ¡±¥À¤í±…ÍÑ±¥Àõ±¥Àíô(€€€€€€€¥˜¡¤”ÈôôôÀ¥Í…µÁ±•1¥µ‰Ì ¤ì(€€€€€€€¥˜¡¤”ÄÀôôôÀ¥ì(€€€€€€€€€½¹ÍÐ±¥µ‰Ìõ¡•É½¡…É…Ñ•Èü¹•Ñ1¥µ‰A½Í¥Ñ¥½¹Ìü¸ ¥ññíôì(€€€€€€€€€…¹¥µ…Ñ¥½¹QÉ…”¹ÁÕÍ ¡í™É…µ”é¤±É½½ÑdéÁ±…å•È¹Á½Í¥Ñ¥½¹lÅt±±¥À±ÍÑ…Ñ”é…¹¥µ…Ñ¥½¹MÑ…Ñ”¹…Ñ¥Ù•MÑ…Ñ”°(€€€€€€€€€€€Ñ¥µ”é…¹¥µ…Ñ¥½¹MÑ…Ñ”¹…Ñ¥Ù•MÑ…Ñ•ÕÉÉ•¹ÑQ¥µ”±±•™Ñ!…¹‘dé±¥µ‰Ì¹±•™Ñ!…¹ü¹lÅt±É¥¡Ñ!…¹‘dé±¥µ‰Ì¹É¥¡Ñ!…¹ü¹lÅt°(€€€€€€€€€€€±•™Ñ½½Ñdé±¥µ‰Ì¹±•™Ñ½½Ðü¹lÅt±É¥¡Ñ½½Ñdé±¥µ‰Ì¹É¥¡Ñ½½Ðü¹lÅuô¤ì(€€€€€€€ô(€€€€€€€Í¥µÕ±…Ñ•‘É…µ•Ì¬¬ì(€€€€€€€¥˜ …Á±…å•È¹ÑÉ…Ù•ÉÍ¥¹œ¥‰É•…¬ì(€€€€€ô(€€€€€€¼¼Q¡”±…‘‘•È½¹ÑÉ½±±•È½Ý¹ÌÉ„ÌÉ½½ÐÝ¡¥±”Ñ¡”	Õ±±•Ð…ÁÍÕ±”¥Ì‘•Ñ…¡•¸(€€€€€€¼¼™Ñ•È‘¥Íµ½Õ¹Ð°Á¡åÍ¥Ì¥ÌÉ•…ÑÑ…¡•…ÐÑ¡”É½½˜…¹É••¥Ù•Ì„™•Ü(€€€€€€¼¼½É‘¥¹…Éä™É…µ•ÌÑ¼•ÍÑ…‰±¥Í É•…°É½½™Ñ½ÀÍÕÁÁ½ÉÐ¸(€€€€€™½È¡±•Ð¤ôÀí¤ðÐ˜˜…Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹É½Õ¹‘•í¤¬¬¥ì(€€€€€€€Á±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€ÑÉ…Ù•ÉÍ…±MåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€…¹¥µ…Ñ¥½¹MåÍÑ•´¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€…¹¥µ…Ñ¥½¹MÑ•ÁÌ¬¬ì(€€€€€€€Ù™áMåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€€€½¹ÍÐÁ±…å•ÈõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤ì(€€€€€€€Í…µÁ±•Ì¹ÁÕÍ ¡9Õµ‰•È ¡Á±…å•È¹Á½Í¥Ñ¥½¹lÅtµÁÉ•Ù¥½ÕÍd¤¹Ñ½¥á• Ô¤¤¤ì(€€€€€€€ÁÉ•Ù¥½ÕÍdõÁ±…å•È¹Á½Í¥Ñ¥½¹lÅtì(€€€€€€€½¹ÍÐ±¥ÀõÁ±…å•É½¹ÑÉ½±±•È¹•Ñ¹¥µ…Ñ¥½¹MÑ…Ñ” ¤ü¹…Ñ¥Ù•±¥Áñðœœì(€€€€€€€¥˜¡±¥À˜™±¥À„ôõ±…ÍÑ±¥À¥í±¥Á¡…¹•Ì¹ÁÕÍ ¡±¥À¤í±…ÍÑ±¥Àõ±¥Àíô(€€€€€€€Í…µÁ±•1¥µ‰Ì ¤ì(€€€€€€€Í¥µÕ±…Ñ•‘É…µ•Ì¬¬ì(€€€€€ô(€€€€€½¹ÍÐÁ½Í¥Ñ¥Ù”õÍ…µÁ±•Ì¹™¥±Ñ•È¡Ù…±Õ”ôùÙ…±Õ”ø¸ÀÀÄ¤±¡½±‘ÌõÍ…µÁ±•Ì¹™¥±Ñ•È¡Ù…±Õ”ôù5…Ñ ¹…‰Ì¡Ù…±Õ”¤ð¸ÀÀÄ¤¹±•¹Ñ ì(€€€€€½¹ÍÐ±¥µ‰5½Ñ¥½¸õ=‰©•Ð¹™É½µ¹ÑÉ¥•Ì¡=‰©•Ð¹•¹ÑÉ¥•Ì¡±¥µ‰M…µÁ±•Ì¤¹µ…À ¡m­•ä±Ù…±Õ•Ít¤ôùm­•ä±íÍ…µÁ±•ÌéÙ…±Õ•Ì¹±•¹Ñ ±Ù•ÉÑ¥…±I…¹”éÙ…±Õ•Ì¹±•¹Ñ ý9Õµ‰•È ¡5…Ñ ¹µ…à ¸¸¹Ù…±Õ•Ì¤µ5…Ñ ¹µ¥¸ ¸¸¹Ù…±Õ•Ì¤¤¹Ñ½¥á• Ì¤¤èÀ±µ¥¸éÙ…±Õ•Ì¹±•¹Ñ ý9Õµ‰•È¡5…Ñ ¹µ¥¸ ¸¸¹Ù…±Õ•Ì¤¹Ñ½¥á• Ì¤¤é¹Õ±°±µ…àéÙ…±Õ•Ì¹±•¹Ñ ý9Õµ‰•È¡5…Ñ ¹µ…à ¸¸¹Ù…±Õ•Ì¤¹Ñ½¥á• Ì¤¤é¹Õ±±õt¤¤ì(€€€€€…ÁÀ¹É•¹‘•Èü¸ ¤ì(€€€€€É•ÑÕÉ¸í½µÁ±•Ñ•è…Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹ÑÉ…Ù•ÉÍ¥¹œ±Í¥µÕ±…Ñ•‘É…µ•Ì±…¹¥µ…Ñ¥½¹MÑ•ÁÌ±…¹¥µ…Ñ¥½¹MåÍÑ•µÙ…¥±…‰±”éÑÉÕ”±±¥µ‰5½Ñ¥½¸°(€€€€€€€ÁÕ±Í•QÉ…”éíÍ…µÁ±•Ì±Á½Í¥Ñ¥Ù•M…µÁ±•ÌéÁ½Í¥Ñ¥Ù”¹±•¹Ñ ±¡½±‘M…µÁ±•Ìé¡½±‘Ì°(€€€€€€€€€µ…áMÑ•Àé5…Ñ ¹µ…à À°¸¸¹Í…µÁ±•Ì¤±µ¥¹MÑ•Àé5…Ñ ¹µ¥¸ ¸¸¹Á½Í¥Ñ¥Ù”°À¥ô°(€€€€€€€±¥Á¡…¹•Ì±…¹¥µ…Ñ¥½¹QÉ…”±Á±…å•ÈéÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤±ÑÉ…Ù•ÉÍ…°éÑÉ…Ù•ÉÍ…±MåÍÑ•´¹•ÑMÑ…Ñ” ¤°(€€€€€€€Á¡åÍ¥ÌéÁ±…å•ÉA¡åÍ¥Ì¹•ÑMÑ…Ñ” ¤±™••Ðé¡•É½¡…É…Ñ•Èü¹•Ñ½½ÑA½Í¥Ñ¥½¹Ìü¸ ¥ññ¹Õ±±ôì(€€€ôì(€€€…µ•Á¤¹‘•‰ÕQÉ…Ù•ÉÍ•QåÁ•½ÉMµ½­”õÑåÁ”ôùì(€€€€€½¹ÍÐ½‰ÍÑ…±”õÑÉ…Ù•ÉÍ…±=‰ÍÑ…±•Ì¹™¥¹¡¥Ñ•´ôù¥Ñ•´¹ÑåÁ”ôôõÑåÁ”¤í¥˜ …½‰ÍÑ…±”¥É•ÑÕÉ¸íÍÑ…ÉÑ•é™…±Í”±ÑåÁ•ôì(€€€€€½¹ÍÐ•¹Ñ•Èõ½‰ÍÑ…±”¹•¹Ñ¥Ñä¹•ÑA½Í¥Ñ¥½¸ ¤±½™™Í•ÐõÑåÁ”ôôô‰Ý…±°µÉÕ¸ˆü´¸ÜèÀì(€€€€€Á±…å•É½¹ÑÉ½±±•È¹Í•ÑA½Í¥Ñ¥½¹½ÉMµ½­”¡m•¹Ñ•È¹à­½™™Í•Ð°À±•¹Ñ•È¹è¬Ä¸ÔÕt°À¤ì(€€€€€½¹ÍÐÍÑ…ÉÑA½Í¥Ñ¥½¸õÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹Á½Í¥Ñ¥½¸¹Í±¥” ¤ì(€€€€€½¹ÍÐ‰•™½É”õÑÉ…Ù•ÉÍ…±MåÍÑ•´¹•ÑMÑ…Ñ” ¤¹ÑÉ…Ù•ÉÍ…±Í½µÁ±•Ñ•ì(€€€€€½¹ÍÐÍÑ…ÉÑ•õÑÉ…Ù•ÉÍ…±MåÍÑ•´¹ÑÉå½¹Ñ•áÑÕ…±QÉ…Ù•ÉÍ…°¡Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤±½‰ÍÑ…±”¹¥¤ì(€€€€€½¹ÍÐ‘ÕÉ…Ñ¥½¸õ9Õµ‰•È¡ÑÉ…Ù•ÉÍ…±MåÍÑ•´¹•ÑMÑ…Ñ” ¤¹±…ÍÑQÉ…Ù•ÉÍ…°ü¹‘ÕÉ…Ñ¥½¸¥ñðÈ¸äì(€€€€€½¹ÍÐ™É…µ•Ìõ5…Ñ ¹µ¥¸ äÀÀ±5…Ñ ¹µ…à Ôà±5…Ñ ¹•¥°¡‘ÕÉ…Ñ¥½¸¼¸ÀÔ¤¬ÄÈ¤¤ì(€€€€€™½È¡±•Ð¤ôÀí¤ñ™É…µ•Ì˜™Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹ÑÉ…Ù•ÉÍ¥¹œí¤¬¬¥ì(€€€€€€€Á±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ” ¸ÀÔ¤íÑÉ…Ù•ÉÍ…±MåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤í…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”ü¸ ¸ÀÔ¤íÙ™áMåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€ô(€€€€€€¼¼1•ÐÑ¡”¹½Éµ…°	Õ±±•ÐÍÕÁÁ½ÉÐÑ•ÍÐÍ•ÑÑ±”…™Ñ•È„ÉÕ¹œµ‰…Í•±¥µˆ¸(€€€€€™½È¡±•Ð¤ôÀí¤ðÐ˜˜…Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹É½Õ¹‘•˜˜…Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¹ÑÉ…Ù•ÉÍ¥¹œí¤¬¬¥ì(€€€€€€€Á±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ” ¸ÀÔ¤íÑÉ…Ù•ÉÍ…±MåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤í…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”ü¸ ¸ÀÔ¤íÙ™áMåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤ì(€€€€€ô(€€€€€½¹ÍÐÑÉ…Ù•ÉÍ…°õÑÉ…Ù•ÉÍ…±MåÍÑ•´¹•ÑMÑ…Ñ” ¤±Á±…å•ÈõÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤ì(€€€€€½¹ÍÐ‘¥ÍÑ…¹•QÉ…Ù•±±•õ5…Ñ ¹¡åÁ½Ð¡Á±…å•È¹Á½Í¥Ñ¥½¹lÁtµÍÑ…ÉÑA½Í¥Ñ¥½¹lÁt±Á±…å•È¹Á½Í¥Ñ¥½¹lÉtµÍÑ…ÉÑA½Í¥Ñ¥½¹lÉt¤ì(€€€€€É•ÑÕÉ¸íÍÑ…ÉÑ•±ÑåÁ”±ÑÉ…Ù•ÉÍ…°±Á±…å•È±½µÁ±•Ñ•è…Á±…å•È¹ÑÉ…Ù•ÉÍ¥¹œ˜™ÑÉ…Ù•ÉÍ…°¹ÑÉ…Ù•ÉÍ…±Í½µÁ±•Ñ•ù‰•™½É”°(€€€€€€€Í¥µÕ±…Ñ•‘É…µ•Ìé™É…µ•Ì±•áÁ•Ñ•‘ÕÉ…Ñ¥½¸é‘ÕÉ…Ñ¥½¸±ÍÑ…ÉÑA½Í¥Ñ¥½¸±‘¥ÍÑ…¹•QÉ…Ù•±±•±Ù•ÉÑ¥…±QÉ…Ù•°éÁ±…å•È¹Á½Í¥Ñ¥½¹lÅtµÍÑ…ÉÑA½Í¥Ñ¥½¹lÅuôì(€€€ôì(€€€…µ•Á¤¹‘•‰Õ)ÕµÁA¡åÍ¥Í½ÉMµ½­”ô ¤ôùì(€€€€€Á±…å•É½¹ÑÉ½±±•È¹Í•ÑA½Í¥Ñ¥½¹½ÉMµ½­”¡lÀ°À°Át°À¤íÁ±…å•É½¹ÑÉ½±±•È¹ÅÕ•Õ•)ÕµÁ½ÉMµ½­” ¤ì(€€€€€€¼¼M…µÁ±”Ñ¡”É¥Í¥¹œÁ¡…Í”¹•…ÈÑ¡”©ÕµÀ…Á•à€¡…‰½ÕÐ€À¸ÈÔÍ•½¹‘Ì¤¸(€€€€€™½È¡±•Ð¤ôÀí¤ðÔí¤¬¬¥íÁ±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ” ¸ÀÔ¤í…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”ü¸ ¸ÀÔ¤íÙ™áMåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤íõ½¹ÍÐ…¥É‰½É¹”õÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤ì(€€€€€™½È¡±•Ð¤ôÀí¤ðÐÈí¤¬¬¥íÁ±…å•É½¹ÑÉ½±±•È¹ÕÁ‘…Ñ” ¸ÀÔ¤í…ÁÀ¹ÍåÍÑ•µÌü¹…¹¥´ü¹½¹¹¥µ…Ñ¥½¹UÁ‘…Ñ”ü¸ ¸ÀÔ¤íÙ™áMåÍÑ•´¹ÕÁ‘…Ñ” ¸ÀÔ¤íô(€€€€€É•ÑÕÉ¸í…¥É‰½É¹”±±…¹‘•éÁ±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤±Ù™àéÙ™áMåÍÑ•´¹•ÑMÑ…Ñ” ¥ôì(€€€ôì(€ô(€…µ•Á¤¹‘…Ñ…=ÁÑ¥µ¥é…Ñ¥½¸¹ÍÑ…ÉÑÕÁÕÉ…Ñ¥½¹5Ìõ5…Ñ ¹É½Õ¹¡Á•É™½Éµ…¹”¹¹½Ü ¤µÍÑ…ÉÑÕÁMÑ…ÉÑ•‘Ð¤ì(€Ý¥¹‘½Ü¹}}9%)}5}|õ…µ•Á¤ì(€Ý¥¹‘½Ü¹}}9%)}IA}U%}|ü¹Í•ÑY¥Ñ…±Ì¡Á±…å•É½¹ÑÉ½±±•È¹•ÑMÑ…Ñ” ¤¤ì((€Ý¥¹‘½Ü¹…‘‘Ù•¹Ñ1¥ÍÑ•¹•È Á…•¡¥‘”œ° ¤ôùí™¥•±‘ÅÕ¥Áµ•¹Ðü¹‘•ÍÑÉ½äü¸ ¤íÁ½±¥•A…ÑÉ½±MåÍÑ•´ü¹‘•ÍÑÉ½äü¸ ¤í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}%1}EU%A59Q}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}%9QIQ}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}A1e}!I=}9%5Q%=9}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}MQ}!I=}}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}QIYIM}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}=5A9%=9}=559}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}Y!%1}9QI}|í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}Y!%1}a%Q}|íÝ½É±‘1¥¡Ñ¥¹œ¹‘•ÍÑÉ½ä ¤íÙ•¡¥±•MåÍÑ•´ü¹‘•ÍÑÉ½äü¸ ¤í½µÁ…¹¥½¹MåÍÑ•´¹‘•ÍÑÉ½ä ¤íÁ•‘•ÍÑÉ¥…¹MåÍÑ•´¹‘•ÍÑÉ½ä ¤íÁ±…å•ÉA¡åÍ¥Ì¹±•…¹ÕÀü¸ ¤íÙ™áMåÍÑ•´¹‘•ÍÑÉ½ä ¤í…Õ‘¥½MåÍÑ•´¹‘•ÍÑÉ½ä ¤í‘•±•Ñ”Ý¥¹‘½Ü¹}}9%)}MQÀá}AI=%1}|íÍÑ…”ÀáAÉ½™¥±•È¹‘•ÍÑÉ½ä ¤íÁ±…å•É½¹ÑÉ½±±•È¹‘•ÍÑÉ½ä ¤íô±í½¹”éÑÉÕ•ô¤ì(€€¼¼MÑ…”€ÀáDè‰…Ñ ½¹±äÙ•É¥™¥•ÍÑ…Ñ¥Œ½Á…ÅÕ”‰½àµ•Í¡•Ì¥¹Í¥‘”€Ðá´ÍÁ…Ñ¥…°•±±Ì¸(€€¼¼A±…å…¹Ù…Ì™ÕÉÑ¡•ÈÍÁ±¥ÑÌ•… •±°‰äµ…Ñ•É¥…°½Í¡…‘•È½±…å•È½Í¡…‘½Ü…¹µ•Í µÍ¥é”½µÁ…Ñ¥‰¥±¥Ñä¸(€½¹ÍÐÍÑ…”ÀáE	…Ñ¡¥¹œô  ¤ôùì(€€€½¹ÍÐ•±±M¥é”ôÐà°•±±Ìõ¹•Ü5…À ¤°É½ÕÁ%‘Ìõmtì(€€€½¹ÍÐ‘å¹…µ¥A…ÑÑ•É¸ô¼¡yñmy„µèÀ´åt¤¡Ù•¡¥±•ñÑÉ…™™¥ñÁ•‘•ÍÑÉ¥…¹ñ¹ÁñÁ±…å•Éñ¡•É½ñ¡…É…Ñ•Éñ‘½½Éñ…Ñ•ñ±¥™Ññ•±•Ù…Ñ½Éñ¥¹Ñ•É…ÑñÁ¥­ÕÁñÝ•…Á½¹ñÁÉ½©•Ñ¥±•ñÉ…‘½±±ñ…¹¥µ…Ñ•‘ñÍ­¥¹¹•‘ñµ½Ù¥¹œ¤ üô‘ñmy„µèÀ´åt¤½¤ì(€€€±•Ð¥¹ÍÁ•Ñ•ôÀ°½Ù•ÉÍ¥é•‘…‰‰ÌôÀ°¹½	½Õ¹‘ÌôÀ°¥¹½µÁ…Ñ¥‰±”ôÀ°Í¥¹±•Ñ½¹•±±ÌôÀ°…ÍÍ¥¹•‘½µÁ½¹•¹ÑÌôÀì(€€€½¹ÍÐ½µÁ½¹•¹ÑÌõl¸¸¸¡…ÁÀ¹É½½Ð¹™¥¹‘½µÁ½¹•¹ÑÌ É•¹‘•Èœ¥ññmt¤°¸¸¸¡…ÁÀ¹É½½Ð¹™¥¹‘½µÁ½¹•¹ÑÌ µ½‘•°œ¥ññmt¥tì(€€€™½È¡½¹ÍÐ½µÁ½¹•¹Ð½˜½µÁ½¹•¹ÑÌ¥ì(€€€€€¥˜ ¡½µÁ½¹•¹Ð¹‰…Ñ¡É½ÕÁ%üü´Ä¤„ôô´Ä¥½¹Ñ¥¹Õ”ì(€€€€€½¹ÍÐ¥¹ÍÑ…¹•Ìõ½µÁ½¹•¹Ð¹µ•Í¡%¹ÍÑ…¹•Íññ½µÁ½¹•¹Ð¹µ½‘•°ü¹µ•Í¡%¹ÍÑ…¹•Íññmtì(€€€€€¥˜¡½µÁ½¹•¹Ð¹ÑåÁ”„ôô‰½àññ¥¹ÍÑ…¹•Ì¹±•¹Ñ „ôôÄ¥í¥¹½µÁ…Ñ¥‰±”¬¬í½¹Ñ¥¹Õ”íô(€€€€€½¹ÍÐ•¹Ñ¥Ñäõ½µÁ½¹•¹Ð¹•¹Ñ¥Ñäì(€€€€€±•Ð¹½‘”õ•¹Ñ¥Ñä°‰±½­•õ™…±Í”ì(€€€€€Ý¡¥±”¡¹½‘”¥ì(€€€€€€€½¹ÍÐ¹½Éµ…±¥é•‘9…µ”õMÑÉ¥¹œ¡¹½‘”¹¹…µ•ñðœœ¤¹É•Á±…” ¼¡m„µèÀ´åt¤¡mµit¤½œ°œÄ€Èœ¤¹É•Á±…” ½my„µèÀ´åt¬½¤°œ€œ¤¹Ñ½1½Ý•É…Í” ¤ì(€€€€€€€¥˜¡‘å¹…µ¥A…ÑÑ•É¸¹Ñ•ÍÐ¡¹½Éµ…±¥é•‘9…µ”¥ññ¹½‘”¹ÍÉ¥ÁÑññ¹½‘”¹…¹¥µññ¹½‘”¹…¹¥µ…Ñ¥½¹ññ¹½‘”¹É¥¥‘‰½‘åññ¹½‘”¹½±±¥Í¥½¸¥í‰±½­•õÑÉÕ”í‰É•…¬íô(€€€€€€€¹½‘”õ¹½‘”¹Á…É•¹Ðì(€€€€€ô(€€€€€½¹ÍÐ¥¹ÍÑ…¹”õ¥¹ÍÑ…¹•ÍlÁt±µ…Ðõ¥¹ÍÑ…¹”¹µ…Ñ•É¥…°ì(€€€€€¥˜¡‰±½­•‘ñð…µ…Ñññµ…Ð¹‰±•¹‘QåÁ”„ôõÁŒ¹	19}9=9ñð¡µ…Ð¹½Á…¥ÑäüüÄ¤ðÀ¸ääåñð¡µ…Ð¹…±Á¡…Q•ÍÐüüÀ¤øÁññ¥¹ÍÑ…¹”¹Í­¥¹%¹ÍÑ…¹”¥í¥¹½µÁ…Ñ¥‰±”¬¬í½¹Ñ¥¹Õ”íô(€€€€€¥¹ÍÁ•Ñ•¬¬ì(€€€€€½¹ÍÐ……‰ˆõ¥¹ÍÑ…¹”¹……‰ˆì(€€€€€¥˜ ………‰ˆü¹¡…±™áÑ•¹ÑÌ¥í¹½	½Õ¹‘Ì¬¬í½¹Ñ¥¹Õ”íô(€€€€€½¹ÍÐ õ……‰ˆ¹¡…±™áÑ•¹ÑÌ±µ…á¥´õ5…Ñ ¹µ…à¡ ¹à± ¹ä± ¹è¤¨Èì(€€€€€¥˜ …9Õµ‰•È¹¥Í¥¹¥Ñ”¡µ…á¥´¥ññµ…á¥´ù•±±M¥é”¥í½Ù•ÉÍ¥é•‘…‰‰Ì¬¬í½¹Ñ¥¹Õ”íô(€€€€€½¹ÍÐÀõ•¹Ñ¥Ñä¹•ÑA½Í¥Ñ¥½¸ ¤±àõ5…Ñ ¹™±½½È¡À¹à½•±±M¥é”¤±èõ5…Ñ ¹™±½½È¡À¹è½•±±M¥é”¤±­•äõà¬œèœ­èì(€€€€€¥˜ …•±±Ì¹¡…Ì¡­•ä¤¥•±±Ì¹Í•Ð¡­•ä±mt¤ì(€€€€€•±±Ì¹•Ð¡­•ä¤¹ÁÕÍ ¡½µÁ½¹•¹Ð¤ì(€€€ô(€€€™½È¡½¹ÍÐm­•ä±µ•µ‰•ÉÍt½˜•±±Ì¥ì(€€€€€¥˜¡µ•µ‰•ÉÌ¹±•¹Ñ ðÈ¥íÍ¥¹±•Ñ½¹•±±Ì¬¬í½¹Ñ¥¹Õ”íô(€€€€€½¹ÍÐmà±étõ­•ä¹ÍÁ±¥Ð œèœ¤ì(€€€€€½¹ÍÐÉ½ÕÀõ…ÁÀ¹‰…Ñ¡•Èü¹…‘‘É½ÕÀü¸ ÍÑ…”ÀáÄµÍÑ…Ñ¥Œ´œ­à¬œ´œ­è±™…±Í”±•±±M¥é”¤ì(€€€€€¥˜ …É½ÕÀ¥½¹Ñ¥¹Õ”ì(€€€€€É½ÕÁ%‘Ì¹ÁÕÍ ¡É½ÕÀ¹¥¤ì(€€€€€™½È¡½¹ÍÐ½µÁ½¹•¹Ð½˜µ•µ‰•ÉÌ¥í½µÁ½¹•¹Ð¹‰…Ñ¡É½ÕÁ%õÉ½ÕÀ¹¥í½µÁ½¹•¹Ð¹}ÍÑ…”ÀáÅ]…ÍU¹‰…Ñ¡•õÑÉÕ”í½µÁ½¹•¹Ð¹}ÍÑ…”ÀáÅ	…Ñ¡É½ÕÁ%õÉ½ÕÀ¹¥í…ÍÍ¥¹•‘½µÁ½¹•¹ÑÌ¬¬íô(€€€ô(€€€É•ÑÕÉ¸í•¹…‰±•é…ÍÍ¥¹•‘½µÁ½¹•¹ÑÌøÀ±•±±M¥é•5•ÑÉ•Ìé•±±M¥é”±µ…á…‰‰M¥é•5•ÑÉ•Ìé•±±M¥é”±¥¹ÍÁ•Ñ•‘MÑ…Ñ¥	½á•Ìé¥¹ÍÁ•Ñ•±…ÍÍ¥¹•‘½µÁ½¹•¹ÑÌ±É½ÕÁ½Õ¹ÐéÉ½ÕÁ%‘Ì¹±•¹Ñ ±É½ÕÁ%‘Ì±½Ù•ÉÍ¥é•‘…‰‰Ì±¹½	½Õ¹‘Ì±¥¹½µÁ…Ñ¥‰±”±Í¥¹±•Ñ½¹•±±Ì±Á½±¥äè½Á…ÅÕ”Í¥¹±”µµ…Ñ•É¥…°‰½àµ•Í¡•Ì½¹±äì€Ðá´`½h•±±Ìì€Ðá´µ…à	ì¹¼µ½Ù¥¹œ½ÍÉ¥ÁÑ•½Á¡åÍ¥Ì½Í­¥¹¹•½ÑÉ…¹ÍÁ…É•¹Ð½¥¹Ñ•É…Ñ¥Ù”µ•Í¡•Ìôì(€ô¤ ¤ì(€€¼¼ÁÁ±äÑ¡”¥¹¥Ñ¥…°€Ð¸á¬µ½µÁ½¹•¹ÐÍ¡…‘½Ü±…ÍÍ¥™¥…Ñ¥½¸½¹”Ý¡¥±”Ñ¡”±½…‘¥¹œÍÉ••¸¥Ì…Ñ¥Ù”¸(€Ý½É±‘1¥¡Ñ¥¹œ¹…ÁÁ±å%¹¥Ñ¥…±M¡…‘½ÝA½±¥ä ¤ì(€…ÁÀ¹ÍÑ…ÉÐ ¤ì(€Ý¥¹‘½Ü¹}}9%)}IA}U%}|ü¹™¥¹¥Í¡1½…‘¥¹œü¸ ¤ì(€ÍÑ…ÑÕÍ1…‰•°¹Ñ•áÑ½¹Ñ•¹ÐôI•…‘äƒŠPMÑ…”€ÀäÁ…É­½ÕÈ°¥Ñä±¥™”…¹Á¡åÍ¥Ìœì(€½¹ÍÐ±½…‘=ÁÑ¥½¹…±9ÁŒõ…Íå¹Œ ¤ôùì(€€€€¼¼I•ÍÁ•Ð¹‘É½¥½‰É½ÝÍ•È…Ñ„M…Ù•È¸AÉ½•‘ÕÉ…°Á•‘•ÍÑÉ¥…¹ÌÉ•µ…¥¸…Ñ¥Ù”(€€€€¼¼…¹Ñ¡”¡…É…Ñ•È‘½Ý¹±½…¥ÌÍ­¥ÁÁ••¹Ñ¥É•±ä½¸„µ•Ñ•É•½¹¹•Ñ¥½¸¸(€€€¥˜¡±½Ý…Ñ…5½‘•ññ±½Ý5•µ½Éå•Ù¥”¥ì(€€€€€¥˜¡…ÍÍ•ÑMÑ…ÑÕÍ1…‰•°¥…ÍÍ•ÑMÑ…ÑÕÍ1…‰•°¹Ñ•áÑ½¹Ñ•¹Ðô…Ñ„Í…Ù•È…Ñ¥Ù”ƒ
-Ü½ÁÑ¥½¹…°!•É¼€ÀÄ…¹¥µ…Ñ¥½¸‘½Ý¹±½…Í­¥ÁÁ•œì(€€€€€É•ÑÕÉ¸ì(€€€ô(€€€ÑÉåì(€€€€€¡•É¼ÀÅ9Á¡…É…Ñ•Èõ…Ý…¥Ð±½…‘!•É½¡…É…Ñ•È¡…ÁÀ±ì(€€€€€€€ÕÉ±Ìél…ÍÍ•ÑÌ½¡•É¼½9…¥©…¥Ñå!•É¼ÀÅ|ØÁ±¥ÁÌ¹±ˆ¹ˆØÐt°(€€€€€€€¡…É…Ñ•É%è¡•É¼ÀÄœ°(€€€€€€€ÍÑ…ÑÕÍ1…‰•°é…ÍÍ•ÑMÑ…ÑÕÍ1…‰•°(€€€€€ô¤ì(€€€€€Á•‘•ÍÑÉ¥…¹MåÍÑ•´¹Í•Ñ!•É½¡…É…Ñ•Èü¸¡¡•É¼ÀÅ9Á¡…É…Ñ•È¤ì(€€€€€½µÁ…¹¥½¹MåÍÑ•´¹Í•Ñ!•É½¡…É…Ñ•Èü¸¡¡•É¼ÀÅ9Á¡…É…Ñ•È¤ì(€€€€€¥˜¡…ÍÍ•ÑMÑ…ÑÕÍ1…‰•°¥…ÍÍ•ÑMÑ…ÑÕÍ1…‰•°¹Ñ•áÑ½¹Ñ•¹ÐôÉ„€Í•¸•µ…±”á•ÕÑ¥Ù”ƒ
-Ü!•É¼€ÀÄ¥Ñä9AÍÑÉ•…µ•¥¸œì(€€€õ…Ñ ¡•ÉÉ½È¥ì(€€€€€½¹Í½±”¹Ý…É¸ =ÁÑ¥½¹…°!•É¼€ÀÄ¥Ñä9Aµ½‘•°½Õ±¹½Ð±½…èœ±•ÉÉ½È¤ì(€€€ô(€ôì(€¥˜ …±½Ý…Ñ…5½‘”¥ì(€€€¥˜¡ÑåÁ•½˜Ý¥¹‘½Ü¹É•ÅÕ•ÍÑ%‘±•…±±‰…¬ôôô™Õ¹Ñ¥½¸œ¥Ý¥¹‘½Ü¹É•ÅÕ•ÍÑ%‘±•…±±‰…¬  ¤ôùíÙ½¥±½…‘=ÁÑ¥½¹…±9ÁŒ ¤íô±íÑ¥µ•½ÕÐèÔÀÀÁô¤ì(€€€•±Í”Ý¥¹‘½Ü¹Í•ÑQ¥µ•½ÕÐ  ¤ôùíÙ½¥±½…‘=ÁÑ¥½¹…±9ÁŒ ¤íô°ÈÔÀÀ¤ì(€ô)ô)ìb¶ËZ¶ë4
+  box('junction-left-kerb',[-21.2,0.02,junctionZ],[0.55,0.24,9.8],m.concrete);
+  box('junction-right-kerb',[21.2,0.02,junctionZ],[0.55,0.24,9.8],m.concrete);
+  for(let i=0;i<5;i++){const x=-3.1+i*1.55;box('north-crosswalk',[x,0.035,junctionZ-5.1],[0.95,0.035,0.85],m.white);box('south-crosswalk',[x,0.035,junctionZ+5.1],[0.95,0.035,0.85],m.white);}
+  for(let i=0;i<4;i++){const z=junctionZ-2.6+i*1.7;box('west-crosswalk',[-6.3,0.035,z],[0.9,0.035,1],m.white);box('east-crosswalk',[6.3,0.035,z],[0.9,0.035,1],m.white);}
+  box('north-stop-line',[0,0.04,junctionZ-6],[7.8,0.035,0.18],m.white);
+  box('south-stop-line',[0,0.04,junctionZ+6],[7.8,0.035,0.18],m.white);
+  box('junction-center-mark',[0,0.035,junctionZ],[0.22,0.025,0.22],m.yellow);
+
+  // Keep explicit plot metadata for all original Yaba commercial buildings.
+  const coreBuildings=[];
+  for(let i=0;i<16;i++){
+    const z=-82+i*9.5,lh=4+(i%3)*1.3,rh=4.5+((i+1)%3)*1.1;
+    const left=box('street-shop-left',[-9.2,lh/2,z],[5.2,lh,6.8],m.shops[i%4]);
+    const right=box('street-shop-right',[9.2,rh/2,z-2],[5.2,rh,6.8],m.shops[(i+2)%4]);
+    left.tags.add('stage08d-core-building');
+    right.tags.add('stage08d-core-building');
+    coreBuildings.push({entity:left,kind:'commercial',x:-9.2,z,width:5.2,height:lh,depth:6.8,side:-1,source:'core'});
+    coreBuildings.push({entity:right,kind:'commercial',x:9.2,z:z-2,width:5.2,height:rh,depth:6.8,side:1,source:'core'});
+  }
+  for(const side of [-1,1]) for(let z=-68;z<48;z+=24){box('drain-cover',[side*6.35,0.14,z],[0.45,0.06,1.5],m.dark);box('drain-grate',[side*6.35,0.18,z],[0.34,0.025,1.1],m.metal);}
+  box('roadside-kiosk',[-7.9,1.15,-17],[2.3,2.3,2.4],m.green);
+  box('kiosk-awning',[-7.9,2.42,-17],[2.7,0.18,2.8],m.red);
+  box('bus-stop-post',[7.3,1.65,-37],[0.12,3.3,0.12],m.metal);
+  box('bus-stop-sign',[7.3,3,-37],[1.25,0.65,0.12],m.blue);
+  box('bus-stop-bench',[7.9,0.65,-37],[1.6,0.16,0.48],m.metal);
+  for(const z of [-12,-39,-62]){box('streetlight-pole',[-7.2,3.3,z],[0.12,6.6,0.12],m.metal);box('streetlight-arm',[-6.8,6.45,z],[0.9,0.12,0.12],m.metal);box('streetlight-head',[-6.35,6.35,z],[0.55,0.18,0.32],m.yellow);}
+  for(const x of [-6.9,6.9]) for(const z of [junctionZ-7,junctionZ+7]) box('junction-bollard',[x,0.55,z],[0.28,1.1,0.28],m.yellow);
+
+  // Stage 03 traffic: a small, pooled set of low-poly vehicles follows lane paths.
+  const trafficGlass=material([0.10,0.20,0.24],0.25);
+  const trafficMaterials=[
+    material([0.12,0.34,0.68],0.4),material([0.82,0.68,0.12],0.4),
+    material([0.18,0.46,0.28],0.4),material([0.68,0.18,0.12],0.4)
+  ];
+  const traffic=[];
+  function makeTrafficCar(name,color,x,z,yaw=0){
+    const entity=new pc.Entity(name);app.root.addChild(entity);
+    const body=new pc.Entity(name+'-body');body.addComponent('render',{type:'box',material:color});
+    body.setLocalScale(1.65,0.58,3.15);body.setLocalPosition(0,0.62,0);entity.addChild(body);
+    const cabin=new pc.Entity(name+'-cabin');cabin.addComponent('render',{type:'box',material:trafficGlass});
+    cabin.setLocalScale(1.32,0.62,1.45);cabin.setLocalPosition(0,1.17,-0.18);entity.addChild(cabin);
+    entity.setPosition(x,0,z);entity.setEulerAngles(0,yaw,0);
+    return entity;
+  }
+  const mainTraffic=[
+    {x:-2.65,z:-64,dir:1,speed:7.0},
+    {x:2.65,z:-48,dir:-1,speed:6.2},
+    {x:-2.65,z:5,dir:1,speed:7.8},
+    {x:2.65,z:35,dir:-1,speed:6.8}
+  ];
+  mainTraffic.forEach((v,i)=>traffic.push({entity:makeTrafficCar('traffic-main-'+i,trafficMaterials[i%4],v.x,v.z,v.dir<0?180:0),...v,route:'main'}));
+  const crossTraffic=[
+    {x:-17,z:junctionZ-2.2,dir:1,speed:5.5},
+    {x:17,z:junctionZ+2.2,dir:-1,speed:5.0}
+  ];
+  crossTraffic.forEach((v,i)=>traffic.push({entity:makeTrafficCar('traffic-cross-'+i,trafficMaterials[(i+1)%4],v.x,v.z,v.dir>0?90:-90),...v,route:'cross'}));
+  const ikejaTraffic=[
+    {x:-4.2,z:258,dir:1,speed:5.2},
+    {x:4.2,z:356,dir:-1,speed:4.8}
+  ];
+  ikejaTraffic.forEach((v,i)=>traffic.push({entity:makeTrafficCar('traffic-ikeja-'+i,trafficMaterials[(i+2)%4],v.x,v.z,v.dir<0?180:0),...v,route:'ikeja'}));
+
+  // Traffic signal phases are deliberately simple and deterministic for repeatable mobile tests.
+  const signalRed=material([0.9,0.04,0.025]),signalAmber=material([0.95,0.55,0.04]),signalGreen=material([0.05,0.75,0.2]);
+  const signalLamps=[];
+  for(const side of [-1,1]){
+    box('traffic-signal-pole',[side*7.5,3.0,junctionZ+side*8],[0.16,6,0.16],m.metal);
+    const head=box('traffic-signal-head',[side*7.5,5.0,junctionZ+side*8],[0.72,1.8,0.55],m.dark);
+    const lamps=[
+      box('signal-red',[side*7.5,5.55,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalRed,head),
+      box('signal-amber',[side*7.5,5.0,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalAmber,head),
+      box('signal-green',[side*7.5,4.45,junctionZ+side*8+0.29],[0.34,0.34,0.08],signalGreen,head)
+    ];
+    signalLamps.push(lamps);
+  }
+  // Stage 08D upgrades every original Yaba shop plus the 16 Stage 08A buildings.
+  const expansionBuildings=(app.root.findByTag('stage08a-building')||[]).map(entity=>{
+    const position=entity.getPosition();
+    const scale=entity.getLocalScale();
+    const residential=entity.name.includes('residential');
+    return {
+      entity,kind:residential?'residential':'commercial',
+      x:position.x,z:position.z,width:scale.x,height:scale.y,depth:scale.z,
+      side:position.x<0?-1:1,source:'08A'
+    };
+  });
+  const stage08D=createStage08DBuildingRealism({
+    app,box,graphicsDevice:device,buildings:[...coreBuildings,...expansionBuildings]
+  });
+
+  let signalClock=0,mainGreen=true;
+  const trafficStatus=document.getElementById('traffic-status');
+  function updateSignal(dt){
+    signalClock+=dt;
+    if(signalClock>=14){signalClock=0;mainGreen=!mainGreen;}
+    const active=mainGreen?2:0,inactive=mainGreen?0:2;
+    for(const lamps of signalLamps){
+      lamps[0].render.material=mainGreen?signalRed:signalGreen;
+      lamps[1].render.material=signalAmber;
+      lamps[2].render.material=mainGreen?signalGreen:signalRed;
+    }
+    if(trafficStatus)trafficStatus.textContent=mainGreen?'TRAFFIC: MAIN ROAD GREEN':'TRAFFIC: CROSS STREET GREEN';
+    return mainGreen;
+  }
+
+  statusLabel.textContent='Loading GLB models and texturesâ€¦';
+  const assetState=await loadSceneAssets(app,{statusLabel:assetStatusLabel});
+  window.__NAIJA_RPG_UI__?.updateLoading?.({percent:19,label:'Preparing player and nearby streetsâ€¦'});
+
+  // Ara 3D Female is bundled from the ready-made Ara 3D Gen Female Executive preset.
+  // It is the only playable character; Hero 01 remains an NPC.
+  let heroCharacter=null;
+  let araLoadError=null;
+  try{
+    window.__NAIJA_RPG_UI__?.updateLoading?.({percent:22,label:'Loading Ara Â· player characterâ€¦'});
+    heroCharacter=await loadHeroCharacter(app,{
+      bundledUrl:'assets/hero/Ara_Female_Executive_Animated_Ladder_Mobile.glb.gz',
+      bundledFallbackUrl:'assets/hero/Ara_Female_Executive_Animated_Ladder.glb',
+      characterId:'ara-female',
+      statusLabel:assetStatusLabel
+    });
+  }catch(error){
+    araLoadError=String(error?.message||error);
+    console.error('Ara female player could not load:',error);
+    if(assetStatusLabel){assetStatusLabel.textContent='Ara 3D Female failed to load Â· '+araLoadError;assetStatusLabel.dataset.state='warning';}
+  }
+  if(heroCharacter) {window.__NAIJA_RPG_UI__?.setPlayerCharacterReady?.();window.__NAIJA_RPG_UI__?.updateLoading?.({percent:61,label:'Player ready Â· loading nearby Yaba buildingsâ€¦'});}
+  else window.__NAIJA_RPG_UI__?.requirePlayerCharacter?.('Ara 3D Female could not load: '+araLoadError);
+
+  // Hero 01 is optional city-NPC content. It is streamed after the player can
+  // enter the world, so its 3.1 MiB animation bundle cannot block first play.
+  let hero01NpcCharacter=null;
+  if(assetStatusLabel){
+    assetStatusLabel.textContent=heroCharacter
+      ? 'Ara 3D Gen Female Executive Â· main player ready'
+      : 'Ara 3D Female failed to load Â· Hero 01 remains an NPC';
+  }
+  const stage08E=createStage08EBuildings({app,lowMemoryDevice,lowDataMode,applyShadowPolicy:worldLighting.applyToEntity});
+  await stage08E.initialize();
+  window.__NAIJA_RPG_UI__?.updateLoading?.({percent:61,label:'Preparing the nearby Yaba districtâ€¦'});
+  const startupBuildingRadiusMetres=(lowDataMode||lowMemoryDevice)?20:35;
+  const startupPreload=await stage08E.preloadArea([0,0,0],startupBuildingRadiusMetres,progress=>{
+    window.__NAIJA_RPG_UI__?.updateLoading?.({...progress,percent:61+(progress.percent||0)*.28,label:'Loading nearby Yaba streetsâ€¦'});
+  });
+  window.__NAIJA_RPG_UI__?.updateLoading?.({percent:90,label:'Nearby streets ready Â· preparing world systemsâ€¦'});
+  const stage08G=createStage08GIkejaStreetLife({app,box,material});
+  const stage08H=createStage08HIkejaPropRealism({app,graphicsDevice:device});
+  const stage08I=createStage08ICityDistrictExpansion({app,box,material});
+  const skipOptionalStreetDownloads=lowDataMode||lowMemoryDevice;
+  const stage08J=await createStage08JYabaIkejaNetworkAndStreets({app,box,material,lowDataMode,skipOptionalDownloads:skipOptionalStreetDownloads});
+  const cityEconomy=createCityEconomy();
+  window.__NAIJA_RPG_UI__?.setEconomy?.(cityEconomy.getState());
+
+  // A small, bounded tutorial traversal lane beside the Yaba spawn route.
+  const ladderFrame=new pc.Entity('traversal-ladder-assembly');
+  app.root.addChild(ladderFrame);
+  box('traversal-ladder-left-rail',[4.08,1.55,-31.0],[.08,3.1,.08],m.metal,ladderFrame);
+  box('traversal-ladder-right-rail',[4.82,1.55,-31.0],[.08,3.1,.08],m.metal,ladderFrame);
+  for(let rung=0;rung<7;rung++)box('traversal-ladder-rung-'+rung,[4.45,.30+rung*.4,-31.0],[.78,.055,.07],m.yellow,ladderFrame);
+  const ladderCollider=box('traversal-ladder-collider',[4.45,1.55,-31.0],[.86,3.1,.28],m.metal);
+  ladderCollider.render.enabled=false;
+  const traversalObstacles=[
+    {id:'yaba-step-01',type:'step',height:.44,entity:box('traversal-step-01',[.65,.22,-1.8],[1,.44,.55],m.concrete)},
+    {id:'yaba-low-vault-01',type:'low-vault',height:.72,entity:box('traversal-low-vault-01',[7.2,.36,-8.2],[1.25,.72,.55],m.concrete)},
+    {id:'yaba-high-vault-01',type:'high-vault',height:1.02,entity:box('traversal-high-vault-01',[-7.2,.51,-10.5],[1.25,1.02,.55],m.shops[1])},
+    {id:'yaba-mantle-01',type:'mantle',height:1.26,entity:box('traversal-mantle-01',[4.8,.63,-15],[1.3,1.26,.6],m.shops[2])},
+    {id:'yaba-ledge-01',type:'ledge',height:2.15,entity:box('traversal-ledge-01',[-.35,1.075,-23],[3.2,2.15,.6],m.concrete)},
+    {id:'yaba-ladder-01',type:'ladder',height:3.1,entity:ladderCollider},
+    {id:'yaba-wall-run-01',type:'wall-run',height:1.3,entity:box('traversal-wall-run-01',[-4.3,.65,-43],[.55,1.3,5.2],m.shops[2])},
+    {id:'yaba-drop-01',type:'drop',height:.72,entity:box('traversal-drop-01',[1.45,.36,-54],[1.8,.72,.62],m.red)}
+  ];
+  // Building-side traversal details: starter foundations, an AC service
+  // platform, low railings, parapet caps and ladder hardware. These are
+  // authored as readable route cues, not invisible Superman-height targets.
+  const propMetal=m.metal, propConcrete=m.concrete, propLight=m.white;
+  // Foundation cap and anti-slip strips on the starter step.
+  box('prop-foundation-cap',[.65,.47,-1.8],[1.08,.06,.62],m.yellow);
+  for(let i=0;i<4;i++)box('prop-foundation-grip-'+i,[.28+i*.24,.515,-1.8],[.08,.018,.42],m.dark);
+  // Small glossy puddles mark wet-road footstep zones on the asphalt.
+  box('prop-wet-road-patch-01',[1.25,.014,-34],[1.8,.008,3.2],m.dark);
+  box('prop-wet-road-patch-02',[-2.2,.014,-65],[2.3,.008,2.2],m.dark);
+  // A realistic wall-mounted AC condenser with a support shelf and side rails.
+  box('prop-ac-service-shelf',[-7.2,1.08,-10.5],[1.55,.12,.82],propMetal);
+  box('prop-ac-condenser',[-7.2,1.66,-10.5],[1.16,1.02,.62],propLight);
+  box('prop-ac-front-panel',[-7.2,1.66,-10.825],[.88,.76,.035],propMetal);
+  for(let i=0;i<6;i++)box('prop-ac-grille-'+i,[-7.56+i*.145,1.66,-10.85],[.025,.68,.025],m.yellow);
+  box('prop-ac-left-bracket',[-7.82,.82,-10.5],[.08,.48,.12],m.red);
+  box('prop-ac-right-bracket',[-6.58,.82,-10.5],[.08,.48,.12],m.red);
+  // Guard rail around the mantle starter; top rail is intentionally low enough to vault.
+  for(let i=0;i<4;i++)box('prop-mantle-rail-post-'+i,[4.15+i*.43,1.54,-15.28],[.055,.92,.06],propMetal);
+  box('prop-mantle-rail-top',[4.795,1.98,-15.28],[1.42,.07,.07],propMetal);
+  box('prop-mantle-rail-mid',[4.795,1.62,-15.28],[1.42,.045,.045],m.yellow);
+  // Parapet cap and a short pipe connector beside the ledge.
+  box('prop-roof-parapet-cap',[-.35,2.19,-23],[3.32,.08,.68],propLight);
+  box('prop-roof-step-pipe',[-2.55,.72,-23],[.09,.09,1.25],propMetal);
+  // Ladder safety hoops / standoff brackets.
+  for(let i=0;i<3;i++)box('prop-ladder-standoff-'+i,[4.45,.55+i*.95,-30.62],[.54,.07,.42],m.red);
+  // Wall-run grip bars and a short roof-edge rail make the route legible.
+  for(let i=0;i<3;i++)box('prop-wallrun-grip-'+i,[-4.3,.62+i*.62,-40.35],[.82,.055,.08],propMetal);
+  box('prop-drop-parapet-cap',[1.45,.78,-54],[1.92,.08,.72],propLight);
+  traversalObstacles.forEach(item=>item.entity.tags.add('stage09-traversal-obstacle'));
+  // Thin surface-query zones follow the visible road, footpaths and pocket
+  // grass. Their top is almost exactly at street level, so they classify
+  // footsteps without creating noticeable bumps in the capsule collision.
+  const surfacePatches=[
+    {id:'yaba-concrete-sidewalk-west',surface:'concrete',position:[-6.1,.06,-18],halfExtents:[.55,.06,75]},
+    {id:'yaba-concrete-sidewalk-east',surface:'concrete',position:[6.1,.06,-18],halfExtents:[.55,.06,75]},
+    {id:'yaba-grass-verge-west',surface:'grass',position:[-9.1,-.006,-18],halfExtents:[1.2,.006,70]},
+    {id:'yaba-grass-verge-east',surface:'grass',position:[9.1,-.006,-18],halfExtents:[1.2,.006,70]},
+    {id:'yaba-wet-asphalt-puddle-01',surface:'wet',position:[1.25,-.004,-34],halfExtents:[.9,.004,1.6]},
+    {id:'yaba-wet-asphalt-puddle-02',surface:'wet',position:[-2.2,-.004,-65],halfExtents:[1.15,.004,1.1]}
+  ];
+  // Stage 09B: multiple authored access routes for every building proxy:
+  // a facade ladder, an adjacent-face mantle, and a second ledge pull-up.
+  // Each route has its own approach direction, landing point and collider pair.
+  const buildingProxies=stage08E.getCollisionProxies();
+  const tutorialObstacleCount=traversalObstacles.length;
+  const buildingRouteObstacles=[];
+  const addBuildingRoute=(proxy,buildingIndex,routeType,normal,routeIndex)=>{
+    const [cx,cy,cz]=proxy.position,[hx,hy,hz]=proxy.halfExtents;
+    const height=Math.max(2.4,hy*2);
+    const nx=normal[0],nz=normal[1];
+    const edge=nx?hx:hz;
+    const routeX=cx+nx*(edge+.46),routeZ=cz+nz*(edge+.46);
+    const entity=new pc.Entity('roof-route-'+routeType+'-'+buildingIndex);
+    entity.setPosition(routeX,cy,routeZ);
+    // Ladder rungs span the wall tangent, not the wall normal. Keep the
+    // collision rail thin through the wall and wide along the rung axis.
+    const facesAlongX=Math.abs(nx)>.5;
+    entity.setLocalScale(facesAlongX?.34:.86,height,facesAlongX?.86:.34);
+    entity.tags.add('stage09-roof-access');
+    app.root.addChild(entity);
+    const destination=routeType==='wall-run'
+      ? [routeX-nz*3.6,0,routeZ+nx*3.6]
+      : [cx+nx*(edge-.38),height,cz+nz*(edge-.38)];
+    const approachYaw=Math.atan2(nx,nz)*180/Math.PI;
+    const route={
+      id:'roof-route-'+routeType+'-'+proxy.id.replace(/^building-/,''),
+      buildingId:proxy.id.replace(/^building-/,''),
+      type:routeType,height,entity,roofRoute:true,
+      destination,approach:[nx,nz],approachYaw,
+      routeOrdinal:routeIndex,
+      physicsColliderIndices:[tutorialObstacleCount+routeIndex,tutorialObstacleCount+buildingProxies.length*4+surfacePatches.length+buildingIndex],
+      buildingHalfExtents:[hx,hy,hz],visuals:null
+    };
+    buildingRouteObstacles.push(route);
+  };
+  for(let i=0;i<buildingProxies.length;i++){
+    const proxy=buildingProxies[i];
+    const [cx,,cz]=proxy.position;
+    // Road-facing side varies with district position; the other two routes
+    // approach from the front and rear elevations.
+    const side=cx<0?1:-1;
+    const front=cz<0?1:-1;
+    addBuildingRoute(proxy,i,'ladder',[side,0],i*4);
+    addBuildingRoute(proxy,i,'mantle',[0,front],i*4+1);
+    addBuildingRoute(proxy,i,'ledge',[0,-front],i*4+2);
+    addBuildingRoute(proxy,i,'wall-run',[-side,0],i*4+3);
+  }
+  const allTraversalObstacles=[...traversalObstacles,...buildingRouteObstacles];
+  let roofVisualClock=0,roofVisualCount=0;
+  function updateRoofAccessVisuals(position,dt){
+    roofVisualClock-=dt;
+    if(roofVisualClock>0)return;
+    roofVisualClock=.55;
+    const nearby=buildingRouteObstacles
+      .map(route=>{const p=route.entity.getPosition();return {route,distance:Math.hypot(position[0]-p.x,position[2]-p.z)};})
+      .filter(item=>item.distance<62)
+      .sort((a,b)=>a.distance-b.distance)
+      .slice(0,4);
+    const active=new Set(nearby.map(item=>item.route));
+    for(const route of buildingRouteObstacles){
+      const visible=active.has(route);
+      if(visible&&!route.visuals){
+        const p=route.entity.getPosition(),h=route.height,visuals=[];
+        const gripMaterial=route.type==='ladder'?m.yellow:route.type==='mantle'?m.red:m.white;
+        if(route.type==='ladder'){
+          const facesAlongX=Math.abs(route.approach[0])>.5;
+          const railOffset=facesAlongX?[-.28,.28]:[-.28,.28];
+          for(let side=0;side<2;side++){
+            const offset=railOffset[side];
+            const railPosition=facesAlongX?[p.x,p.y-h/2,p.z+offset]:[p.x+offset,p.y-h/2,p.z];
+            visuals.push(box(route.id+'-rail-'+side,railPosition,[.07,h,.07],m.metal));
+          }
+          // 40 cm authored rung spacing matches the climb IK grid.
+          let rungIndex=0;
+          for(let y=.32;y<h-.20&&rungIndex<120;y+=.4,rungIndex++){
+            visuals.push(box(route.id+'-rung-'+rungIndex,[p.x,y,p.z],facesAlongX?[.07,.055,.58]:[.58,.055,.07],gripMaterial));
+          }
+        }else{
+          const normal=route.approach;
+          for(let grip=0;grip<5;grip++){
+            const y=(grip+1)*h/6;
+            visuals.push(box(route.id+'-wall-grip-'+grip,[p.x-normal[0]*.22,y,p.z-normal[1]*.22],normal[0]?[.74,.065,.09]:[.09,.065,.74],gripMaterial));
+          }
+          visuals.push(box(route.id+'-ledge-cap',[p.x-normal[0]*.2,Math.max(.08,h-.14),p.z-normal[1]*.2],normal[0]?[.95,.14,.12]:[.12,.14,.95],m.metal));
+        }
+        route.visuals=visuals;
+      }
+      if(route.visuals)for(const visual of route.visuals){
+        if(visual.render)visual.render.enabled=visible;
+      }
+    }
+    roofVisualCount=nearby.length;
+  }
+
+  const actorWorldColliders=[...traversalObstacles,...(stage08I.collisionProxies||[]),...(stage08J.collisionProxies||[])];
+  const navigationColliders=[
+    ...allTraversalObstacles,
+    ...buildingProxies,
+    ...(stage08C.collisionProxies||[]),
+    ...(stage08G.collisionProxies||[]),
+    ...(stage08I.collisionProxies||[]),
+    ...(stage08J.collisionProxies||[])
+  ].filter(item=>{
+    const halfY=Array.isArray(item?.halfExtents)?Math.abs(item.halfExtents[1]):Math.abs(item?.entity?.getLocalScale?.().y||0)/2;
+    const centerY=Array.isArray(item?.position)?item.position[1]:(item?.entity?.getPosition?.().y||0);
+    return halfY>=.28&&centerY+halfY>.85;
+  });
+  const actorPhysics=createActorPhysics({colliders:actorWorldColliders,groundY:0,gravity:18});
+  const playerWorldColliders=[
+    ...allTraversalObstacles,
+    ...surfacePatches,
+    ...buildingProxies,
+    ...(stage08C.collisionProxies||[]),
+    ...(stage08G.collisionProxies||[]),
+    ...(stage08I.collisionProxies||[]),
+    ...(stage08I.groundColliders||[]),
+    ...(stage08J.collisionProxies||[])
+  ];
+  let playerPhysics=actorPhysics;
+  try {
+    // Keep the eight tutorial obstacles at the front: traversal temporarily
+    // disables their matching Bullet bodies by index while the player climbs.
+    playerPhysics=await createPlayerPhysics({colliders:playerWorldColliders,groundY:0,gravity:18});
+  } catch(error) {
+    console.warn('Bullet player physics unavailable; using the kinematic fallback:',error);
+    if(assetStatusLabel)assetStatusLabel.textContent='Bullet unavailable Â· basic player physics fallback active';
+  }
+  const vfxSystem=createVfxSystem({app,poolSize:24});
+  const audioSystem=createAudioSystem();
+  const emitPlayerFeedback=(type,position,meta={})=>{
+    vfxSystem.emit(type,position,1,meta.surface||'asphalt');
+    const sound=type==='dust'?'footstep':type==='jump'?'jump':type==='landing'?'landing':type==='parkour'?'parkour':null;
+    if(sound)audioSystem.play(sound,meta.surface||'asphalt');
+  };
+  let traversalSystem=null;
+  let fieldEquipment=null;
+  let policePatrolSystem=null;
+  const playerController=createThirdPersonController(app,camera,canvas,{
+    onCameraModeChange:mode=>window.__NAIJA_RPG_UI__?.setCameraMode?.(mode),
+    tryTraversal:state=>traversalSystem?.tryContextualTraversal(state)===true,
+    onTraversal:()=>window.__NAIJA_RPG_UI__?.showToast('Parkour move started'),
+    resolveMovement:(current,proposed)=>{
+      // Bullet owns building and solid street-prop collision when available;
+      // retain the legacy manifest resolver only for the lightweight fallback.
+      const cityResolved=playerPhysics===actorPhysics?stage08E.resolveMovement(current,proposed):proposed;
+      return traversalSystem ? traversalSystem.resolveMovement(current,cityResolved) : cityResolved;
+    },
+    heroCharacter,physics:playerPhysics,onEffect:emitPlayerFeedback,
+    onCharacterEvent:event=>{
+      if(event.type==='damage')window.__NAIJA_RPG_UI__?.showToast('Impact Â· health '+Math.round(event.health));
+      else if(event.type==='healing')window.__NAIJA_RPG_UI__?.showToast('Recovered '+Math.round(event.amount)+' health');
+      else if(event.type==='stamina-empty')window.__NAIJA_RPG_UI__?.showToast('Stamina depleted');
+    },
+    onInteract:state=>{
+      if(fieldEquipment?.pickupNearest(state)) return;
+      if(vehicleSystem?.toggle(state)) return;
+      const nearestInteractable=interactionSystem?.findNearest(state);
+      if(nearestInteractable?.available){
+        interactionSystem.interact(state);
+        return;
+      }
+      if(traversalSystem?.tryContextualTraversal(state)){
+        window.__NAIJA_RPG_UI__?.showToast('Traversal started Â· '+(traversalSystem.getState().lastTraversal?.clip||'movement'));
+        return;
+      }
+      window.__NAIJA_RPG_UI__?.showToast(nearestInteractable
+        ? nearestInteractable.name+' is too far away or blocked.'
+        : 'Nothing nearby to interact with.');
+    }
+  });
+
+  // Spawn Ara on the west pedestrian footpath, clear of the moving traffic lanes.
+  // The matching Bullet surface patch is raised to the visible 12cm sidewalk top.
+  const firstSpawnPosition = [-6.1, 0.12, -40];
+  playerController.setPosition(firstSpawnPosition, 90);
+  playerController.setCameraViewYaw?.(0);
+
+  traversalSystem=createTraversalSystem({playerController,physics:playerPhysics,obstacles:allTraversalObstacles,onEffect:(type,position)=>vfxSystem.emit(type,position)});
+  let vehicleSystem=null;
+  let interactionSystem=null;
+  try{
+    vehicleSystem=await createVehicleSystem({
+      app,camera,canvas,traffic,playerController,playerPhysics,
+      buildingColliders:buildingProxies,
+      streetColliders:[...(stage08C.collisionProxies||[]),...(stage08G.collisionProxies||[]),...(stage08I.collisionProxies||[]),...(stage08I.groundColliders||[]),...(stage08J.collisionProxies||[])],
+      audioSystem,vfxSystem,
+      onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message)
+    });
+  }catch(error){
+    console.warn('Enterable vehicle failed to initialize:',error);
+    window.__NAIJA_RPG_UI__?.showToast('Vehicle unavailable Â· walking mode remains active');
+  }
+
+  interactionSystem=createWorldInteractionSystem({
+    getPlayerState:()=>playerController.getState(),
+    defaultRange:3.25,
+    lineOfSight:(from,to)=>hasClearLineOfSight(from,to,navigationColliders,.03),
+    onMessage:message=>window.__NAIJA_RPG_UI__?.showToast(message)
+  });
+  interactionSystem.register({
+    id:'yaba-street-kiosk',name:'Street kiosk',position:[-5.5,0,-17],range:3.25,prompt:'TALK Â· STREET KIOSK',
+    onInteract:()=>({message:'You greet the kiosk owner. Vendor trading will connect to the inventory system next.'})
+  });
+  interactionSystem.register({
+    id:'yaba-bus-stop',name:'Bus stop',position:[5.8,0,-37],range:3.25,prompt:'CHECK Â· BUS STOP',
+    onInteract:()=>({message:'Bus stop Â· the route board is not connected yet.'})
+  });
+
+  fieldEquipment=createFieldEquipmentSystem({
+    app,player:playerController.player,playerController,playerPhysics,vfxSystem,audioSystem,lowMemoryDevice,
+    onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message)
+  });
+  window.__NAIJA_FIELD_EQUIPMENT__=fieldEquipment;
+  window.__NAIJA_RPG_UI__?.refreshEquipmentUI?.(fieldEquipment.getState());
+
+  const worldIdentityRecords=buildWorldIdentityRecords({stage08EState:stage08E.getState()});
+  const worldSignage=createWorldSignage({root:document.getElementById('rpg-interface'),camera,canvas});
+  worldSignage.setRecords(worldIdentityRecords);
+  worldSignage.update(playerController.getState().position);
+  window.__NAIJA_RPG_UI__?.setWorldMapData?.(worldIdentityRecords);
+  let worldWaypoint=null;
+  window.__NAIJA_SET_WAYPOINT__=record=>{worldWaypoint=record;const label=document.getElementById('hud-gps-label');if(label)label.textContent=record?'GPS Â· '+record.name.toUpperCase():'NO GPS DESTINATION';return true;};
+
+  const companionSystem=createCompanionSystem({
+    app,playerController,heroCharacter,obstacles:traversalObstacles,physics:actorPhysics,maxActive:2,
+    onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message),onEffect:(type,position)=>vfxSystem.emit(type,position)
+  });
+  const pedestrianSystem=createPedestrianSystem({
+    app,physics:actorPhysics,colliders:actorWorldColliders,occluders:navigationColliders,
+    navigationColliders,heroCharacter:null
+  });
+  const cityTrafficAI=createCityTrafficAI({traffic,junctionZ});
+  policePatrolSystem=createPolicePatrolSystem({app,playerPhysics,lowMemoryDevice,onStatus:message=>window.__NAIJA_RPG_UI__?.showToast(message)});
+  const stage08FProfiler = createStage08FDeviceProfiler({ app, canvas, device, stage08E });
+  window.__NAIJA_STAGE08F_PROFILE__ = stage08FProfiler;
+  window.__NAIJA_INTERACT__=()=>playerController.interact();
+  window.__NAIJA_SET_CAMERA_MODE__=mode=>playerController.setCameraMode(mode);
+  window.__NAIJA_PLAY_HERO_ANIMATION__=(name,durationSeconds)=>playerController.playAnimation(name,durationSeconds);
+  window.__NAIJA_SET_HERO_FACE__=(name,weight=1)=>playerController.playFaceExpression(name,weight);
+  window.__NAIJA_TRAVERSE__=()=>traversalSystem.tryContextualTraversal(playerController.getState());
+  window.__NAIJA_VEHICLE_ENTER__=()=>vehicleSystem?.enter(true);
+  window.__NAIJA_VEHICLE_EXIT__=()=>vehicleSystem?.exit();
+  window.__NAIJA_COMPANION_COMMAND__=(roleId,command)=>companionSystem.command(roleId,command);
+  window.__NAIJA_RPG_UI__?.setCameraMode?.(playerController.getState().cameraMode);
+  statusLabel.textContent='Open-world FPS/RPG ready â€” V switches view / touch joystick';
+
+  // Stage 06: city traffic continues as lightweight kinematic scenery.
+  // The human character is now the only player-controlled actor.
+  let hudClock=0;
+  app.on('update',dt=>{
+    if(window.__NAIJA_RPG_PAUSED__) return;
+    worldLighting.update(dt);
+    const step=Math.min(dt,0.05);
+    const greenForMain=updateSignal(step);
+    cityTrafficAI.update(step,{mainGreen:greenForMain,pedestrians:pedestrianSystem.getState().roster});
+    playerController.update(step);
+    fieldEquipment?.update(step);
+    playerController.applyGroundedFootLock?.();
+    traversalSystem.update(step);
+    vehicleSystem?.update(step);
+    companionSystem.update(step);
+    const playerState=playerController.getState();
+    const vehicleState=vehicleSystem?.getState?.();
+    const worldActorState=vehicleState?.occupied
+      ? {...playerState,position:vehicleState.position,vehicleOccupied:true,noiseEvent:true}
+      : playerState;
+    pedestrianSystem.update(step,worldActorState);
+    policePatrolSystem?.update(step);
+    vfxSystem.update(step);
+    stage08E.update(worldActorState.position);
+    if(!vehicleState?.occupied)updateRoofAccessVisuals(playerState.position,step);
+    hudClock+=step;
+    if(hudClock>=0.12){
+      hudClock=0;
+      const [district,region]=(()=>{const [x,,z]=worldActorState.position;if(x>=-120&&x<=120&&z>=165&&z<=500)return ['Ikeja','Lagos'];return ['Yaba','Lagos'];})();
+      window.__NAIJA_RPG_UI__?.setDistrictLabel?.(district,region);
+      window.__NAIJA_RPG_UI__?.setVitals(playerState);
+      window.__NAIJA_RPG_UI__?.setWorldActivity?.({pedestrians:10,companions:companionSystem.getState().activeCount});
+      window.__NAIJA_RPG_UI__?.setInteractionPrompt?.(interactionSystem?.findNearest(playerState)||null);
+      window.__NAIJA_RPG_UI__?.setWorldMapPlayerPosition?.(worldActorState.position,Math.atan2(camera.forward.x,-camera.forward.z));
+      worldSignage.update(worldActorState.position);
+      if(worldWaypoint){const d=Math.hypot(worldActorState.position[0]-worldWaypoint.position[0],worldActorState.position[2]-worldWaypoint.position[2]);const gps=document.getElementById('hud-gps-label');if(gps)gps.textContent='GPS Â· '+(d>=1000?(d/1000).toFixed(1)+' KM':Math.round(d)+' M')+' Â· '+worldWaypoint.name.toUpperCase();}
+    }
+  });
+
+  // Documented AppStats telemetry; GPU memory is estimated tracked resource usage.
+  const stats=app.stats,perf={elapsed:0,samples:0,frameTotal:0,framePeak:0,cpuTotal:0,drawTotal:0};
+  function samplePerformance(){
+    const frame=stats.frameTime||0;perf.elapsed+=frame;perf.samples++;perf.frameTotal+=frame;perf.framePeak=Math.max(perf.framePeak,frame);
+    perf.cpuTotal+=(stats.cpuUpdateTime||0)+(stats.cpuRenderTime||0);perf.drawTotal+=stats.drawCallCount||0;
+    if(perf.elapsed<1000||!perfPanel)return;
+    const avg=perf.frameTotal/perf.samples,heap=performance.memory?.usedJSHeapSize;
+    const renderDiag=window.__NAIJA_RENDER_DIAGNOSTICS__;
+    const fps=Math.round(1000/Math.max(avg,0.01));
+    window.__NAIJA_ANDROID_BASELINE__={userAgent:navigator.userAgent,viewport:{width:innerWidth,height:innerHeight},devicePixelRatio:window.devicePixelRatio,canvas:{width:canvas.width,height:canvas.height},fps,averageFrameMs:avg,drawCalls:stats.drawCallCount,meshInstances:renderDiag?.scene?.meshInstances??null,gpuMemoryMiB:stats.vramTotalBytes/(1024*1024),jsHeapMiB:heap?heap/1048576:null,gpu:device.unmaskedRenderer||'Not exposed'};
+    const vram=stats.vramTotalBytes/(1024*1024);
+    perfPanel.textContent=`FPS ${fps} Â· Frame ${avg.toFixed(1)} ms (peak ${perf.framePeak.toFixed(1)}) Â· CPU ${(perf.cpuTotal/perf.samples).toFixed(1)} ms\nDraw calls ${Math.round(perf.drawTotal/perf.samples)} Â· GPU resources ${Number.isFinite(vram)?vram.toFixed(1):'N/A'} MiB Â· JS heap ${heap?(heap/1048576).toFixed(1):'N/A'} MiB\nCanvas ${canvas.width}Ã—${canvas.height} Â· Viewport ${innerWidth}Ã—${innerHeight} Â· DPR ${devicePixelRatio} Â· Meshes ${renderDiag?.scene?.meshInstances??'N/A'}\nGPU: ${device.unmaskedRenderer||'Not exposed by browser'}`;
+    perf.elapsed=0;perf.samples=0;perf.frameTotal=0;perf.framePeak=0;perf.cpuTotal=0;perf.drawTotal=0;
+  }
+  app.on('frameend',samplePerformance);
+  app.on('frameend',()=>{
+    const rect=canvas.getBoundingClientRect(),cameraPos=camera.getPosition(),forward=camera.forward;
+    const renderComponents=app.root.findComponents('render');
+    const meshInstances=renderComponents.reduce((sum,component)=>sum+(component.meshInstances?.length||0),0);
+    window.__NAIJA_RENDER_DIAGNOSTICS__={viewport:{width:window.innerWidth,height:window.innerHeight},canvas:{left:rect.left,top:rect.top,width:rect.width,height:rect.height,bufferWidth:canvas.width,bufferHeight:canvas.height},camera:{position:[cameraPos.x,cameraPos.y,cameraPos.z],forward:[forward.x,forward.y,forward.z],fov:camera.camera.fov,farClip:camera.camera.farClip},scene:{rootEntities:app.root.children.length,renderComponents:renderComponents.length,meshInstances,exposure:app.scene.exposure,toneMapping:camera.camera.toneMapping,knownBounds:{min:[-120,-9,-200],max:[120,24,500]},},drawCallCount:stats.drawCallCount,primitiveCount:stats.primitiveCount??null,frameTime:stats.frameTime,gpuMemoryBytes:stats.vramTotalBytes};
+  });
+  const profileExport=document.getElementById('profile-export');
+  perfToggle?.addEventListener('click',()=>{const show=perfPanel.hidden;perfPanel.hidden=!show;perfToggle.setAttribute('aria-expanded',String(show));if(profileExport)profileExport.hidden=!show;});
+  profileExport?.addEventListener('click',()=>stage08FProfiler.download());
+  const gameApi={ready:true,stage:10,hudStage:7,firstSpawnPosition:firstSpawnPosition.slice(),dataOptimization:{lowMemoryDevice,lowDataMode,startupBuildingRadiusMetres,startupBuildings:startupPreload.total,startupBuildingBytes:startupPreload.bytes,progressiveBuildingRadiusMetres:lowDataMode?85:(lowMemoryDevice?140:180),heroBuildingActivationRadiusMetres:lowDataMode?48:(lowMemoryDevice?65:76),manualDataSaver:manualDataSaver===true,manualDataSaverOverride:dataSaverPreference?.explicit===true,hero01NpcDeferred:true,optionalStreetDownloadsSkipped:skipOptionalStreetDownloads,hero01NpcSkipped:lowDataMode||lowMemoryDevice},rendering:{toneMapping:camera.camera.toneMapping,exposure:app.scene.exposure,worldLighting:worldLighting.getState()},mainCharacterId:'ara-female',mainCharacterName:'Ara 3D Female',hero01Role:'city-npc',stage08A,stage08B,stage08C,stage08D,stage08E:stage08E.getState(),startupPreload,getStage08EState:()=>stage08E.getState(),resolveBuildingMovement:stage08E.resolveMovement,worldCollision:{buildingProxies:stage08E.getCollisionProxies().length,streetInfrastructureProxies:stage08C.collisionProxies?.length||0,ikejaProxies:stage08G.collisionProxies?.length||0,ikejaDistrictProxies:stage08I.collisionProxies?.length||0,ikejaGroundColliders:stage08I.groundColliders?.filter(collider=>collider.surface==='grass').length||0,yabaIkejaStreetProxies:stage08J.collisionProxies?.length||0,totalProxies:playerWorldColliders.length},stage08G,stage08H,stage08I,stage08J,getCityEconomyState:()=>cityEconomy.getState(),getTrafficAIState:()=>cityTrafficAI.getState(),stage08F:'device-profiling-harness',getStage08FProfile:()=>stage08FProfiler.snapshot(),landscapeOnly:true,mobileCrouch:true,mobileInteract:true,genre:'open-world FPS/RPG',cameraModes:['first-person','third-person'],getCameraMode:()=>playerController.getState().cameraMode,setCameraMode:mode=>playerController.setCameraMode(mode),cameraMode:'third-person',thirdPersonCharacter:true,firstPersonCharacter:true,characterGeometry:heroCharacter?'rigged-glb':'no-visible-player-rig',playerCharacterReady:!!heroCharacter,characterSource:heroCharacter?.source??'ara-female-not-installed',characterForwardCorrection:heroCharacter?.forwardAxisCorrectionDegrees??null,characterVisualGroundOffset:heroCharacter?.visualGroundOffset??0,characterLoadError:araLoadError,heroAnimations:heroCharacter?.clipNames??[],heroFaceMorphs:heroCharacter?.morphNames??[],characterMetadata:heroCharacter?.metadata??null,heroDefaultClips:heroCharacter?.defaultClips??null,traversal:true,traversalObstacles:allTraversalObstacles.length,buildingRoofRoutes:new Set(buildingRouteObstacles.map(route=>route.buildingId)).size,buildingAccessPoints:buildingRouteObstacles.length,getRoofVisualCount:()=>roofVisualCount,getTraversalState:()=>traversalSystem.getState(),getInteractionState:()=>interactionSystem?.getState?.()||null,getWorldIdentityState:()=>({count:worldIdentityRecords.length,enterable:worldIdentityRecords.filter(item=>item.enterable).length,byCategory:worldIdentityRecords.reduce((out,item)=>{out[item.category]=(out[item.category]||0)+1;return out;},{})}),getWorldMapState:()=>window.__NAIJA_RPG_UI__?.getWorldMapState?.()||null,getWaypoint:()=>worldWaypoint?.id||null,getCharacterSimulationState:()=>({vitals:playerController.getVitalsState?.(),facial:playerController.getFacialAnimationState?.(),footLock:playerController.getFootLockState?.(),ragdoll:playerController.getRagdollState?.(),recovery:playerController.getRecoveryState?.(),pedestrians:pedestrianSystem.getState(),interactions:interactionSystem?.getState?.()}),companions:true,companionRoster:companionSystem.getState(),getCompanionState:()=>companionSystem.getState(),pedestrians:true,getPedestrianState:()=>pedestrianSystem.getState(),getHeroNpcState:()=>pedestrianSystem.getState().heroNpc,physics:actorPhysics.getState(),getPhysicsState:()=>({player:playerPhysics.getState(),agents:actorPhysics.getState()}),vfx:true,getVfxState:()=>vfxSystem.getState(),audio:true,getAudioState:()=>audioSystem.getState(),vehicle:true,vehicleName:'Naija City Sedan',getVehicleState:()=>vehicleSystem?.getState?.()||{available:false},fieldEquipment:fieldEquipment.getState(),getFieldEquipmentState:()=>fieldEquipment.getState(),policePatrol:policePatrolSystem?.getState?.()||null,getPolicePatrolState:()=>policePatrolSystem?.getState?.()||null,getHeroRigSnapshot:()=>playerController.getRigSnapshot(),getHeroMeshSnapshot:()=>heroCharacter?.getRenderMeshSnapshot?.()||[],getHeroFootPositions:()=>heroCharacter?.getFootPositions?.()||null,getHeroLimbPositions:()=>heroCharacter?.getLimbPositions?.()||null,getHeroSoleMarkerInfo:()=>heroCharacter?.getSoleMarkerInfo?.()||null,getHeroFootLockState:()=>playerController.getFootLockState?.()||null,getHeroVisualBounds:()=>heroCharacter?.getVisualBounds?.()||null,getGroundProbe:(from,to)=>playerPhysics.raycast?.(from,to)||null,getCameraPosition:()=>camera.getPosition().toArray(),getVisualSettings:()=>({ambientLight:app.scene.ambientLight.toArray(),exposure:app.scene.exposure,toneMapping:pc.tonemapNames[camera.camera.toneMapping],directionalIntensity:sun.light.intensity,directionalColour:sun.light.color.toArray(),clearColour:camera.camera.clearColor.toArray()}),
+    surfacePatches:surfacePatches.map(patch=>({id:patch.id,surface:patch.surface,position:patch.position.slice(),halfExtents:patch.halfExtents.slice()})),movement:true,sprint:true,jump:true,proceduralAnimations:!heroCharacter,mobileJoystick:true,cameraOrbit:true,junction:true,traffic:traffic.length,getTrafficPositions:()=>traffic.map(item=>({name:item.entity.name,position:item.entity.getPosition().toArray()})),trafficAI:true,assets:assetState,stats,getPlayerState:()=>playerController.getState(),getHeroAnimationState:()=>playerController.getAnimationState()};
+  if(import.meta.env.DEV && new URLSearchParams(window.location.search).has('smoke')) {
+    // QA-only scene diagnostics stay out of the production bundle.
+    gameApi.getUnbatchedComponentAudit=()=>{const components=[...(app.root.findComponents('render')||[]),...(app.root.findComponents('model')||[])];const dynamicPattern=/(^|[^a-z0-9])(vehicle|traffic|pedestrian|npc|player|hero|character|door|gate|lift|elevator|pickup|weapon|projectile|ragdoll|animated|skinned|moving)(?=$|[^a-z0-9])/i;const specialPattern=/(^|[^a-z0-9])(interact)(?=$|[^a-z0-9])/i;const rows=[];for(const component of components){const instances=component.meshInstances||component.model?.meshInstances||[];const id=component.batchGroupId??-1;if(id!==-1&&!component._stage08qWasUnbatched)continue;const entity=component.entity;const chain=[],ancestors=[];let node=entity;while(node){chain.push(node.name||'(unnamed)');ancestors.push(node);node=node.parent;}const materials=[...new Set(instances.map(instance=>instance.material).filter(Boolean))];const materialRecords=materials.map(material=>({name:material.name||'',type:material.constructor?.name||'Material',blendType:material.blendType??null,opacity:material.opacity??1,alphaTest:material.alphaTest??0,transparent:material.blendType!=null&&material.blendType!==pc.BLEND_NONE,shaderDefs:material.shaderDefs??null}));const names=chain.join('/').replace(/([a-z0-9])([A-Z])/g,'$1 $2').replace(/[^a-z0-9]+/gi,' ').toLowerCase();const skinned=instances.some(instance=>Boolean(instance.skinInstance));const animated=ancestors.some(item=>Boolean(item.anim||item.animation))||Boolean(component.model?.model?.skinInstances?.length);const physics=ancestors.some(item=>Boolean(item.rigidbody||item.collision));const scripted=ancestors.some(item=>Boolean(item.script));const dynamicHint=dynamicPattern.test(names)||skinned||animated||physics||scripted;const specialHint=specialPattern.test(names);const opaque=materialRecords.every(material=>!material.transparent&&material.opacity>=0.999&&material.alphaTest===0);const sameMaterial=materials.length<=1;const position=entity?.getPosition?.()?.toArray?.()||[0,0,0];const scale=entity?.getScale?.()?.toArray?.()||[1,1,1];const localPosition=entity?.getLocalPosition?.()?.toArray?.()||[0,0,0];const bounds=instances.map(instance=>{const aabb=instance.aabb;return aabb?{center:aabb.center.toArray(),halfExtents:aabb.halfExtents.toArray()}:null;}).filter(Boolean);rows.push({entityName:entity?.name||'(unnamed)',parentPath:chain.slice(1).reverse(),componentType:component.type||component.system?.id||'render',meshCount:instances.length,batchGroupId:id,materials:materialRecords,materialCompatibility:{materialCount:materials.length,singleMaterial:sameMaterial,opaque,compatibleForStaticBatch:sameMaterial&&opaque},transform:{worldPosition:position,localPosition,worldScale:scale,bounds},movement:{dynamic:dynamicHint,special:specialHint,skinned,animated,physics,scripted,reason:dynamicHint?'dynamic name/animation/skin/physics heuristic':specialHint?'special conservative batching exclusion':'no dynamic marker found'},staticBatchCandidate:!dynamicHint&&!specialHint&&instances.length>0&&sameMaterial&&opaque});}return {unbatchedComponents:rows.length,staticCandidates:rows.filter(row=>row.staticBatchCandidate).length,dynamicOrIncompatible:rows.filter(row=>row.movement.dynamic||row.movement.special||!row.materialCompatibility.compatibleForStaticBatch).length,dynamicComponents:rows.filter(row=>row.movement.dynamic).length,specialComponents:rows.filter(row=>row.movement.special).length,classification:'dynamic/special/material compatibility heuristic; review before batching',components:rows};};
+    gameApi.getPreExistingBatchIndex=()=>{const components=[...(app.root.findComponents('render')||[]),...(app.root.findComponents('model')||[])];const rows=[];for(const component of components){const id=component.batchGroupId??-1;if(id===-1||component._stage08qWasUnbatched)continue;const entity=component.entity;const chain=[],ancestors=[];let node=entity;while(node){chain.push(node.name||'(unnamed)');ancestors.push(node);node=node.parent;}const instances=component.meshInstances||component.model?.meshInstances||[];rows.push({entityName:entity?.name||'(unnamed)',parentPath:chain.slice(1).reverse(),componentType:component.type||component.system?.id||'render',meshCount:instances.length,batchGroupId:id});}return {preExistingBatchedComponents:rows.length,components:rows};};
+    gameApi.getRenderBreakdown=()=>{const rows=new Map();const components=[...(app.root.findComponents('render')||[]),...(app.root.findComponents('model')||[])];const stageTags=['stage08a-building','stage08a-roof','stage08b-detail','stage08c-street-detail','stage08d-building','stage08d-architecture','stage08e-building','stage08g-ikeja-street-life','stage08h-ikeja-prop','stage08i-ikeja-district','stage08j-yaba-ikeja-network'];for(const component of components){const instances=component.meshInstances||component.model?.meshInstances||[];let node=component.entity,key='unclassified';while(node){for(const tag of stageTags){if(node.tags?.has(tag)){key=tag;break;}}if(key!=='unclassified')break;node=node.parent;}const row=rows.get(key)||{components:0,meshInstances:0,enabledComponents:0,shadowCasters:0,batchGroupIds:{}};row.components++;row.meshInstances+=instances.length;if(component.enabled!==false&&component.entity?.enabledInHierarchy!==false)row.enabledComponents++;if(component.castShadows===true)row.shadowCasters++;const id=component.batchGroupId??'none';row.batchGroupIds[id]=(row.batchGroupIds[id]||0)+1;rows.set(key,row);}return {frameDrawCalls:stats.drawCallCount,components:components.length,groups:[...rows.entries()].map(([name,value])=>({name,...value})).sort((a,b)=>b.meshInstances-a.meshInstances)};};
+    gameApi.getStaticBatchState=()=>{const state={};for(const [name,id] of Object.entries({stage08A:stage08A.batchGroupId,stage08B:stage08B.batchGroupId,stage08C:stage08C.batchGroupId,stage08D:stage08D.batchGroupId,stage08E:stage08E.getState().batchGroupId,stage08H:stage08H.batchGroupId,stage08I:stage08I.batchGroupId,stage08J:stage08J.batchGroupId})){const group=id==null?null:app.batcher?.getGroupById?.(id);const members=group?Object.values(group._obj||{}).reduce((sum,list)=>sum+(Array.isArray(list)?list.length:0),0):0;state[name]={groupId:id,batches:id==null?0:app.batcher?.getBatches?.(id)?.length||0,members};}state.stage08Q={...stage08QBatching,batches:stage08QBatching.groupIds.reduce((sum,id)=>sum+(app.batcher?.getBatches?.(id)?.length||0),0)};state.stage08B.legacySuppressed=(app.root.findByTag('stage08b-detail')||[]).filter(entity=>entity.render?.enabled===false).length;state.stage08D.legacySuppressed=(app.root.findByTag('stage08d-architecture')||[]).filter(entity=>entity.render?.enabled===false).length;state.stage08G={taggedEntities:(app.root.findByTag('stage08g-ikeja-street-life')||[]).length,reassignedToStage08H:stage08H.batchGroupId};return state;};
+    gameApi.getLightingAudit=()=>{const renderComponents=app.root.findComponents('render')||[];
+    gameApi.debugSetStage08QBatchingForSmoke=enabled=>{const components=[...(app.root.findComponents('render')||[]),...(app.root.findComponents('model')||[])].filter(component=>component._stage08qWasUnbatched);for(const component of components)component.batchGroupId=enabled?component._stage08qBatchGroupId:-1;app.batcher?.generate?.(stage08QBatching.groupIds);return {enabled:!!enabled,components:components.length,groupIds:stage08QBatching.groupIds,batches:stage08QBatching.groupIds.reduce((sum,id)=>sum+(app.batcher?.getBatches?.(id)?.length||0),0)};};const modelComponents=app.root.findComponents('model')||[];const components=[...renderComponents,...modelComponents];const visible=component=>component.enabled!==false&&component.entity?.enabledInHierarchy!==false;const meshInstances=component=>component.meshInstances?.length??component.model?.meshInstances?.length??0;return {renderComponents:renderComponents.length,modelComponents:modelComponents.length,visibleComponents:components.filter(visible).length,visibleMeshInstances:components.filter(visible).reduce((sum,component)=>sum+meshInstances(component),0),shadowCastingComponents:components.filter(component=>visible(component)&&component.castShadows===true).length,shadowReceivingComponents:components.filter(component=>visible(component)&&component.receiveShadows===true).length,worldLighting:worldLighting.getState()}};
+
+    gameApi.debugSetCameraFarClipForSmoke=(value)=>{camera.camera.farClip=Math.max(100,Math.min(800,Number(value)||620));return camera.camera.farClip;};
+    gameApi.debugSetWorldTimeForSmoke=(hours)=>worldLighting.setTimeHours(hours);
+    gameApi.debugInteractForSmoke=()=>interactionSystem.interact(playerController.getState());
+    gameApi.debugSetCameraForSmoke=(position,target)=>{camera.setPosition(...position);camera.lookAt(...target);};
+    gameApi.debugSetPlayerForSmoke=(position,yaw=0)=>playerController.setPositionForSmoke(position,yaw);
+    gameApi.debugSetPlayerMotionForSmoke=(position,velocity,yaw=0)=>playerController.setMotionForSmoke(position,velocity,yaw);
+    gameApi.debugSetPlayerInputForSmoke=(x=0,y=0,sprint=false)=>playerController.setInputForSmoke(x,y,sprint);
+    gameApi.debugSetControlEnabledForSmoke=value=>playerController.setControlEnabled(value);
+    gameApi.debugSetCrouchedForSmoke=value=>playerController.setCrouched(value);
+    gameApi.debugApplyPlayerDamageForSmoke=(amount=25,options={})=>playerController.applyDamage(amount,{source:'smoke-impact',...options});
+    gameApi.debugHealPlayerForSmoke=(amount=25)=>playerController.heal(amount,{source:'smoke-heal'});
+    gameApi.debugRecoverPlayerForSmoke=options=>playerController.recoverFromDowned(options||{});
+    gameApi.debugSetFaceExpressionForSmoke=(name='happy',weight=1)=>playerController.playFaceExpression(name,weight);
+    gameApi.debugSetFaceVisemeForSmoke=(name,weight=1)=>playerController.playFaceViseme(name,weight);
+    gameApi.debugApplyHeroLimbIKForSmoke=(side,target,weight=1)=>heroCharacter?.applyLimbIK?.(side,target,weight)||null;
+    gameApi.debugGetHeroRagdollPoseForSmoke=()=>heroCharacter?.getRagdollPose?.()||null;
+    gameApi.debugGetRagdollStateForSmoke=()=>playerController.getRagdollState?.()||null;
+    gameApi.debugGetRecoveryStateForSmoke=()=>playerController.getRecoveryState?.()||{active:false};
+    gameApi.debugProbeCharacterRecoverySupportForSmoke=(x,y,z,yaw=0)=>playerController.probeRecoverySupportForSmoke?.(x,y,z,yaw)||null;
+    gameApi.debugAddCharacterTerrainForSmoke=(owner,colliders)=>playerPhysics.addStaticColliders(colliders,owner);
+    gameApi.debugRemoveCharacterTerrainForSmoke=owner=>playerPhysics.removeStaticColliders(owner);
+    gameApi.debugRaycastForSmoke=(from,to)=>playerPhysics.raycast(from,to);
+    gameApi.debugRunUnevenTerrainIKForSmoke=()=>{
+      const originalState=playerController.getState(),original=originalState.position.slice(),originalYaw=originalState.facingYaw;
+      playerController.setPositionForSmoke([0,0,0],0);
+      window.__NAIJA_PLAY_HERO_ANIMATION__?.('Idle',1.0);
+      const animationSystem=app.systems?.anim;
+      for(let i=0;i<5;i++)animationSystem?.onAnimationUpdate?.(1/60);
+      const feet=heroCharacter?.getLimbPositions?.()||{};
+      const left=feet.leftAnkle||feet.leftFoot,right=feet.rightAnkle||feet.rightFoot;
+      if(!left||!right)return {pass:false,error:'Ara ankle bones unavailable'};
+      const owner='smoke-uneven-terrain';
+      const colliders=[
+        {id:'smoke-left-incline',position:[left[0],left[1]-.12,left[2]],halfExtents:[.12,.08,.44],rotationZ:14,surface:'concrete'},
+        {id:'smoke-right-step',position:[right[0],right[1]-.005,right[2]],halfExtents:[.12,.11,.44],rotationZ:-8,surface:'concrete'}
+      ];
+      const created=playerPhysics.addStaticColliders(colliders,owner);
+      const results={};
+      for(const side of ['left','right']){
+        const ankle=(side==='left'?left:right).slice();
+        const hit=playerPhysics.raycast([ankle[0],ankle[1]+.65,ankle[2]],[ankle[0],ankle[1]-.65,ankle[2]]);
+        const marker=(feet[side+'SoleHeel']||feet[side+'SoleToe']||ankle);
+        const target=makeFootPlantTarget(ankle,hit,{maxVerticalOffset:.48,soleOffset:ankle[1]-marker[1]});
+        const ik=target?heroCharacter?.applyLimbIK?.(side,target.position,1,target.normal):null;
+        const actual=(heroCharacter?.getLimbPositions?.()||{})[side+'Ankle'];
+        const normal=heroCharacter?.getFootSoleNormal?.(side)||null;
+        const error=actual&&target?Math.hypot(actual[0]-target.position[0],actual[1]-target.position[1],actual[2]-target.position[2]):Infinity;
+        results[side]={hit:!!hit,surface:hit?.surface||null,groundNormal:hit?.normal||null,target:target?.position||null,ikApplied:!!ik?.applied,reachable:!!ik?.reachable,endEffectorError:error,footNormal:normal,normalAlignment:normal&&hit?.normal?normal[0]*hit.normal[0]+normal[1]*hit.normal[1]+normal[2]*hit.normal[2]:null};
+      }
+      playerPhysics.removeStaticColliders(owner);
+      playerController.setPositionForSmoke(original,originalYaw);
+      const pass=['left','right'].every(side=>results[side].hit&&results[side].ikApplied&&results[side].reachable&&results[side].endEffectorError<.025&&results[side].normalAlignment>.94);
+      return {pass,created,results};
+    };
+    gameApi.debugAdvanceCharacterSimulationForSmoke=(frames=60,dt=1/60)=>{
+      const limit=Math.max(1,Math.min(600,Math.floor(Number(frames)||60)));
+      const step=Math.max(1/120,Math.min(1/30,Number(dt)||1/60));
+      const animationSystem=app.systems?.anim,ragdollTrace=[];
+      for(let i=0;i<limit;i++){
+        animationSystem?.onAnimationUpdate?.(step);
+        playerController.update(step);
+        playerController.applyGroundedFootLock?.();
+        vfxSystem.update(step);
+        const ragdoll=playerController.getRagdollState?.();
+        if(ragdoll?.active)ragdollTrace.push({frame:i,stepCount:ragdoll.stepCount,phase:ragdoll.phase,handoffWeight:ragdoll.handoffWeight});
+      }
+      app.render?.();
+      return {frames:limit,dt:step,player:playerController.getState(),animation:playerController.getAnimationState(),ragdollTrace,facial:playerController.getFacialAnimationState?.()||null};
+    };
+    gameApi.debugEnterVehicleForSmoke=()=>vehicleSystem?.debugEnter?.()||false;
+    gameApi.debugExitVehicleForSmoke=()=>vehicleSystem?.debugExit?.()||false;
+    gameApi.debugSetVehicleInputForSmoke=(steering=0,accelerate=false,brake=false)=>vehicleSystem?.debugSetInput?.(steering,accelerate,brake)||null;
+    gameApi.debugAdvanceVehicleForSmoke=(maxFrames=300,target=null,dt=1/60)=>{
+      const limit=Math.max(1,Math.min(1200,Math.floor(Number(maxFrames)||300)));
+      const step=Math.max(1/120,Math.min(.05,Number(dt)||1/60));
+      let frames=0,state=vehicleSystem?.getState?.()||null;
+      for(let i=0;i<limit;i++){
+        vehicleSystem?.update(step);
+        vfxSystem.update(step);
+        frames++;
+        state=vehicleSystem?.getState?.()||null;
+        if(target&&state?.occupied&&state.position[0]>Number(target.x??Infinity)&&
+          state.position[2]<Number(target.z??-Infinity)&&state.position[1]>.35&&state.position[1]<1.7&&
+          (state.dynamics?.measuredWheelContacts||0)>=3&&state.speedKmh>5)break;
+      }
+      return {frames,completed:!!(target&&state?.occupied&&state.position[0]>Number(target.x??Infinity)&&
+        state.position[2]<Number(target.z??-Infinity)&&(state.dynamics?.measuredWheelContacts||0)>=3&&state.speedKmh>5),vehicle:state};
+    };
+    gameApi.debugSetVehiclePositionForSmoke=(position,yaw=0)=>vehicleSystem?.debugSetPositionForSmoke?.(position,yaw)||false;
+    gameApi.debugProbeVehicleColliderForSmoke=()=>{
+      const vehicle=vehicleSystem?.getState?.()||{};
+      const p=vehicle.position||[0,.94,5.5];
+      const hit=playerPhysics.raycast?.([p[0],1,p[2]+4],[p[0],1,p[2]-4])||null;
+      return {vehicleColliderReady:!!vehicle.playerCarColliderReady,hit,vehicle};
+    };
+    gameApi.debugProbeVehicleBodyCollisionForSmoke=()=>{
+      const vehicle=vehicleSystem?.getState?.()||{};
+      const carPosition=vehicle.position||[0,.94,5.5];
+      const yaw=(Number(vehicle.yaw)||180)*Math.PI/180;
+      const sideX=-Math.cos(yaw),sideZ=Math.sin(yaw);
+      const start=[carPosition[0]+sideX*2.35,0,carPosition[2]+sideZ*2.35];
+      const original=playerController.getState().position.slice();
+      const originalYaw=playerController.getState().facingYaw||0;
+      playerController.setPositionForSmoke(start,vehicle.yaw||180);
+      const actor={position:start.slice(),velocity:[0,0,0],grounded:true,traversing:true};
+      for(let i=0;i<24;i++)playerPhysics.step(actor,[-sideX*3,0,-sideZ*3],.05);
+      const finalOffset=(actor.position[0]-carPosition[0])*sideX+(actor.position[2]-carPosition[2])*sideZ;
+      playerController.setPositionForSmoke(original,originalYaw);
+      return {vehicleColliderReady:!!vehicle.playerCarColliderReady,start,finalPosition:actor.position,
+        finalOffset:Number(finalOffset.toFixed(3)),blockedByCar:finalOffset>1.25,
+        movementTowardCar:Number((2.35-finalOffset).toFixed(3)),playerBodyEnabled:playerPhysics.getState().playerBodyEnabled};
+    };
+    gameApi.debugClearVehicleInputForSmoke=()=>vehicleSystem?.debugClearInput?.()||null;
+    gameApi.debugTraverseBuildingForSmoke=(buildingId,routeType='ladder')=>{
+      const route=buildingRouteObstacles.find(item=>(!buildingId||item.buildingId===buildingId)&&item.type===routeType);
+      if(!route)return {started:false,buildingRouteCount:buildingRouteObstacles.length,routeType};
+      const p=route.entity.getPosition();
+      const start=[p.x+route.approach[0]*2.2,0,p.z+route.approach[1]*2.2];
+      playerController.setPositionForSmoke(start,route.approachYaw);
+      const started=traversalSystem.tryContextualTraversal(playerController.getState(),route.id);
+      const mountDuration=playerController.getClipDuration?.('Ara_LadderMount')||.75;
+      const climbCycle=playerController.getClipDuration?.('Ara_LadderClimb')||.958;
+      const dismountDuration=playerController.getClipDuration?.('Ara_LadderDismount')||.75;
+      const traversalFrames=Math.min(1800,Math.ceil((mountDuration+Math.ceil(route.height/.4)*climbCycle+dismountDuration)/.05)+12);
+      for(let i=0;i<traversalFrames;i++){playerController.update(.05);traversalSystem.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);}
+      return {started,route:route.id,buildingId:route.buildingId,routeType:route.type,height:route.height,
+        expectedFacingYaw:route.approachYaw,player:playerController.getState(),traversal:traversalSystem.getState(),feet:heroCharacter?.getFootPositions?.()||null,visualBounds:heroCharacter?.getVisualBounds?.()||null,traversalFrames};
+    };
+    gameApi.debugStartBuildingTraversalForSmoke=(buildingId,routeType='ladder')=>{
+      const route=buildingRouteObstacles.find(item=>(!buildingId||item.buildingId===buildingId)&&item.type===routeType);
+      if(!route)return {started:false,buildingRouteCount:buildingRouteObstacles.length,routeType};
+      const p=route.entity.getPosition();
+      const start=[p.x+route.approach[0]*2.2,0,p.z+route.approach[1]*2.2];
+      const before=traversalSystem.getState().traversalsCompleted;
+      playerController.setPositionForSmoke(start,route.approachYaw);
+      const started=traversalSystem.tryContextualTraversal(playerController.getState(),route.id);
+      return {started,route:route.id,buildingId:route.buildingId,routeType:route.type,height:route.height,
+        expectedFacingYaw:route.approachYaw,start,before,routePosition:p.toArray(),approach:route.approach.slice(),
+        expectedDuration:(playerController.getClipDuration?.('Ara_LadderMount')||.75)+Math.ceil(route.height/.4)*(playerController.getClipDuration?.('Ara_LadderClimb')||.958)+(playerController.getClipDuration?.('Ara_LadderDismount')||.75)};
+    };
+    gameApi.debugProbeWorldCollisionForSmoke=()=>({
+      buildingBlocked:playerPhysics.canFitCapsule?.([-9.2,0,-82],1.8)===false,
+      roadwayClear:playerPhysics.canFitCapsule?.([0,0,-82],1.8)===true,
+      corridorProxies:playerWorldColliders.length,
+      physics:playerPhysics.getState()
+    });
+    gameApi.debugProbeBulletCollisionForSmoke=()=>{
+      const start=[-16,0,-82];
+      playerController.setPositionForSmoke(start,90);
+      const actor={position:start.slice(),velocity:[0,0,0],grounded:true};
+      for(let i=0;i<60;i++)playerPhysics.step(actor,[3,0,0],.05);
+      playerController.setPositionForSmoke([0,0,0],0);
+      return {startX:start[0],endX:actor.position[0],buildingBoundaryX:-12.45,
+        stoppedByBuilding:actor.position[0]<-12.5,physics:playerPhysics.getState()};
+    };
+    gameApi.debugAdvanceTraversalForSmoke=(frames=90)=>{
+      const count=Math.max(1,Math.min(180,Math.floor(Number(frames)||90)));
+      const step=1/60;
+      const trace=[];
+      const animationSystem=app.systems?.anim;
+      for(let i=0;i<count;i++){
+        playerController.update(step);
+        traversalSystem.update(step);
+        // Step PlayCanvas's actual AnimComponentSystem alongside Bullet, then
+        // pin the active shoe marker before collecting this 60 Hz sample.
+        animationSystem?.onAnimationUpdate?.(step);
+        const footLock=playerController.applyGroundedFootLock?.()||null;
+        vfxSystem.update(step);
+        {
+          const player=playerController.getState();
+          const roof=playerPhysics.raycast?.([player.position[0],player.position[1]+.45,player.position[2]],
+            [player.position[0],player.position[1]-.45,player.position[2]])||null;
+          trace.push({time:Number(((i+1)*step).toFixed(5)),dt:step,position:player.position,grounded:player.grounded,roofY:roof?.point?.[1]??null,groundY:roof?.point?.[1]??null,
+            clip:playerController.getAnimationState()?.activeClip||'',activeStateProgress:playerController.getAnimationState()?.activeStateProgress??null,
+            locomotionPlaybackRates:playerController.getAnimationState()?.locomotionPlaybackRates||null,footLock,
+            evaluatorClips:playerController.getAnimationState()?.evaluatorClips||[],limbs:heroCharacter?.getLimbPositions?.()||null});
+        }
+      }
+      app.render?.();
+      return {player:playerController.getState(),traversal:traversalSystem.getState(),trace,
+        animationSystemAvailable:!!animationSystem?.onAnimationUpdate};
+    };
+    gameApi.debugAdvanceLocomotionForSmoke=(frames=120,dt=1/60)=>{
+      const count=Math.max(1,Math.min(360,Math.floor(Number(frames)||120)));
+      const step=Math.max(1/120,Math.min(1/30,Number(dt)||1/60));
+      const trace=[];
+      const animationSystem=app.systems?.anim;
+      if(!animationSystem?.onAnimationUpdate)throw new Error('PlayCanvas AnimComponentSystem.onAnimationUpdate is unavailable');
+      for(let i=0;i<count;i++){
+        playerController.update(step);
+        animationSystem.onAnimationUpdate(step);
+        const footLock=playerController.applyGroundedFootLock?.()||null;
+        const player=playerController.getState();
+        const limbs=heroCharacter?.getLimbPositions?.()||null;
+        const ground=playerPhysics.raycast?.([player.position[0],player.position[1]+.7,player.position[2]],
+          [player.position[0],player.position[1]-.65,player.position[2]])||null;
+        const animation=playerController.getAnimationState?.()||{};
+        trace.push({time:Number(((i+1)*step).toFixed(5)),dt:step,position:player.position,
+          grounded:player.grounded,groundY:ground?.point?.[1]??null,horizontalSpeed:player.horizontalSpeed,
+          running:player.running,moving:player.moving,facingYaw:player.facingYaw,clip:animation.activeClip||'',activeState:animation.activeState||'',
+          activeStateProgress:animation.activeStateProgress??null,activeStateCurrentTime:animation.activeStateCurrentTime??null,activeStateDuration:animation.activeStateDuration??null,locomotionPlaybackRates:animation.locomotionPlaybackRates||null,
+          footLock,footLockState:playerController.getFootLockState?.()||null,limbs});
+      }
+      app.render?.();
+      return {player:playerController.getState(),trace,animationSystemAvailable:true,dt:step};
+    };
+    gameApi.debugCompleteTraversalForSmoke=(maxFrames=900)=>{
+      const limit=Math.max(1,Math.min(1800,Math.floor(Number(maxFrames)||900)));
+      const samples=[],clipChanges=[],animationTrace=[];
+      const limbSamples={leftHandTip:[],rightHandTip:[],leftFoot:[],rightFoot:[]};
+      const animationSystem=app.systems?.anim;
+      if(!animationSystem?.onAnimationUpdate)throw new Error('PlayCanvas AnimComponentSystem.onAnimationUpdate is unavailable');
+      let previousY=playerController.getState().position[1],lastClip='';
+      let simulatedFrames=0,animationSteps=0;
+      const sampleLimbs=()=>{
+        const player=playerController.getState(),limbs=heroCharacter?.getLimbPositions?.()||{};
+        for(const key of Object.keys(limbSamples))if(limbs[key])limbSamples[key].push(limbs[key][1]);
+      };
+      for(let i=0;i<limit;i++){
+        playerController.update(.05);
+        traversalSystem.update(.05);
+        animationSystem.onAnimationUpdate(.05);
+        animationSteps++;
+        vfxSystem.update(.05);
+        const player=playerController.getState();
+        const delta=player.position[1]-previousY;
+        samples.push(Number(delta.toFixed(5)));
+        previousY=player.position[1];
+        const animationState=playerController.getAnimationState()||{};
+        const clip=animationState.activeClip||'';
+        if(clip&&clip!==lastClip){clipChanges.push(clip);lastClip=clip;}
+        if(i%2===0)sampleLimbs();
+        if(i%10===0){
+          const limbs=heroCharacter?.getLimbPositions?.()||{};
+          animationTrace.push({frame:i,rootY:player.position[1],clip,state:animationState.activeState,
+            time:animationState.activeStateCurrentTime,leftHandY:limbs.leftHand?.[1],rightHandY:limbs.rightHand?.[1],
+            leftFootY:limbs.leftFoot?.[1],rightFootY:limbs.rightFoot?.[1]});
+        }
+        simulatedFrames++;
+        if(!player.traversing)break;
+      }
+      // The ladder controller owns Ara's root while the Bullet capsule is detached.
+      // After dismount, physics is reattached at the roof and receives a few
+      // ordinary frames to establish real rooftop support.
+      for(let i=0;i<4&&!playerController.getState().grounded;i++){
+        playerController.update(.05);
+        traversalSystem.update(.05);
+        animationSystem.onAnimationUpdate(.05);
+        animationSteps++;
+        vfxSystem.update(.05);
+        const player=playerController.getState();
+        samples.push(Number((player.position[1]-previousY).toFixed(5)));
+        previousY=player.position[1];
+        const clip=playerController.getAnimationState()?.activeClip||'';
+        if(clip&&clip!==lastClip){clipChanges.push(clip);lastClip=clip;}
+        sampleLimbs();
+        simulatedFrames++;
+      }
+      const positive=samples.filter(value=>value>.001),holds=samples.filter(value=>Math.abs(value)<.001).length;
+      const limbMotion=Object.fromEntries(Object.entries(limbSamples).map(([key,values])=>[key,{samples:values.length,verticalRange:values.length?Number((Math.max(...values)-Math.min(...values)).toFixed(3)):0,min:values.length?Number(Math.min(...values).toFixed(3)):null,max:values.length?Number(Math.max(...values).toFixed(3)):null}]));
+      app.render?.();
+      return {completed:!playerController.getState().traversing,simulatedFrames,animationSteps,animationSystemAvailable:true,limbMotion,
+        pulseTrace:{samples,positiveSamples:positive.length,holdSamples:holds,
+          maxStep:Math.max(0,...samples),minStep:Math.min(...positive,0)},
+        clipChanges,animationTrace,player:playerController.getState(),traversal:traversalSystem.getState(),
+        physics:playerPhysics.getState(),feet:heroCharacter?.getFootPositions?.()||null};
+    };
+    gameApi.debugTraverseTypeForSmoke=type=>{
+      const obstacle=traversalObstacles.find(item=>item.type===type);if(!obstacle)return {started:false,type};
+      const center=obstacle.entity.getPosition(),offset=type==="wall-run"?-.7:0;
+      playerController.setPositionForSmoke([center.x+offset,0,center.z+1.55],0);
+      const startPosition=playerController.getState().position.slice();
+      const before=traversalSystem.getState().traversalsCompleted;
+      const started=traversalSystem.tryContextualTraversal(playerController.getState(),obstacle.id);
+      const duration=Number(traversalSystem.getState().lastTraversal?.duration)||2.9;
+      const frames=Math.min(900,Math.max(58,Math.ceil(duration/.05)+12));
+      for(let i=0;i<frames&&playerController.getState().traversing;i++){
+        playerController.update(.05);traversalSystem.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);
+      }
+      // Let the normal Bullet support test settle after a rung-based climb.
+      for(let i=0;i<4&&!playerController.getState().grounded&&!playerController.getState().traversing;i++){
+        playerController.update(.05);traversalSystem.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);
+      }
+      const traversal=traversalSystem.getState(),player=playerController.getState();
+      const distanceTravelled=Math.hypot(player.position[0]-startPosition[0],player.position[2]-startPosition[2]);
+      return {started,type,traversal,player,completed:!player.traversing&&traversal.traversalsCompleted>before,
+        simulatedFrames:frames,expectedDuration:duration,startPosition,distanceTravelled,verticalTravel:player.position[1]-startPosition[1]};
+    };
+    gameApi.debugJumpPhysicsForSmoke=()=>{
+      playerController.setPositionForSmoke([0,0,0],0);playerController.queueJumpForSmoke();
+      // Sample the rising phase near the jump apex (about 0.25 seconds).
+      for(let i=0;i<5;i++){playerController.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);}const airborne=playerController.getState();
+      for(let i=0;i<42;i++){playerController.update(.05);app.systems?.anim?.onAnimationUpdate?.(.05);vfxSystem.update(.05);}
+      return {airborne,landed:playerController.getState(),vfx:vfxSystem.getState()};
+    };
+  }
+  gameApi.dataOptimization.startupDurationMs=Math.round(performance.now()-startupStartedAt);
+  window.__NAIJA_GAME__=gameApi;
+  window.__NAIJA_RPG_UI__?.setVitals(playerController.getState());
+
+  window.addEventListener('pagehide',()=>{fieldEquipment?.destroy?.();policePatrolSystem?.destroy?.();delete window.__NAIJA_FIELD_EQUIPMENT__;delete window.__NAIJA_INTERACT__;delete window.__NAIJA_PLAY_HERO_ANIMATION__;delete window.__NAIJA_SET_HERO_FACE__;delete window.__NAIJA_TRAVERSE__;delete window.__NAIJA_COMPANION_COMMAND__;delete window.__NAIJA_VEHICLE_ENTER__;delete window.__NAIJA_VEHICLE_EXIT__;worldLighting.destroy();vehicleSystem?.destroy?.();companionSystem.destroy();pedestrianSystem.destroy();playerPhysics.cleanup?.();vfxSystem.destroy();audioSystem.destroy();delete window.__NAIJA_STAGE08F_PROFILE__;stage08FProfiler.destroy();playerController.destroy();},{once:true});
+  // Stage 08Q: batch only verified static opaque box meshes inside 48m spatial cells.
+  // PlayCanvas further splits each cell by material/shader/layer/shadow and mesh-size compatibility.
+  const stage08QBatching=(()=>{
+    const cellSize=48, cells=new Map(), groupIds=[];
+    const dynamicPattern=/(^|[^a-z0-9])(vehicle|traffic|pedestrian|npc|player|hero|character|door|gate|lift|elevator|interact|pickup|weapon|projectile|ragdoll|animated|skinned|moving)(?=$|[^a-z0-9])/i;
+    let inspected=0, oversizedAabbs=0, noBounds=0, incompatible=0, singletonCells=0, assignedComponents=0;
+    const components=[...(app.root.findComponents('render')||[]),...(app.root.findComponents('model')||[])];
+    for(const component of components){
+      if((component.batchGroupId??-1)!==-1)continue;
+      const instances=component.meshInstances||component.model?.meshInstances||[];
+      if(component.type!=='box'||instances.length!==1){incompatible++;continue;}
+      const entity=component.entity;
+      let node=entity, blocked=false;
+      while(node){
+        const normalizedName=String(node.name||'').replace(/([a-z0-9])([A-Z])/g,'$1 $2').replace(/[^a-z0-9]+/gi,' ').toLowerCase();
+        if(dynamicPattern.test(normalizedName)||node.script||node.anim||node.animation||node.rigidbody||node.collision){blocked=true;break;}
+        node=node.parent;
+      }
+      const instance=instances[0],mat=instance.material;
+      if(blocked||!mat||mat.blendType!==pc.BLEND_NONE||(mat.opacity??1)<0.999||(mat.alphaTest??0)>0||instance.skinInstance){incompatible++;continue;}
+      inspected++;
+      const aabb=instance.aabb;
+      if(!aabb?.halfExtents){noBounds++;continue;}
+      const h=aabb.halfExtents,maxDim=Math.max(h.x,h.y,h.z)*2;
+      if(!Number.isFinite(maxDim)||maxDim>cellSize){oversizedAabbs++;continue;}
+      const p=entity.getPosition(),cx=Math.floor(p.x/cellSize),cz=Math.floor(p.z/cellSize),key=cx+':'+cz;
+      if(!cells.has(key))cells.set(key,[]);
+      cells.get(key).push(component);
+    }
+    for(const [key,members] of cells){
+      if(members.length<2){singletonCells++;continue;}
+      const [cx,cz]=key.split(':');
+      const group=app.batcher?.addGroup?.('stage08q-static-'+cx+'-'+cz,false,cellSize);
+      if(!group)continue;
+      groupIds.push(group.id);
+      for(const component of members){component.batchGroupId=group.id;component._stage08qWasUnbatched=true;component._stage08qBatchGroupId=group.id;assignedComponents++;}
+    }
+    return {enabled:assignedComponents>0,cellSizeMetres:cellSize,maxAabbSizeMetres:cellSize,inspectedStaticBoxes:inspected,assignedComponents,groupCount:groupIds.length,groupIds,oversizedAabbs,noBounds,incompatible,singletonCells,policy:'opaque single-material box meshes only; 48m X/Z cells; 48m max AABB; no moving/scripted/physics/skinned/transparent/interactive meshes'};
+  })();
+  // Apply the initial 4.8k-component shadow classification once while the loading screen is active.
+  worldLighting.applyInitialShadowPolicy();
+  app.start();
+  window.__NAIJA_RPG_UI__?.finishLoading?.();
+  statusLabel.textContent='Ready â€” Stage 09 parkour, city life and physics';
+  const loadOptionalNpc=async()=>{
+    // Respect Android/browser Data Saver. Procedural pedestrians remain active
+    // and the character download is skipped entirely on a metered connection.
+    if(lowDataMode||lowMemoryDevice){
+      if(assetStatusLabel)assetStatusLabel.textContent='Data saver active Â· optional Hero 01 animation download skipped';
+      return;
+    }
+    try{
+      hero01NpcCharacter=await loadHeroCharacter(app,{
+        urls:['assets/hero/NaijaCityHero01_60clips.glb.b64'],
+        characterId:'hero01',
+        statusLabel:assetStatusLabel
+      });
+      pedestrianSystem.setHeroCharacter?.(hero01NpcCharacter);
+      companionSystem.setHeroCharacter?.(hero01NpcCharacter);
+      if(assetStatusLabel)assetStatusLabel.textContent='Ara 3D Gen Female Executive Â· Hero 01 city NPC streamed in';
+    }catch(error){
+      console.warn('Optional Hero 01 city NPC model could not load:',error);
+    }
+  };
+  if(!lowDataMode){
+    if(typeof window.requestIdleCallback==='function')window.requestIdleCallback(()=>{void loadOptionalNpc();},{timeout:5000});
+    else window.setTimeout(()=>{void loadOptionalNpc();},2500);
+  }
+}

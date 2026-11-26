@@ -218,4 +218,3 @@ const authoredOverrides=[];
 const manifest={stage:'08E',format:'glTF 2.0 binary',units:'meters',frontAxis:'-X',textureEncoding:'Procedural mobile GLBs use local compact materials; standalone local compact materials',lods:['LOD0','LOD1','LOD2'],streaming:{loadRadius:150,unloadRadius:210,maxConcurrentLoads:2},sharedMaterials:materialNames,models};
 await writeFile(join(root,'public/assets/stage-08e-manifest.json'),JSON.stringify(manifest)+'\n');
 console.log('Stage 08E asset generation complete:',models.length,'individual GLB buildings;',models.reduce((n,m)=>n+m.bytes,0),'bytes total.');
-{­²Ö­ºÍ
