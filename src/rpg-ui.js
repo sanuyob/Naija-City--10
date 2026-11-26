@@ -207,6 +207,16 @@ export function mountRPGInterface() {
       if (setting.dataset.setting === 'touch') root.classList.toggle('large-touch', enabled);
       return;
     }
+    const cosmeticAction = event.target.closest('[data-cosmetic-prop-action]');
+    if (cosmeticAction) {
+      const system = window.__NAIJA_COSMETIC_PROPS__;
+      const itemId = cosmeticAction.dataset.cosmeticPropId;
+      const operation = system?.select?.(itemId);
+      refreshCosmeticPropUI();
+      await operation;
+      refreshCosmeticPropUI();
+      return;
+    }
     const gearAction = event.target.closest('[data-gear-action]');
     if (gearAction) {
       const system = window.__NAIJA_FIELD_EQUIPMENT__;
@@ -265,9 +275,37 @@ export function mountRPGInterface() {
             '<button type="button" data-gear-action="drop" data-gear-id="' + escapeMarkup(item.id) + '"' + unavailable + '>DROP</button></div></article>';
         }).join('')
       : '<article><strong>Field equipment is loading</strong><small>Start the game to initialise the field kit.</small></article>';
+
+    const cosmetic = window.__NAIJA_COSMETIC_PROPS__?.getState?.();
+    const cosmeticRows = cosmetic?.items?.length
+      ? cosmetic.items.map(item => {
+          const selected = item.selected ? ' is-selected' : '';
+          const stateLabel = item.loading ? 'LOADING ASSET' : item.selected
+            ? 'DISPLAYED · ' + (cosmetic.cameraMode === 'first-person' ? 'FIRST PERSON' : 'THIRD PERSON')
+            : 'STATIC COSMETIC · ' + Math.round(item.bytes / 1024) + ' KB';
+          const buttonLabel = item.selected ? 'HIDE PROP' : 'SHOW PROP';
+          const icon = item.icon === 'long'
+            ? '<svg viewBox="0 0 56 36" aria-hidden="true"><path d="M3 14h8l4-4h25l5 4h8v5h-9l-4 3H16l-4-3H3z"/></svg>'
+            : '<svg viewBox="0 0 56 36" aria-hidden="true"><path d="M7 13h12l5-6h8v5h14v8H32v6h-9l-4-6H7z"/></svg>';
+          return '<article class="cosmetic-prop-card' + selected + '">' +
+            '<div class="cosmetic-prop-card-heading"><span class="cosmetic-prop-icon">' + icon + '</span><span><strong>' + escapeMarkup(item.name) + '</strong><small>SUPPLIED 3D MODEL · STATIC</small></span></div>' +
+            '<small class="cosmetic-prop-meta">' + escapeMarkup(item.description) + ' · ' + item.triangles.toLocaleString() + ' triangles</small>' +
+            '<small class="cosmetic-prop-state">' + stateLabel + '</small>' +
+            '<button type="button" data-cosmetic-prop-action="select" data-cosmetic-prop-id="' + escapeMarkup(item.id) + '" aria-pressed="' + String(Boolean(item.selected)) + '"' + (item.loading ? ' disabled' : '') + '>' + buttonLabel + '</button></article>';
+        }).join('')
+      : '<article class="cosmetic-prop-card"><strong>Cosmetic props unavailable</strong><small>Add the supplied static GLB assets to enable display.</small></article>';
+
     return '<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦' + Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG') + '</b></div>' +
       '<section class="field-equipment-list"><div class="field-section-heading"><b>FIELD EQUIPMENT</b><small>UTILITY GEAR · 3 QUICK SLOTS</small></div><div class="gear-grid">' + gearRows + '</div></section>' +
+      '<section class="cosmetic-prop-list"><div class="field-section-heading"><b>COSMETIC DISPLAY PROPS</b><small>STATIC MODELS · NO GAMEPLAY ACTIONS</small></div><div class="cosmetic-prop-grid">' + cosmeticRows + '</div></section>' +
       '<section><div class="field-section-heading"><b>STORES & SUPPLIES</b></div><div class="tiles">' + goodsRows + '</div></section>';
+  }
+
+  function refreshCosmeticPropUI() {
+    if (!panel.hidden && root.querySelector('#panel-title')?.textContent === 'Inventory') {
+      root.querySelector('#panel-content').innerHTML = renderInventory();
+    }
+    return window.__NAIJA_COSMETIC_PROPS__?.getState?.() || null;
   }
 
   function refreshEquipmentUI(state = null) {
@@ -380,6 +418,6 @@ export function mountRPGInterface() {
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     setWorldMapData:worldMapUI.setData, setWorldMapPlayerPosition:worldMapUI.setPlayerPosition, getWorldMapState:worldMapUI.getState,
     isPlayerCharacterRequired: () => characterRequired,
-    refreshEquipmentUI
+    refreshEquipmentUI, refreshCosmeticPropUI
   };
 }
