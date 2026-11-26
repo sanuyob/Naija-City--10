@@ -1,6 +1,6 @@
 import * as pc from 'playcanvas';
 
-const BASE = import.meta.env.BASE_URL || '/';
+const BASE = import.meta.env?.BASE_URL || '/';
 const resolveAssetUrl = value => new URL(String(value).replace(/^\//, ''), new URL(BASE, window.location.origin)).href;
 
 export const COSMETIC_PROP_DEFINITIONS = Object.freeze([
@@ -74,6 +74,7 @@ export function createCosmeticPropSystem({
   let activeItemId = null;
   let cameraMode = playerController.getState?.().cameraMode || 'third-person';
   let destroyed = false;
+  let selectionToken = 0;
   let lastMessage = '';
 
   const status = (message, ok = true) => {
@@ -158,6 +159,7 @@ export function createCosmeticPropSystem({
     if (!DEFINITION_MAP.has(itemId)) return status('Unknown cosmetic prop.', false);
     if (activeItemId === itemId) return hide();
 
+    const token = ++selectionToken;
     if (activeItemId) {
       const previous = activeItemId;
       activeItemId = null;
@@ -167,9 +169,9 @@ export function createCosmeticPropSystem({
     status('Loading ' + DEFINITION_MAP.get(itemId).name + '…');
     try {
       await loadProp(itemId);
-      if (destroyed) {
-        releaseLoaded(itemId);
-        return status('Cosmetic prop display was closed.', false);
+      if (destroyed || token !== selectionToken) {
+        if (activeItemId !== itemId) releaseLoaded(itemId);
+        return getState();
       }
       activeItemId = itemId;
       mountActive();
@@ -177,13 +179,16 @@ export function createCosmeticPropSystem({
         (cameraMode === 'first-person' ? 'first-person' : 'third-person') + ' view.');
       return getState();
     } catch (error) {
-      releaseLoaded(itemId);
-      status('Could not load ' + DEFINITION_MAP.get(itemId).name + ': ' + error.message, false);
+      if (token === selectionToken) {
+        releaseLoaded(itemId);
+        status('Could not load ' + DEFINITION_MAP.get(itemId).name + ': ' + error.message, false);
+      }
       return getState();
     }
   }
 
   function hide() {
+    ++selectionToken;
     if (!activeItemId) return status('No cosmetic prop is being displayed.', false);
     const previous = activeItemId;
     activeItemId = null;
@@ -226,6 +231,7 @@ export function createCosmeticPropSystem({
   function destroy() {
     if (destroyed) return;
     destroyed = true;
+    ++selectionToken;
     activeItemId = null;
     for (const itemId of [...loaded.keys()]) releaseLoaded(itemId);
     loading.clear();
