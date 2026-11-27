@@ -55,7 +55,7 @@ This is a **fictionalized city plan**, not a claim that the six districts are ge
 
 **Build lineup.** Compact streets and smaller plots; three- to four-storey apartment / tenement massing; older bungalow forms; ground-floor shops; small offices and education buildings; narrow shop awnings; signboards; window AC units; metal gates; fences; utility poles and wires; drains and patched road surfaces; small food and market frontage; tropical trees and courtyard plants. Use low/mid-rise commercial GLBs, suburban forms and road / street-prop pieces as a base.
 
-**Implemented in Stage 08K.** Ten Afro-Brazilian-inspired veranda bungalow frontage modules; eight low-rise tenement frontage modules with repeated window bays, balconies and rain pipes; an 18-piece open-courtyard Yoruba family-compound kit; three roadside produce stalls; five fictional Nigerian business signs; and 84 roadside drain/grate modules. The compound replaces one original neighbourhood-home blockout shell. The modules are static-batched, and 53 collision proxies are exposed to player/actor physics. The optional CC0 streetlight GLB is skipped on low-memory devices. **Still to deepen:** full room/courtyard interiors, bespoke roof silhouettes, more varied market inventory and a dedicated asphalt/paving PBR pass.
+**Implemented in Stage 08K.** Ten Afro-Brazilian-inspired veranda bungalow frontage modules; eight low-rise tenement frontage modules with repeated window bays, balconies and rain pipes; an 18-piece open-courtyard Yoruba family-compound kit; three roadside produce stalls; five fictional Nigerian business signs; and 84 roadside drain/grate modules. The compound replaces one original neighbourhood-home blockout shell. The modules are static-batched (635 static members in the low-memory Chromium pass), and 53 collision proxies are exposed to player/actor physics. Five shared 128×128 procedural albedo maps (about 320 KiB total) add fine plaster, aged-wall, timber, metal and concrete variation. The optional CC0 streetlight GLB is skipped on low-memory devices. **Still to deepen:** full room/courtyard interiors, bespoke roof silhouettes, more varied market inventory and a dedicated asphalt/paving PBR pass.
 
 ### Alimosho — expansive residential fabric and strong local commercial nodes
 
@@ -87,8 +87,8 @@ The source archives are retained outside `public/` under `asset-sources/fictiona
 - Use low-detail building variants for far skyline silhouettes and detailed models only near the player.
 - Reuse repeated assets as PlayCanvas instances; group static geometry where it does not compromise streaming or visibility culling.
 - Use shared low-resolution material variants. The existing registered ambientCG Road 008 B, Concrete 044 D and Paving Stones 152 CC0 materials can support the first pass of asphalt, kerbs and paving.
-- For the actual district build, measure draw calls, frame time, GPU memory and download bytes on a real Android phone before raising object density.
-- Asset file size and GLB structure have been checked. A visual sample check and full mobile device test are tracked separately from the file-level validation.
+- Stage 08K browser validation passed in 844×390 mobile-layout Chromium emulation: 10 bungalow fronts, 8 tenement fronts, 18 compound modules, 3 stalls, 5 signs, 84 drain grates and 53 collision proxies; five shared 128×128 surface maps; no browser errors.
+- The browser run uses software WebGL/SwiftShader and low-memory emulation. Its draw-call, frame-time and GPU-memory readings are diagnostic only, not proof of real Android frame rate or thermal stability. A real-device playtest remains required.
 
 ## 5. First playable Yaba slice and remaining gaps
 

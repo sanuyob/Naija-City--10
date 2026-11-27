@@ -1,19 +1,25 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-const game=fs.readFileSync('src/game.js','utf8');
-const stage=fs.readFileSync('src/stage-08k-yaba-heritage-frontages.js','utf8');
-assert.match(game,/createStage08KYabaHeritageFrontages/,'Yaba heritage stage is imported and constructed');
-assert.match(game,/stage08K\.collisionProxies/,'Yaba compound collision proxies are wired into world physics');
-assert.match(game,/yabaHeritageProxies:stage08K\.collisionProxies/,'Yaba heritage collision count is exposed in diagnostics');
-assert.match(game,/yabaHeritageProxies:stage08K\.collisionProxies/,'Yaba heritage collision count is exposed in diagnostics');
-assert.match(game,/stage08J,stage08K,getCityEconomyState/,'Yaba heritage stage is exposed to runtime QA');
-assert.match(game,/stage08K,getCityEconomyState/,'Yaba heritage stage is exposed through the game diagnostics API');
-for (const feature of ['bungalow-veranda-roof','tenement-balcony-rail','compound-courtyard-floor','market-stall-tarpaulin','shop-signboard','open-roadside-drain','roads__light-curved.glb']) assert.ok(stage.includes(feature),`missing feature ${feature}`);
-assert.match(stage,/lowMemoryDevice/,'optional imported asset respects low-memory mode');
-assert.match(stage,/counts\.compoundModules=18/,'Yoruba compound courtyard modules are authored');
-assert.match(stage,/counts\.marketStalls\+\+/,'market stalls are counted');
-assert.match(stage,/counts\.drains\+\+/,'roadside drain modules are counted');
-assert.match(stage,/counts\.compoundModules=18/,'Yoruba compound courtyard modules are authored');
-assert.match(stage,/counts\.marketStalls\+\+/,'market stalls are counted');
-assert.match(stage,/counts\.drains\+\+/,'roadside drain modules are counted');
-console.log('Stage 08K Yaba heritage tests passed: architecture, compound, stalls, signs, drains, imported GLB and physics integration.');
+
+const game = fs.readFileSync('src/game.js', 'utf8');
+const stage = fs.readFileSync('src/stage-08k-yaba-heritage-frontages.js', 'utf8');
+
+assert.match(game, /createStage08KYabaHeritageFrontages/, 'Yaba heritage stage is imported and constructed');
+assert.match(game, /stage08K\.collisionProxies/, 'Yaba compound collision proxies are wired into world physics');
+assert.match(game, /yabaHeritageProxies:stage08K\.collisionProxies/, 'Yaba heritage collision count is exposed in diagnostics');
+assert.match(game, /stage08J,stage08K,getCityEconomyState/, 'Yaba heritage stage is exposed to runtime QA');
+
+for (const feature of [
+  'bungalow-veranda-roof', 'bungalow-window-arch-voussoir', 'tenement-balcony-rail',
+  'compound-courtyard-floor', 'market-stall-tarpaulin', 'shop-signboard',
+  'open-roadside-drain-run', 'drain-grate', 'roads__light-curved.glb'
+]) assert.ok(stage.includes(feature), `missing feature ${feature}`);
+
+assert.match(stage, /lowMemoryDevice/, 'optional imported asset respects low-memory mode');
+assert.match(stage, /counts\.compoundModules=18/, 'Yoruba compound courtyard modules are authored');
+assert.match(stage, /counts\.marketStalls\+\+/, 'market stalls are counted');
+assert.match(stage, /counts\.drains\+\+/, 'roadside drain modules are counted');
+assert.match(stage, /makeSurfaceMap/, 'the heritage kit has procedural surface texture finishing');
+assert.match(stage, /proceduralSurfaceMaps:Object\.keys\(surfaceMaps\)\.length/, 'shared material finish diagnostics are returned');
+
+console.log('Stage 08K Yaba heritage tests passed: bungalow/tenement facades, courtyard compound, market stalls, signs, drains, surface maps, CC0 light and collision integration.');

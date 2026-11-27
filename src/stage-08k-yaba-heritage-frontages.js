@@ -27,6 +27,66 @@ export async function createStage08KYabaHeritageFrontages({ app, box, material, 
     yellow: material([0.88,0.66,0.12]), white: material([0.88,0.86,0.78]), concrete: material([0.48,0.46,0.41]),
     drain: material([0.055,0.065,0.06]), produce: [material([0.60,0.14,0.08]), material([0.22,0.39,0.12]), material([0.83,0.56,0.10])]
   };
+  // Small shared procedural surface maps keep the custom Nigerian frontage kit
+  // from looking like untextured blockout geometry, without adding network fetches.
+  const makeSurfaceMap = (name, seed, pattern = 'grain') => {
+    const size = 128, canvas = document.createElement('canvas');
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const image = ctx.createImageData(size, size);
+    let state = seed >>> 0;
+    const random = () => { state = (state * 1664525 + 1013904223) >>> 0; return state / 4294967296; };
+    for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+      const i = (y * size + x) * 4;
+      const broad = pattern === 'timber' ? Math.sin(y * 0.42 + Math.sin(x * 0.11) * 1.7) * 8
+        : pattern === 'plaster' ? Math.sin(x * 0.055) * 3 + Math.cos(y * 0.07) * 3
+        : pattern === 'metal' ? Math.sin(y * 1.3) * 4 : 0;
+      const grit = (random() - 0.5) * (pattern === 'plaster' ? 34 : 24);
+      const value = Math.max(0, Math.min(255, 222 + broad + grit));
+      image.data[i] = value; image.data[i + 1] = value; image.data[i + 2] = value; image.data[i + 3] = 255;
+    }
+    ctx.putImageData(image, 0, 0);
+    if (pattern === 'plaster' || pattern === 'aged') {
+      ctx.globalAlpha = pattern === 'aged' ? 0.14 : 0.08;
+      for (let i = 0; i < 22; i++) {
+        const x = random() * size, y = random() * size;
+        ctx.strokeStyle = i % 3 ? '#635c50' : '#fff4df'; ctx.lineWidth = 1 + random() * 2;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + random() * 15 - 7, y + random() * 26); ctx.stroke();
+      }
+    }
+    if (pattern === 'timber') {
+      ctx.globalAlpha = 0.18; ctx.strokeStyle = '#53402c';
+      for (let y = 4; y < size; y += 13) { ctx.lineWidth = 1 + random(); ctx.beginPath(); ctx.moveTo(0,y); ctx.bezierCurveTo(34,y-3,82,y+3,size,y-1); ctx.stroke(); }
+    }
+    if (pattern === 'metal') {
+      ctx.globalAlpha = 0.12; ctx.strokeStyle = '#444a49';
+      for (let x = 8; x < size; x += 18) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, size); ctx.stroke(); }
+    }
+    const texture = new pc.Texture(app.graphicsDevice, { width:size, height:size, format:pc.PIXELFORMAT_R8_G8_B8_A8, mipmaps:true });
+    texture.name = `Stage 08K ${name} surface`; texture.setSource(canvas);
+    texture.addressU = pc.ADDRESS_REPEAT; texture.addressV = pc.ADDRESS_REPEAT; texture.anisotropy = 2;
+    return texture;
+  };
+  const surfaceMaps = {
+    plaster: makeSurfaceMap('painted plaster', 811, 'plaster'),
+    aged: makeSurfaceMap('weathered plaster', 812, 'aged'),
+    timber: makeSurfaceMap('timber grain', 813, 'timber'),
+    metal: makeSurfaceMap('galvanized metal', 814, 'metal'),
+    concrete: makeSurfaceMap('cast concrete', 815, 'concrete')
+  };
+  const applySurfaceMap = (target, map, tiling = [1.5, 1.5]) => {
+    target.diffuseMap = map; target.diffuseMapTiling = new pc.Vec2(tiling[0], tiling[1]);
+    target.gloss = 0.12; target.shininess = 10; target.update();
+  };
+  for (const target of mats.plaster) applySurfaceMap(target, surfaceMaps.plaster, [2.5, 2]);
+  applySurfaceMap(mats.aged, surfaceMaps.aged, [2, 2]);
+  applySurfaceMap(mats.cream, surfaceMaps.plaster, [2.2, 2]);
+  applySurfaceMap(mats.timber, surfaceMaps.timber, [1.2, 2.4]);
+  applySurfaceMap(mats.roof, surfaceMaps.metal, [2.8, 3.2]);
+  applySurfaceMap(mats.metal, surfaceMaps.metal, [1.8, 2.2]);
+  applySurfaceMap(mats.rust, surfaceMaps.metal, [1.8, 2.2]);
+  applySurfaceMap(mats.concrete, surfaceMaps.concrete, [2, 3]);
+
   const makeSignMaterial = (label, background) => {
     const canvas=document.createElement('canvas'); canvas.width=512; canvas.height=128;
     const ctx=canvas.getContext('2d');
@@ -66,7 +126,10 @@ export async function createStage08KYabaHeritageFrontages({ app, box, material, 
         add('bungalow-window-reveal',[frontX-side*0.11,2.10,z+dz],[0.12,1.75,0.95],mats.dark);
         add('bungalow-window-shutter',[frontX-side*0.19,2.10,z+dz],[0.08,1.48,0.72],mats.timber);
         add('bungalow-window-sill',[frontX-side*0.20,1.26,z+dz],[0.20,0.12,1.08],mats.cream);
-        add('bungalow-window-lintel',[frontX-side*0.18,3.00,z+dz],[0.18,0.16,1.08],mats.cream);
+        for (let segment = -1; segment <= 1; segment++) {
+          const archRise = 0.12 + (1 - Math.abs(segment)) * 0.28;
+          add('bungalow-window-arch-voussoir',[frontX-side*0.18,2.88+archRise,z+dz+segment*0.40],[0.18,0.15,0.40],mats.cream);
+        }
       }
       add('bungalow-entry-door',[frontX-side*0.12,1.45,z],[0.16,2.55,0.92],mats.timber,0,true);
       add('bungalow-step',[frontX-side*0.52,0.12,z],[0.78,0.24,1.45],mats.concrete);
@@ -151,10 +214,13 @@ export async function createStage08KYabaHeritageFrontages({ app, box, material, 
 
   // Covered open drains and grates: a repeatable roadside module, deliberately
   // set behind the kerb so it does not obstruct the walkable footpath.
-  for (const side of [-1,1]) for (let z=-105;z<=125;z+=5.5) {
-    add('open-roadside-drain',[side*6.95,0.035,z],[0.34,0.10,5.2],mats.drain);
-    add('drain-grate',[side*6.95,0.105,z],[0.38,0.035,0.82],mats.metal);
-    counts.drains++;
+  for (const side of [-1,1]) {
+    // One continuous drainage run per side, with repeated maintenance grates.
+    add('open-roadside-drain-run',[side*6.95,0.035,10],[0.34,0.10,230],mats.drain);
+    for (let z=-105;z<=125;z+=5.5) {
+      add('drain-grate',[side*6.95,0.105,z],[0.38,0.035,0.82],mats.metal);
+      counts.drains++;
+    }
   }
 
   // Reuse a verified CC0 streetlight GLB from the downloaded asset library.
@@ -178,7 +244,8 @@ export async function createStage08KYabaHeritageFrontages({ app, box, material, 
     stage:'08K', district:'Yaba heritage and market frontage',
     counts, collisionProxies:colliders, staticBatching:Boolean(batch), batchGroupId:batch?.id??null,
     architecture:'Afro-Brazilian-inspired veranda bungalow fronts, low-rise Lagos tenement balconies, and an open-courtyard Yoruba family compound',
-    materials:'weathered stucco, painted plaster, timber, dark steel, concrete and restrained painted shop fascia',
+    materials:'weathered stucco, painted plaster, timber, galvanized metal, cast concrete and restrained painted shop fascia',
+    materialFinish:{proceduralSurfaceMaps:Object.keys(surfaceMaps).length,mapResolution:128,sharedTextures:true,textureBytesApprox:5*128*128*4,signageCanvasTextures:counts.signage},
     importedModels:importedModel?['roads__light-curved.glb']:[],
     mobilePolicy:{lowMemoryDevice,sharedMaterials:true,customGeometry:true,optionalGlbSkipped:lowMemoryDevice},
     note:'The compound and facade modules are fictionalized architectural interpretations, not measured reproductions of a specific heritage building.'

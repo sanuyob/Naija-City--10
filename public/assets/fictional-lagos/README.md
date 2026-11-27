@@ -1,6 +1,6 @@
 # Fictional Lagos district asset library
 
-This is a **library**, not a prebuilt scene. It contains 258 licensed GLB models selected for six fictionalized Nigerian districts, plus four shared colour atlases referenced by the models. The models are not loaded by the game at startup.
+This is a **district asset library**, not a complete prebuilt world. It contains 258 licensed GLB models selected for six fictionalized Nigerian districts, plus four shared colour atlases referenced by the models. The catalog is not bulk-loaded at startup. The first Yaba playable slice (Stage 08K) adds locally authored bungalow/tenement frontage geometry, a Yoruba courtyard-compound module, market stalls, fictional shop signs and roadside drainage; its optional CC0 streetlight GLB is skipped on low-memory devices.
 
 - `library/asset-library.json` — full index, source URLs, licenses, technical checks and district recommendations.
 - `library/asset-register.csv` — portable model asset-rights register.
@@ -14,4 +14,4 @@ Model payload: 10.97 MiB; four texture atlases: 46.2 KB; combined library: 11.01
 python3 scripts/build-fictional-lagos-library.py
 ```
 
-Runtime rule: load only the nearby district's selected assets, prefer low-detail variants for distant buildings, and instance repeated props. Do not preload the entire catalog.
+Runtime rule: load only the nearby district's selected assets, prefer low-detail variants for distant buildings, and instance repeated props. Do not preload the entire catalog. See `docs/FICTIONAL-LAGOS-DISTRICT-REFERENCE-AND-ASSET-PLAN.md` for researched district lineups and Stage 08K implementation boundaries.
