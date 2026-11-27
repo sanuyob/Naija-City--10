@@ -541,7 +541,7 @@ export function createThirdPersonController(app, camera, canvas, {
     const missingActionClip=requestedClips.some(clip=>{const resolved=resolveHeroClip(clip);return !resolved||!availableHeroClips.has(resolved);});
     const clips=requestedClips.map(resolveHeroClip).filter(Boolean);
     if(!clips.length)return false;
-    const end=[pc.math.clamp(destination[0],-120,4200),Math.max(0,destination[1]),pc.math.clamp(destination[2],-3900,480)];
+    const end=[pc.math.clamp(destination[0],-620,620),Math.max(0,destination[1]),pc.math.clamp(destination[2],-200,790)];
     const dx=end[0]-p.x,dz=end[2]-p.z,distance=Math.hypot(dx,dz);
     if(distance<.2)return false;
     if(distance>.05 || Number.isFinite(options.facingYaw)) {
@@ -921,11 +921,11 @@ export function createThirdPersonController(app, camera, canvas, {
         const body={position:currentPosition,velocity:[velocity.x,velocity.y,velocity.z],radius:.30,height:1.78,grounded};
         physics.step(body,desired,step);
         velocity.set(body.velocity[0],body.velocity[1],body.velocity[2]);grounded=body.grounded;
-        proposedPosition=[pc.math.clamp(body.position[0],-120,120),body.position[1],pc.math.clamp(body.position[2],-200,500)];
+        proposedPosition=[pc.math.clamp(body.position[0],-620,620),body.position[1],pc.math.clamp(body.position[2],-200,790)];
       }else{
         const blend=Math.min(1,(grounded?24:8)*step);velocity.x+=(desired[0]-velocity.x)*blend;velocity.z+=(desired[2]-velocity.z)*blend;
         if(!grounded)velocity.y-=18.5*step;
-        proposedPosition=[pc.math.clamp(p.x+velocity.x*step,-120,4200),p.y+velocity.y*step,pc.math.clamp(p.z+velocity.z*step,-3900,480)];
+        proposedPosition=[pc.math.clamp(p.x+velocity.x*step,-620,620),p.y+velocity.y*step,pc.math.clamp(p.z+velocity.z*step,-200,790)];
       }
     }
     input.jumpQueued=false;

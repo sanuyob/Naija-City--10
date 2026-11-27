@@ -1,6 +1,6 @@
 # Naija City — Fictional Lagos District Reference & Asset Plan
 
-**Status:** Research-backed district library plus first playable Yaba heritage slice (Stage 08K)
+**Status:** Research-backed district library, playable Yaba heritage slice (Stage 08K), and five connected district exterior slices (Stage 08L)
 **Scope:** Lekki, Ekiti, Eko Atlantic, Victoria Island (VI), Yaba and Alimosho  
 **Target art style:** Low-poly semi-realism: readable low-cost geometry, believable real-world scale, restrained colour variation, grounded material response and Nigerian district-specific composition.
 
@@ -88,14 +88,15 @@ The source archives are retained outside `public/` under `asset-sources/fictiona
 - Reuse repeated assets as PlayCanvas instances; group static geometry where it does not compromise streaming or visibility culling.
 - Use shared low-resolution material variants. The existing registered ambientCG Road 008 B, Concrete 044 D and Paving Stones 152 CC0 materials can support the first pass of asphalt, kerbs and paving.
 - Stage 08K browser validation passed in 844×390 mobile-layout Chromium emulation: 10 bungalow fronts, 8 tenement fronts, 18 compound modules, 3 stalls, 5 signs, 84 drain grates and 53 collision proxies; five shared 128×128 surface maps; no browser errors.
+- Stage 08L introduces five connected exterior slices, 25 district/road/connector ground colliders, custom road and building collision proxies, five world-map landmarks, four shared 64×64 material maps and proximity-based district root activation. See [Stage 08L rollout report](STAGE-08L-FIVE-DISTRICT-ROLLOUT-REPORT.md) for scope and fidelity limits.
 - The browser run uses software WebGL/SwiftShader and low-memory emulation. Its draw-call, frame-time and GPU-memory readings are diagnostic only, not proof of real Android frame rate or thermal stability. A real-device playtest remains required.
 
 ## 5. First playable Yaba slice and remaining gaps
 
 - A Sketchfab market-stall result advertised itself as optimized low-poly, but its page reports about **474,300 triangles**. It was excluded as unsuitable for the mobile target.
 - The generic city kits remain a base palette, not a finished Nigerian art pack. Stage 08K adds a first fictionalized Yaba frontage/compound/stall/sign/drain pass, but it is not a measured reproduction of a named heritage building and does not yet constitute a fully detailed AAA environment.
-- Eko Atlantic seawall, revetment, canal quay walls, bridges and marina modules are researched and specified here but are not yet built into the runtime. The ESIA describes a rock-core defence with armour rock and precast concrete armour units, a vertical sheet-pile canal wall system, canals about 18m wide, and bridges crossing canals and roads; treat these as design references, not proof that every planned element is complete today.
-- Lekki, Victoria Island, Eko Atlantic, Alimosho and Ekiti remain district-manifested asset plans, not playable rebuilt districts.
+- Stage 08L now adds first playable exterior slices for Lekki, Victoria Island, Eko Atlantic, Alimosho and Ekiti. These are compact, fictionalized district interpretations with connected roads, basic ground support, collision proxies, five world-map landmarks and proximity-managed scene roots. They are not complete metro-scale reconstructions.
+- Eko Atlantic now has a first low-poly canal / sheet-pile wall / bridge / promenade / marina / armour-rock visual kit. Its dimensions and forms are design references from the ESIA, not engineering-grade or surveyed reproductions.
 - No unverified or unclear-license downloaded asset was added. Paid items were not purchased.
 
 ## 6. Research references

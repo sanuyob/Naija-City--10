@@ -34,9 +34,14 @@ export function mountWorldMapUI(root) {
   const canvas=overlay.querySelector('#city-world-map'),ctx=canvas.getContext('2d');
   const search=overlay.querySelector('#world-map-search');
   let records=[],player=[-6.1,.12,-40],heading=0,filter='all',query='',zoom=1,pan={x:0,y:0},selected=null,waypoint=null,drag=null;
-  const bounds={minX:-120,maxX:120,minZ:-200,maxZ:500},districts=[
+  const bounds={minX:-620,maxX:620,minZ:-200,maxZ:790},districts=[
     {name:'YABA',x:0,z:-5,rx:68,rz:155},
-    {name:'IKEJA',x:0,z:320,rx:110,rz:150}
+    {name:'IKEJA',x:0,z:320,rx:110,rz:150},
+    {name:'ALIMOSHO',x:-250,z:390,rx:92,rz:82},
+    {name:'EKITI',x:-250,z:650,rx:96,rz:88},
+    {name:'LEKKI',x:250,z:270,rx:92,rz:78},
+    {name:'VICTORIA ISLAND',x:250,z:45,rx:90,rz:74},
+    {name:'EKO ATLANTIC',x:500,z:45,rx:112,rz:78}
   ];
   function visible(){return records.filter(r=>(filter==='all'||r.category===filter)&&(!query||(r.name+' '+r.district+' '+r.category).toLowerCase().includes(query)));}
   function transform(){
@@ -69,8 +74,10 @@ export function mountWorldMapUI(root) {
     for(const d of districts){const p=xy(d.x,d.z);ctx.beginPath();ctx.ellipse(p.x,p.y,d.rx*t.scale,d.rz*t.scale,0,0,Math.PI*2);ctx.fillStyle='rgba(77,111,83,.14)';ctx.fill();ctx.strokeStyle='rgba(143,174,135,.2)';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='rgba(210,220,201,.62)';ctx.font='600 14px Arial';ctx.textAlign='center';ctx.fillText(d.name,p.x,p.y-d.rz*t.scale-10);}
     // Local block grids show the structure of each authored neighbourhood.
     for(const d of districts)for(let k=-2;k<=2;k++){let a=xy(d.x-95,d.z+k*42),b=xy(d.x+95,d.z+k*42);ctx.strokeStyle='rgba(190,198,174,.24)';ctx.lineWidth=Math.max(1.3,4*t.scale);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();a=xy(d.x+k*42,d.z-95);b=xy(d.x+k*42,d.z+95);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
-    // Major bridge spans are measured from the existing Stage 08K road data.
-    ctx.strokeStyle='rgba(215,184,120,.68)';ctx.lineWidth=Math.max(2,13*t.scale);let a=xy(705,-700),b=xy(705,-1900);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();a=xy(1159,-724);b=xy(1453,-724);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+    // Main connectors link the compact Yaba–Ikeja core to five district slices.
+    ctx.strokeStyle='rgba(215,184,120,.74)';ctx.lineWidth=Math.max(2.2,12*t.scale);ctx.lineCap='round';
+    const links=[[[-83,320],[-168,390]],[[83,320],[168,270]],[[83,205],[250,45]],[[335,45],[405,45]],[[-250,472],[-250,562]]];
+    for(const link of links){const a=xy(link[0][0],link[0][1]),b=xy(link[1][0],link[1][1]);ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}
     if(waypoint){a=xy(player[0],player[2]);b=xy(waypoint.position[0],waypoint.position[2]);ctx.setLineDash([9,8]);ctx.strokeStyle='#ffc76d';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);}
     const shown=visible(),clusters=new Map();
     for(const item of shown){const p=xy(item.position[0],item.position[2]);if(p.x<8||p.x>w-8||p.y<8||p.y>h-8)continue;const key=Math.floor(p.x/30)+':'+Math.floor(p.y/30);if(!clusters.has(key))clusters.set(key,[]);clusters.get(key).push({item,p});}
