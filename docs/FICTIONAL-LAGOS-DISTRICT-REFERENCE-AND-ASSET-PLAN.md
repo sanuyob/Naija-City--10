@@ -1,6 +1,6 @@
 # Naija City — Fictional Lagos District Reference & Asset Plan
 
-**Status:** Research-backed art direction and first downloaded asset library  
+**Status:** Research-backed district library plus first playable Yaba heritage slice (Stage 08K)
 **Scope:** Lekki, Ekiti, Eko Atlantic, Victoria Island (VI), Yaba and Alimosho  
 **Target art style:** Low-poly semi-realism: readable low-cost geometry, believable real-world scale, restrained colour variation, grounded material response and Nigerian district-specific composition.
 
@@ -55,7 +55,7 @@ This is a **fictionalized city plan**, not a claim that the six districts are ge
 
 **Build lineup.** Compact streets and smaller plots; three- to four-storey apartment / tenement massing; older bungalow forms; ground-floor shops; small offices and education buildings; narrow shop awnings; signboards; window AC units; metal gates; fences; utility poles and wires; drains and patched road surfaces; small food and market frontage; tropical trees and courtyard plants. Use low/mid-rise commercial GLBs, suburban forms and road / street-prop pieces as a base.
 
-**Must be custom-authored.** Afro-Brazilian bungalow facade kit; Lagos tenement corridor/balcony kit; Yaba market and food-stall family; Nigerian business signage; open drains and patched asphalt detail.
+**Implemented in Stage 08K.** Ten Afro-Brazilian-inspired veranda bungalow frontage modules; eight low-rise tenement frontage modules with repeated window bays, balconies and rain pipes; an 18-piece open-courtyard Yoruba family-compound kit; three roadside produce stalls; five fictional Nigerian business signs; and 84 roadside drain/grate modules. The compound replaces one original neighbourhood-home blockout shell. The modules are static-batched, and 53 collision proxies are exposed to player/actor physics. The optional CC0 streetlight GLB is skipped on low-memory devices. **Still to deepen:** full room/courtyard interiors, bespoke roof silhouettes, more varied market inventory and a dedicated asphalt/paving PBR pass.
 
 ### Alimosho — expansive residential fabric and strong local commercial nodes
 
@@ -90,12 +90,13 @@ The source archives are retained outside `public/` under `asset-sources/fictiona
 - For the actual district build, measure draw calls, frame time, GPU memory and download bytes on a real Android phone before raising object density.
 - Asset file size and GLB structure have been checked. A visual sample check and full mobile device test are tracked separately from the file-level validation.
 
-## 5. Exclusions and known gaps
+## 5. First playable Yaba slice and remaining gaps
 
 - A Sketchfab market-stall result advertised itself as optimized low-poly, but its page reports about **474,300 triangles**. It was excluded as unsuitable for the mobile target.
-- The generic city kits are a base palette, not a finished Nigerian art pack. They do not provide exact Yaba Afro-Brazilian houses, Yoruba compound houses, Lagos market stalls, Nigerian shop signage or Eko Atlantic's seawall/canal kit.
-- No unverified or unclear-license asset was added. Paid items were not purchased.
-- No district has been rebuilt or placed into the playable map yet. This deliverable is the researched, license-checked and district-tagged art library that the next worldbuilding pass can consume.
+- The generic city kits remain a base palette, not a finished Nigerian art pack. Stage 08K adds a first fictionalized Yaba frontage/compound/stall/sign/drain pass, but it is not a measured reproduction of a named heritage building and does not yet constitute a fully detailed AAA environment.
+- Eko Atlantic seawall, revetment, canal quay walls, bridges and marina modules are researched and specified here but are not yet built into the runtime. The ESIA describes a rock-core defence with armour rock and precast concrete armour units, a vertical sheet-pile canal wall system, canals about 18m wide, and bridges crossing canals and roads; treat these as design references, not proof that every planned element is complete today.
+- Lekki, Victoria Island, Eko Atlantic, Alimosho and Ekiti remain district-manifested asset plans, not playable rebuilt districts.
+- No unverified or unclear-license downloaded asset was added. Paid items were not purchased.
 
 ## 6. Research references
 
@@ -109,6 +110,12 @@ The source archives are retained outside `public/` under `asset-sources/fictiona
 - [BusinessDay, 2022 — Eko Atlantic and VI development](https://businessday.ng/real-estate/article/how-eko-atlantic-city-new-plan-drive-devt-boom-in-victoria-island/) (VI commercial and mixed-use growth).
 - [ICWA, 2015 — How Long is Now? Lagos' architectural landscape](https://www.icwa.org/how-long-is-now-lagos-fast-evolving-architectural-landscape/) (Yaba's layered building stock and street character).
 - [Duerksen — Waterhouses](https://ohioopen.library.ohio.edu/cgi/viewcontent.cgi?article=1109&context=oupress) (Lagos compounds, Yaba bungalow, tenements and waterfront housing).
+- [Ibitoye et al., 2022 — Documentation of Local Architectural Vocabularies for Residential Building Components in Yoruba Cultures](https://doi.org/10.33003/fjs-2021-0601-2037) (Yoruba residential building components).
+- [Adenaike et al., 2020 — A Documentation Review of Yoruba Indigenous Architectural Morphology](https://doi.org/10.7176/jaas/66-05) (room modules, family compounds, courtyards and material patterns).
+- [Bloomberg, 2022 — How Face-Me-I-Face-You Homes Became a Way of Life in Lagos](https://www.bloomberg.com/news/features/2022-05-05/the-history-and-design-of-lagos-face-me-i-face-you-homes) (one-/two-storey axial tenement arrangement).
+- [Jolaoso & Onolaja, 2021 — Significance of Informal Trading Activities in the Emergence of Urban Spatial Vernacular](https://doi.org/10.26905/lw.v13i1.5177) (Lagos street trading, open shelves/containers, mats, clustered stalls and integrated sheds).
+- [African Development Bank — Eko Atlantic ESIA Summary](https://www.afdb.org/fileadmin/uploads/afdb/Documents/Environmental-and-Social-Assessments/Nigeria_Eko_Atlantic_ESIA_ESMP_Summary.pdf) (rock revetment, concrete armour units, sheet-pile canal walls, canal widths and bridges).
+- [Eko Atlantic — Official Infrastructure](https://www.ekoatlantic.com/about/infrastructure) (developer description of the Great Wall, promenade and marinas).
 - [Lagos State Ministry — Development Plans](https://mppud-opp.com/index.php?page=development-plans-new) (official Alimosho Model City Plan listing).
 - [Alimosho Model City Plan 2010–2020](https://lasbca.lagosstate.gov.ng/wp-content/uploads/2021/07/ALIMOSHO-MODEL-CITY-PLAN-2010-2020.pdf) (residential density, mixed-use and road-network categories).
 - [RALF — Alimosho local area guide](https://rentalocalfriend.com/en/global-community/africa/nigeria/alimosho153661-153661) (Ikotun, Igando, Egbeda, Iyana Ipaja and market/transport context).
