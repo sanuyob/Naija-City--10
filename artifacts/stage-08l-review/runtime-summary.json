@@ -1,0 +1,358 @@
+{
+  "result": "PASS",
+  "viewport": "1024x640 Chromium / SwiftShader",
+  "baseline": {
+    "stage": "08L",
+    "districtKeys": [
+      "alimosho",
+      "lekki",
+      "victoriaIsland",
+      "ekoAtlantic",
+      "ekiti"
+    ],
+    "mapPins": 5,
+    "roadNetwork": {
+      "interDistrictConnectors": 5,
+      "connectedToExistingIkejaCorridor": true,
+      "localRoadSegments": 10,
+      "roadSurfaceColliders": 15,
+      "groundZones": 5
+    },
+    "staticBatch": {
+      "taggedEntities": 1982,
+      "batchedEntities": 1810,
+      "staticCandidates": 1982,
+      "groundZones": 25
+    },
+    "stage08QBatching": {
+      "enabled": true,
+      "cellSizeMetres": 48,
+      "maxAabbSizeMetres": 48,
+      "inspectedStaticBoxes": 2097,
+      "assignedComponents": 1952,
+      "groupCount": 66,
+      "groupIds": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75
+      ],
+      "oversizedAabbs": 137,
+      "noBounds": 0,
+      "incompatible": 210,
+      "singletonCells": 8,
+      "policy": "opaque single-material box meshes only; 48m X/Z cells; 48m max AABB; no moving/scripted/physics/skinned/transparent/interactive meshes",
+      "batches": 96
+    },
+    "renderBreakdown": {
+      "frameDrawCalls": 190,
+      "components": 6136,
+      "groups": [
+        {
+          "name": "stage08l-district-rollout",
+          "components": 1982,
+          "meshInstances": 1982,
+          "enabledComponents": 1982,
+          "shadowCasters": 0,
+          "batchGroupIds": {
+            "16": 26,
+            "17": 19,
+            "18": 16,
+            "19": 45,
+            "20": 33,
+            "21": 62,
+            "22": 38,
+            "23": 28,
+            "24": 10,
+            "25": 8,
+            "26": 5,
+            "27": 6,
+            "28": 9,
+            "29": 2,
+            "30": 3,
+            "31": 3,
+            "32": 6,
+            "33": 24,
+            "34": 28,
+            "35": 68,
+            "36": 12,
+            "37": 33,
+            "38": 33,
+            "39": 76,
+            "40": 15,
+            "41": 5,
+            "42": 3,
+            "43": 99,
+            "44": 124,
+            "45": 88,
+            "46": 2,
+            "47": 86,
+            "48": 88,
+            "49": 2,
+            "50": 10,
+            "51": 6,
+            "52": 3,
+            "53": 2,
+            "54": 4,
+            "55": 3,
+            "56": 12,
+            "57": 112,
+            "58": 143,
+            "59": 128,
+            "60": 107,
+            "61": 4,
+            "62": 13,
+            "63": 29,
+            "64": 26,
+            "65": 10,
+            "66": 2,
+            "67": 17,
+            "68": 2,
+            "69": 18,
+            "70": 2,
+            "71": 12,
+            "72": 9,
+            "73": 2,
+            "74": 16,
+            "75": 13,
+            "-1": 172
+          }
+        },
+        {
+          "name": "unclassified",
+          "components": 1505,
+          "meshInstances": 1625,
+          "enabledComponents": 1480,
+          "shadowCasters": 84,
+          "batchGroupIds": {
+            "0": 210,
+            "4": 32,
+            "6": 149,
+            "8": 104,
+            "9": 635,
+            "10": 9,
+            "11": 72,
+            "12": 9,
+            "13": 42,
+            "14": 6,
+            "15": 4,
+            "-1": 233
+          }
+        },
+        {
+          "name": "stage08d-architecture",
+          "components": 904,
+          "meshInstances": 904,
+          "enabledComponents": 0,
+          "shadowCasters": 264,
+          "batchGroupIds": {
+            "3": 904
+          }
+        },
+        {
+          "name": "stage08i-ikeja-district",
+          "components": 741,
+          "meshInstances": 741,
+          "enabledComponents": 741,
+          "shadowCasters": 64,
+          "batchGroupIds": {
+            "7": 741
+          }
+        },
+        {
+          "name": "stage08c-street-detail",
+          "components": 470,
+          "meshInstances": 470,
+          "enabledComponents": 470,
+          "shadowCasters": 34,
+          "batchGroupIds": {
+            "2": 470
+          }
+        },
+        {
+          "name": "stage08g-ikeja-street-life",
+          "components": 254,
+          "meshInstances": 254,
+          "enabledComponents": 238,
+          "shadowCasters": 0,
+          "batchGroupIds": {
+            "6": 254
+          }
+        },
+        {
+          "name": "stage08b-detail",
+          "components": 216,
+          "meshInstances": 216,
+          "enabledComponents": 0,
+          "shadowCasters": 0,
+          "batchGroupIds": {
+            "3": 216
+          }
+        },
+        {
+          "name": "stage08d-building",
+          "components": 32,
+          "meshInstances": 32,
+          "enabledComponents": 0,
+          "shadowCasters": 32,
+          "batchGroupIds": {
+            "3": 32
+          }
+        },
+        {
+          "name": "stage08a-building",
+          "components": 16,
+          "meshInstances": 16,
+          "enabledComponents": 0,
+          "shadowCasters": 16,
+          "batchGroupIds": {
+            "3": 16
+          }
+        },
+        {
+          "name": "stage08a-roof",
+          "components": 16,
+          "meshInstances": 16,
+          "enabledComponents": 0,
+          "shadowCasters": 16,
+          "batchGroupIds": {
+            "3": 16
+          }
+        }
+      ]
+    },
+    "worldMapCount": 55,
+    "farClip": 520
+  },
+  "districtGroundAndStreamingProbes": [
+    {
+      "district": "alimosho",
+      "rootActive": true,
+      "playerPosition": [
+        -250,
+        0.01999340020120144,
+        390
+      ],
+      "groundHit": true,
+      "groundNormalY": 1,
+      "groundSurface": "asphalt",
+      "visibleChildren": 337
+    },
+    {
+      "district": "lekki",
+      "rootActive": true,
+      "playerPosition": [
+        250,
+        0.01999375782907009,
+        270
+      ],
+      "groundHit": true,
+      "groundNormalY": 1,
+      "groundSurface": "asphalt",
+      "visibleChildren": 332
+    },
+    {
+      "district": "victoriaIsland",
+      "rootActive": true,
+      "playerPosition": [
+        250,
+        0,
+        45
+      ],
+      "groundHit": true,
+      "groundNormalY": 1,
+      "groundSurface": "asphalt",
+      "visibleChildren": 555
+    },
+    {
+      "district": "ekoAtlantic",
+      "rootActive": true,
+      "playerPosition": [
+        500,
+        0,
+        45
+      ],
+      "groundHit": true,
+      "groundNormalY": 1,
+      "groundSurface": "grass",
+      "visibleChildren": 607
+    },
+    {
+      "district": "ekiti",
+      "rootActive": true,
+      "playerPosition": [
+        -250,
+        0,
+        650
+      ],
+      "groundHit": true,
+      "groundNormalY": 1,
+      "groundSurface": "grass",
+      "visibleChildren": 151
+    }
+  ],
+  "browserErrors": [],
+  "limitation": "Software WebGL validation only; this is not a physical Android performance or thermal test."
+}

@@ -7,7 +7,7 @@ const stage = fs.readFileSync('src/stage-08k-yaba-heritage-frontages.js', 'utf8'
 assert.match(game, /createStage08KYabaHeritageFrontages/, 'Yaba heritage stage is imported and constructed');
 assert.match(game, /stage08K\.collisionProxies/, 'Yaba compound collision proxies are wired into world physics');
 assert.match(game, /yabaHeritageProxies:stage08K\.collisionProxies/, 'Yaba heritage collision count is exposed in diagnostics');
-assert.match(game, /stage08J,stage08K,getCityEconomyState/, 'Yaba heritage stage is exposed to runtime QA');
+assert.match(game, /stage08J,stage08K,stage08L,getCityEconomyState/, 'Yaba heritage stage is exposed to runtime QA');
 
 for (const feature of [
   'bungalow-veranda-roof', 'bungalow-window-arch-voussoir', 'tenement-balcony-rail',
