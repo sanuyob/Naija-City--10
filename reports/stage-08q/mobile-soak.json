@@ -6,7 +6,7 @@
       "total": 8,
       "loaded": 8,
       "failed": 0,
-      "bytes": 1238864,
+      "bytes": 741236,
       "ready": true
     },
     "deviceMemoryGiB": 3,
@@ -18,24 +18,24 @@
       "height": 390
     },
     "heap": {
-      "used": 247985236,
-      "total": 316117000,
+      "used": 200614004,
+      "total": 255071752,
       "limit": 4254597120
     }
   },
   "soak": {
-    "durationMs": 20235.400000002235,
-    "frames": 82,
+    "durationMs": 20347.40000000596,
+    "frames": 78,
     "frameMs": {
-      "p50": 233.29999999999927,
-      "p95": 450,
-      "max": 2979.5000000029804
+      "p50": 233.40000000000146,
+      "p95": 550,
+      "max": 1233.300000000001
     },
-    "heapStartBytes": 248028360,
-    "heapEndBytes": 294663521,
-    "heapGrowthBytes": 46635161,
-    "drawCalls": 312,
-    "meshInstances": 5151
+    "heapStartBytes": 202714868,
+    "heapEndBytes": 199705654,
+    "heapGrowthBytes": -3009214,
+    "drawCalls": 343,
+    "meshInstances": 4503
   },
   "errors": [],
   "consoleErrors": [],

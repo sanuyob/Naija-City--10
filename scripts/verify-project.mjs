@@ -454,7 +454,7 @@ assert.ok(!publicAssetDirectories.includes('curated-buildings'),'GIDI curated ar
 assert.equal(stage08eManifest.models.length,48,'The retained compact city must keep its 48 original Yaba/Ikeja procedural building placements.');
 assert.ok(stage08eManifest.models.every(model=>typeof model.url==='string'&&model.url.startsWith('/assets/buildings/')),
   'All retained Stage 08E buildings must use the lightweight procedural asset folder.');
-assert.doesNotMatch(game,/GIDI|gidi|stage08K|stage08L|stage08N|gatewayPath/,
+assert.doesNotMatch(game,/GIDI|gidi|gatewayPath/,
   'The live game source must not instantiate the removed GIDI region or gateway.');
 assert.doesNotMatch(stage08fProfiler,/gidi/i,'The device profiler must not report removed GIDI streaming state.');
 

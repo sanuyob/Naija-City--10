@@ -14,3 +14,16 @@
 
 ## Weapon and explosive content
 This asset register intentionally excludes real weapon and explosive downloads. Naija City can use clearly fictional, non-functional props only where supplied and explicitly requested as static cosmetic assets.
+
+## Fictional Lagos district asset library (2026-11-27)
+
+A new source-tracked library is curated under `public/assets/fictional-lagos/`. The extracted models are unchanged, and source archives are retained outside `public/` in `asset-sources/fictional-lagos/originals/`.
+
+- Kenney City Kit (Commercial), 41 GLB models, CC0 1.0: https://kenney.nl/assets/city-kit-commercial
+- Kenney City Kit (Suburban), 40 GLB models, CC0 1.0: https://kenney.nl/assets/city-kit-suburban
+- Kenney City Kit (Roads), 95 GLB models, CC0 1.0: https://kenney.nl/assets/city-kit-roads
+- Kenney City Kit (Industrial), 37 GLB models, CC0 1.0: https://kenney.nl/assets/city-kit-industrial
+- Kenney Nature Kit, 44 selected GLB models, CC0 1.0: https://kenney.nl/assets/nature-kit
+- Innerscene Low-poly Nature — Palm tree, 1 GLB model, CC0 dedication: https://www.innerscene.com/tools/library/3d-parts/low-poly-nature-palm-tree-5e953f37
+
+Total: 258 GLB files (10.97 MiB) plus four shared colour atlases (46.2 KB), 11.01 MiB combined. The library includes a machine-readable asset index and CSV rights registers with source URLs, license, credits, file hashes, sizes and triangle counts. Files have been extracted unchanged. This library is not automatically loaded in the playable world; future placement must stream by district and reuse instances.

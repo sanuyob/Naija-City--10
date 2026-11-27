@@ -1,0 +1,1062 @@
+{
+  "capture": "Yaba spawn after nearby building load",
+  "viewport": {
+    "width": 844,
+    "height": 390
+  },
+  "visualSettings": {
+    "ambientLight": [
+      0.5,
+      0.52,
+      0.56,
+      1
+    ],
+    "exposure": 1,
+    "toneMapping": "ACES2",
+    "directionalIntensity": 1.35,
+    "directionalColour": [
+      1,
+      0.96,
+      0.9,
+      1
+    ],
+    "clearColour": [
+      0.46,
+      0.65,
+      0.84,
+      1
+    ]
+  },
+  "lightingAudit": {
+    "renderComponents": 4184,
+    "modelComponents": 0,
+    "visibleComponents": 2959,
+    "visibleMeshInstances": 3101,
+    "shadowCastingComponents": 212,
+    "shadowReceivingComponents": 2958,
+    "worldLighting": {
+      "enabled": true,
+      "mode": "low-cost-day-night-cycle",
+      "timeHours": 9.265,
+      "timeLabel": "09:15",
+      "sunIntensity": 1.35,
+      "sunColor": [
+        1,
+        0.96,
+        0.9,
+        1
+      ],
+      "ambientLight": [
+        0.5,
+        0.52,
+        0.56,
+        1
+      ],
+      "exposure": 1,
+      "sunElevation": 42,
+      "shadows": true,
+      "shadowResolution": 512,
+      "shadowDistance": 42,
+      "shadowCascades": 1,
+      "shadowIntensity": 0.62,
+      "shadowUpdateMode": "on-demand-every-2-seconds",
+      "shadowPolicy": {
+        "fullSceneScans": 1,
+        "componentsSeen": 4104,
+        "castingComponents": 490,
+        "receivingComponents": 4133,
+        "registeredEntities": 11,
+        "registeredComponents": 62,
+        "initialScanMs": 8,
+        "lastEntityApplyMs": 0.4
+      },
+      "clouds": {
+        "enabled": true,
+        "drawCalls": 1,
+        "puffCount": 30,
+        "triangles": 300,
+        "nightOpacity": 0.18
+      },
+      "fog": {
+        "enabled": true,
+        "type": "linear",
+        "start": 235,
+        "end": 610,
+        "color": [
+          0.46,
+          0.65,
+          0.84,
+          1
+        ],
+        "sceneWide": true,
+        "extraDrawCalls": 0
+      },
+      "nightLighting": {
+        "enabled": true,
+        "method": "moderate cool directional moonlight + lifted blue ambient fill",
+        "extraLights": 0,
+        "night": false
+      },
+      "skySimulation": "disabled",
+      "environmentBake": "disabled"
+    }
+  },
+  "renderDiagnostics": {
+    "drawCallCount": 334,
+    "primitiveCount": 143317,
+    "meshInstances": 4326,
+    "frameTime": 16.600000000000364,
+    "camera": {
+      "position": [
+        -1.8299963474273682,
+        2.5434741973876953,
+        -8.251388549804688
+      ],
+      "forward": [
+        0.21413989816367307,
+        -0.14784743203353892,
+        0.9655491913183605
+      ],
+      "fov": 62,
+      "farClip": 520
+    }
+  },
+  "stage08E": {
+    "stage": "08E",
+    "ready": true,
+    "expectedBuildings": 48,
+    "loadedBuildings": 11,
+    "loadingBuildings": 0,
+    "failedBuildings": 0,
+    "unloadedBuildings": 0,
+    "legacyBodiesHidden": 1184,
+    "staticBatching": true,
+    "lod0": 9,
+    "lod1": 0,
+    "lod2": 0,
+    "lastPlayerPosition": [
+      2.2013691217126485e-11,
+      0,
+      0
+    ],
+    "lastCandidateCount": 22,
+    "activeDistricts": [
+      "west-north",
+      "east-north",
+      "east-south",
+      "west-south"
+    ],
+    "failures": [],
+    "buildings": [
+      {
+        "id": "yaba-core-01",
+        "name": "Computer Village Electronics Plaza",
+        "kind": "mixed-use",
+        "position": [
+          -9.2,
+          0,
+          -82
+        ],
+        "size": [
+          6.5,
+          16.1,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": true
+      },
+      {
+        "id": "yaba-core-02",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -84
+        ],
+        "size": [
+          5.2,
+          5.6,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-03",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          -72.5
+        ],
+        "size": [
+          5.2,
+          5.3,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-04",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -74.5
+        ],
+        "size": [
+          5.2,
+          6.7,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-05",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          -63
+        ],
+        "size": [
+          5.2,
+          6.6,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-06",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -65
+        ],
+        "size": [
+          5.2,
+          4.5,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-07",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          -53.5
+        ],
+        "size": [
+          5.2,
+          4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-08",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -55.5
+        ],
+        "size": [
+          5.2,
+          5.6,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-09",
+        "kind": "mixed-use",
+        "position": [
+          -9.2,
+          0,
+          -44
+        ],
+        "size": [
+          5.2,
+          7.4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-10",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -46
+        ],
+        "size": [
+          5.2,
+          6.7,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-11",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          -34.5
+        ],
+        "size": [
+          5.2,
+          6.6,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-12",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -36.5
+        ],
+        "size": [
+          5.2,
+          4.5,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-13",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          -25
+        ],
+        "size": [
+          5.2,
+          4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-14",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -27
+        ],
+        "size": [
+          5.2,
+          5.6,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-15",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          -15.5
+        ],
+        "size": [
+          5.2,
+          5.3,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-16",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -17.5
+        ],
+        "size": [
+          5.2,
+          6.7,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-17",
+        "kind": "mixed-use",
+        "position": [
+          -9.2,
+          0,
+          -6
+        ],
+        "size": [
+          5.2,
+          7.4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-18",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          -8
+        ],
+        "size": [
+          5.2,
+          4.5,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-19",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          3.5
+        ],
+        "size": [
+          5.2,
+          4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-20",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          1.5
+        ],
+        "size": [
+          5.2,
+          5.6,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-21",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          13
+        ],
+        "size": [
+          5.2,
+          5.3,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-22",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          11
+        ],
+        "size": [
+          5.2,
+          6.7,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-23",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          22.5
+        ],
+        "size": [
+          5.2,
+          6.6,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-24",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          20.5
+        ],
+        "size": [
+          5.2,
+          4.5,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-25",
+        "kind": "mixed-use",
+        "position": [
+          -9.2,
+          0,
+          32
+        ],
+        "size": [
+          5.2,
+          7.4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-26",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          30
+        ],
+        "size": [
+          5.2,
+          5.6,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-27",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          41.5
+        ],
+        "size": [
+          5.2,
+          5.3,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-28",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          39.5
+        ],
+        "size": [
+          5.2,
+          6.7,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-29",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          51
+        ],
+        "size": [
+          5.2,
+          6.6,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-30",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          49
+        ],
+        "size": [
+          5.2,
+          4.5,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-31",
+        "kind": "commercial",
+        "position": [
+          -9.2,
+          0,
+          60.5
+        ],
+        "size": [
+          5.2,
+          4,
+          6.8
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "yaba-core-32",
+        "kind": "commercial",
+        "position": [
+          9.2,
+          0,
+          58.5
+        ],
+        "size": [
+          5.2,
+          5.6,
+          6.8
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-33",
+        "kind": "commercial",
+        "position": [
+          -20.5,
+          0,
+          -160
+        ],
+        "size": [
+          8.4,
+          5.2,
+          13.5
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-34",
+        "kind": "mixed-use",
+        "position": [
+          -20.5,
+          0,
+          -65
+        ],
+        "size": [
+          8.4,
+          7.4,
+          13.5
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-35",
+        "kind": "commercial",
+        "position": [
+          -20.5,
+          0,
+          62
+        ],
+        "size": [
+          8.4,
+          5.2,
+          13.5
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-36",
+        "kind": "commercial",
+        "position": [
+          -20.5,
+          0,
+          153
+        ],
+        "size": [
+          8.4,
+          6.300000000000001,
+          13.5
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-37",
+        "kind": "commercial",
+        "position": [
+          20.5,
+          0,
+          -160
+        ],
+        "size": [
+          8.4,
+          5.2,
+          13.5
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-38",
+        "kind": "mixed-use",
+        "position": [
+          20.5,
+          0,
+          -65
+        ],
+        "size": [
+          8.4,
+          7.4,
+          13.5
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-39",
+        "kind": "commercial",
+        "position": [
+          20.5,
+          0,
+          62
+        ],
+        "size": [
+          8.4,
+          5.2,
+          13.5
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "expansion-shop-40",
+        "kind": "commercial",
+        "position": [
+          20.5,
+          0,
+          153
+        ],
+        "size": [
+          8.4,
+          6.300000000000001,
+          13.5
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-41",
+        "kind": "residential",
+        "position": [
+          -42.5,
+          0,
+          -155
+        ],
+        "size": [
+          9.5,
+          4.1,
+          14.5
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-42",
+        "kind": "residential",
+        "position": [
+          -42.5,
+          0,
+          -72
+        ],
+        "size": [
+          9.5,
+          4.55,
+          14.5
+        ],
+        "rotationY": 180,
+        "district": "west-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-43",
+        "kind": "residential",
+        "position": [
+          -42.5,
+          0,
+          65
+        ],
+        "size": [
+          9.5,
+          5,
+          14.5
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-44",
+        "kind": "residential",
+        "position": [
+          -42.5,
+          0,
+          150
+        ],
+        "size": [
+          9.5,
+          4.1,
+          14.5
+        ],
+        "rotationY": 180,
+        "district": "west-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-45",
+        "kind": "residential",
+        "position": [
+          42.5,
+          0,
+          -155
+        ],
+        "size": [
+          9.5,
+          4.1,
+          14.5
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-46",
+        "kind": "residential",
+        "position": [
+          42.5,
+          0,
+          -72
+        ],
+        "size": [
+          9.5,
+          4.55,
+          14.5
+        ],
+        "rotationY": 0,
+        "district": "east-north",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-47",
+        "kind": "residential",
+        "position": [
+          42.5,
+          0,
+          65
+        ],
+        "size": [
+          9.5,
+          5,
+          14.5
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      },
+      {
+        "id": "neighbourhood-home-48",
+        "kind": "residential",
+        "position": [
+          42.5,
+          0,
+          150
+        ],
+        "size": [
+          9.5,
+          4.1,
+          14.5
+        ],
+        "rotationY": 0,
+        "district": "east-south",
+        "enterable": false,
+        "hero": false
+      }
+    ],
+    "textureEncoding": "Shared KTX2 Basis library for 39 curated Yaba commercial/mixed-use assets; the Stage 08F Computer Village hero uses its own 10 KTX2 maps; 8 neighbourhood-home GLBs retain their existing embedded PNG maps",
+    "heroBuildingId": "yaba-core-01",
+    "heroBuildingLoaded": true,
+    "heroLoadMs": 908,
+    "heroTextureEncoding": "KTX2 Basis Universal (KHR_texture_basisu)",
+    "heroPbrMaterials": [
+      "weathered-plaster",
+      "corrugated-roofing",
+      "tinted-shopfront-glass",
+      "painted-steel",
+      "cast-concrete",
+      "painted-facade",
+      "signage"
+    ],
+    "heroLoadError": null,
+    "batchGroupId": 4,
+    "collisionProxyCount": 48,
+    "collisionMode": "persistent static rotated-box Bullet proxies",
+    "collisionRadius": 0.38,
+    "preloading": false,
+    "preloadTotal": 8,
+    "preloadCompleted": 8,
+    "preloadFailed": 0,
+    "preloadBytes": 741236,
+    "preloadReady": true,
+    "streaming": "35m startup preload + distance-prioritized progressive loading; 140m background radius, hero asset at 65m, 420ms pacing, 300m visual eviction",
+    "cachedAssets": 11,
+    "sharedMaterialCount": 13,
+    "masterAsset": "yaba-core-20"
+  },
+  "playerPosition": [
+    2.2013691217126485e-11,
+    0,
+    0
+  ],
+  "displayLuminance": {
+    "pixelCount": 329160,
+    "mean": 50.5,
+    "p10": 7,
+    "p50": 28,
+    "p90": 132,
+    "darkPixelPercent": 63.13,
+    "highlightPixelPercent": 0.11,
+    "scope": "entire canvas; includes sky, ground, buildings and actors, not a facade-only measurement"
+  }
+}
