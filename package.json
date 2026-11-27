@@ -18,7 +18,9 @@
     "test:city": "node scripts/stage-08i-city.test.mjs",
     "test:city:runtime": "node scripts/stage-08i-runtime-smoke.mjs",
     "test:audit:yaba-ikeja": "node scripts/yaba-ikeja-driving-audit.mjs",
-    "test:districts": "node scripts/city-economy.test.mjs && node scripts/city-traffic-ai.test.mjs"
+    "test:districts": "node scripts/city-economy.test.mjs && node scripts/city-traffic-ai.test.mjs",
+    "assets:fictional-lagos": "python3 scripts/build-fictional-lagos-library.py",
+    "verify:fictional-lagos": "python3 scripts/verify-fictional-lagos-library.py"
   },
   "dependencies": {
     "playcanvas": "^2.24.0"
