@@ -59,6 +59,8 @@ jobs:
 
   deploy:
     needs: build
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages-preview
@@ -67,3 +69,23 @@ jobs:
       - name: Publish tested Naija City preview
         id: deployment
         uses: actions/deploy-pages@v4
+
+  verify-live:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the deployed release source and asset manifest
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Install WebGL-enabled Chromium for live-site verification
+        run: npx playwright install --with-deps chromium
+      - name: Verify the actual published GitHub Pages game
+        env:
+          SMOKE_BASE_URL: ${{ needs.deploy.outputs.page_url }}
+        run: npm run test:production
