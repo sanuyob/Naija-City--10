@@ -1,0 +1,52 @@
+name: Naija City feature branch playable preview
+
+on:
+  push:
+    branches:
+      - feature/stage-08m-nigerian-street-tech
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages-preview
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the tested feature release
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Install locked dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Build the playable game with GitHub Pages base path
+        run: npm run build
+      - name: Install headless Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verify production build, all NPC assets, vehicle fleets and browser runtime
+        run: npm run test:production
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages-preview
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish tested Naija City preview
+        id: deployment
+        uses: actions/deploy-pages@v4
