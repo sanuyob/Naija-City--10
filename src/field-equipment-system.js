@@ -3,19 +3,22 @@ import * as pc from 'playcanvas';
 export const FIELD_EQUIPMENT_DEFINITIONS = Object.freeze([
   { id: 'field-radio', name: 'Field Radio', shortName: 'RADIO', description: 'Communications and location pings', kind: 'communication', cooldown: 1.4, maxCount: 1 },
   { id: 'repair-kit', name: 'Repair Kit', shortName: 'REPAIR', description: 'Utility kit for service-point interactions', kind: 'maintenance', cooldown: 4, maxCount: 2 },
-  { id: 'survey-beacon', name: 'Survey Beacon', shortName: 'BEACON', description: 'Marks your current location with a visual pulse', kind: 'navigation', cooldown: 2.5, maxCount: 3 }
+  { id: 'survey-beacon', name: 'Survey Beacon', shortName: 'BEACON', description: 'Marks your current location with a visual pulse', kind: 'navigation', cooldown: 2.5, maxCount: 3 },
+  { id: 'scout-drone', name: 'Scout Drone', shortName: 'DRONE', description: 'Deploy a camera drone to scout streets and rooftops', kind: 'remote-scouting', cooldown: 2, maxCount: 1 }
 ]);
 
 export const FIELD_EQUIPMENT_DEFAULT_INVENTORY = Object.freeze({
   'field-radio': 1,
   'repair-kit': 1,
-  'survey-beacon': 2
+  'survey-beacon': 2,
+  'scout-drone': 1
 });
 
 export const FIELD_EQUIPMENT_DEFAULT_SLOTS = Object.freeze([
   'field-radio',
   'survey-beacon',
-  'repair-kit'
+  'repair-kit',
+  'scout-drone'
 ]);
 
 const DEFINITION_MAP = new Map(FIELD_EQUIPMENT_DEFINITIONS.map(item => [item.id, item]));
@@ -66,6 +69,39 @@ export function stepDroppedFieldProp(body, deltaSeconds, groundHit = null) {
   return next;
 }
 
+/** Deterministic, frame-capped scout-drone movement used by the runtime and tests. */
+export function stepScoutDrone(state, deltaSeconds, controls = {}) {
+  const dt = Math.max(0, Math.min(0.05, Number(deltaSeconds) || 0));
+  const next = {
+    ...state,
+    position: state.position.slice(),
+    battery: Math.max(0, Number(state.battery) || 0)
+  };
+  if (dt <= 0 || next.battery <= 0) return next;
+  const yaw = Number(state.headingRadians) || 0;
+  const x = Math.max(-1, Math.min(1, Number(controls.x) || 0));
+  const y = Math.max(-1, Math.min(1, Number(controls.y) || 0));
+  const magnitude = Math.hypot(x, y);
+  const scale = magnitude > 1 ? 1 / magnitude : 1;
+  const rightX = Math.cos(yaw), rightZ = -Math.sin(yaw);
+  const forwardX = -Math.sin(yaw), forwardZ = -Math.cos(yaw);
+  const speed = 5.4;
+  next.position[0] += (rightX * x + forwardX * y) * speed * scale * dt;
+  next.position[2] += (rightZ * x + forwardZ * y) * speed * scale * dt;
+  const vertical = Math.max(-1, Math.min(1, Number(controls.vertical) || 0));
+  next.position[1] = Math.max(state.homePosition[1] + 2.8,
+    Math.min(state.homePosition[1] + 18, next.position[1] + vertical * 3.2 * dt));
+  const dx = next.position[0] - state.homePosition[0];
+  const dz = next.position[2] - state.homePosition[2];
+  const distance = Math.hypot(dx, dz);
+  if (distance > 55) {
+    next.position[0] = state.homePosition[0] + dx / distance * 55;
+    next.position[2] = state.homePosition[2] + dz / distance * 55;
+  }
+  next.battery = Math.max(0, next.battery - dt * 0.28);
+  return next;
+}
+
 /** Mobile-first non-combat field equipment, visual carry props and dropped-item physics. */
 export function createFieldEquipmentSystem({
   app,
@@ -99,6 +135,9 @@ export function createFieldEquipmentSystem({
   makeMaterial('field-trim-metal', [0.43, 0.48, 0.46], 0.42);
   makeMaterial('field-beacon-cyan', [0.12, 0.66, 0.72], 0.34);
   makeMaterial('field-rubber', [0.025, 0.035, 0.035], 0.92);
+  makeMaterial('field-drone-carbon', [0.045, 0.06, 0.07], 0.5);
+  makeMaterial('field-drone-arm', [0.17, 0.21, 0.22], 0.46);
+  makeMaterial('field-drone-led', [0.08, 0.72, 0.62], 0.22);
 
   function addBox(parent, name, position, scale, material) {
     const entity = new pc.Entity(name);
@@ -148,6 +187,22 @@ export function createFieldEquipmentSystem({
       addSphere(group, 'beacon-dome', [0, 0.16, 0], [0.12, 0.07, 0.12], screen);
       addBox(group, 'beacon-base', [0, -0.14, 0], [0.22, 0.035, 0.18], metal);
       addBox(group, 'beacon-foot', [0, -0.18, 0], [0.13, 0.04, 0.11], green);
+    } else if (itemId === 'scout-drone') {
+      const droneBody = materials['field-drone-carbon'];
+      const droneArm = materials['field-drone-arm'];
+      const led = materials['field-drone-led'];
+      addBox(group, 'drone-central-body', [0, 0, 0], [0.34, 0.105, 0.25], droneBody);
+      addBox(group, 'drone-top-shell', [0, 0.065, -0.015], [0.22, 0.055, 0.18], green);
+      addSphere(group, 'drone-front-camera', [0, -0.018, -0.14], [0.085, 0.07, 0.055], screen);
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+        const x = sx * 0.23, z = sz * 0.19;
+        const arm = addBox(group, 'drone-arm-' + sx + '-' + sz, [x * 0.52, 0, z * 0.52], [0.34, 0.04, 0.055], droneArm);
+        arm.setLocalEulerAngles(0, sx === sz ? 42 : -42, 0);
+        addSphere(group, 'drone-motor-' + sx + '-' + sz, [x, 0.045, z], [0.085, 0.045, 0.085], metal);
+        const rotor = addBox(group, 'drone-rotor-' + sx + '-' + sz, [x, 0.075, z], [0.25, 0.018, 0.045], charcoal);
+        rotor.tags.add('scout-drone-rotor');
+        addSphere(group, 'drone-led-' + sx + '-' + sz, [x, -0.025, z], [0.045, 0.035, 0.045], led);
+      }
     }
     group.setLocalScale(1, 1, 1);
     return group;
@@ -166,6 +221,12 @@ export function createFieldEquipmentSystem({
   const stats = { equips: 0, stows: 0, uses: 0, drops: 0, pickups: 0, physicsSteps: 0, groundContacts: 0 };
   const maximumDrops = lowMemoryDevice ? 3 : 6;
   const droppedProps = [];
+  let scoutDrone = null;
+  let droneEntity = null;
+  let droneVerticalInput = 0;
+  let dronePanInput = 0;
+  let droneInput = { x: 0, y: 0 };
+  let droneRotorAngle = 0;
   function findRightHandBone(root) {
     const wanted = ['righthand', 'handr', 'righthandindex1', 'mixamorigrighthand'];
     const stack = [...(root.children || [])];
@@ -206,6 +267,76 @@ export function createFieldEquipmentSystem({
     const result = { ok, message };
     onStatus(message, result);
     return result;
+  }
+
+  function launchScoutDrone() {
+    if (scoutDrone) return status('SCOUT DRONE · already airborne. Use RECALL to bring it home.', false);
+    const playerState = playerController.getState();
+    const homePosition = playerState.position.slice();
+    const headingRadians = (Number(playerState.facingYaw) || 0) * Math.PI / 180;
+    scoutDrone = {
+      position: [homePosition[0], homePosition[1] + 3.2, homePosition[2]],
+      homePosition,
+      headingRadians,
+      battery: 100,
+      deployed: true,
+      flightSeconds: 0
+    };
+    droneEntity = buildProp('scout-drone', app.root, 'deployed');
+    droneEntity.setPosition(...scoutDrone.position);
+    droneEntity.setEulerAngles(0, Number(playerState.facingYaw) || 0, 0);
+    droneEntity.setLocalScale(1.12, 1.12, 1.12);
+    droneInput = { x: 0, y: 0 };
+    droneVerticalInput = 0;
+    dronePanInput = 0;
+    playerController.setControlEnabled(false);
+    audioSystem?.play?.('gearEquip');
+    return status('SCOUT DRONE · link established. Left stick flies; UP/DOWN changes altitude.');
+  }
+
+  function recallScoutDrone(reason = 'Drone recalled to operator.') {
+    if (!scoutDrone) return status('No scout drone is airborne.', false);
+    droneEntity?.destroy();
+    droneEntity = null;
+    scoutDrone = null;
+    droneInput = { x: 0, y: 0 };
+    droneVerticalInput = 0;
+    dronePanInput = 0;
+    playerController.clearExternalCameraPose?.();
+    playerController.setControlEnabled(true);
+    playerController.resetCameraAfterVehicle?.();
+    audioSystem?.play?.('gearEquip');
+    return status('SCOUT DRONE · ' + reason);
+  }
+
+  function setDroneInput(x = 0, y = 0) {
+    droneInput = {
+      x: Math.max(-1, Math.min(1, Number(x) || 0)),
+      y: Math.max(-1, Math.min(1, Number(y) || 0))
+    };
+    return Boolean(scoutDrone);
+  }
+
+  function setDroneVertical(value = 0) {
+    droneVerticalInput = Math.max(-1, Math.min(1, Number(value) || 0));
+    return Boolean(scoutDrone);
+  }
+
+  function setDronePan(value = 0) {
+    dronePanInput = Math.max(-1, Math.min(1, Number(value) || 0));
+    return Boolean(scoutDrone);
+  }
+
+  function getDroneState() {
+    return scoutDrone ? {
+      active: true,
+      position: scoutDrone.position.slice(),
+      battery: Math.round(scoutDrone.battery),
+      flightSeconds: Number(scoutDrone.flightSeconds.toFixed(1)),
+      maximumRangeMetres: 55,
+      headingRadians: scoutDrone.headingRadians,
+      altitudeMetres: Number((scoutDrone.position[1] - scoutDrone.homePosition[1]).toFixed(1))
+    } : { active: false, battery: 100, maximumRangeMetres: 55 };
   }
 
   function equip(itemId) {
@@ -249,6 +380,11 @@ export function createFieldEquipmentSystem({
   function activate(itemId = activeItemId) {
     if (!itemId || !DEFINITION_MAP.has(itemId)) return status('Equip a field item first.', false);
     if (inventory[itemId] <= 0) return status('That item is not in your bag.', false);
+    if (itemId === 'scout-drone') {
+      if (scoutDrone) return recallScoutDrone();
+      if (activeItemId !== itemId) equip(itemId);
+      return launchScoutDrone();
+    }
     if (activeItemId !== itemId) equip(itemId);
     if (cooldowns[itemId] > 0) return status('Ready in ' + cooldowns[itemId].toFixed(1) + 's.', false);
 
@@ -276,6 +412,7 @@ export function createFieldEquipmentSystem({
 
   function drop(itemId = activeItemId) {
     if (!itemId || !DEFINITION_MAP.has(itemId)) return status('Choose an item to drop.', false);
+    if (itemId === 'scout-drone') return status('The scout drone is reusable field equipment and cannot be dropped.', false);
     if (inventory[itemId] <= 0) return status('No spare item is available to drop.', false);
     if (activeItemId === itemId) stow();
 
@@ -345,6 +482,29 @@ export function createFieldEquipmentSystem({
     if (destroyed) return;
     const dt = Math.max(0, Math.min(0.05, Number(deltaSeconds) || 0));
     for (const itemId of Object.keys(cooldowns)) cooldowns[itemId] = Math.max(0, cooldowns[itemId] - dt);
+
+    if (scoutDrone && droneEntity) {
+      scoutDrone.headingRadians += dronePanInput * dt * 1.05;
+      const next = stepScoutDrone(scoutDrone, dt, { ...droneInput, vertical: droneVerticalInput });
+      scoutDrone.position = next.position;
+      scoutDrone.battery = next.battery;
+      scoutDrone.flightSeconds += dt;
+      droneEntity.setPosition(...scoutDrone.position);
+      droneEntity.setEulerAngles(0, scoutDrone.headingRadians * 180 / Math.PI, 0);
+      droneRotorAngle = (droneRotorAngle + dt * 1480) % 360;
+      for (const child of droneEntity.children) {
+        if (child.tags?.has?.('scout-drone-rotor')) child.setLocalEulerAngles(0, droneRotorAngle, 0);
+      }
+      const yaw = scoutDrone.headingRadians;
+      const cameraPosition = [scoutDrone.position[0], scoutDrone.position[1] + 0.24, scoutDrone.position[2]];
+      const cameraTarget = [
+        scoutDrone.position[0] - Math.sin(yaw) * 15,
+        scoutDrone.position[1] - 1.7,
+        scoutDrone.position[2] - Math.cos(yaw) * 15
+      ];
+      playerController.setExternalCameraPose?.(cameraPosition, cameraTarget, 82);
+      if (scoutDrone.battery <= 0.01) recallScoutDrone('battery depleted; drone returned to operator.');
+    }
 
     if (transition) {
       transition.elapsed += dt;
@@ -416,6 +576,7 @@ export function createFieldEquipmentSystem({
       activeItemId,
       quickSlots: slots,
       droppedProps: droppedProps.length,
+      drone: getDroneState(),
       visuals: { proceduralModels: equippedModels.size, carryAnchor: rightHandBone ? 'right-hand bone attachment' : 'player-root offset fallback', transition: 'procedural equip/stow scale and position blend' },
       physics: { mode: 'raycast-supported arcade rigid-body drops', gravity: 15.5, maxDroppedProps: maximumDrops, liveDrops: droppedProps.length, groundContacts: stats.groundContacts },
       stats: { ...stats }
@@ -425,11 +586,16 @@ export function createFieldEquipmentSystem({
   function destroy() {
     if (destroyed) return;
     destroyed = true;
+    if (droneEntity) droneEntity.destroy();
+    droneEntity = null;
+    scoutDrone = null;
+    playerController.clearExternalCameraPose?.();
+    playerController.setControlEnabled(true);
     carrier.destroy();
     for (const item of droppedProps) item.entity.destroy();
     droppedProps.length = 0;
   }
 
   persist();
-  return { equip, stow, equipSlot, activate, drop, pickupNearest, update, getState, destroy };
+  return { equip, stow, equipSlot, activate, drop, pickupNearest, update, getState, getDroneState, setDroneInput, setDroneVertical, setDronePan, recallScoutDrone, destroy };
 }

@@ -463,13 +463,13 @@ export function createStage08LDistrictRollout({ app, box, material, lowMemoryDev
   }
 
   const activationRadius = lowMemoryDevice ? 320 : 460;
-  function update(playerPosition) {
+  function update(playerPosition, remoteDistrictKey = null) {
     const vectorArray = playerPosition?.toArray?.();
     const p = Array.isArray(playerPosition) ? playerPosition : ArrayBuffer.isView(playerPosition) ? Array.from(playerPosition) : Array.isArray(vectorArray) ? vectorArray : [playerPosition?.x || 0, playerPosition?.y || 0, playerPosition?.z || 0];
     for (const [key, spec] of Object.entries(DISTRICTS)) {
       const distance = Math.hypot(Number(p[0] || 0) - spec.center[0], Number(p[2] || 0) - spec.center[1]);
       const root = districtRoots[key];
-      root.enabled = distance <= activationRadius + (root.enabled ? 60 : 0);
+      root.enabled = key === remoteDistrictKey || distance <= activationRadius + (root.enabled ? 60 : 0);
     }
   }
   update([0, 0, 0]);
@@ -505,7 +505,7 @@ export function createStage08LDistrictRollout({ app, box, material, lowMemoryDev
     sharedSurfaceMaps: Object.keys(surfaces).length,
     surfaceMapResolution: 64,
     lowMemoryDevice,
-    liveTrafficAdded: false,
+    liveTrafficAdded: true,
     liveNpcAdded: false,
     features: [
       'Alimosho rooming-house blocks, independent shops, roadside market, bus terminal, open drainage and overhead utilities',

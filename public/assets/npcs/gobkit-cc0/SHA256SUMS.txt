@@ -1,0 +1,6 @@
+69220c194637fc86262f0d82d53292953a6e04edc24ca3ebdce242bf576a318b  public/assets/npcs/gobkit-cc0/accountant.glb
+2582afd0e9a18f0872d3d7a5c5637c462d5c86076972869393003d1868405982  public/assets/npcs/gobkit-cc0/delivery-rider.glb
+743d9ebadde8dfe6bd1cd8e016a85a8abe36bc606bca6fcda67730ddc94cd7e7  public/assets/npcs/gobkit-cc0/farm-hand.glb
+2aaa07272065d2d483151304b761d11487779d31ec38ab63af1c9f5ec7df54b5  public/assets/npcs/gobkit-cc0/market-vendor.glb
+a28165749ccf7199a1f1042169bed92773ff4823059b622c58aa4e4b4097f619  public/assets/npcs/gobkit-cc0/security-guard.glb
+cc4c2c7c0acdefca987170f8c9ad5b0d0b80e1793c066170316d906f7dabccb9  public/assets/npcs/gobkit-cc0/site-engineer.glb

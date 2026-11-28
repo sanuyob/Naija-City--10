@@ -70,6 +70,11 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
     const vehicle = game.getVehicleState?.() || {};
     const batches = game.getStaticBatchState?.() || {};
     const traffic = game.getTrafficPositions?.() || [];
+    const npcState = window.__NAIJA_NPC_SYSTEM__?.getState?.() || game.getNpcPopulationState?.() || {};
+    const npcCharacters = npcState.characters || [];
+    const loadedNpcs = npcCharacters.filter(actor => actor.loaded);
+    const activeNpcs = npcCharacters.filter(actor => actor.visible);
+    const garmentRenderParts = loadedNpcs.reduce((sum, actor) => sum + (Number(actor.outfitRenderParts) || 0), 0);
     return {
       stage: '08F',
       capturedAt: new Date().toISOString(),
@@ -98,7 +103,11 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
         devicePixelRatio: window.devicePixelRatio,
-        renderer: device.unmaskedRenderer || 'not exposed'
+        renderer: device.unmaskedRenderer || 'not exposed',
+        webglVersion: device.webglVersion || null,
+        maxTextureSize: device.maxTextureSize || null,
+        touchCapable: ('ontouchstart' in window) || (navigator.maxTouchPoints || 0) > 0,
+        maxTouchPoints: navigator.maxTouchPoints || 0
       },
       city: {
         trafficActors: traffic.length,
@@ -107,7 +116,20 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
           occupied: vehicle.occupied ?? null,
           speedKmh: vehicle.speedKmh ?? null
         },
-        staticBatches: batches
+        staticBatches: batches,
+        npcs: {
+          authoredDefinitions: npcState.definitions ?? npcCharacters.length,
+          districtCount: npcState.districtCount ?? null,
+          activeDistrict: npcState.activeDistrict ?? null,
+          loadedCharacters: loadedNpcs.length,
+          activeCharacters: activeNpcs.length,
+          failedLoads: npcState.failedLoads ?? null,
+          outfitRenderParts: garmentRenderParts,
+          streamedDistrictCharacters: npcCharacters.reduce((counts, actor) => {
+            counts[actor.district] = (counts[actor.district] || 0) + (actor.loaded ? 1 : 0);
+            return counts;
+          }, {})
+        }
       },
       memory: { jsHeapMiB: heapBytes === null ? null : heapBytes / 1048576 },
       device: {
@@ -124,10 +146,11 @@ export function createStage08FDeviceProfiler({ app, canvas, device, stage08E }) 
         loadingBuildings: stage.loadingBuildings ?? null,
         failedBuildings: stage.failedBuildings ?? null
       },
+      measurementSource: 'Collected live from the browser and PlayCanvas device running this session.',
       limitations: [
         'GPU memory is the engine-reported tracked resource estimate, not a full operating-system VRAM measurement.',
         'JavaScript heap is omitted on browsers that do not expose performance.memory.',
-        'A browser run is not a substitute for a physical-device test.'
+        'Use this export from the target Android phone browser for a physical-device result; desktop Chromium/SwiftShader exports are only simulator results.'
       ]
     };
   }

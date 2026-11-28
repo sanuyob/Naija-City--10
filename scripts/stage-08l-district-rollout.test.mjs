@@ -10,9 +10,9 @@ const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
 assert.match(game, /createStage08LDistrictRollout/, 'Stage 08L must be imported and mounted');
 assert.match(game, /stage08L\.collisionProxies/, 'District collision proxies must enter player and actor physics');
 assert.match(game, /stage08L\.groundColliders/, 'District ground and road colliders must enter physics');
-assert.match(game, /stage08L\.update\(playerController\.getState\(\)\.position\)/, 'District visibility must follow the player/vehicle position');
+assert.match(game, /stage08L\.update\(playerController\.getState\(\)\.position,remoteDistrictKey\)/, 'District visibility must follow the player/vehicle position and remote CCTV feed');
 assert.match(game, /districtRolloutProxies/, 'District collision coverage must be exposed');
-assert.match(game, /stage08K,stage08L,getCityEconomyState/, 'Stage 08L must be accessible to runtime QA');
+assert.match(game, /stage08K,stage08L,stage08M,getCityEconomyState/, 'Stage 08L must be accessible to runtime QA');
 assert.match(controller, /clamp\(body\.position\[0\],-620,620\)/, 'Bullet movement must allow access to the expanded district map');
 assert.match(controller, /clamp\(body\.position\[2\],-200,790\)/, 'Bullet movement must allow access to the Ekiti upland slice');
 assert.match(controller, /clamp\(p\.x\+velocity\.x\*step,-620,620\)/, 'Fallback movement must allow access to the expanded district map');
@@ -34,10 +34,11 @@ for (const district of ['alimosho', 'lekki', 'victoriaIsland', 'ekoAtlantic', 'e
 
 assert.match(stage, /interDistrictConnectors: 5/, 'Exactly five district connectors must be declared');
 assert.match(stage, /groundZones: Object\.keys\(DISTRICTS\)\.length/, 'Every district needs its own ground support');
+assert.match(stage, /liveTrafficAdded: true/, 'Stage 08L must advertise the district vehicle fleet integration');
 assert.match(stage, /sharedSurfaceMaps: Object\.keys\(surfaces\)\.length/, 'PBR-like materials must use shared low-memory texture maps');
 assert.match(stage, /surfaceMapResolution: 64/, 'Shared maps must stay at the compact 64px resolution');
 assert.match(stage, /lowMemoryDevice \? 320 : 460/, 'District root activation must adapt to low-memory devices');
-assert.match(stage, /root\.enabled = distance <= activationRadius/, 'District geometry must be proximity streamed');
+assert.match(stage, /root\.enabled = key === remoteDistrictKey \|\| distance <= activationRadius/, 'District geometry must be proximity streamed or temporarily activated by remote surveillance');
 assert.doesNotMatch(stage, /Math\.random\(/, 'Procedural assets must be deterministic across builds');
 
 for (const district of ['ALIMOSHO', 'LEKKI', 'VICTORIA ISLAND', 'EKO ATLANTIC', 'EKITI']) {

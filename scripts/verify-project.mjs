@@ -18,6 +18,7 @@ const stage08h=await readFile(new URL('../src/stage-08h-ikeja-prop-realism.js',i
 const stage08i=await readFile(new URL('../src/stage-08i-ikeja-city-expansion.js',import.meta.url),'utf8');
 const stage08j=await readFile(new URL('../src/stage-08j-yaba-ikeja-network-and-yaba-streets.js',import.meta.url),'utf8');
 const stage08l=await readFile(new URL('../src/stage-08l-district-rollout.js',import.meta.url),'utf8');
+const districtActivity=await readFile(new URL('../src/district-activity-system.js',import.meta.url),'utf8');
 const worldMap=await readFile(new URL('../src/world-map-ui.js',import.meta.url),'utf8');
 const stage08fSpec=await readFile(new URL('../docs/STAGE-08F-PRODUCTION-SPEC.md',import.meta.url),'utf8');
 const stage08fMaterials=JSON.parse(await readFile(new URL('../public/assets/stage-08f-material-library.json',import.meta.url),'utf8'));
@@ -380,12 +381,16 @@ assert.match(game,/debugSetCameraForSmoke/,'The browser smoke mode must be able 
 assert.match(game,/createStage08LDistrictRollout/,'Stage 08L five-district geometry must be mounted in the live scene');
 assert.match(game,/districtRolloutProxies/,'Stage 08L collision proxy count must be exposed');
 assert.match(game,/stage08L\.groundColliders/,'Stage 08L district ground and road surfaces must enter player and vehicle physics');
-assert.match(game,/stage08K,stage08L,getCityEconomyState/,'Stage 08L metadata must be exposed through the live game API');
+assert.match(game,/stage08K,stage08L,stage08M,getCityEconomyState/,'Stage 08L metadata must be exposed through the live game API');
 for(const feature of ['Alimosho rooming-house blocks','Lekki gated estate','Victoria Island office/hospitality skyline','Eko Atlantic sheet-pile canal','Ekiti Agbo-Ile courtyard compounds']) assert.ok(stage08l.includes(feature),`Missing Stage 08L district feature contract: ${feature}`);
 for(const feature of ['face-me-face-you-rooming-house','bus-terminal-apron','wetland-water-retention-pond','victoria-office-tower','canal-sheet-pile-wall-west','canal-bridge-deck','seawall-armor-block','tetrapod-cross-arm','agbo-ile-yard','granite-rock-outcrop']) assert.ok(stage08l.includes(feature),`Missing Stage 08L authored asset: ${feature}`);
 assert.match(stage08l,/interDistrictConnectors: 5/,'Five district connectors must be present');
-assert.match(stage08l,/root\.enabled = distance <= activationRadius/,'District geometry must be proximity-streamed by district root');
-assert.match(game,/stage08L\.update\(playerController\.getState\(\)\.position\)/,'District proximity streaming must follow the player and vehicle position');
+assert.match(stage08l,/root\.enabled = key === remoteDistrictKey \\|\\| distance <= activationRadius/,'District geometry must be proximity-streamed or activated by the remote CCTV feed');
+assert.match(game,/stage08L\.update\(playerController\.getState\(\)\.position,remoteDistrictKey\)/,'District proximity streaming must follow the player and remote CCTV camera');
+assert.match(game,/createDistrictActivitySystem/,'Remote CCTV must attach live district pedestrians and vehicles');
+assert.match(districtActivity,/district-ambient-npc/,'District activity must use real 3D pedestrian entities');
+assert.match(districtActivity,/district-ambient-vehicle/,'District activity must use real 3D vehicle entities');
+assert.match(districtActivity,/setActiveDistrict/,'Only the district being remotely viewed should simulate');
 assert.match(stage08l,/sharedSurfaceMaps: Object\.keys\(surfaces\)\.length/,'Stage 08L must use shared surface maps');
 assert.match(stage08l,/source: 'stage08l-' \+ district/,'Stage 08L must expose collision source identity');
 assert.match(worldMap,/name:'ALIMOSHO'/,'The city atlas must include Alimosho');
@@ -421,7 +426,7 @@ assert.match(game,/getStage08FProfile/,'Stage 08F profile snapshot must be expos
 assert.match(stage08fProfiler,/p95Ms/,'Stage 08F must report p95 frame time');
 assert.match(stage08fProfiler,/firstBuildingMs/,'Stage 08F must report first building load time');
 assert.match(stage08fProfiler,/devicePixelRatio/,'Stage 08F must capture device pixel ratio');
-assert.match(stage08fProfiler,/physical-device test/,'Stage 08F must clearly distinguish browser automation from physical-device profiling');
+assert.match(stage08fProfiler,/physical-device result/,'Stage 08F must clearly distinguish browser automation from physical-device profiling');
 assert.ok(stage08fSpec.includes('KTX2 / Basis delivery') && stage08fSpec.includes('Collision and physics') && stage08fSpec.includes('Mobile performance acceptance'),'Stage 08F production gates are incomplete');
 assert.equal(stage08fMaterials.targetResolution.hero,2048,'Stage 08F hero PBR maps must target 2K');
 assert.equal(stage08fMaterials.materials.length,8,'Stage 08F material authoring contract must define eight surface families');

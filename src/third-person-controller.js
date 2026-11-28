@@ -1219,6 +1219,23 @@ export function createThirdPersonController(app, camera, canvas, {
     return cameraYaw;
   }
 
+  function setExternalCameraPose(position, target, fov = defaultCameraFov) {
+    if (!Array.isArray(position) || !Array.isArray(target) ||
+        position.length < 3 || target.length < 3 ||
+        !position.slice(0, 3).every(value => Number.isFinite(Number(value))) ||
+        !target.slice(0, 3).every(value => Number.isFinite(Number(value)))) return false;
+    camera.setPosition(Number(position[0]), Number(position[1]), Number(position[2]));
+    camera.lookAt(Number(target[0]), Number(target[1]), Number(target[2]));
+    if (camera.camera && Number.isFinite(Number(fov))) camera.camera.fov = Math.max(45, Math.min(100, Number(fov)));
+    return true;
+  }
+
+  function clearExternalCameraPose() {
+    if (camera.camera) camera.camera.fov = cameraMode === 'first-person' ? Math.max(defaultCameraFov, 72) : defaultCameraFov;
+    cameraInitialized = false;
+    return true;
+  }
+
   function getControlInput() {
     const keyX = (keys.d || keys.arrowright ? 1 : 0) - (keys.a || keys.arrowleft ? 1 : 0);
     const keyY = (keys.s || keys.arrowdown ? 1 : 0) - (keys.w || keys.arrowup ? 1 : 0);
@@ -1320,6 +1337,8 @@ export function createThirdPersonController(app, camera, canvas, {
     getControlInput,
     resetCameraAfterVehicle,
     setCameraViewYaw,
+    setExternalCameraPose,
+    clearExternalCameraPose,
     setCameraMode,
     performTraversal,
     setPositionForSmoke,

@@ -57,8 +57,38 @@ export function mountRPGInterface() {
         <button id="sprint-button" aria-label="Toggle sprint" aria-pressed="false">»<small>SPRINT</small></button>
         <button id="crouch-button" aria-label="Toggle crouch" aria-pressed="false">↓<small>CROUCH</small></button>
         <button id="interact-button" aria-label="Interact">◎<small>INTERACT</small></button>
+        <button id="spar-button" aria-label="Friendly sparring">✦<small>SPAR</small></button>
       </div>
     </div>
+    <section class="drone-controls" id="drone-controls" aria-label="Scout drone controls" hidden>
+      <div class="drone-readout"><small>REMOTE SCOUT LINK</small><b>DRONE CAMERA</b><span id="drone-battery-label">BATTERY · 100%</span><i class="drone-battery-track"><i id="drone-battery-fill"></i></i><span id="drone-altitude-label">ALTITUDE · 3.2 M</span></div>
+      <div class="drone-joystick" id="drone-joystick" role="application" aria-label="Drone flight joystick"><i id="drone-knob"></i><small>FLIGHT</small></div>
+      <div class="drone-actions" aria-label="Drone flight and camera controls">
+        <button type="button" data-drone-action="ascend">↑<small>UP</small></button>
+        <button type="button" data-drone-action="descend">↓<small>DOWN</small></button>
+        <button type="button" data-drone-action="turn-left">↶<small>YAW L</small></button>
+        <button type="button" data-drone-action="turn-right">↷<small>YAW R</small></button>
+        <button type="button" data-drone-action="scan">⌕<small>SCAN</small></button>
+        <button type="button" data-drone-action="recall">⌂<small>RECALL</small></button>
+      </div>
+    </section>
+    <section class="cctv-controls" id="cctv-controls" aria-label="Remote CCTV controls" hidden>
+      <div class="cctv-readout"><small>NAIJA CITY · REMOTE SURVEILLANCE</small><b id="cctv-camera-name">CCTV CAMERA</b><span id="cctv-camera-meta">LIVE · NETWORK LINK</span><i class="cctv-signal-track"><i id="cctv-signal-fill"></i></i><span id="cctv-camera-signal">SIGNAL · 92%</span></div>
+      <div class="cctv-left-controls">
+        <button type="button" data-cctv-action="previous">◀<small>PREV CAM</small></button>
+        <button type="button" data-cctv-action="scan">⌕<small>SCAN AREA</small></button>
+        <button type="button" data-cctv-action="next">▶<small>NEXT CAM</small></button>
+        <button type="button" data-cctv-action="close">×<small>EXIT FEED</small></button>
+      </div>
+      <div class="cctv-ptz-controls" aria-label="Pan, tilt and zoom controls">
+        <button type="button" data-cctv-hold="pan-left">←<small>PAN L</small></button>
+        <button type="button" data-cctv-hold="tilt-up">↑<small>TILT UP</small></button>
+        <button type="button" data-cctv-hold="tilt-down">↓<small>TILT DN</small></button>
+        <button type="button" data-cctv-hold="pan-right">→<small>PAN R</small></button>
+        <button type="button" data-cctv-zoom="out">−<small>ZOOM</small></button>
+        <button type="button" data-cctv-zoom="in">+<small>ZOOM</small></button>
+      </div>
+    </section>
     <section class="vehicle-controls" id="vehicle-controls" aria-label="Vehicle driving controls" hidden>
       <div class="vehicle-readout" id="vehicle-status">
         <b id="vehicle-speed">0 km/h</b>
@@ -79,6 +109,7 @@ export function mountRPGInterface() {
       <button data-slot="1" aria-label="Quick slot 1"><b>1</b><small>EMPTY</small></button>
       <button data-slot="2" aria-label="Quick slot 2"><b>2</b><small>EMPTY</small></button>
       <button data-slot="3" aria-label="Quick slot 3"><b>3</b><small>EMPTY</small></button>
+      <button data-slot="4" aria-label="Quick slot 4"><b>4</b><small>EMPTY</small></button>
     </div>
     <nav class="nav" aria-label="Game menus">
       <button data-open="inventory">▦<small>INVENTORY</small></button>
@@ -168,6 +199,33 @@ export function mountRPGInterface() {
     pause.hidden = true;
   };
   root.addEventListener('click', async event => {
+    const cctvAction = event.target.closest('[data-cctv-action]');
+    if (cctvAction) {
+      const action = cctvAction.dataset.cctvAction;
+      const system = window.__NAIJA_SURVEILLANCE__;
+      if (action === 'previous') system?.cycleCamera?.(-1);
+      else if (action === 'next') system?.cycleCamera?.(1);
+      else if (action === 'scan') system?.scanActiveCamera?.();
+      else if (action === 'close') system?.closeFeed?.();
+      return;
+    }
+    const zoomControl = event.target.closest('[data-cctv-zoom]');
+    if (zoomControl) {
+      window.__NAIJA_SURVEILLANCE__?.setZoom?.(zoomControl.dataset.cctvZoom === 'in' ? 1 : -1);
+      return;
+    }
+    const droneAction = event.target.closest('[data-drone-action]');
+    if (droneAction) {
+      const action = droneAction.dataset.droneAction;
+      const equipment = window.__NAIJA_FIELD_EQUIPMENT__;
+      if (action === 'recall') {
+        equipment?.recallScoutDrone?.();
+        setDroneState(equipment?.getDroneState?.());
+      } else if (action === 'scan') {
+        window.__NAIJA_SURVEILLANCE__?.scanFromDrone?.(equipment?.getDroneState?.());
+      }
+      return;
+    }
     const viewToggle = event.target.closest('#camera-view-toggle');
     if (viewToggle) {
       const nextMode = viewToggle.dataset.mode === 'first-person' ? 'third-person' : 'first-person';
@@ -193,6 +251,11 @@ export function mountRPGInterface() {
       window.__NAIJA_INTERACT__?.();
       return;
     }
+    if (event.target.closest('#spar-button')) {
+      const result = window.__NAIJA_NPC_SPAR__?.();
+      if (!result?.ok) showToast(result?.reason === 'cooldown' ? 'Sparring cooldown · wait a moment' : 'Move closer to a district NPC to spar');
+      return;
+    }
     const setting = event.target.closest('[data-setting]');
     if (setting) {
       if(setting.dataset.setting==='vehicle-controls'){
@@ -214,6 +277,7 @@ export function mountRPGInterface() {
       const itemId = gearAction.dataset.gearId;
       const result = system?.[action]?.(itemId);
       refreshEquipmentUI();
+      setDroneState(system?.getDroneState?.());
       return;
     }
     const slot = event.target.closest('[data-slot]');
@@ -223,6 +287,83 @@ export function mountRPGInterface() {
       return;
     }
   });
+  const droneStick = root.querySelector('#drone-joystick');
+  const droneKnob = root.querySelector('#drone-knob');
+  let droneStickPointer = null;
+  let droneVerticalPointer = null;
+  let droneYawPointer = null;
+  let cctvHoldPointer = null;
+  const readDroneStick = event => {
+    if (!droneStick) return;
+    const rect = droneStick.getBoundingClientRect();
+    const radius = Math.max(1, Math.min(rect.width, rect.height) * 0.36);
+    const dx = event.clientX - (rect.left + rect.width / 2);
+    const dy = event.clientY - (rect.top + rect.height / 2);
+    const length = Math.hypot(dx, dy) || 1;
+    const scale = Math.min(1, radius / length);
+    const x = dx / radius * scale;
+    const y = -dy / radius * scale;
+    if (droneKnob) droneKnob.style.transform = 'translate(' + (dx * scale) + 'px,' + (dy * scale) + 'px)';
+    window.__NAIJA_FIELD_EQUIPMENT__?.setDroneInput?.(x, y);
+  };
+  const resetDroneStick = () => {
+    droneStickPointer = null;
+    if (droneKnob) droneKnob.style.transform = 'translate(0,0)';
+    window.__NAIJA_FIELD_EQUIPMENT__?.setDroneInput?.(0, 0);
+  };
+  droneStick?.addEventListener('pointerdown', event => {
+    event.preventDefault();
+    droneStickPointer = event.pointerId;
+    droneStick.setPointerCapture?.(event.pointerId);
+    readDroneStick(event);
+  });
+  droneStick?.addEventListener('pointermove', event => {
+    if (event.pointerId === droneStickPointer) { event.preventDefault(); readDroneStick(event); }
+  });
+  droneStick?.addEventListener('pointerup', event => { if (event.pointerId === droneStickPointer) resetDroneStick(); });
+  droneStick?.addEventListener('pointercancel', resetDroneStick);
+  droneStick?.addEventListener('lostpointercapture', resetDroneStick);
+  root.addEventListener('pointerdown', event => {
+    const droneAction = event.target.closest('[data-drone-action]')?.dataset.droneAction;
+    if (droneAction === 'ascend' || droneAction === 'descend') {
+      event.preventDefault();
+      droneVerticalPointer = event.pointerId;
+      window.__NAIJA_FIELD_EQUIPMENT__?.setDroneVertical?.(droneAction === 'ascend' ? 1 : -1);
+      return;
+    }
+    if (droneAction === 'turn-left' || droneAction === 'turn-right') {
+      event.preventDefault();
+      droneYawPointer = event.pointerId;
+      window.__NAIJA_FIELD_EQUIPMENT__?.setDronePan?.(droneAction === 'turn-left' ? -1 : 1);
+      return;
+    }
+    const cctvHold = event.target.closest('[data-cctv-hold]')?.dataset.cctvHold;
+    if (cctvHold) {
+      event.preventDefault();
+      cctvHoldPointer = event.pointerId;
+      const pan = cctvHold === 'pan-left' ? -1 : cctvHold === 'pan-right' ? 1 : 0;
+      const tilt = cctvHold === 'tilt-up' ? 1 : cctvHold === 'tilt-down' ? -1 : 0;
+      window.__NAIJA_SURVEILLANCE__?.setPanInput?.(pan, tilt);
+    }
+  });
+  const releaseRemoteControls = event => {
+    const matches = pointer => pointer !== null && (event?.pointerId === undefined || event.pointerId === pointer);
+    if (matches(droneVerticalPointer)) {
+      droneVerticalPointer = null;
+      window.__NAIJA_FIELD_EQUIPMENT__?.setDroneVertical?.(0);
+    }
+    if (matches(droneYawPointer)) {
+      droneYawPointer = null;
+      window.__NAIJA_FIELD_EQUIPMENT__?.setDronePan?.(0);
+    }
+    if (matches(cctvHoldPointer)) {
+      cctvHoldPointer = null;
+      window.__NAIJA_SURVEILLANCE__?.setPanInput?.(0, 0);
+    }
+  };
+  window.addEventListener('pointerup', releaseRemoteControls, true);
+  window.addEventListener('pointercancel', releaseRemoteControls, true);
+
   // Handle Data Saver in the capture phase so this persistent system setting
   // is applied even when another interface layer intercepts menu bubbling.
   document.addEventListener('click', event => {
@@ -266,8 +407,42 @@ export function mountRPGInterface() {
         }).join('')
       : '<article><strong>Field equipment is loading</strong><small>Start the game to initialise the field kit.</small></article>';
     return '<div class="inventory-wallet"><span>AVAILABLE CASH</span><b>₦' + Math.floor(Number(economyState.cash) || 0).toLocaleString('en-NG') + '</b></div>' +
-      '<section class="field-equipment-list"><div class="field-section-heading"><b>FIELD EQUIPMENT</b><small>UTILITY GEAR · 3 QUICK SLOTS</small></div><div class="gear-grid">' + gearRows + '</div></section>' +
+      '<section class="field-equipment-list"><div class="field-section-heading"><b>FIELD EQUIPMENT</b><small>UTILITY GEAR · 4 QUICK SLOTS</small></div><div class="gear-grid">' + gearRows + '</div></section>' +
       '<section><div class="field-section-heading"><b>STORES & SUPPLIES</b></div><div class="tiles">' + goodsRows + '</div></section>';
+  }
+
+  function setDroneState(state = null) {
+    const drone = state || window.__NAIJA_FIELD_EQUIPMENT__?.getDroneState?.() || { active: false };
+    const active = Boolean(drone.active);
+    root.classList.toggle('drone-active', active);
+    const controls = root.querySelector('#drone-controls');
+    if (controls) controls.hidden = !active;
+    const battery = Math.max(0, Math.min(100, Number(drone.battery) || 0));
+    const label = root.querySelector('#drone-battery-label');
+    const fill = root.querySelector('#drone-battery-fill');
+    const altitude = root.querySelector('#drone-altitude-label');
+    if (label) label.textContent = 'BATTERY · ' + Math.round(battery) + '%';
+    if (fill) fill.style.width = battery + '%';
+    if (altitude && active) altitude.textContent = 'ALTITUDE · ' + (Number(drone.altitudeMetres) || 0).toFixed(1) + ' M';
+    return drone;
+  }
+
+  function setCctvState(state = null) {
+    const feed = state?.activeFeed || null;
+    const active = Boolean(feed?.type === 'cctv');
+    root.classList.toggle('cctv-active', active);
+    const controls = root.querySelector('#cctv-controls');
+    if (controls) controls.hidden = !active;
+    if (!active) return null;
+    const cameraName = root.querySelector('#cctv-camera-name');
+    const cameraMeta = root.querySelector('#cctv-camera-meta');
+    const signal = root.querySelector('#cctv-camera-signal');
+    const fill = root.querySelector('#cctv-signal-fill');
+    if (cameraName) cameraName.textContent = feed.name || 'CCTV CAMERA';
+    if (cameraMeta) cameraMeta.textContent = 'CAM ' + (feed.cameraNumber || 1) + '/' + (feed.cameraCount || 1) + ' · ' + String(feed.district || 'CITY').toUpperCase() + ' · LIVE';
+    if (signal) signal.textContent = 'SIGNAL · ' + Math.round(feed.signalPercent || 0) + '%';
+    if (fill) fill.style.width = Math.max(0, Math.min(100, Number(feed.signalPercent) || 0)) + '%';
+    return feed;
   }
 
   function refreshEquipmentUI(state = null) {
@@ -380,6 +555,8 @@ export function mountRPGInterface() {
     setVehicleControlsMode, getVehicleControlsMode:()=>vehicleControlsMode,
     setWorldMapData:worldMapUI.setData, setWorldMapPlayerPosition:worldMapUI.setPlayerPosition, getWorldMapState:worldMapUI.getState,
     isPlayerCharacterRequired: () => characterRequired,
-    refreshEquipmentUI
+    refreshEquipmentUI,
+    setDroneState,
+    setCctvState
   };
 }

@@ -356,3 +356,58 @@
 @media(orientation:landscape) and (max-height:560px){
   .camera-view-toggle{top:calc(48px + env(safe-area-inset-top,0px));right:calc(10px + env(safe-area-inset-right,0px))}
 }
+
+/* Stage 08M — remote scout drone controls. */
+.drone-controls{position:absolute;inset:0;z-index:14;pointer-events:none}
+.drone-controls[hidden]{display:none!important}
+.drone-readout{position:absolute;left:50%;top:calc(58px + var(--safe-top,0px));transform:translateX(-50%);display:grid;gap:4px;min-width:148px;padding:8px 11px;border:1px solid rgba(93,212,180,.42);border-radius:10px;background:rgba(4,14,15,.84);text-align:center;backdrop-filter:blur(8px)}
+.drone-readout>small{color:#8ce0c5;font:700 7px ui-monospace,monospace;letter-spacing:.15em}
+.drone-readout>b{font:700 11px ui-monospace,monospace;letter-spacing:.09em}
+.drone-readout>span{color:#c5d5d0;font:700 7px ui-monospace,monospace;letter-spacing:.06em}
+.drone-battery-track{display:block;height:4px;overflow:hidden;border-radius:99px;background:#ffffff22}
+.drone-battery-track>i{display:block;width:100%;height:100%;background:#68d9ae;transition:width .2s linear}
+.drone-joystick{position:absolute;left:calc(16px + var(--safe-left,0px));bottom:calc(18px + var(--safe-bottom,0px));width:clamp(82px,12vh,100px);height:clamp(82px,12vh,100px);display:grid;place-items:center;border:1px solid rgba(115,226,198,.56);border-radius:50%;background:rgba(3,19,20,.54);box-shadow:inset 0 0 0 5px rgba(115,226,198,.04),0 5px 24px rgba(0,0,0,.18);pointer-events:auto;touch-action:none}
+.drone-joystick>i{width:35px;height:35px;border:1px solid rgba(151,240,217,.72);border-radius:50%;background:rgba(86,194,165,.25);box-shadow:0 2px 8px #0005;pointer-events:none}
+.drone-joystick>small{position:absolute;bottom:-15px;color:#a5dfcf;font:700 7px ui-monospace,monospace;letter-spacing:.14em}
+.drone-actions{position:absolute;right:calc(16px + var(--safe-right,0px));bottom:calc(18px + var(--safe-bottom,0px));display:grid;grid-template-columns:repeat(2,clamp(48px,7.5vh,58px));gap:7px;pointer-events:auto}
+.drone-actions button{width:clamp(48px,7.5vh,58px);height:clamp(48px,7.5vh,58px);min-width:48px;min-height:48px;border:1px solid rgba(115,226,198,.42);border-radius:13px;background:rgba(4,23,23,.86);color:#d7f4eb;font-size:18px;touch-action:none}
+.drone-actions button small{display:block;color:#a6ddcd;font:700 7px ui-monospace,monospace;letter-spacing:.08em}
+.drone-actions button[data-drone-action="recall"]{grid-column:1 / span 2;width:100%;height:39px;min-height:39px;border-color:#d7b87888;background:rgba(54,40,17,.92);font-size:14px}
+#rpg-interface.drone-active .touch,#rpg-interface.drone-active .quick-slots{display:none!important}
+#rpg-interface.drone-active .drone-controls{display:block}
+@media(orientation:landscape) and (max-height:560px){
+ .drone-readout{top:calc(48px + var(--safe-top,0px));padding:6px 9px;min-width:132px}
+ .drone-joystick{left:calc(12px + var(--safe-left,0px));bottom:calc(12px + var(--safe-bottom,0px))}
+ .drone-actions{right:calc(12px + var(--safe-right,0px));bottom:calc(12px + var(--safe-bottom,0px));gap:5px}
+}
+
+/* Stage 08M — fixed CCTV network console and PTZ controls. */
+.cctv-controls{position:absolute;inset:0;z-index:15;pointer-events:none}
+.cctv-controls[hidden]{display:none!important}
+.cctv-readout{position:absolute;left:50%;top:calc(58px + var(--safe-top,0px));transform:translateX(-50%);display:grid;gap:4px;min-width:185px;max-width:min(310px,52vw);padding:9px 13px;border:1px solid rgba(105,190,165,.48);border-radius:10px;background:rgba(4,14,15,.88);text-align:center;backdrop-filter:blur(8px)}
+.cctv-readout>small{color:#9be0c9;font:700 7px ui-monospace,monospace;letter-spacing:.13em}
+.cctv-readout>b{font:700 12px ui-monospace,monospace;letter-spacing:.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cctv-readout>span{color:#c1d4cb;font:700 7px ui-monospace,monospace;letter-spacing:.07em}
+.cctv-signal-track{display:block;height:4px;overflow:hidden;border-radius:99px;background:#ffffff22}
+.cctv-signal-track>i{display:block;width:92%;height:100%;background:#75d5aa;transition:width .2s linear}
+.cctv-left-controls,.cctv-ptz-controls{position:absolute;bottom:calc(16px + var(--safe-bottom,0px));display:grid;gap:6px;pointer-events:auto}
+.cctv-left-controls{left:calc(14px + var(--safe-left,0px));grid-template-columns:repeat(2,clamp(54px,8vh,66px))}
+.cctv-ptz-controls{right:calc(14px + var(--safe-right,0px));grid-template-columns:repeat(2,clamp(52px,7.5vh,62px))}
+.cctv-left-controls button,.cctv-ptz-controls button{width:clamp(52px,8vh,66px);height:clamp(46px,7vh,58px);min-width:48px;min-height:44px;border:1px solid rgba(116,203,176,.42);border-radius:11px;background:rgba(4,20,20,.88);color:#dbf4e8;font-size:15px;touch-action:none}
+.cctv-left-controls button small,.cctv-ptz-controls button small{display:block;margin-top:3px;color:#a9d9c9;font:700 6px ui-monospace,monospace;letter-spacing:.07em}
+.cctv-left-controls [data-cctv-action="scan"]{border-color:#d6b47799;background:rgba(60,43,17,.92)}
+.cctv-left-controls [data-cctv-action="close"]{border-color:#bb756988;background:rgba(56,23,22,.9)}
+.cctv-ptz-controls [data-cctv-zoom]{background:rgba(23,39,34,.94);border-color:#d6b47777}
+#rpg-interface.cctv-active .touch,#rpg-interface.cctv-active .quick-slots,#rpg-interface.cctv-active .nav{display:none!important}
+#rpg-interface.cctv-active .cctv-controls{display:block}
+#rpg-interface.cctv-active .camera-view-toggle{display:none}
+#rpg-interface.drone-active .nav,#rpg-interface.drone-active .camera-view-toggle{display:none}
+@media(orientation:landscape) and (max-height:560px){
+ .cctv-readout{top:calc(46px + var(--safe-top,0px));padding:6px 10px;min-width:158px}
+ .cctv-left-controls,.cctv-ptz-controls{bottom:calc(10px + var(--safe-bottom,0px));gap:5px}
+ .cctv-left-controls{left:calc(10px + var(--safe-left,0px))}
+ .cctv-ptz-controls{right:calc(10px + var(--safe-right,0px))}
+ .cctv-left-controls button,.cctv-ptz-controls button{height:44px;min-height:42px}
+}
+
+#spar-button{background:#68413adf;border-color:#e3a18c;touch-action:manipulation}

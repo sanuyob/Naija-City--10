@@ -6,6 +6,15 @@ const INVENTORY = [
     ['Original business-sign variants', '4'], ['Separate plaster, concrete, roof, steel and tinted-glass maps', 'Shared'],
     ['Modular facade details', 'Runtime diagnostic']
   ]},
+  { title: 'STAGE 08M NIGERIAN STREET TECH', items: [
+    ['CCTV camera assemblies', '5'], ['Telecom distribution cabinets', '2'],
+    ['Neighbourhood generator sets', '1'], ['Prepaid electricity meters', '2'],
+    ['Solar streetlights', '3'], ['Smart estate access gate', '1'],
+    ['Digital street billboard', '1'], ['Public Wi-Fi mast', '1'],
+    ['EV charging stations', '2'], ['Compound video intercom', '1'],
+    ['Roadside POS terminal', '1'], ['Transformer enclosure', '1'],
+    ['Interactive street-tech devices', '5']
+  ]},
   { title: 'STAGE 08C NIGERIAN STREET INFRASTRUCTURE', items: [
     ['Utility poles and overhead service wire spans', '16 poles / 42 wire runs'],
     ['Distributor-road streetlight assemblies', '16'], ['Kerbs and storm-water drain covers', 'Extended network'],
