@@ -7,7 +7,7 @@ const port = 4192;
 const origin = `http://127.0.0.1:${port}`;
 const basePath = process.env.GITHUB_ACTIONS === 'true' ? '/Naija-City--10/' : '/';
 const remoteBaseUrl = process.env.SMOKE_BASE_URL?.trim();
-const baseUrl = remoteBaseUrl ? remoteBaseUrl.replace(/\\/+$/, '') + '/' : origin + basePath;
+const baseUrl = remoteBaseUrl ? remoteBaseUrl.replace(new RegExp('/+$'), '') + '/' : origin + basePath;
 const server = remoteBaseUrl ? null : spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
 let browser;
 try {
