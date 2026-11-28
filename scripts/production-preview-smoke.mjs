@@ -6,20 +6,28 @@ import { chromium } from 'playwright';
 const port = 4192;
 const origin = `http://127.0.0.1:${port}`;
 const basePath = process.env.GITHUB_ACTIONS === 'true' ? '/Naija-City--10/' : '/';
-const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
+const remoteBaseUrl = process.env.SMOKE_BASE_URL?.trim();
+const baseUrl = remoteBaseUrl ? remoteBaseUrl.replace(/\\/+$/, '') + '/' : origin + basePath;
+const server = remoteBaseUrl ? null : spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
 let browser;
 try {
   let ready = false;
-  for (let i = 0; i < 80; i++) {
-    try { const response = await fetch(origin); if (response.ok) { ready = true; break; } } catch {}
-    if (server.exitCode !== null) throw new Error('Vite production preview exited: ' + server.exitCode);
-    await delay(350);
+  if (remoteBaseUrl) {
+    const response = await fetch(baseUrl, { cache: 'no-store' });
+    ready = response.ok;
+    if (!ready) throw new Error('Live production page returned HTTP ' + response.status + ' at ' + baseUrl);
+  } else {
+    for (let i = 0; i < 80; i++) {
+      try { const response = await fetch(baseUrl); if (response.ok) { ready = true; break; } } catch {}
+      if (server.exitCode !== null) throw new Error('Vite production preview exited: ' + server.exitCode);
+      await delay(350);
+    }
+    if (!ready) throw new Error('Production preview did not become ready');
   }
-  if (!ready) throw new Error('Production preview did not become ready');
   const manifest = JSON.parse(await readFile(new URL('../public/assets/npcs/gobkit-cc0/roster/manifest.json', import.meta.url), 'utf8'));
   if (manifest.count !== 64 || manifest.characters.length !== 64) throw new Error('Production NPC manifest does not contain 64 characters.');
   const assetChecks = await Promise.all(manifest.characters.map(async character => {
-    const response = await fetch(`${origin}${basePath}${character.url}`, { method: 'HEAD' });
+    const response = await fetch(`${baseUrl}${character.url}`, { method: 'HEAD' });
     if (!response.ok) throw new Error(`Production roster asset missing: ${character.slug} HTTP ${response.status}`);
     return { file: character.slug + '.glb', bytes: Number(response.headers.get('content-length')) || 0, status: response.status };
   }));
@@ -30,7 +38,7 @@ try {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-  await page.goto(origin + basePath + '?smoke=1&stage08m=1', { waitUntil: 'networkidle' });
+  await page.goto(baseUrl + '?smoke=1&stage08m=1', { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready === true, null, { timeout: 90000 });
   await page.waitForFunction(() => window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount > 0, null, { timeout: 30000 });
   const camera = await page.evaluate(() => window.__NAIJA_SURVEILLANCE__?.openCamera?.('cctv-ekiti-1'));
@@ -103,8 +111,8 @@ try {
       result.deviceProfile.npcDefinitions !== 64 || !result.deviceProfile.canvas[0] || !result.deviceProfile.canvas[1] || errors.length) {
     throw new Error('Production browser verification failed: ' + JSON.stringify({ result, errors }));
   }
-  console.log(JSON.stringify({ result: 'PASS', target: 'Vite production dist preview', rosterAssetCount: assetChecks.length, viewport: '844x390 Chromium/SwiftShader touch', assetChecks, farmerInteraction, sparring, sparButtonVisible, browser: result, errors, limitation: 'Software-rendered browser verification; no physical Android device test.' }, null, 2));
+  console.log(JSON.stringify({ result: 'PASS', target: remoteBaseUrl ? 'live hosted production URL' : 'Vite production dist preview', rosterAssetCount: assetChecks.length, viewport: '844x390 Chromium/SwiftShader touch', assetChecks, farmerInteraction, sparring, sparButtonVisible, browser: result, errors, limitation: 'Software-rendered browser verification; no physical Android device test.' }, null, 2));
 } finally {
   await browser?.close();
-  server.kill('SIGTERM');
+  server?.kill('SIGTERM');
 }
