@@ -5,6 +5,7 @@ import { chromium } from 'playwright';
 
 const port = 4192;
 const origin = `http://127.0.0.1:${port}`;
+const basePath = process.env.GITHUB_ACTIONS === 'true' ? '/Naija-City--10/' : '/';
 const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', String(port), '--strictPort'], { stdio: 'ignore' });
 let browser;
 try {
@@ -18,7 +19,7 @@ try {
   const manifest = JSON.parse(await readFile(new URL('../public/assets/npcs/gobkit-cc0/roster/manifest.json', import.meta.url), 'utf8'));
   if (manifest.count !== 64 || manifest.characters.length !== 64) throw new Error('Production NPC manifest does not contain 64 characters.');
   const assetChecks = await Promise.all(manifest.characters.map(async character => {
-    const response = await fetch(`${origin}/${character.url}`, { method: 'HEAD' });
+    const response = await fetch(`${origin}${basePath}${character.url}`, { method: 'HEAD' });
     if (!response.ok) throw new Error(`Production roster asset missing: ${character.slug} HTTP ${response.status}`);
     return { file: character.slug + '.glb', bytes: Number(response.headers.get('content-length')) || 0, status: response.status };
   }));
@@ -29,7 +30,7 @@ try {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
-  await page.goto(origin + '?smoke=1&stage08m=1', { waitUntil: 'networkidle' });
+  await page.goto(origin + basePath + '?smoke=1&stage08m=1', { waitUntil: 'networkidle' });
   await page.waitForFunction(() => window.__NAIJA_GAME__?.ready === true, null, { timeout: 90000 });
   await page.waitForFunction(() => window.__NAIJA_RENDER_DIAGNOSTICS__?.drawCallCount > 0, null, { timeout: 30000 });
   const camera = await page.evaluate(() => window.__NAIJA_SURVEILLANCE__?.openCamera?.('cctv-ekiti-1'));
